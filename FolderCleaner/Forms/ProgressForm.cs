@@ -8,11 +8,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace FolderCleaner
+namespace FolderCleaner.Forms
 {
-    public partial class Form1 : Form
+    public partial class ProgressForm : Form
     {
-        public Form1()
+        public ProgressForm()
         {
             InitializeComponent();
         }

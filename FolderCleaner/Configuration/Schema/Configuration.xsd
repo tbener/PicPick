@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xs="http://www.w3.org/2001/XMLSchema" attributeFormDefault="unqualified" elementFormDefault="qualified">
+  <xsd:element name="FolderCleanerConfig">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="Projects">
+          <xsd:complexType>
+            <xsd:sequence>
+              <xsd:element maxOccurs="unbounded" name="Project">
+                <xsd:complexType>
+                  <xsd:sequence>
+                    <xsd:element maxOccurs="unbounded" name="TaskRef">
+                      <xsd:complexType>
+                        <xsd:attribute name="Name" type="xsd:string" use="required" />
+                      </xsd:complexType>
+                    </xsd:element>
+                  </xsd:sequence>
+                  <xsd:attribute name="Name" type="xsd:string" use="required" />
+                </xsd:complexType>
+              </xsd:element>
+            </xsd:sequence>
+            <xsd:attribute name="id" type="xsd:unsignedByte" use="required" />
+          </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="Tasks">
+          <xsd:complexType>
+            <xsd:sequence>
+              <xsd:element maxOccurs="unbounded" name="Task">
+                <xsd:complexType>
+                  <xsd:sequence>
+                    <xsd:element name="Source">
+                      <xsd:complexType>
+                        <xsd:attribute name="Path" type="xsd:string" use="required" />
+                        <xsd:attribute name="Filter" type="xsd:string" use="required" />
+                      </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element maxOccurs="unbounded" name="Destination">
+                      <xsd:complexType>
+                        <xsd:attribute name="Path" type="xsd:string" use="required" />
+                        <xsd:attribute name="Template" type="xsd:string" use="required" />
+                      </xsd:complexType>
+                    </xsd:element>
+                  </xsd:sequence>
+                  <xsd:attribute name="Name" type="xsd:string" use="required" />
+                </xsd:complexType>
+              </xsd:element>
+            </xsd:sequence>
+          </xsd:complexType>
+        </xsd:element>
+      </xsd:sequence>
+      <xsd:attribute name="ver" type="xsd:string" use="required" />
+    </xsd:complexType>
+  </xsd:element>
+</xs:schema>
