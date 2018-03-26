@@ -51,8 +51,33 @@ namespace FolderCleaner.Forms
 
             if (sender == pathSource) _currentTask.Source.Path = pathSource.Text;
             if (sender == txtFilter) _currentTask.Source.Filter = txtFilter.Text;
+            if (sender == pathSource || sender == txtFilter) SourceUpdated();
 
-            if (isDirty) _currentTask?.SetDirty();
+                if (isDirty) _currentTask?.SetDirty();
+        }
+
+        private void SourceUpdated()
+        {
+            try
+            {
+                if (PathHelper.Exists(_currentTask.Source.Path))
+                {
+                    lblFileCount.Text = "Reading...";
+                    _currentTask.ReadFiles();
+                    lblFileCount.Text = $"{_currentTask.FileCount} files found";
+                    btnCheck.Enabled = _currentTask.FileCount > 0;
+                }
+                else
+                {
+                    lblFileCount.Text = "";
+                    btnCheck.Enabled = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                lblFileCount.Text = ex.Message;
+                btnCheck.Enabled = false;
+            }
         }
 
         private void SetDirty(bool isDirty)
@@ -141,6 +166,7 @@ namespace FolderCleaner.Forms
                 lblTaskName.Text = _currentTask.Name;
                 pathSource.Text = _currentTask.Source.Path;
                 txtFilter.Text = _currentTask.Source.Filter;
+                SourceUpdated();
 
                 foreach (var dest in _currentTask.Destination)
                 {
@@ -212,6 +238,9 @@ namespace FolderCleaner.Forms
                 _taskForm.Dispose();
         }
 
-
+        private void button1_Click(object sender, EventArgs e)
+        {
+            _currentTask.ReadFiles();
+        }
     }
 }

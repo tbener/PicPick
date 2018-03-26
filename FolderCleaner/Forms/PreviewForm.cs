@@ -33,14 +33,18 @@ namespace FolderCleaner.Forms
 
                 if (!_task.Initialized) _task.Init();
 
-                foreach (var dst in _task.Destination)
+                _task.OnCopyStatusChanged += OnCopyStatusChanged;
+                foreach (var map in _task.Mapping)
                 {
-                    dst.OnCopyStatusChanged += Dst_OnCopyStatusChanged;
-                    foreach (var map in dst.Mapping.Values)
-                    {
-                        _mapRows[map] = dgInfo.Rows.Add(dst.GetPath(map.Folder), map.FileList.Count());
-                    }
+                    DataGridViewRow row = dgInfo.Rows[dgInfo.Rows.Add()];
+                    row.Cells["Path"].Value = map.Key;
+                    row.Cells["Files"].Value = map.Value.FileList.Count();
+
+                    _mapRows[map.Value] = row.Index;
+
                 }
+                btnRun.Enabled = true;
+                
             }
             catch (Exception ex)
             {
@@ -48,9 +52,9 @@ namespace FolderCleaner.Forms
             }
         }
 
-        private void Dst_OnCopyStatusChanged(object sender, CopyEventArgs e)
+        private void OnCopyStatusChanged(object sender, CopyEventArgs e)
         {
-            dgInfo.Rows[_mapRows[e.Info]].Cells["Status"].Value = e.Info.GetStatus();
+            dgInfo.Rows[_mapRows[e.Info]].Cells["Status"].Value = e.Info.GetStatusString();
         }
 
         public void Start(FolderCleanerConfigTask task)
@@ -69,12 +73,18 @@ namespace FolderCleaner.Forms
 
         private void btnRun_Click(object sender, EventArgs e)
         {
+            btnRun.Enabled = false;
             if (_task != null)
             {
                 if (!_task.Initialized) Preview(this);
 
                 _task.Execute();
             }
+        }
+
+        private void btnClose_Click(object sender, EventArgs e)
+        {
+            Close();
         }
     }
 }

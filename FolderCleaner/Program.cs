@@ -30,14 +30,24 @@ namespace FolderCleaner
             Application.SetCompatibleTextRenderingDefault(false);
             //Application.Run(new Form1());
 
-            //string f = @"C:\Users\Tal\source\repos\FolderCleaner\FolderCleaner\Test\2018-01-11 09.36.58.jpg";
-            //Debug.Print( Configuration.FolderCleanerConfigTaskDestination.GetDateTaken(f).ToString());
+            
 
             CommandLine.Parser.Default.ParseArguments<Options>(args)
                 .WithParsed<Options>(opts => RunOptionsAndReturnExitCode(opts))
                 .WithNotParsed<Options>((errs) => HandleParseError((IEnumerable<Error>)errs));
 
 
+        }
+        
+
+        public static void m1()
+        {
+            Msg.Show("Method 1");
+        }
+
+        public static void m2()
+        {
+            Msg.Show("Method 2");
         }
 
         private static void HandleParseError(IEnumerable<Error> errs)

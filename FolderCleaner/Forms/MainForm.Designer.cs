@@ -33,17 +33,17 @@
             this.mnuProject = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuOpen = new System.Windows.Forms.ToolStripMenuItem();
             this.noProjectsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuSave = new System.Windows.Forms.ToolStripMenuItem();
             this.splitContainerMain = new System.Windows.Forms.SplitContainer();
+            this.lstTasks = new System.Windows.Forms.CheckedListBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.lblCheck = new System.Windows.Forms.Label();
             this.btnCheck = new System.Windows.Forms.Button();
             this.pnlDestinations = new System.Windows.Forms.GroupBox();
             this.txtFilter = new System.Windows.Forms.TextBox();
             this.lblTaskName = new System.Windows.Forms.Label();
-            this.toolStrip = new System.Windows.Forms.ToolStrip();
-            this.mnuSave = new System.Windows.Forms.ToolStripMenuItem();
             this.pathSource = new FolderCleaner.UserControls.PathBrowser();
-            this.lstTasks = new System.Windows.Forms.CheckedListBox();
+            this.toolStrip = new System.Windows.Forms.ToolStrip();
+            this.lblFileCount = new System.Windows.Forms.Label();
             this.menuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerMain)).BeginInit();
             this.splitContainerMain.Panel1.SuspendLayout();
@@ -93,6 +93,14 @@
             this.noProjectsToolStripMenuItem.Size = new System.Drawing.Size(143, 22);
             this.noProjectsToolStripMenuItem.Text = "(No projects)";
             // 
+            // mnuSave
+            // 
+            this.mnuSave.Name = "mnuSave";
+            this.mnuSave.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
+            this.mnuSave.Size = new System.Drawing.Size(138, 22);
+            this.mnuSave.Text = "&Save";
+            this.mnuSave.Click += new System.EventHandler(this.mnuSave_Click);
+            // 
             // splitContainerMain
             // 
             this.splitContainerMain.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -106,7 +114,7 @@
             // 
             // splitContainerMain.Panel2
             // 
-            this.splitContainerMain.Panel2.Controls.Add(this.lblCheck);
+            this.splitContainerMain.Panel2.Controls.Add(this.lblFileCount);
             this.splitContainerMain.Panel2.Controls.Add(this.btnCheck);
             this.splitContainerMain.Panel2.Controls.Add(this.pnlDestinations);
             this.splitContainerMain.Panel2.Controls.Add(this.txtFilter);
@@ -116,6 +124,16 @@
             this.splitContainerMain.SplitterDistance = 325;
             this.splitContainerMain.TabIndex = 2;
             // 
+            // lstTasks
+            // 
+            this.lstTasks.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lstTasks.FormattingEnabled = true;
+            this.lstTasks.Location = new System.Drawing.Point(29, 100);
+            this.lstTasks.Name = "lstTasks";
+            this.lstTasks.Size = new System.Drawing.Size(254, 340);
+            this.lstTasks.TabIndex = 2;
+            this.lstTasks.SelectedIndexChanged += new System.EventHandler(this.lstTasks_SelectedIndexChanged);
+            // 
             // label1
             // 
             this.label1.AutoSize = true;
@@ -124,16 +142,6 @@
             this.label1.Size = new System.Drawing.Size(35, 13);
             this.label1.TabIndex = 1;
             this.label1.Text = "label1";
-            // 
-            // lblCheck
-            // 
-            this.lblCheck.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.lblCheck.Location = new System.Drawing.Point(117, 83);
-            this.lblCheck.Name = "lblCheck";
-            this.lblCheck.Size = new System.Drawing.Size(503, 134);
-            this.lblCheck.TabIndex = 6;
-            this.lblCheck.Text = "files...";
             // 
             // btnCheck
             // 
@@ -174,6 +182,13 @@
             this.lblTaskName.TabIndex = 2;
             this.lblTaskName.Text = "Task";
             // 
+            // pathSource
+            // 
+            this.pathSource.Location = new System.Drawing.Point(12, 37);
+            this.pathSource.Name = "pathSource";
+            this.pathSource.Size = new System.Drawing.Size(303, 46);
+            this.pathSource.TabIndex = 1;
+            // 
             // toolStrip
             // 
             this.toolStrip.Location = new System.Drawing.Point(0, 24);
@@ -182,30 +197,14 @@
             this.toolStrip.TabIndex = 3;
             this.toolStrip.Text = "toolStrip1";
             // 
-            // mnuSave
+            // lblFileCount
             // 
-            this.mnuSave.Name = "mnuSave";
-            this.mnuSave.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-            this.mnuSave.Size = new System.Drawing.Size(138, 22);
-            this.mnuSave.Text = "&Save";
-            this.mnuSave.Click += new System.EventHandler(this.mnuSave_Click);
-            // 
-            // pathSource
-            // 
-            this.pathSource.Location = new System.Drawing.Point(12, 37);
-            this.pathSource.Name = "pathSource";
-            this.pathSource.Size = new System.Drawing.Size(303, 46);
-            this.pathSource.TabIndex = 1;
-            // 
-            // lstTasks
-            // 
-            this.lstTasks.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lstTasks.FormattingEnabled = true;
-            this.lstTasks.Location = new System.Drawing.Point(29, 100);
-            this.lstTasks.Name = "lstTasks";
-            this.lstTasks.Size = new System.Drawing.Size(254, 349);
-            this.lstTasks.TabIndex = 2;
-            this.lstTasks.SelectedIndexChanged += new System.EventHandler(this.lstTasks_SelectedIndexChanged);
+            this.lblFileCount.AutoSize = true;
+            this.lblFileCount.Location = new System.Drawing.Point(117, 86);
+            this.lblFileCount.Name = "lblFileCount";
+            this.lblFileCount.Size = new System.Drawing.Size(10, 13);
+            this.lblFileCount.TabIndex = 6;
+            this.lblFileCount.Text = "-";
             // 
             // MainForm
             // 
@@ -249,8 +248,8 @@
         private System.Windows.Forms.TextBox txtFilter;
         private System.Windows.Forms.GroupBox pnlDestinations;
         private System.Windows.Forms.Button btnCheck;
-        private System.Windows.Forms.Label lblCheck;
         private System.Windows.Forms.ToolStripMenuItem mnuSave;
         private System.Windows.Forms.CheckedListBox lstTasks;
+        private System.Windows.Forms.Label lblFileCount;
     }
 }

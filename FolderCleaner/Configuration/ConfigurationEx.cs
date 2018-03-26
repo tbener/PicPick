@@ -50,6 +50,8 @@ namespace FolderCleaner.Configuration
 
     public partial class FolderCleanerConfigTask
     {
+        public event CopyEventHandler OnCopyStatusChanged;
+
         [XmlIgnore]
         public TaskRunner Runner { get; set; }
 
@@ -64,32 +66,83 @@ namespace FolderCleaner.Configuration
             Initialized = false;
         }
 
-        public bool Init()
+        Dictionary<string, DateTime> _dicFiles = new Dictionary<string, DateTime>();
+        List<string> _errorFiles = new List<string>();
+
+        /*
+         * Lists the files and their dates
+         */
+        public void ReadFiles()
         {
-            string[] fileEntries = Directory.GetFiles(Source.Path, Source.Filter);
-            Debug.Print("Found {0} \"{1}\" files", fileEntries.Count(), Source.Filter);
-            FileCount = fileEntries.Count();
+            DateTime dateTime = DateTime.MinValue;
+
+            _dicFiles.Clear();
+            _errorFiles.Clear();
+
+            FileDateInfo fileDateInfo = new FileDateInfo();
+            string[] filters = Source.Filter.Split(new char[]{',', ';'},StringSplitOptions.RemoveEmptyEntries);
+            foreach (string fltr in filters)
+            {
+                string filter = fltr.Trim();
+                Debug.Print($"-------------\r\nFilter: {filter}\r\n---------------");
+                string[] fileEntries = Directory.GetFiles(Source.Path, filter);
+                foreach (string file in fileEntries)
+                {
+                    if (!_dicFiles.ContainsKey(file) && !_errorFiles.Contains(file))
+                        if (fileDateInfo.GetFileDate(file, out dateTime))
+                            _dicFiles.Add(file, dateTime);
+                        else
+                            _errorFiles.Add(file);
+                    //Debug.Print($"{Path.GetFileName(file)} - {_dicFiles[file].ToShortDateString()}");
+                }
+            }
+            Debug.Print($"Found {_dicFiles.Count()} files");
+            if (_errorFiles.Count() > 0)
+            {
+                Debug.Print($"ERRORS: Couldn't get dates from {_errorFiles.Count()} files:");
+                foreach (string file in _errorFiles)
+                {
+                    Debug.Print($"\t{Path.GetFileName(file)}");
+                }
+            }
+        }
+
+        Dictionary<string, CopyFilesInfo> _mapping = new Dictionary<string, CopyFilesInfo>();
+
+        public bool Init(bool readFiles = false)
+        {
+            _mapping.Clear();
+            if (readFiles)
+                ReadFiles();
 
             foreach (FolderCleanerConfigTaskDestination destination in Destination)
             {
-                destination.PathAbsolute = PathHelper.GetFullPath(Source.Path, destination.Path);
+                string pathAbsolute = PathHelper.GetFullPath(Source.Path, destination.Path);
                 // Create a new mapping dictionary (key: template value. value: file)
-                destination.Mapping = new Dictionary<string, CopyFilesInfo>();
+                //destination.Mapping = new Dictionary<string, CopyFilesInfo>();
                 if (destination.HasTemplate)
-                    foreach (string file in fileEntries)
+                    foreach (var kv in _dicFiles)
                     {
                         // create the string from template
-                        string relPath = destination.GetTemplatePath(file);
+                        string relPath = destination.GetTemplatePath(kv.Value);
+                        string fullPath = PathHelper.GetFullPath(pathAbsolute, relPath);
                         // add to mapping dictionary
-                        if (!destination.Mapping.ContainsKey(relPath))
+                        if (!_mapping.ContainsKey(fullPath))
                         {
-                            Debug.Print("New template path: {0}", relPath);
-                            destination.Mapping.Add(relPath, new CopyFilesInfo(relPath));
+                            Debug.Print($"New template path: {relPath} (in {fullPath})");
+                            _mapping.Add(fullPath, new CopyFilesInfo(relPath));
                         }
-                        destination.Mapping[relPath].AddFile(file);
+                        _mapping[fullPath].AddFile(kv.Key);
                     }
                 else
-                    destination.Mapping.Add("", new CopyFilesInfo("", fileEntries.ToList()));
+                {
+                    if (!_mapping.ContainsKey(pathAbsolute))
+                    {
+                        _mapping.Add(pathAbsolute, new CopyFilesInfo(""));
+                    }
+                    _mapping[pathAbsolute].AddRange(_dicFiles.Keys.ToList());
+                    //_mapping.Add("", new CopyFilesInfo("", _dicFiles.Keys.ToList()));
+                }
             }
 
             Destination.Last().Move = true;
@@ -101,14 +154,54 @@ namespace FolderCleaner.Configuration
 
         public void Execute()
         {
-            foreach (var dst in Destination)
+            foreach (var kv in _mapping)
             {
-                dst.Execute();
+                CopyEventArgs e = new CopyEventArgs(kv.Value);
+
+                CopyFilesInfo copyFilesInfo = kv.Value;
+                string fullPath = PathHelper.GetFullPath(kv.Key, true);
+                copyFilesInfo.SetStart();
+                OnCopyStatusChanged?.Invoke(this, e);
+
+                try
+                {
+                    Debug.Print("Copying {0} files to {1}", copyFilesInfo.FileList.Count(), fullPath);
+                    if (ShellFileOperation.CopyItems(copyFilesInfo.FileList, fullPath))
+                        copyFilesInfo.SetFinished();
+                    else 
+                        copyFilesInfo.SetCancelled();
+                }
+                catch (Exception ex)
+                {
+                    copyFilesInfo.SetError(ex);
+                    throw;
+                }
+
+                OnCopyStatusChanged?.Invoke(this, e);
+
+                if (copyFilesInfo.Status == COPY_STATUS.CANCELLED)
+                    break;
+            }
+
+            try
+            {
+                Debug.Print($"Moving all files to backup ({PathHelper.AppPath("backup")})");
+                string backupPath = PathHelper.GetFullPath(PathHelper.AppPath("backup"), false);
+                ShellFileOperation.DeleteCompletelySilent(backupPath);
+                ShellFileOperation.MoveItems(_dicFiles.Keys.ToList(), PathHelper.GetFullPath(backupPath, true));
+
+            }
+            catch (Exception ex)
+            {
+                ErrorHandler.Handle(ex, "Error while backing up the files after the main operation has finished.");
             }
         }
 
         [XmlIgnore]
-        public int FileCount { get; private set; }
+        public int FileCount { get => _dicFiles.Count(); }
+
+        [XmlIgnore]
+        public Dictionary<string, CopyFilesInfo> Mapping { get => _mapping;  }
 
         public override string ToString() { return Name; }
     }
@@ -119,6 +212,7 @@ namespace FolderCleaner.Configuration
         NOT_STARTED = 0,
         STARTED = 1,
         FINISHED = 2,
+        CANCELLED = 3,
         ERROR = 9
     }
 
@@ -129,6 +223,7 @@ namespace FolderCleaner.Configuration
                 { COPY_STATUS.NOT_STARTED, "" },
                 { COPY_STATUS.STARTED, "Started" },
                 { COPY_STATUS.FINISHED, "Finished" },
+                { COPY_STATUS.CANCELLED, "Cancelled" },
                 { COPY_STATUS.ERROR, "Error" }
             };
         
@@ -146,32 +241,44 @@ namespace FolderCleaner.Configuration
             FileList.Add(file);
         }
 
+        public void AddRange(IEnumerable<string> fileList)
+        {
+            FileList.AddRange(fileList);
+        }
+
         #region Status handling
+
+        private void SetStatus(COPY_STATUS stat, Exception ex)
+        {
+            Status = stat;
+            Exception = ex;
+        }
 
         public void SetStart()
         {
-            Status = COPY_STATUS.STARTED;
-            Exception = null;
+            SetStatus(COPY_STATUS.STARTED, null);
         }
         public void SetFinished()
         {
-            Status = COPY_STATUS.FINISHED;
-            Exception = null;
+            SetStatus(COPY_STATUS.FINISHED, null);
+        }
+        public void SetCancelled()
+        {
+            SetStatus(COPY_STATUS.CANCELLED, null);
         }
         public void SetError(Exception ex)
         {
-            Status = COPY_STATUS.ERROR;
-            Exception = ex;
+            SetStatus(COPY_STATUS.ERROR, ex);
         }
 
         #endregion
 
-        private COPY_STATUS Status { get; set; }
+        public COPY_STATUS Status { get; private set; }
         public string Folder { get; set; }
         public List<string> FileList { get; set; }
         public Exception Exception { get; set; }
 
-        public string GetStatus()
+        public string GetStatusString()
         {
             return _statusStrings[Status];
         }
@@ -199,46 +306,46 @@ namespace FolderCleaner.Configuration
             return HasTemplate ? dt.ToString(Template) : string.Empty;
         }
 
-        public string GetTemplatePath(string file)
-        {
-            return HasTemplate ? GetTemplatePath(GetFileDate(file, true)) : string.Empty;
-        }
+        //public string GetTemplatePath(string file)
+        //{
+        //    return HasTemplate ? GetTemplatePath(GetFileDate(file, true)) : string.Empty;
+        //}
 
-        public DateTime GetFileDate(string file, bool usePicDateTaken)
-        {
-            if (usePicDateTaken)
-                return GetDateTaken(file);
-            else
-                return File.GetLastWriteTime(file);
-        }
+        //public DateTime GetFileDate(string file, bool usePicDateTaken)
+        //{
+        //    if (usePicDateTaken)
+        //        return GetDateTaken(file);
+        //    else
+        //        return File.GetLastWriteTime(file);
+        //}
 
-        public static DateTime GetDateTaken(string inFullPath)
-        {
-            DateTime returnDateTime = DateTime.MinValue;
-            FileStream picStream = null;
-            try
-            {
-                picStream = new FileStream(inFullPath, FileMode.Open, FileAccess.Read, FileShare.Read);
-                BitmapSource bitSource = BitmapFrame.Create(picStream);
-                BitmapMetadata metaData = (BitmapMetadata)bitSource.Metadata;
-                returnDateTime = DateTime.Parse(metaData.DateTaken);
+        //public static DateTime GetDateTaken(string inFullPath)
+        //{
+        //    DateTime returnDateTime = DateTime.MinValue;
+        //    FileStream picStream = null;
+        //    try
+        //    {
+        //        picStream = new FileStream(inFullPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+        //        BitmapSource bitSource = BitmapFrame.Create(picStream);
+        //        BitmapMetadata metaData = (BitmapMetadata)bitSource.Metadata;
+        //        returnDateTime = DateTime.Parse(metaData.DateTaken);
 
-                //JpegBitmapDecoder decoder = new JpegBitmapDecoder(picStream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.None);
-                //BitmapMetadata metaData = new BitmapMetadata("jpg");
-                //BitmapFrame frame = BitmapFrame.Create(decoder.Frames[0]);
+        //        //JpegBitmapDecoder decoder = new JpegBitmapDecoder(picStream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.None);
+        //        //BitmapMetadata metaData = new BitmapMetadata("jpg");
+        //        //BitmapFrame frame = BitmapFrame.Create(decoder.Frames[0]);
 
-            }
-            catch(Exception ex)
-            {
-                Debug.Print($"{System.IO.Path.GetFileName(inFullPath)} - {ex.Message}");
-                returnDateTime = File.GetLastWriteTime(inFullPath);
-            }
-            finally
-            {
-                picStream?.Close();
-            }
-            return returnDateTime;
-        }
+        //    }
+        //    catch(Exception ex)
+        //    {
+        //        Debug.Print($"{System.IO.Path.GetFileName(inFullPath)} - {ex.Message}");
+        //        returnDateTime = File.GetLastWriteTime(inFullPath);
+        //    }
+        //    finally
+        //    {
+        //        picStream?.Close();
+        //    }
+        //    return returnDateTime;
+        //}
 
         public string GetFullPath(DateTime dt)
         {

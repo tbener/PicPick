@@ -159,12 +159,14 @@ namespace FolderCleaner.Helpers
                     pFrom = string.Join("\0", items.ToArray()) + '\0' + '\0',
                     pTo = destination + '\0' + '\0'
                 };
-                SHFileOperation(ref fs);
-                return true;
+                
+                // tbener 3/2018 - changed to return False if cancelled by user
+                return SHFileOperation(ref fs) == 0;
             }
             catch (Exception)
             {
-                return false;
+                // tbener 3/2018 - change from return false (as opposed to cancel)
+                throw;
             }
         }
 
@@ -178,12 +180,13 @@ namespace FolderCleaner.Helpers
                     pFrom = string.Join("\0", items.ToArray()) + '\0' + '\0',
                     pTo = destination + '\0' + '\0'
                 };
-                SHFileOperation(ref fs);
-                return true;
+                // tbener 3/2018 - changed to return False if cancelled by user
+                return SHFileOperation(ref fs) == 0;
             }
             catch (Exception)
             {
-                return false;
+                // tbener 3/2018 - change from return false (as opposed to cancel)
+                throw;
             }
         }
 
