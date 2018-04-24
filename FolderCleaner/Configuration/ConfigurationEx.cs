@@ -52,6 +52,21 @@ namespace FolderCleaner.Configuration
     {
         public event CopyEventHandler OnCopyStatusChanged;
 
+        private List<FolderCleanerConfigTaskDestination> _destList = null;
+
+        [XmlIgnore]
+        // Use this list rather than the Destination Array for easyer manipulations and editing.
+        // This will be converted back to the Destination Array in ConfigurationHelper.Save()
+        public List<FolderCleanerConfigTaskDestination> DestinationList
+        {
+            get
+            {
+                if (_destList == null)
+                    _destList = new List<FolderCleanerConfigTaskDestination>(this.Destination);
+                return _destList;
+            }
+        }
+
         [XmlIgnore]
         public TaskRunner Runner { get; set; }
 
@@ -68,6 +83,7 @@ namespace FolderCleaner.Configuration
 
         Dictionary<string, DateTime> _dicFiles = new Dictionary<string, DateTime>();
         List<string> _errorFiles = new List<string>();
+        Dictionary<string, bool> _dicFilesResult = new Dictionary<string, bool>();
 
         /*
          * Lists the files and their dates
@@ -107,7 +123,7 @@ namespace FolderCleaner.Configuration
             }
         }
 
-        Dictionary<string, CopyFilesInfo> _mapping = new Dictionary<string, CopyFilesInfo>();
+        Dictionary<string, CopyFilesHandler> _mapping = new Dictionary<string, CopyFilesHandler>();
 
         public bool Init(bool readFiles = false)
         {
@@ -118,8 +134,6 @@ namespace FolderCleaner.Configuration
             foreach (FolderCleanerConfigTaskDestination destination in Destination)
             {
                 string pathAbsolute = PathHelper.GetFullPath(Source.Path, destination.Path);
-                // Create a new mapping dictionary (key: template value. value: file)
-                //destination.Mapping = new Dictionary<string, CopyFilesInfo>();
                 if (destination.HasTemplate)
                     foreach (var kv in _dicFiles)
                     {
@@ -130,7 +144,7 @@ namespace FolderCleaner.Configuration
                         if (!_mapping.ContainsKey(fullPath))
                         {
                             Debug.Print($"New template path: {relPath} (in {fullPath})");
-                            _mapping.Add(fullPath, new CopyFilesInfo(relPath));
+                            _mapping.Add(fullPath, new CopyFilesHandler(fullPath));
                         }
                         _mapping[fullPath].AddFile(kv.Key);
                     }
@@ -138,7 +152,7 @@ namespace FolderCleaner.Configuration
                 {
                     if (!_mapping.ContainsKey(pathAbsolute))
                     {
-                        _mapping.Add(pathAbsolute, new CopyFilesInfo(""));
+                        _mapping.Add(pathAbsolute, new CopyFilesHandler(pathAbsolute));
                     }
                     _mapping[pathAbsolute].AddRange(_dicFiles.Keys.ToList());
                     //_mapping.Add("", new CopyFilesInfo("", _dicFiles.Keys.ToList()));
@@ -154,33 +168,40 @@ namespace FolderCleaner.Configuration
 
         public void Execute()
         {
+            Init(true);
+            _dicFilesResult.Clear();
+
             foreach (var kv in _mapping)
             {
                 CopyEventArgs e = new CopyEventArgs(kv.Value);
 
-                CopyFilesInfo copyFilesInfo = kv.Value;
+                CopyFilesHandler copyFilesHandler = kv.Value;
+                copyFilesHandler.OnFileProcess += CopyFilesHandler_OnFileProcess;
                 string fullPath = PathHelper.GetFullPath(kv.Key, true);
-                copyFilesInfo.SetStart();
+                copyFilesHandler.SetStart();
                 OnCopyStatusChanged?.Invoke(this, e);
 
-                try
-                {
-                    Debug.Print("Copying {0} files to {1}", copyFilesInfo.FileList.Count(), fullPath);
-                    if (ShellFileOperation.CopyItems(copyFilesInfo.FileList, fullPath))
-                        copyFilesInfo.SetFinished();
-                    else 
-                        copyFilesInfo.SetCancelled();
-                }
-                catch (Exception ex)
-                {
-                    copyFilesInfo.SetError(ex);
-                    throw;
-                }
+                Debug.Print("Copying {0} files to {1}", copyFilesHandler.FileList.Count(), fullPath);
+                copyFilesHandler.DoCopy();
 
-                OnCopyStatusChanged?.Invoke(this, e);
+                //try
+                //{
+                    
+                //    if (ShellFileOperation.CopyItems(copyFilesInfo.FileList, fullPath))
+                //        copyFilesInfo.SetFinished();
+                //    else 
+                //        copyFilesInfo.SetCancelled();
+                //}
+                //catch (Exception ex)
+                //{
+                //    copyFilesInfo.SetError(ex);
+                //    throw;
+                //}
 
-                if (copyFilesInfo.Status == COPY_STATUS.CANCELLED)
-                    break;
+                //OnCopyStatusChanged?.Invoke(this, e);
+
+                //if (copyFilesInfo.Status == COPY_STATUS.CANCELLED)
+                //    break;
             }
 
             try
@@ -188,7 +209,7 @@ namespace FolderCleaner.Configuration
                 Debug.Print($"Moving all files to backup ({PathHelper.AppPath("backup")})");
                 string backupPath = PathHelper.GetFullPath(PathHelper.AppPath("backup"), false);
                 ShellFileOperation.DeleteCompletelySilent(backupPath);
-                ShellFileOperation.MoveItems(_dicFiles.Keys.ToList(), PathHelper.GetFullPath(backupPath, true));
+                ShellFileOperation.MoveItems(_dicFilesResult.Where(f => f.Value).Select(f => f.Key).ToList(), PathHelper.GetFullPath(backupPath, true));
 
             }
             catch (Exception ex)
@@ -197,92 +218,27 @@ namespace FolderCleaner.Configuration
             }
         }
 
+        private void CopyFilesHandler_OnFileProcess(object sender, string file, string msg, bool success = true)
+        {
+            // if success we set it only if it didn't fail before
+            if (success)
+                // so if it exists we don't touch it
+                if (_dicFilesResult.ContainsKey(file))
+                    return;
+            _dicFilesResult[file] = success;
+        }
+
         [XmlIgnore]
         public int FileCount { get => _dicFiles.Count(); }
 
         [XmlIgnore]
-        public Dictionary<string, CopyFilesInfo> Mapping { get => _mapping;  }
+        public Dictionary<string, CopyFilesHandler> Mapping { get => _mapping;  }
 
         public override string ToString() { return Name; }
     }
 
 
-    public enum COPY_STATUS
-    {
-        NOT_STARTED = 0,
-        STARTED = 1,
-        FINISHED = 2,
-        CANCELLED = 3,
-        ERROR = 9
-    }
-
-    public class CopyFilesInfo
-    {
-        static readonly Dictionary<COPY_STATUS, string> _statusStrings = new Dictionary<COPY_STATUS, string>()
-            {
-                { COPY_STATUS.NOT_STARTED, "" },
-                { COPY_STATUS.STARTED, "Started" },
-                { COPY_STATUS.FINISHED, "Finished" },
-                { COPY_STATUS.CANCELLED, "Cancelled" },
-                { COPY_STATUS.ERROR, "Error" }
-            };
-        
-        public CopyFilesInfo(string folder, List<string> fileList)
-        {
-            Folder = folder;
-            FileList = fileList;
-            Status = COPY_STATUS.NOT_STARTED;
-        }
-        public CopyFilesInfo(string folder) :  this(folder, new List<string>())
-        { }
-
-        public void AddFile(string file)
-        {
-            FileList.Add(file);
-        }
-
-        public void AddRange(IEnumerable<string> fileList)
-        {
-            FileList.AddRange(fileList);
-        }
-
-        #region Status handling
-
-        private void SetStatus(COPY_STATUS stat, Exception ex)
-        {
-            Status = stat;
-            Exception = ex;
-        }
-
-        public void SetStart()
-        {
-            SetStatus(COPY_STATUS.STARTED, null);
-        }
-        public void SetFinished()
-        {
-            SetStatus(COPY_STATUS.FINISHED, null);
-        }
-        public void SetCancelled()
-        {
-            SetStatus(COPY_STATUS.CANCELLED, null);
-        }
-        public void SetError(Exception ex)
-        {
-            SetStatus(COPY_STATUS.ERROR, ex);
-        }
-
-        #endregion
-
-        public COPY_STATUS Status { get; private set; }
-        public string Folder { get; set; }
-        public List<string> FileList { get; set; }
-        public Exception Exception { get; set; }
-
-        public string GetStatusString()
-        {
-            return _statusStrings[Status];
-        }
-    }
+    
 
 
     public partial class FolderCleanerConfigTaskDestination
@@ -290,7 +246,7 @@ namespace FolderCleaner.Configuration
         public event CopyEventHandler OnCopyStatusChanged;
 
         [XmlIgnore]
-        public Dictionary<string, CopyFilesInfo> Mapping { get; set; }
+        public Dictionary<string, CopyFilesHandler> Mapping { get; set; }
 
         [XmlIgnore]
         public bool Move { get; set; }
@@ -365,7 +321,7 @@ namespace FolderCleaner.Configuration
 
                 // get the full path and CREATE it if not exists
                 string fullPath = GetPath(kv.Key, true);
-                CopyFilesInfo map = kv.Value;
+                CopyFilesHandler map = kv.Value;
                 map.SetStart();
                 OnCopyStatusChanged?.Invoke(this, e);
 

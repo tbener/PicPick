@@ -88,8 +88,10 @@
       <DependentUpon>TestForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Helpers\BitmapImageCheck.cs" />
+    <Compile Include="Helpers\CopyFilesHandler.cs" />
     <Compile Include="Helpers\FileInfo.cs" />
     <Compile Include="Helpers\HistoryComboHelper.cs" />
+    <Compile Include="Helpers\LogHandler.cs" />
     <Compile Include="Helpers\ProjectRunner.cs" />
     <Compile Include="Helpers\ShellFileOperations.cs" />
     <Compile Include="Helpers\Utils.cs" />

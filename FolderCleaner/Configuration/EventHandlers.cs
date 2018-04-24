@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FolderCleaner.Helpers;
+using System;
 
 namespace FolderCleaner.Configuration
 {
@@ -9,11 +10,11 @@ namespace FolderCleaner.Configuration
         public CopyEventArgs()
         { }
 
-        public CopyEventArgs(CopyFilesInfo info)
+        public CopyEventArgs(CopyFilesHandler info)
         {
             Info = info;
         }
-        public CopyFilesInfo Info { get; set; }
+        public CopyFilesHandler Info { get; set; }
 
     }
 }

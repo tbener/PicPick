@@ -1,4 +1,5 @@
 ﻿using FolderCleaner.Configuration;
+using FolderCleaner.Helpers;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -15,7 +16,7 @@ namespace FolderCleaner.Forms
     public partial class PreviewForm : Form
     {
         FolderCleanerConfigTask _task;
-        Dictionary<CopyFilesInfo, int> _mapRows = new Dictionary<CopyFilesInfo, int>();
+        Dictionary<CopyFilesHandler, int> _mapRows = new Dictionary<CopyFilesHandler, int>();
         public PreviewForm()
         {
             InitializeComponent();
@@ -85,6 +86,12 @@ namespace FolderCleaner.Forms
         private void btnClose_Click(object sender, EventArgs e)
         {
             Close();
+        }
+
+        private void btnRefresh_Click(object sender, EventArgs e)
+        {
+            _task.Init(true);
+            Preview();
         }
     }
 }

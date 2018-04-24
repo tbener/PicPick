@@ -30,7 +30,7 @@ namespace FolderCleaner.Helpers
                 {
                     // get the full path and CREATE it if not exists
                     string fullPath = PathHelper.GetFullPath(dst.Path, kv.Key, true);
-                    CopyFilesInfo info = kv.Value;
+                    CopyFilesHandler info = kv.Value;
 
                     // The operation is done on a banch of files at once!
                     if (dst.Move)

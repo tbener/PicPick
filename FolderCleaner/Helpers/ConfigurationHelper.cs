@@ -53,6 +53,8 @@ namespace FolderCleaner.Helpers
 
             try
             {
+                foreach (FolderCleanerConfigTask task in _folderCleanerConfig.Tasks)
+                    task.Destination = task.DestinationList.ToArray();
                 return SerializeHelper.Save(_folderCleanerConfig, file);
             }
             catch (Exception ex)

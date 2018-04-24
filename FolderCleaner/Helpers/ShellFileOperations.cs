@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 
 namespace FolderCleaner.Helpers
@@ -159,9 +160,13 @@ namespace FolderCleaner.Helpers
                     pFrom = string.Join("\0", items.ToArray()) + '\0' + '\0',
                     pTo = destination + '\0' + '\0'
                 };
-                
+
                 // tbener 3/2018 - changed to return False if cancelled by user
-                return SHFileOperation(ref fs) == 0;
+                int res = SHFileOperation(ref fs);
+                if (res != 0)
+                    Debug.Print($"RESULT RETURNED: {res}");
+
+                return res == 0;
             }
             catch (Exception)
             {

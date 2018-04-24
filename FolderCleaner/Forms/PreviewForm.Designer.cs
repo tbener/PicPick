@@ -29,11 +29,12 @@
         private void InitializeComponent()
         {
             this.dgInfo = new System.Windows.Forms.DataGridView();
-            this.btnRun = new System.Windows.Forms.Button();
-            this.btnClose = new System.Windows.Forms.Button();
             this.Status = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Files = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Path = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.btnRun = new System.Windows.Forms.Button();
+            this.btnClose = new System.Windows.Forms.Button();
+            this.btnRefresh = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgInfo)).BeginInit();
             this.SuspendLayout();
             // 
@@ -55,6 +56,29 @@
             this.dgInfo.RowHeadersVisible = false;
             this.dgInfo.Size = new System.Drawing.Size(616, 345);
             this.dgInfo.TabIndex = 0;
+            // 
+            // Status
+            // 
+            this.Status.Frozen = true;
+            this.Status.HeaderText = "Status";
+            this.Status.Name = "Status";
+            this.Status.ReadOnly = true;
+            // 
+            // Files
+            // 
+            this.Files.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            this.Files.Frozen = true;
+            this.Files.HeaderText = "Files";
+            this.Files.Name = "Files";
+            this.Files.ReadOnly = true;
+            this.Files.Width = 53;
+            // 
+            // Path
+            // 
+            this.Path.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.Path.HeaderText = "Path";
+            this.Path.Name = "Path";
+            this.Path.ReadOnly = true;
             // 
             // btnRun
             // 
@@ -80,28 +104,17 @@
             this.btnClose.UseVisualStyleBackColor = true;
             this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
             // 
-            // Status
+            // btnRefresh
             // 
-            this.Status.Frozen = true;
-            this.Status.HeaderText = "Status";
-            this.Status.Name = "Status";
-            this.Status.ReadOnly = true;
-            // 
-            // Files
-            // 
-            this.Files.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-            this.Files.Frozen = true;
-            this.Files.HeaderText = "Files";
-            this.Files.Name = "Files";
-            this.Files.ReadOnly = true;
-            this.Files.Width = 53;
-            // 
-            // Path
-            // 
-            this.Path.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.Path.HeaderText = "Path";
-            this.Path.Name = "Path";
-            this.Path.ReadOnly = true;
+            this.btnRefresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnRefresh.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnRefresh.Location = new System.Drawing.Point(12, 384);
+            this.btnRefresh.Name = "btnRefresh";
+            this.btnRefresh.Size = new System.Drawing.Size(105, 34);
+            this.btnRefresh.TabIndex = 3;
+            this.btnRefresh.Text = "Refresh";
+            this.btnRefresh.UseVisualStyleBackColor = true;
+            this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
             // 
             // PreviewForm
             // 
@@ -109,6 +122,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnClose;
             this.ClientSize = new System.Drawing.Size(640, 430);
+            this.Controls.Add(this.btnRefresh);
             this.Controls.Add(this.btnClose);
             this.Controls.Add(this.btnRun);
             this.Controls.Add(this.dgInfo);
@@ -131,5 +145,6 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn Status;
         private System.Windows.Forms.DataGridViewTextBoxColumn Files;
         private System.Windows.Forms.DataGridViewTextBoxColumn Path;
+        private System.Windows.Forms.Button btnRefresh;
     }
 }

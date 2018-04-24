@@ -28,6 +28,7 @@ namespace FolderCleaner.Forms
             pathSource.Changed += (s, e) => SetDirty(s);
             txtFilter.TextChanged += (s, e) => SetDirty(s);
             lstTasks.ItemCheck += (s, e) => SetDirty(s);
+            LogHandler.OnLog += (m) => txtLog.AppendText($"{m}\n");
 
             _taskForm = new PreviewForm();
         }
@@ -168,14 +169,8 @@ namespace FolderCleaner.Forms
                 txtFilter.Text = _currentTask.Source.Filter;
                 SourceUpdated();
 
-                foreach (var dest in _currentTask.Destination)
-                {
-                    TemplatePath dstPath = new TemplatePath(dest);
-                    dstPath.Changed += (s, e) => SetDirty();
-
-                    pnlDestinations.Controls.Add(dstPath);
-                    dstPath.Dock = DockStyle.Top;
-                }
+                _currentTask.DestinationList.ForEach(AddDestinationControl);
+                
             }
             catch (Exception ex)
             {
@@ -187,9 +182,69 @@ namespace FolderCleaner.Forms
             }
         }
 
+        private void AddDestinationControl(FolderCleanerConfigTaskDestination dest)
+        {
+            TemplatePath dstPath = new TemplatePath(dest);
+            dstPath.Changed += (s, e) => SetDirty();
+
+            Panel pnl = new Panel()
+            {
+                BorderStyle = BorderStyle.FixedSingle
+            };
+
+            Button btnDel = new Button()
+            {
+                Text = "X",
+                Size = new Size(25, 25),
+                Tag = dest
+            };
+            btnDel.Click += BtnDel_Click;
+
+            pnl.Controls.Add(dstPath);
+            pnl.Controls.Add(btnDel);
+
+            btnDel.Location = new Point(dstPath.Width, 0);
+
+            pnl.Dock = DockStyle.Top;
+            pnlDestinations.Controls.Add(pnl);
+        }
+
+        private void BtnDel_Click(object sender, EventArgs e)
+        {
+            // get the actual button
+            Button btn = (Button)sender;
+            // the Destination object is it's Tag
+            FolderCleanerConfigTaskDestination dest = (FolderCleanerConfigTaskDestination)btn.Tag;
+            // remove this destination from the list
+            _currentTask.DestinationList.Remove(dest);
+            // remove the panel from the UI
+            btn.Parent.Dispose();
+
+            SetDirty();
+        }
+
+        private void btnAddDestination_Click(object sender, EventArgs e)
+        {
+            FolderCleanerConfigTaskDestination dest = new FolderCleanerConfigTaskDestination();
+            _currentTask.DestinationList.Add(dest);
+            AddDestinationControl(dest);
+        }
+
         private void StartTask(FolderCleanerConfigTask task)
         {
-            _taskForm.Start(task);
+            //_taskForm.Start(task);
+            txtLog.Clear();
+            LogHandler.Log("Start\n");
+            try
+            {
+                task.Execute();
+                LogHandler.Log("\nFinished");
+            }
+            catch (Exception ex)
+            {
+                LogHandler.Log("\nFinished with errors:");
+                LogHandler.Log(ex.Message);
+            }
         }
 
         private void MnuOpen_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
@@ -242,5 +297,7 @@ namespace FolderCleaner.Forms
         {
             _currentTask.ReadFiles();
         }
+
+        
     }
 }

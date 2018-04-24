@@ -1,0 +1,240 @@
+﻿using FolderCleaner.Configuration;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using TalUtils;
+
+namespace FolderCleaner.Helpers
+{
+    public delegate void FileProcessEventHandler(object sender, string file, string msg, bool success=true);
+    //public delegate void FileProcessEventHandler(object sender, bool success);
+
+    public enum FILE_EXISTS_RESPONSE
+    {
+        ASK,
+        OVERWRITE,
+        SKIP,
+        RENAME,     // save both
+        COMPARE     // check if same files or just same names. then act accordingly...
+    }
+
+    public enum COPY_STATUS
+    {
+        NOT_STARTED = 0,
+        STARTED = 1,
+        FINISHED = 2,
+        CANCELLED = 3,
+        ERROR = 9
+    }
+
+    public enum FILE_STATUS
+    {
+        NOT_STARTED = 0,
+        COPIED = 1
+    }
+
+    public class CopyFilesHandler
+    {
+        public event FileProcessEventHandler OnFileProcess;
+
+        static readonly Dictionary<COPY_STATUS, string> _statusStrings = new Dictionary<COPY_STATUS, string>()
+            {
+                { COPY_STATUS.NOT_STARTED, "" },
+                { COPY_STATUS.STARTED, "Started" },
+                { COPY_STATUS.FINISHED, "Finished" },
+                { COPY_STATUS.CANCELLED, "Cancelled" },
+                { COPY_STATUS.ERROR, "Error" }
+            };
+
+        public CopyFilesHandler(string dest, List<string> fileList)
+        {
+            Destination = dest;
+            FileList = fileList;
+            Status = COPY_STATUS.NOT_STARTED;
+        }
+        public CopyFilesHandler(string dest) : this(dest, new List<string>())
+        { }
+
+        public void AddFile(string file)
+        {
+            FileList.Add(file);
+        }
+
+        public void AddRange(IEnumerable<string> fileList)
+        {
+            FileList.AddRange(fileList);
+        }
+
+        #region Status handling
+
+        private void SetStatus(COPY_STATUS stat, Exception ex)
+        {
+            Status = stat;
+            Exception = ex;
+        }
+
+        public void SetStart()
+        {
+            SetStatus(COPY_STATUS.STARTED, null);
+        }
+        public void SetFinished()
+        {
+            SetStatus(COPY_STATUS.FINISHED, null);
+        }
+        public void SetCancelled()
+        {
+            SetStatus(COPY_STATUS.CANCELLED, null);
+        }
+        public void SetError(Exception ex)
+        {
+            SetStatus(COPY_STATUS.ERROR, ex);
+        }
+
+        public void DoCopy()
+        {
+            FILE_EXISTS_RESPONSE fileExistsResponse = FILE_EXISTS_RESPONSE.ASK;
+            FILE_EXISTS_RESPONSE action = fileExistsResponse;
+            bool dontAsk = false;
+            string curFile = "";
+
+            try
+            {
+                // iterate FileList and copy to dest
+                foreach (string file in FileList)
+                {
+                    curFile = file;
+                    string dest = Path.Combine(Destination, Path.GetFileName(file));
+
+                    // if the file exists in destination
+                    if (File.Exists(dest))
+                    {
+                        action = fileExistsResponse;
+                        if (fileExistsResponse == FILE_EXISTS_RESPONSE.ASK)
+                        {
+                            // ask the user.
+                            // the choices are: Skip, Overwrite or Rename (keep both)
+                            // todo: action = AskWhatToDo();
+
+                            // temp. because the UI is not supported yet...
+                            action = FILE_EXISTS_RESPONSE.SKIP;
+
+                            // temp. because the UI is not supported yet...
+                            dontAsk = true;
+
+                            if (dontAsk)
+                                // make this permanent
+                                fileExistsResponse = action;
+                        }
+
+                        if (action == FILE_EXISTS_RESPONSE.COMPARE)
+                        {
+                            // todo:
+                            // check other properties. if it seems like its the same file - overwrite
+                            // if not - rename
+
+                            if (AreSameFiles(file, dest))
+                                action = FILE_EXISTS_RESPONSE.SKIP;  // we can overwrite, but for testing purposes...
+                            else
+                                action = FILE_EXISTS_RESPONSE.RENAME;
+
+                            // temp. because we don't support comparing
+                            action = FILE_EXISTS_RESPONSE.SKIP;
+                        }
+
+                        switch (action)
+                        {
+                            case FILE_EXISTS_RESPONSE.OVERWRITE:
+                                File.Copy(file, dest, true);
+                                ReportFileProcess(file, action);
+                                break;
+                            case FILE_EXISTS_RESPONSE.SKIP:
+                                ReportFileProcess(file, action);
+                                break;
+                            case FILE_EXISTS_RESPONSE.RENAME:
+                                // todo: get a new file name
+
+                                //temp
+                                dest = Path.Combine(TalUtils.PathHelper.GetFullPath(Destination, "Existing Files", true), Path.GetFileName(file));
+
+                                File.Copy(file, dest, true);
+                                ReportFileProcess(file, action, dest);
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        File.Copy(file, dest);
+                        ReportFileProcess(file, $"Copied to {dest}", true);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ReportFileProcess(curFile, ex.Message, false);
+                if (!ErrorHandler.Handle(ex, "An error occurred. Do you want to continue to the next files?"))
+                    return;
+            }
+
+        }
+
+        private bool AreSameFiles(string f1, string f2)
+        {
+            return false;
+        }
+
+        private void ReportFileProcess(string file, string msg, bool success=true)
+        {
+            try
+            {
+                OnFileProcess?.Invoke(this, file, msg, success);
+                LogHandler.Log(file, msg);
+            }
+            catch (Exception ex)
+            {   // todo
+                throw;
+            }
+        }
+
+        private void ReportFileProcess(string file, FILE_EXISTS_RESPONSE action, string arg="")
+        {
+            string msg = "";
+            bool success = true;
+            switch (action)
+            {
+                case FILE_EXISTS_RESPONSE.OVERWRITE:
+                    msg = $"Copied as {arg} (OVERWRITE)";
+                    break;
+                case FILE_EXISTS_RESPONSE.SKIP:
+                    // todo: add to log!
+                    msg = "Skipped";
+                    success = false;
+                    break;
+                case FILE_EXISTS_RESPONSE.RENAME:
+                    msg = $"Copied as {arg}";
+                    break;
+                default:
+                    break;
+            }
+            ReportFileProcess(file, msg, success);
+        }
+
+        #endregion
+
+        public COPY_STATUS Status { get; private set; }
+        //public string RelativePath { get; set; }
+        public string Destination { get; set; }
+        public List<string> FileList { get; set; }
+        public Exception Exception { get; set; }
+
+        public string GetStatusString()
+        {
+            return _statusStrings[Status];
+        }
+    }
+    
+}

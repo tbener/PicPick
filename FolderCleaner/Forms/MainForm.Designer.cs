@@ -37,13 +37,15 @@
             this.splitContainerMain = new System.Windows.Forms.SplitContainer();
             this.lstTasks = new System.Windows.Forms.CheckedListBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.pnlDestinations = new System.Windows.Forms.Panel();
+            this.btnAddDestination = new System.Windows.Forms.Button();
+            this.txtLog = new System.Windows.Forms.TextBox();
+            this.lblFileCount = new System.Windows.Forms.Label();
             this.btnCheck = new System.Windows.Forms.Button();
-            this.pnlDestinations = new System.Windows.Forms.GroupBox();
             this.txtFilter = new System.Windows.Forms.TextBox();
             this.lblTaskName = new System.Windows.Forms.Label();
-            this.pathSource = new FolderCleaner.UserControls.PathBrowser();
             this.toolStrip = new System.Windows.Forms.ToolStrip();
-            this.lblFileCount = new System.Windows.Forms.Label();
+            this.pathSource = new FolderCleaner.UserControls.PathBrowser();
             this.menuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerMain)).BeginInit();
             this.splitContainerMain.Panel1.SuspendLayout();
@@ -53,9 +55,9 @@
             // 
             // statusStrip
             // 
-            this.statusStrip.Location = new System.Drawing.Point(0, 531);
+            this.statusStrip.Location = new System.Drawing.Point(0, 594);
             this.statusStrip.Name = "statusStrip";
-            this.statusStrip.Size = new System.Drawing.Size(978, 22);
+            this.statusStrip.Size = new System.Drawing.Size(1009, 22);
             this.statusStrip.TabIndex = 0;
             this.statusStrip.Text = "statusStrip1";
             // 
@@ -65,7 +67,7 @@
             this.mnuProject});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
-            this.menuStrip.Size = new System.Drawing.Size(978, 24);
+            this.menuStrip.Size = new System.Drawing.Size(1009, 24);
             this.menuStrip.TabIndex = 1;
             this.menuStrip.Text = "menuStrip1";
             // 
@@ -114,14 +116,16 @@
             // 
             // splitContainerMain.Panel2
             // 
+            this.splitContainerMain.Panel2.Controls.Add(this.pnlDestinations);
+            this.splitContainerMain.Panel2.Controls.Add(this.btnAddDestination);
+            this.splitContainerMain.Panel2.Controls.Add(this.txtLog);
             this.splitContainerMain.Panel2.Controls.Add(this.lblFileCount);
             this.splitContainerMain.Panel2.Controls.Add(this.btnCheck);
-            this.splitContainerMain.Panel2.Controls.Add(this.pnlDestinations);
             this.splitContainerMain.Panel2.Controls.Add(this.txtFilter);
             this.splitContainerMain.Panel2.Controls.Add(this.lblTaskName);
             this.splitContainerMain.Panel2.Controls.Add(this.pathSource);
-            this.splitContainerMain.Size = new System.Drawing.Size(978, 507);
-            this.splitContainerMain.SplitterDistance = 325;
+            this.splitContainerMain.Size = new System.Drawing.Size(1009, 570);
+            this.splitContainerMain.SplitterDistance = 335;
             this.splitContainerMain.TabIndex = 2;
             // 
             // lstTasks
@@ -143,6 +147,47 @@
             this.label1.TabIndex = 1;
             this.label1.Text = "label1";
             // 
+            // pnlDestinations
+            // 
+            this.pnlDestinations.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.pnlDestinations.AutoScroll = true;
+            this.pnlDestinations.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pnlDestinations.Location = new System.Drawing.Point(12, 150);
+            this.pnlDestinations.Name = "pnlDestinations";
+            this.pnlDestinations.Size = new System.Drawing.Size(646, 191);
+            this.pnlDestinations.TabIndex = 0;
+            // 
+            // btnAddDestination
+            // 
+            this.btnAddDestination.Location = new System.Drawing.Point(583, 121);
+            this.btnAddDestination.Name = "btnAddDestination";
+            this.btnAddDestination.Size = new System.Drawing.Size(75, 23);
+            this.btnAddDestination.TabIndex = 0;
+            this.btnAddDestination.Text = "Add...";
+            this.btnAddDestination.UseVisualStyleBackColor = true;
+            this.btnAddDestination.Click += new System.EventHandler(this.btnAddDestination_Click);
+            // 
+            // txtLog
+            // 
+            this.txtLog.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtLog.Location = new System.Drawing.Point(12, 347);
+            this.txtLog.Multiline = true;
+            this.txtLog.Name = "txtLog";
+            this.txtLog.Size = new System.Drawing.Size(646, 204);
+            this.txtLog.TabIndex = 7;
+            // 
+            // lblFileCount
+            // 
+            this.lblFileCount.AutoSize = true;
+            this.lblFileCount.Location = new System.Drawing.Point(117, 86);
+            this.lblFileCount.Name = "lblFileCount";
+            this.lblFileCount.Size = new System.Drawing.Size(10, 13);
+            this.lblFileCount.TabIndex = 6;
+            this.lblFileCount.Text = "-";
+            // 
             // btnCheck
             // 
             this.btnCheck.Location = new System.Drawing.Point(12, 80);
@@ -152,18 +197,6 @@
             this.btnCheck.Text = "Check";
             this.btnCheck.UseVisualStyleBackColor = true;
             this.btnCheck.Click += new System.EventHandler(this.btnCheck_Click);
-            // 
-            // pnlDestinations
-            // 
-            this.pnlDestinations.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.pnlDestinations.Location = new System.Drawing.Point(25, 220);
-            this.pnlDestinations.Name = "pnlDestinations";
-            this.pnlDestinations.Size = new System.Drawing.Size(595, 274);
-            this.pnlDestinations.TabIndex = 4;
-            this.pnlDestinations.TabStop = false;
-            this.pnlDestinations.Text = "Destinations";
             // 
             // txtFilter
             // 
@@ -182,6 +215,14 @@
             this.lblTaskName.TabIndex = 2;
             this.lblTaskName.Text = "Task";
             // 
+            // toolStrip
+            // 
+            this.toolStrip.Location = new System.Drawing.Point(0, 24);
+            this.toolStrip.Name = "toolStrip";
+            this.toolStrip.Size = new System.Drawing.Size(1009, 25);
+            this.toolStrip.TabIndex = 3;
+            this.toolStrip.Text = "toolStrip1";
+            // 
             // pathSource
             // 
             this.pathSource.Location = new System.Drawing.Point(12, 37);
@@ -189,28 +230,11 @@
             this.pathSource.Size = new System.Drawing.Size(303, 46);
             this.pathSource.TabIndex = 1;
             // 
-            // toolStrip
-            // 
-            this.toolStrip.Location = new System.Drawing.Point(0, 24);
-            this.toolStrip.Name = "toolStrip";
-            this.toolStrip.Size = new System.Drawing.Size(978, 25);
-            this.toolStrip.TabIndex = 3;
-            this.toolStrip.Text = "toolStrip1";
-            // 
-            // lblFileCount
-            // 
-            this.lblFileCount.AutoSize = true;
-            this.lblFileCount.Location = new System.Drawing.Point(117, 86);
-            this.lblFileCount.Name = "lblFileCount";
-            this.lblFileCount.Size = new System.Drawing.Size(10, 13);
-            this.lblFileCount.TabIndex = 6;
-            this.lblFileCount.Text = "-";
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(978, 553);
+            this.ClientSize = new System.Drawing.Size(1009, 616);
             this.Controls.Add(this.toolStrip);
             this.Controls.Add(this.splitContainerMain);
             this.Controls.Add(this.statusStrip);
@@ -246,10 +270,12 @@
         private UserControls.PathBrowser pathSource;
         private System.Windows.Forms.Label lblTaskName;
         private System.Windows.Forms.TextBox txtFilter;
-        private System.Windows.Forms.GroupBox pnlDestinations;
         private System.Windows.Forms.Button btnCheck;
         private System.Windows.Forms.ToolStripMenuItem mnuSave;
         private System.Windows.Forms.CheckedListBox lstTasks;
         private System.Windows.Forms.Label lblFileCount;
+        private System.Windows.Forms.TextBox txtLog;
+        private System.Windows.Forms.Button btnAddDestination;
+        private System.Windows.Forms.Panel pnlDestinations;
     }
 }
