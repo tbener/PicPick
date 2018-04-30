@@ -1,6 +1,6 @@
 ﻿using CommandLine;
-using FolderCleaner.Forms;
-using FolderCleaner.Helpers;
+using PicPick.Forms;
+using PicPick.Helpers;
 using log4net;
 using System;
 using System.Collections.Generic;
@@ -8,7 +8,9 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using TalUtils;
 
-namespace FolderCleaner
+[assembly: log4net.Config.XmlConfigurator(Watch=true)]
+
+namespace PicPick
 {
     static class Program
     {

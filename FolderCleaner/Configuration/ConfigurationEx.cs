@@ -1,4 +1,4 @@
-﻿using FolderCleaner.Helpers;
+﻿using PicPick.Helpers;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -14,24 +14,24 @@ using System.Text.RegularExpressions;
 using System.Drawing.Imaging;
 using System.Windows.Media.Imaging;
 
-namespace FolderCleaner.Configuration
+namespace PicPick.Configuration
 {
 
 
-    public partial class FolderCleanerConfigProjects
+    public partial class PicPickConfigProjects
     {
 
-        public FolderCleanerConfigProjectsProject ProjectByName(string name)
+        public PicPickConfigProjectsProject ProjectByName(string name)
         {
-            FolderCleanerConfigProjectsProject proj = this.Project.FirstOrDefault(p => p.Name == name);
+            PicPickConfigProjectsProject proj = this.Project.FirstOrDefault(p => p.Name == name);
             if (proj != null)
             {
                 if (proj.Tasks == null)
                 {
-                    proj.Tasks = new List<FolderCleanerConfigTask>();
+                    proj.Tasks = new List<PicPickConfigTask>();
                     foreach (var taskRef in proj.TaskRef)
                     {
-                        FolderCleanerConfigTask task = ConfigurationHelper.Default.Tasks.FirstOrDefault(t => t.Name == taskRef.Name);
+                        PicPickConfigTask task = ConfigurationHelper.Default.Tasks.FirstOrDefault(t => t.Name == taskRef.Name);
                         if (task != null)
                             proj.Tasks.Add(task);
                     }
@@ -42,27 +42,27 @@ namespace FolderCleaner.Configuration
         }
     }
 
-    public partial class FolderCleanerConfigProjectsProject
+    public partial class PicPickConfigProjectsProject
     {
         [XmlIgnore]
-        public List<FolderCleanerConfigTask> Tasks { get; set; }
+        public List<PicPickConfigTask> Tasks { get; set; }
     }
 
-    public partial class FolderCleanerConfigTask
+    public partial class PicPickConfigTask
     {
         public event CopyEventHandler OnCopyStatusChanged;
 
-        private List<FolderCleanerConfigTaskDestination> _destList = null;
+        private List<PicPickConfigTaskDestination> _destList = null;
 
         [XmlIgnore]
         // Use this list rather than the Destination Array for easyer manipulations and editing.
         // This will be converted back to the Destination Array in ConfigurationHelper.Save()
-        public List<FolderCleanerConfigTaskDestination> DestinationList
+        public List<PicPickConfigTaskDestination> DestinationList
         {
             get
             {
                 if (_destList == null)
-                    _destList = new List<FolderCleanerConfigTaskDestination>(this.Destination);
+                    _destList = new List<PicPickConfigTaskDestination>(this.Destination);
                 return _destList;
             }
         }
@@ -131,7 +131,7 @@ namespace FolderCleaner.Configuration
             if (readFiles)
                 ReadFiles();
 
-            foreach (FolderCleanerConfigTaskDestination destination in Destination)
+            foreach (PicPickConfigTaskDestination destination in Destination)
             {
                 string pathAbsolute = PathHelper.GetFullPath(Source.Path, destination.Path);
                 if (destination.HasTemplate)
@@ -241,7 +241,7 @@ namespace FolderCleaner.Configuration
     
 
 
-    public partial class FolderCleanerConfigTaskDestination
+    public partial class PicPickConfigTaskDestination
     {
         public event CopyEventHandler OnCopyStatusChanged;
 

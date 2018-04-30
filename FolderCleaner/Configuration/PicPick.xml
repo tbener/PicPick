@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<FolderCleanerConfig xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ver="1.0.0.0" >
+<PicPickConfig xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ver="1.0.0.0" >
 
   <Projects id="1">
     <Project Name="DefaultProject">
@@ -13,17 +13,17 @@
 
   <Tasks>
     <Task Name="Task1">
-      <Source Path="C:\Users\Tal\source\repos\FolderCleaner\FolderCleaner\Test" Filter="*.jpg"/>
+      <Source Path="C:\Users\Tal\source\repos\PicPick\PicPick\Test" Filter="*.jpg"/>
       <Destination Path="" Template="yyyy-MM"/>
       <Destination Path="C:\Users\Public\Pictures\Temp" Template=""/>
     </Task>
 
     <Task Name="Task2">
-      <Source Path="C:\Users\Tal\source\repos\FolderCleaner\FolderCleaner\Test" Filter="*.jpg"/>
+      <Source Path="C:\Users\Tal\source\repos\PicPick\PicPick\Test" Filter="*.jpg"/>
       <Destination Path="" Template="DD-yy"/>
       <Destination Path="c:\user\my pictures" Template="DD-yy"/>
     </Task>
 
   </Tasks>
 
-</FolderCleanerConfig>
+</PicPickConfig>

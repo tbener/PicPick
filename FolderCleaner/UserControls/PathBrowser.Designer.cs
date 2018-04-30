@@ -1,4 +1,4 @@
-﻿namespace FolderCleaner.UserControls
+﻿namespace PicPick.UserControls
 {
     partial class PathBrowser
     {
@@ -60,7 +60,7 @@
             // btnOpenFolder
             // 
             this.btnOpenFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnOpenFolder.Image = global::FolderCleaner.Properties.Resources.Folder_16x16;
+            this.btnOpenFolder.Image = global::PicPick.Properties.Resources.Folder_16x16;
             this.btnOpenFolder.Location = new System.Drawing.Point(487, 10);
             this.btnOpenFolder.Name = "btnOpenFolder";
             this.btnOpenFolder.Size = new System.Drawing.Size(29, 23);

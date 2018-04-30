@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using FolderCleaner.Properties;
+using PicPick.Properties;
 
-namespace FolderCleaner.Helpers
+namespace PicPick.Helpers
 {
     /*
      * Class is not completed

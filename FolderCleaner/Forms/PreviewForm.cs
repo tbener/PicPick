@@ -1,5 +1,5 @@
-﻿using FolderCleaner.Configuration;
-using FolderCleaner.Helpers;
+﻿using PicPick.Configuration;
+using PicPick.Helpers;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -11,11 +11,11 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using TalUtils;
 
-namespace FolderCleaner.Forms
+namespace PicPick.Forms
 {
     public partial class PreviewForm : Form
     {
-        FolderCleanerConfigTask _task;
+        PicPickConfigTask _task;
         Dictionary<CopyFilesHandler, int> _mapRows = new Dictionary<CopyFilesHandler, int>();
         public PreviewForm()
         {
@@ -58,13 +58,13 @@ namespace FolderCleaner.Forms
             dgInfo.Rows[_mapRows[e.Info]].Cells["Status"].Value = e.Info.GetStatusString();
         }
 
-        public void Start(FolderCleanerConfigTask task)
+        public void Start(PicPickConfigTask task)
         {
             _task = task;
             Preview();
         }
 
-        public FolderCleanerConfigTask Task { get => _task; set => _task = value; }
+        public PicPickConfigTask Task { get => _task; set => _task = value; }
 
         private void PreviewForm_FormClosing(object sender, FormClosingEventArgs e)
         {

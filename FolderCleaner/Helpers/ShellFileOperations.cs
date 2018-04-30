@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 
-namespace FolderCleaner.Helpers
+namespace PicPick.Helpers
 {
     class ShellFileOperation
     {

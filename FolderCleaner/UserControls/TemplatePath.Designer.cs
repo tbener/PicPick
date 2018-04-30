@@ -1,4 +1,4 @@
-﻿namespace FolderCleaner.UserControls
+﻿namespace PicPick.UserControls
 {
     partial class TemplatePath
     {
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.pathControl = new FolderCleaner.UserControls.PathBrowser();
+            this.pathControl = new PicPick.UserControls.PathBrowser();
             this.txtTemplate = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.lblPreview = new System.Windows.Forms.Label();

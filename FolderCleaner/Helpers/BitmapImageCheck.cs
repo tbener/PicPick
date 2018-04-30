@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace FolderCleaner.Helpers
+namespace PicPick.Helpers
 {
     /// <summary>
     /// Provides methods for checking whether a file can likely be opened as a BitmapImage, based upon its file extension

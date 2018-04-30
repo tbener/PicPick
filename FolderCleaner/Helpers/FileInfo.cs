@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 
-namespace FolderCleaner.Helpers
+namespace PicPick.Helpers
 {
     internal class FileDateInfo
     {

@@ -1,45 +1,45 @@
 ﻿using System;
 using System.IO;
-using FolderCleaner.Configuration;
+using PicPick.Configuration;
 using log4net;
 using TalUtils;
 
-namespace FolderCleaner.Helpers
+namespace PicPick.Helpers
 {
     public static class ConfigurationHelper
     {
-        private const string DEFAULT_FILE = "FolderCleaner.xml";
+        private const string DEFAULT_FILE = "PicPick.xml";
 
         private static readonly ILog _log =
             LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         private static readonly ErrorHandler _errorHandler = new ErrorHandler(_log);
 
-        private static FolderCleanerConfig _folderCleanerConfig;
+        private static PicPickConfig _PicPickConfig;
 
-        public static FolderCleanerConfig Default
+        public static PicPickConfig Default
         {
             get
             {
-                if (_folderCleanerConfig == null)
+                if (_PicPickConfig == null)
                 {
                     LoadedFile = PathHelper.GetFullPath(PathHelper.AppPath(@"Configuration"), DEFAULT_FILE);
                     Load(LoadedFile);
                 }
-                return _folderCleanerConfig;
+                return _PicPickConfig;
             }
         }
 
         public static string LoadedFile { get; private set; }
 
-        public static FolderCleanerConfig Load(string file)
+        public static PicPickConfig Load(string file)
         {
             try
             {
-                _folderCleanerConfig = SerializeHelper.Load(typeof(FolderCleanerConfig), file) as FolderCleanerConfig;
+                _PicPickConfig = SerializeHelper.Load(typeof(PicPickConfig), file) as PicPickConfig;
                 //if (OnConfigurationLoaded != null)
                 //    OnConfigurationLoaded(null, new EventArgs());
-                return _folderCleanerConfig;
+                return _PicPickConfig;
             }
             catch (Exception ex)
             {
@@ -53,9 +53,9 @@ namespace FolderCleaner.Helpers
 
             try
             {
-                foreach (FolderCleanerConfigTask task in _folderCleanerConfig.Tasks)
+                foreach (PicPickConfigTask task in _PicPickConfig.Tasks)
                     task.Destination = task.DestinationList.ToArray();
-                return SerializeHelper.Save(_folderCleanerConfig, file);
+                return SerializeHelper.Save(_PicPickConfig, file);
             }
             catch (Exception ex)
             {

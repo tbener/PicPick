@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{6CEDEC73-F3DA-48F1-B1FE-2E951F3ADCD2}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>FolderCleaner</RootNamespace>
-    <AssemblyName>FolderCleaner</AssemblyName>
+    <RootNamespace>PicPick</RootNamespace>
+    <AssemblyName>PicPick</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -159,7 +159,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Configuration\FolderCleaner.xml">
+    <Content Include="Configuration\PicPick.xml">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

@@ -1,17 +1,17 @@
-﻿using FolderCleaner.Configuration;
-using FolderCleaner.Forms;
+﻿using PicPick.Configuration;
+using PicPick.Forms;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FolderCleaner.Helpers
+namespace PicPick.Helpers
 {
     class ProjectRunner
     {
         ProgressForm _progressForm;
-        FolderCleanerConfigProjectsProject _project;
+        PicPickConfigProjectsProject _project;
 
         public ProjectRunner(string taskName)
         {
@@ -23,7 +23,7 @@ namespace FolderCleaner.Helpers
         public bool Init()
         {
             _project = ConfigurationHelper.Default.Projects.ProjectByName(TaskName);
-            foreach (FolderCleanerConfigTask task in _project.Tasks)
+            foreach (PicPickConfigTask task in _project.Tasks)
             {
                 task.Runner = new TaskRunner(task, _progressForm);
                 task.Init();
@@ -33,7 +33,7 @@ namespace FolderCleaner.Helpers
 
         public void Run()
         {
-            foreach (FolderCleanerConfigTask task in _project.Tasks)
+            foreach (PicPickConfigTask task in _project.Tasks)
             {
                 task.Runner.Run();
             }

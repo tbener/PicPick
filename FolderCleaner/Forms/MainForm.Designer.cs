@@ -1,4 +1,4 @@
-﻿namespace FolderCleaner.Forms
+﻿namespace PicPick.Forms
 {
     partial class MainForm
     {
@@ -39,13 +39,13 @@
             this.label1 = new System.Windows.Forms.Label();
             this.pnlDestinations = new System.Windows.Forms.Panel();
             this.btnAddDestination = new System.Windows.Forms.Button();
-            this.txtLog = new System.Windows.Forms.TextBox();
             this.lblFileCount = new System.Windows.Forms.Label();
             this.btnCheck = new System.Windows.Forms.Button();
             this.txtFilter = new System.Windows.Forms.TextBox();
             this.lblTaskName = new System.Windows.Forms.Label();
             this.toolStrip = new System.Windows.Forms.ToolStrip();
-            this.pathSource = new FolderCleaner.UserControls.PathBrowser();
+            this.rtbLog = new System.Windows.Forms.RichTextBox();
+            this.pathSource = new PicPick.UserControls.PathBrowser();
             this.menuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerMain)).BeginInit();
             this.splitContainerMain.Panel1.SuspendLayout();
@@ -116,9 +116,9 @@
             // 
             // splitContainerMain.Panel2
             // 
+            this.splitContainerMain.Panel2.Controls.Add(this.rtbLog);
             this.splitContainerMain.Panel2.Controls.Add(this.pnlDestinations);
             this.splitContainerMain.Panel2.Controls.Add(this.btnAddDestination);
-            this.splitContainerMain.Panel2.Controls.Add(this.txtLog);
             this.splitContainerMain.Panel2.Controls.Add(this.lblFileCount);
             this.splitContainerMain.Panel2.Controls.Add(this.btnCheck);
             this.splitContainerMain.Panel2.Controls.Add(this.txtFilter);
@@ -168,17 +168,6 @@
             this.btnAddDestination.UseVisualStyleBackColor = true;
             this.btnAddDestination.Click += new System.EventHandler(this.btnAddDestination_Click);
             // 
-            // txtLog
-            // 
-            this.txtLog.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtLog.Location = new System.Drawing.Point(12, 347);
-            this.txtLog.Multiline = true;
-            this.txtLog.Name = "txtLog";
-            this.txtLog.Size = new System.Drawing.Size(646, 204);
-            this.txtLog.TabIndex = 7;
-            // 
             // lblFileCount
             // 
             this.lblFileCount.AutoSize = true;
@@ -194,7 +183,7 @@
             this.btnCheck.Name = "btnCheck";
             this.btnCheck.Size = new System.Drawing.Size(88, 24);
             this.btnCheck.TabIndex = 5;
-            this.btnCheck.Text = "Check";
+            this.btnCheck.Text = "Run";
             this.btnCheck.UseVisualStyleBackColor = true;
             this.btnCheck.Click += new System.EventHandler(this.btnCheck_Click);
             // 
@@ -222,6 +211,23 @@
             this.toolStrip.Size = new System.Drawing.Size(1009, 25);
             this.toolStrip.TabIndex = 3;
             this.toolStrip.Text = "toolStrip1";
+            // 
+            // rtbLog
+            // 
+            this.rtbLog.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.rtbLog.BackColor = System.Drawing.Color.Black;
+            this.rtbLog.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.rtbLog.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rtbLog.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
+            this.rtbLog.Location = new System.Drawing.Point(12, 347);
+            this.rtbLog.Name = "rtbLog";
+            this.rtbLog.ReadOnly = true;
+            this.rtbLog.Size = new System.Drawing.Size(646, 211);
+            this.rtbLog.TabIndex = 8;
+            this.rtbLog.Text = "Text text text";
+            this.rtbLog.WordWrap = false;
             // 
             // pathSource
             // 
@@ -274,8 +280,8 @@
         private System.Windows.Forms.ToolStripMenuItem mnuSave;
         private System.Windows.Forms.CheckedListBox lstTasks;
         private System.Windows.Forms.Label lblFileCount;
-        private System.Windows.Forms.TextBox txtLog;
         private System.Windows.Forms.Button btnAddDestination;
         private System.Windows.Forms.Panel pnlDestinations;
+        private System.Windows.Forms.RichTextBox rtbLog;
     }
 }

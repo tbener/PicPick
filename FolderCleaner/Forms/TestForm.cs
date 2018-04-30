@@ -1,4 +1,4 @@
-﻿using FolderCleaner.Helpers;
+﻿using PicPick.Helpers;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace FolderCleaner.Forms
+namespace PicPick.Forms
 {
     public partial class TestForm : Form
     {

@@ -1,5 +1,5 @@
-﻿using FolderCleaner.Configuration;
-using FolderCleaner.Forms;
+﻿using PicPick.Configuration;
+using PicPick.Forms;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -9,14 +9,14 @@ using System.Text;
 using System.Threading.Tasks;
 using TalUtils;
 
-namespace FolderCleaner.Helpers
+namespace PicPick.Helpers
 {
     public class TaskRunner
     {
         ProgressForm _progressForm;
-        FolderCleanerConfigTask _task;
+        PicPickConfigTask _task;
 
-        public TaskRunner(FolderCleanerConfigTask task, ProgressForm progressForm)
+        public TaskRunner(PicPickConfigTask task, ProgressForm progressForm)
         {
             _task = task;
             _progressForm = progressForm;
@@ -24,7 +24,7 @@ namespace FolderCleaner.Helpers
 
         public void Run()
         {
-            foreach (FolderCleanerConfigTaskDestination dst in _task.Destination)
+            foreach (PicPickConfigTaskDestination dst in _task.Destination)
             {
                 foreach (var kv in dst.Mapping)
                 {

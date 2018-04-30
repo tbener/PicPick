@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace FolderCleaner.Forms
+namespace PicPick.Forms
 {
     public partial class ProgressForm : Form
     {

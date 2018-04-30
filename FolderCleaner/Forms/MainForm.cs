@@ -1,6 +1,6 @@
-﻿using FolderCleaner.Configuration;
-using FolderCleaner.Helpers;
-using FolderCleaner.UserControls;
+﻿using PicPick.Configuration;
+using PicPick.Helpers;
+using PicPick.UserControls;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -12,23 +12,31 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using TalUtils;
 
-namespace FolderCleaner.Forms
+namespace PicPick.Forms
 {
     public partial class MainForm : Form
     {
-        FolderCleanerConfigTask _currentTask;
+        PicPickConfigTask _currentTask;
         bool _isDirty;
         bool _isLoading;
         PreviewForm _taskForm;
 
+        Dictionary<LOG_TYPE, Color> logColors = new Dictionary<LOG_TYPE, Color>()
+        {
+            { LOG_TYPE.ERROR, Color.Red },
+            { LOG_TYPE.INFO, Color.Green },
+            { LOG_TYPE.WARNING, Color.Red }
+        };
+
         public MainForm()
         {
             InitializeComponent();
+            rtbLog.Clear();
 
             pathSource.Changed += (s, e) => SetDirty(s);
             txtFilter.TextChanged += (s, e) => SetDirty(s);
             lstTasks.ItemCheck += (s, e) => SetDirty(s);
-            LogHandler.OnLog += (m) => txtLog.AppendText($"{m}\n");
+            LogHandler.OnLog += LogHandler_OnLog;
 
             _taskForm = new PreviewForm();
         }
@@ -124,7 +132,7 @@ namespace FolderCleaner.Forms
             }
         }
 
-        private void LoadProject(FolderCleanerConfigProjectsProject proj)
+        private void LoadProject(PicPickConfigProjectsProject proj)
         {
             try
             {
@@ -145,7 +153,7 @@ namespace FolderCleaner.Forms
             }
         }
 
-        private void LoadTask(FolderCleanerConfigTask task)
+        private void LoadTask(PicPickConfigTask task)
         {
             try
             {
@@ -182,7 +190,7 @@ namespace FolderCleaner.Forms
             }
         }
 
-        private void AddDestinationControl(FolderCleanerConfigTaskDestination dest)
+        private void AddDestinationControl(PicPickConfigTaskDestination dest)
         {
             TemplatePath dstPath = new TemplatePath(dest);
             dstPath.Changed += (s, e) => SetDirty();
@@ -214,7 +222,7 @@ namespace FolderCleaner.Forms
             // get the actual button
             Button btn = (Button)sender;
             // the Destination object is it's Tag
-            FolderCleanerConfigTaskDestination dest = (FolderCleanerConfigTaskDestination)btn.Tag;
+            PicPickConfigTaskDestination dest = (PicPickConfigTaskDestination)btn.Tag;
             // remove this destination from the list
             _currentTask.DestinationList.Remove(dest);
             // remove the panel from the UI
@@ -225,32 +233,31 @@ namespace FolderCleaner.Forms
 
         private void btnAddDestination_Click(object sender, EventArgs e)
         {
-            FolderCleanerConfigTaskDestination dest = new FolderCleanerConfigTaskDestination();
+            PicPickConfigTaskDestination dest = new PicPickConfigTaskDestination();
             _currentTask.DestinationList.Add(dest);
             AddDestinationControl(dest);
         }
 
-        private void StartTask(FolderCleanerConfigTask task)
+        private void StartTask(PicPickConfigTask task)
         {
             //_taskForm.Start(task);
-            txtLog.Clear();
-            LogHandler.Log("Start\n");
+            rtbLog.Clear();
             try
             {
                 task.Execute();
-                LogHandler.Log("\nFinished");
+                LogHandler.Log("Finished");
             }
             catch (Exception ex)
             {
-                LogHandler.Log("\nFinished with errors:");
-                LogHandler.Log(ex.Message);
+                LogHandler.Log("Finished with errors:", LOG_TYPE.ERROR);
+                LogHandler.Log(ex.Message, LOG_TYPE.ERROR);
             }
         }
 
         private void MnuOpen_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
 
-            FolderCleanerConfigProjectsProject p = e.ClickedItem.Tag as FolderCleanerConfigProjectsProject;
+            PicPickConfigProjectsProject p = e.ClickedItem.Tag as PicPickConfigProjectsProject;
             if (p != null)
                 LoadProject(p);
         }
@@ -260,7 +267,7 @@ namespace FolderCleaner.Forms
         {
             //_currentTask = ConfigurationHelper.Default.Tasks.FirstOrDefault(t => t.Name == lstTasks.SelectedItem.ToString());
             if (_currentTask != lstTasks.SelectedItem)
-                LoadTask(lstTasks.SelectedItem as FolderCleanerConfigTask);
+                LoadTask(lstTasks.SelectedItem as PicPickConfigTask);
         }
 
         private void btnCheck_Click(object sender, EventArgs e)
@@ -298,6 +305,20 @@ namespace FolderCleaner.Forms
             _currentTask.ReadFiles();
         }
 
-        
+        private void LogHandler_OnLog(string msg, LOG_TYPE logType)
+        {
+            AppendLog(msg, logColors[logType]);
+        }
+
+        private void AppendLog(string text, Color color)
+        {
+            rtbLog.SelectionStart = rtbLog.TextLength;
+            rtbLog.SelectionLength = 0;
+
+            rtbLog.SelectionColor = color;
+            rtbLog.AppendText(text + Environment.NewLine);
+            rtbLog.SelectionColor = rtbLog.ForeColor;
+        }
+
     }
 }

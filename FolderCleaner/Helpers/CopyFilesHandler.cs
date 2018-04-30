@@ -1,4 +1,4 @@
-﻿using FolderCleaner.Configuration;
+﻿using PicPick.Configuration;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TalUtils;
 
-namespace FolderCleaner.Helpers
+namespace PicPick.Helpers
 {
     public delegate void FileProcessEventHandler(object sender, string file, string msg, bool success=true);
     //public delegate void FileProcessEventHandler(object sender, bool success);
@@ -98,15 +98,15 @@ namespace FolderCleaner.Helpers
             FILE_EXISTS_RESPONSE fileExistsResponse = FILE_EXISTS_RESPONSE.ASK;
             FILE_EXISTS_RESPONSE action = fileExistsResponse;
             bool dontAsk = false;
-            string curFile = "";
+            string fileName = "";
 
             try
             {
                 // iterate FileList and copy to dest
                 foreach (string file in FileList)
                 {
-                    curFile = file;
-                    string dest = Path.Combine(Destination, Path.GetFileName(file));
+                    fileName = Path.GetFileName(file);
+                    string dest = Path.Combine(Destination, fileName);
 
                     // if the file exists in destination
                     if (File.Exists(dest))
@@ -148,10 +148,8 @@ namespace FolderCleaner.Helpers
                         {
                             case FILE_EXISTS_RESPONSE.OVERWRITE:
                                 File.Copy(file, dest, true);
-                                ReportFileProcess(file, action);
                                 break;
                             case FILE_EXISTS_RESPONSE.SKIP:
-                                ReportFileProcess(file, action);
                                 break;
                             case FILE_EXISTS_RESPONSE.RENAME:
                                 // todo: get a new file name
@@ -160,22 +158,22 @@ namespace FolderCleaner.Helpers
                                 dest = Path.Combine(TalUtils.PathHelper.GetFullPath(Destination, "Existing Files", true), Path.GetFileName(file));
 
                                 File.Copy(file, dest, true);
-                                ReportFileProcess(file, action, dest);
                                 break;
                             default:
                                 break;
                         }
+                        ReportFileProcess(fileName, action, dest);
                     }
                     else
                     {
                         File.Copy(file, dest);
-                        ReportFileProcess(file, $"Copied to {dest}", true);
+                        ReportFileProcess(fileName, $"Copied to {dest}", LOG_TYPE.INFO);
                     }
                 }
             }
             catch (Exception ex)
             {
-                ReportFileProcess(curFile, ex.Message, false);
+                ReportFileProcess(fileName, $"ERROR: {ex.Message}", LOG_TYPE.ERROR);
                 if (!ErrorHandler.Handle(ex, "An error occurred. Do you want to continue to the next files?"))
                     return;
             }
@@ -187,12 +185,12 @@ namespace FolderCleaner.Helpers
             return false;
         }
 
-        private void ReportFileProcess(string file, string msg, bool success=true)
+        private void ReportFileProcess(string file, string msg, LOG_TYPE logType)
         {
             try
             {
-                OnFileProcess?.Invoke(this, file, msg, success);
-                LogHandler.Log(file, msg);
+                OnFileProcess?.Invoke(this, file, msg, logType == LOG_TYPE.INFO);
+                LogHandler.Log(file, msg, logType);
             }
             catch (Exception ex)
             {   // todo
@@ -200,27 +198,27 @@ namespace FolderCleaner.Helpers
             }
         }
 
-        private void ReportFileProcess(string file, FILE_EXISTS_RESPONSE action, string arg="")
+        private void ReportFileProcess(string file, FILE_EXISTS_RESPONSE action, string dest)
         {
             string msg = "";
-            bool success = true;
+            LOG_TYPE logType = LOG_TYPE.INFO;
             switch (action)
             {
                 case FILE_EXISTS_RESPONSE.OVERWRITE:
-                    msg = $"Copied as {arg} (OVERWRITE)";
+                    msg = $"Copied as {dest} (OVERWRITE)";
                     break;
                 case FILE_EXISTS_RESPONSE.SKIP:
                     // todo: add to log!
-                    msg = "Skipped";
-                    success = false;
+                    msg = $"Skipped ({dest} exists)";
+                    logType = LOG_TYPE.WARNING;
                     break;
                 case FILE_EXISTS_RESPONSE.RENAME:
-                    msg = $"Copied as {arg}";
+                    msg = $"Copied as {dest}";
                     break;
                 default:
                     break;
             }
-            ReportFileProcess(file, msg, success);
+            ReportFileProcess(file, msg, logType);
         }
 
         #endregion

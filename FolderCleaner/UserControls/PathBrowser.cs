@@ -8,9 +8,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using TalUtils;
-using FolderCleaner.Helpers;
+using PicPick.Helpers;
 
-namespace FolderCleaner.UserControls
+namespace PicPick.UserControls
 {
     public partial class PathBrowser : UserControl
     {

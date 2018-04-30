@@ -9,18 +9,18 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using TalUtils;
 using System.IO;
-using FolderCleaner.Configuration;
+using PicPick.Configuration;
 
-namespace FolderCleaner.UserControls
+namespace PicPick.UserControls
 {
     public partial class TemplatePath : UserControl
     {
         public event EventHandler Changed;
 
         private DateTime? _previewDate;
-        private FolderCleanerConfigTaskDestination _destination;
+        private PicPickConfigTaskDestination _destination;
 
-        public TemplatePath(FolderCleanerConfigTaskDestination destination)
+        public TemplatePath(PicPickConfigTaskDestination destination)
         {
             InitializeComponent();
 

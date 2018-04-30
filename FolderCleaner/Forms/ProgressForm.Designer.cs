@@ -1,4 +1,4 @@
-﻿namespace FolderCleaner.Forms
+﻿namespace PicPick.Forms
 {
     partial class ProgressForm
     {

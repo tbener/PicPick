@@ -1,7 +1,7 @@
-﻿using FolderCleaner.Helpers;
+﻿using PicPick.Helpers;
 using System;
 
-namespace FolderCleaner.Configuration
+namespace PicPick.Configuration
 {
     public delegate void CopyEventHandler(object sender, CopyEventArgs e);
 

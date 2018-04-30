@@ -8,7 +8,7 @@ using System.Windows.Forms;
 using System.Reflection;
 using System.IO;
 
-namespace FolderCleaner.Helpers
+namespace PicPick.Helpers
 {
     class Utils
     {
