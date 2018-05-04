@@ -6,36 +6,27 @@ using System.Threading.Tasks;
 
 namespace PicPick.Helpers
 {
-    // TEMP until I'll put in log4net
-    public enum LOG_TYPE
-    {
-        INFO,
-        ERROR,
-        WARNING
-    }
-
-    public delegate void LogEventHandler(string msg, LOG_TYPE logType);
 
     public static class LogHandler
     {
-        
-        public static event LogEventHandler OnLog;
 
-        public static void Log(string msg, LOG_TYPE logType)
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
+
+        public static void Log(string msg, log4net.Core.Level level)
         {
-            //string strDate = DateTime.Now.ToString("dd/MM/yy HH:mm");
-            OnLog?.Invoke(msg, logType);
+            log.Logger.Log(log.GetType(), level, msg, null);
         }
 
 
-        public static void Log(string file, string msg, LOG_TYPE logType)
+        public static void Log(string file, string msg, log4net.Core.Level level)
         {
-            Log($"{file} - {msg}", logType);
+            Log($"{file} - {msg}", level);
         }
 
         public static void Log(string msg)
         {
-            Log($"{msg}", LOG_TYPE.INFO);
+            Log(msg, log4net.Core.Level.Info);
         }
     }
 }

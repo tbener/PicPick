@@ -1,4 +1,6 @@
-﻿using PicPick.Configuration;
+﻿using log4net.Appender;
+using log4net.Core;
+using PicPick.Configuration;
 using PicPick.Helpers;
 using PicPick.UserControls;
 using System;
@@ -14,18 +16,18 @@ using TalUtils;
 
 namespace PicPick.Forms
 {
-    public partial class MainForm : Form
+    public partial class MainForm : Form, IAppender
     {
         PicPickConfigTask _currentTask;
         bool _isDirty;
         bool _isLoading;
         PreviewForm _taskForm;
 
-        Dictionary<LOG_TYPE, Color> logColors = new Dictionary<LOG_TYPE, Color>()
+        Dictionary<Level, Color> logColors = new Dictionary<Level, Color>()
         {
-            { LOG_TYPE.ERROR, Color.Red },
-            { LOG_TYPE.INFO, Color.Green },
-            { LOG_TYPE.WARNING, Color.Red }
+            { Level.Error, Color.Red },
+            { Level.Info, Color.Green },
+            { Level.Warn, Color.Yellow }
         };
 
         public MainForm()
@@ -36,15 +38,18 @@ namespace PicPick.Forms
             pathSource.Changed += (s, e) => SetDirty(s);
             txtFilter.TextChanged += (s, e) => SetDirty(s);
             lstTasks.ItemCheck += (s, e) => SetDirty(s);
-            LogHandler.OnLog += LogHandler_OnLog;
 
             _taskForm = new PreviewForm();
+
+            ((log4net.Repository.Hierarchy.Hierarchy)log4net.LogManager.GetRepository()).Root.AddAppender(this);
         }
 
         
 
         private void MainForm_Load(object sender, EventArgs e)
         {
+            
+
             LoadFile();
             SetDirty(sender, e, false);
         }
@@ -244,14 +249,16 @@ namespace PicPick.Forms
             rtbLog.Clear();
             try
             {
+                LogHandler.Log($"Starting Task: {task.Name}");
                 task.Execute();
                 LogHandler.Log("Finished");
             }
             catch (Exception ex)
             {
-                LogHandler.Log("Finished with errors:", LOG_TYPE.ERROR);
-                LogHandler.Log(ex.Message, LOG_TYPE.ERROR);
+                LogHandler.Log("Finished with errors:", Level.Error);
+                LogHandler.Log(ex.Message, Level.Error);
             }
+            SourceUpdated();
         }
 
         private void MnuOpen_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
@@ -305,11 +312,6 @@ namespace PicPick.Forms
             _currentTask.ReadFiles();
         }
 
-        private void LogHandler_OnLog(string msg, LOG_TYPE logType)
-        {
-            AppendLog(msg, logColors[logType]);
-        }
-
         private void AppendLog(string text, Color color)
         {
             rtbLog.SelectionStart = rtbLog.TextLength;
@@ -320,5 +322,13 @@ namespace PicPick.Forms
             rtbLog.SelectionColor = rtbLog.ForeColor;
         }
 
+        #region IAppender implementation
+        public void DoAppend(LoggingEvent loggingEvent)
+        {
+            if (!logColors.ContainsKey(loggingEvent.Level))
+                return;
+            AppendLog($"({loggingEvent.Level.Name}) {loggingEvent.MessageObject.ToString()}", logColors[loggingEvent.Level]);
+        }
+        #endregion
     }
 }

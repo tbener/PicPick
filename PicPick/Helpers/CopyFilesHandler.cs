@@ -38,6 +38,7 @@ namespace PicPick.Helpers
 
     public class CopyFilesHandler
     {
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         public event FileProcessEventHandler OnFileProcess;
 
         static readonly Dictionary<COPY_STATUS, string> _statusStrings = new Dictionary<COPY_STATUS, string>()
@@ -167,13 +168,13 @@ namespace PicPick.Helpers
                     else
                     {
                         File.Copy(file, dest);
-                        ReportFileProcess(fileName, $"Copied to {dest}", LOG_TYPE.INFO);
+                        ReportFileProcess(fileName, $"Copied to {dest}", log4net.Core.Level.Info);
                     }
                 }
             }
             catch (Exception ex)
             {
-                ReportFileProcess(fileName, $"ERROR: {ex.Message}", LOG_TYPE.ERROR);
+                ReportFileProcess(fileName, $"ERROR: {ex.Message}", log4net.Core.Level.Error);
                 if (!ErrorHandler.Handle(ex, "An error occurred. Do you want to continue to the next files?"))
                     return;
             }
@@ -185,12 +186,13 @@ namespace PicPick.Helpers
             return false;
         }
 
-        private void ReportFileProcess(string file, string msg, LOG_TYPE logType)
+        private void ReportFileProcess(string file, string msg, log4net.Core.Level level)
         {
             try
             {
-                OnFileProcess?.Invoke(this, file, msg, logType == LOG_TYPE.INFO);
-                LogHandler.Log(file, msg, logType);
+                OnFileProcess?.Invoke(this, file, msg, level == log4net.Core.Level.Info);
+                
+                LogHandler.Log(file, msg, level);
             }
             catch (Exception ex)
             {   // todo
@@ -201,7 +203,7 @@ namespace PicPick.Helpers
         private void ReportFileProcess(string file, FILE_EXISTS_RESPONSE action, string dest)
         {
             string msg = "";
-            LOG_TYPE logType = LOG_TYPE.INFO;
+            log4net.Core.Level level = log4net.Core.Level.Info;
             switch (action)
             {
                 case FILE_EXISTS_RESPONSE.OVERWRITE:
@@ -210,7 +212,7 @@ namespace PicPick.Helpers
                 case FILE_EXISTS_RESPONSE.SKIP:
                     // todo: add to log!
                     msg = $"Skipped ({dest} exists)";
-                    logType = LOG_TYPE.WARNING;
+                    level = log4net.Core.Level.Warn;
                     break;
                 case FILE_EXISTS_RESPONSE.RENAME:
                     msg = $"Copied as {dest}";
@@ -218,7 +220,7 @@ namespace PicPick.Helpers
                 default:
                     break;
             }
-            ReportFileProcess(file, msg, logType);
+            ReportFileProcess(file, msg, level);
         }
 
         #endregion
