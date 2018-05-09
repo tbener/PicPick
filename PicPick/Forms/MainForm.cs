@@ -54,6 +54,12 @@ namespace PicPick.Forms
             SetDirty(sender, e, false);
         }
 
+        public override void Refresh()
+        {
+            base.Refresh();
+
+            ReadSource();
+        }
 
 
         private void SetDirty(object sender, EventArgs e = null,  bool isDirty = true)
@@ -65,12 +71,12 @@ namespace PicPick.Forms
 
             if (sender == pathSource) _currentTask.Source.Path = pathSource.Text;
             if (sender == txtFilter) _currentTask.Source.Filter = txtFilter.Text;
-            if (sender == pathSource || sender == txtFilter) SourceUpdated();
+            if (sender == pathSource || sender == txtFilter) ReadSource();
 
                 if (isDirty) _currentTask?.SetDirty();
         }
 
-        private void SourceUpdated()
+        private void ReadSource()
         {
             try
             {
@@ -180,7 +186,7 @@ namespace PicPick.Forms
                 lblTaskName.Text = _currentTask.Name;
                 pathSource.Text = _currentTask.Source.Path;
                 txtFilter.Text = _currentTask.Source.Filter;
-                SourceUpdated();
+                ReadSource();
 
                 _currentTask.DestinationList.ForEach(AddDestinationControl);
                 
@@ -258,7 +264,7 @@ namespace PicPick.Forms
                 LogHandler.Log("Finished with errors:", Level.Error);
                 LogHandler.Log(ex.Message, Level.Error);
             }
-            SourceUpdated();
+            ReadSource();
         }
 
         private void MnuOpen_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
@@ -330,5 +336,10 @@ namespace PicPick.Forms
             AppendLog($"({loggingEvent.Level.Name}) {loggingEvent.MessageObject.ToString()}", logColors[loggingEvent.Level]);
         }
         #endregion
+
+        private void mnuRefresh_Click(object sender, EventArgs e)
+        {
+            Refresh();
+        }
     }
 }
