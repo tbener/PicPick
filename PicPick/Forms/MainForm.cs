@@ -10,6 +10,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using TalUtils;
@@ -22,6 +23,7 @@ namespace PicPick.Forms
         bool _isDirty;
         bool _isLoading;
         PreviewForm _taskForm;
+        CancellationTokenSource cts = new CancellationTokenSource();
 
         Dictionary<Level, Color> logColors = new Dictionary<Level, Color>()
         {
@@ -35,34 +37,34 @@ namespace PicPick.Forms
             InitializeComponent();
             rtbLog.Clear();
 
-            pathSource.Changed += (s, e) => SetDirty(s);
-            txtFilter.TextChanged += (s, e) => SetDirty(s);
-            lstTasks.ItemCheck += (s, e) => SetDirty(s);
+            pathSource.Changed += async (s, e) => await SetDirty(s);
+            txtFilter.TextChanged += async (s, e) => await SetDirty(s);
+            lstTasks.ItemCheck += async (s, e) => await SetDirty(s);
 
             _taskForm = new PreviewForm();
 
             ((log4net.Repository.Hierarchy.Hierarchy)log4net.LogManager.GetRepository()).Root.AddAppender(this);
         }
 
-        
 
-        private void MainForm_Load(object sender, EventArgs e)
+
+        private async void MainForm_Load(object sender, EventArgs e)
         {
-            
+
 
             LoadFile();
-            SetDirty(sender, e, false);
+            await SetDirty(sender, e, false);
         }
 
-        public override void Refresh()
+        public override async void Refresh()
         {
             base.Refresh();
 
-            ReadSource();
+            await ReadSourceAsync();
         }
 
 
-        private void SetDirty(object sender, EventArgs e = null,  bool isDirty = true)
+        private async Task SetDirty(object sender, EventArgs e = null, bool isDirty = true)
         {
             if (_isLoading) return;
 
@@ -71,42 +73,69 @@ namespace PicPick.Forms
 
             if (sender == pathSource) _currentTask.Source.Path = pathSource.Text;
             if (sender == txtFilter) _currentTask.Source.Filter = txtFilter.Text;
-            if (sender == pathSource || sender == txtFilter) ReadSource();
+            if (sender == pathSource || sender == txtFilter)
+            {
+                await ReadSourceAsync();
+            }
 
-                if (isDirty) _currentTask?.SetDirty();
+            if (isDirty) _currentTask?.SetDirty();
         }
 
-        private void ReadSource()
+        private async Task<int> CountFilesAsync()
         {
             try
             {
-                if (PathHelper.Exists(_currentTask.Source.Path))
-                {
-                    lblFileCount.Text = "Reading...";
-                    _currentTask.ReadFiles();
-                    lblFileCount.Text = $"{_currentTask.FileCount} files found";
-                    btnCheck.Enabled = _currentTask.FileCount > 0;
-                }
-                else
-                {
-                    lblFileCount.Text = "";
-                    btnCheck.Enabled = false;
-                }
+                await _currentTask.ReadFilesAsync(cts.Token);
+                return _currentTask.FileCount;
             }
-            catch (Exception ex)
+            catch (OperationCanceledException)
             {
-                lblFileCount.Text = ex.Message;
-                btnCheck.Enabled = false;
+                return -1;
             }
         }
 
-        private void SetDirty(bool isDirty)
+        
+        async Task ReadSourceAsync()
         {
-            SetDirty(null, null, isDirty);
+            try
+            {
+                // Cancel previous operations
+                cts.Cancel();
+
+                // reset state
+                btnRun.Enabled = false;
+                lblFileCount.Text = "";
+
+                // Create a new cancellations token and await a new task to count files
+                cts = new CancellationTokenSource();
+                int count = await _currentTask.GetFileCount(cts.Token);
+                lblFileCount.Text = $"{count} files found";
+                btnRun.Enabled = _currentTask.FileCount > 0;
+            }
+            catch (OperationCanceledException)
+            {
+                // operation was canceled
+                lblFileCount.Text = "";
+            }
+            catch (Exception)
+            {
+                // error in counting files. most probably because folder doesn't exist.
+                lblFileCount.Text = "---";
+            }
         }
-        private void SetDirty()
+
+        private async void button1_Click_1(object sender, EventArgs e)
         {
-            SetDirty(true);
+            await ReadSourceAsync();
+        }
+
+        private async Task SetDirty(bool isDirty)
+        {
+            await SetDirty(null, null, isDirty);
+        }
+        private async Task SetDirty()
+        {
+            await SetDirty(true);
         }
 
         private void LoadFile()
@@ -164,12 +193,13 @@ namespace PicPick.Forms
             }
         }
 
-        private void LoadTask(PicPickConfigTask task)
+        private async Task LoadTask(PicPickConfigTask task)
         {
             try
             {
                 _isLoading = true;
                 _currentTask = task;
+                Task readSource = ReadSourceAsync();
 
                 // clear fields
                 lblTaskName.Text = "";
@@ -186,10 +216,10 @@ namespace PicPick.Forms
                 lblTaskName.Text = _currentTask.Name;
                 pathSource.Text = _currentTask.Source.Path;
                 txtFilter.Text = _currentTask.Source.Filter;
-                ReadSource();
 
                 _currentTask.DestinationList.ForEach(AddDestinationControl);
-                
+                await readSource;
+
             }
             catch (Exception ex)
             {
@@ -249,7 +279,7 @@ namespace PicPick.Forms
             AddDestinationControl(dest);
         }
 
-        private void StartTask(PicPickConfigTask task)
+        private async Task StartTask(PicPickConfigTask task)
         {
             //_taskForm.Start(task);
             rtbLog.Clear();
@@ -264,7 +294,7 @@ namespace PicPick.Forms
                 LogHandler.Log("Finished with errors:", Level.Error);
                 LogHandler.Log(ex.Message, Level.Error);
             }
-            ReadSource();
+            await ReadSourceAsync();
         }
 
         private void MnuOpen_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
@@ -276,24 +306,24 @@ namespace PicPick.Forms
         }
 
         // Todo: avoid reload when clicking on the selected task
-        private void lstTasks_SelectedIndexChanged(object sender, EventArgs e)
+        private async void lstTasks_SelectedIndexChanged(object sender, EventArgs e)
         {
             //_currentTask = ConfigurationHelper.Default.Tasks.FirstOrDefault(t => t.Name == lstTasks.SelectedItem.ToString());
             if (_currentTask != lstTasks.SelectedItem)
-                LoadTask(lstTasks.SelectedItem as PicPickConfigTask);
+                await LoadTask(lstTasks.SelectedItem as PicPickConfigTask);
         }
 
         private void btnCheck_Click(object sender, EventArgs e)
         {
             StartTask(_currentTask);
 
-            
+
         }
 
-        private void mnuSave_Click(object sender, EventArgs e)
+        private async void mnuSave_Click(object sender, EventArgs e)
         {
             ConfigurationHelper.Save();
-            SetDirty(false);
+            await SetDirty(false);
         }
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -340,6 +370,11 @@ namespace PicPick.Forms
         private void mnuRefresh_Click(object sender, EventArgs e)
         {
             Refresh();
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            cts.Cancel();
         }
     }
 }

@@ -43,15 +43,17 @@
             this.pnlDestinations = new System.Windows.Forms.Panel();
             this.btnAddDestination = new System.Windows.Forms.Button();
             this.lblFileCount = new System.Windows.Forms.Label();
-            this.btnCheck = new System.Windows.Forms.Button();
+            this.btnRun = new System.Windows.Forms.Button();
             this.txtFilter = new System.Windows.Forms.TextBox();
             this.lblTaskName = new System.Windows.Forms.Label();
-            this.pathSource = new PicPick.UserControls.PathBrowser();
             this.toolStrip = new System.Windows.Forms.ToolStrip();
             this.mainContainer = new System.Windows.Forms.SplitContainer();
             this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
             this.taskToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuRefresh = new System.Windows.Forms.ToolStripMenuItem();
+            this.button1 = new System.Windows.Forms.Button();
+            this.button2 = new System.Windows.Forms.Button();
+            this.pathSource = new PicPick.UserControls.PathBrowser();
             this.menuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.topContainer)).BeginInit();
             this.topContainer.Panel1.SuspendLayout();
@@ -97,7 +99,7 @@
             this.mnuOpen.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.noProjectsToolStripMenuItem});
             this.mnuOpen.Name = "mnuOpen";
-            this.mnuOpen.Size = new System.Drawing.Size(152, 22);
+            this.mnuOpen.Size = new System.Drawing.Size(138, 22);
             this.mnuOpen.Text = "&Open";
             this.mnuOpen.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.MnuOpen_DropDownItemClicked);
             // 
@@ -111,7 +113,7 @@
             // 
             this.mnuSave.Name = "mnuSave";
             this.mnuSave.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-            this.mnuSave.Size = new System.Drawing.Size(152, 22);
+            this.mnuSave.Size = new System.Drawing.Size(138, 22);
             this.mnuSave.Text = "&Save";
             this.mnuSave.Click += new System.EventHandler(this.mnuSave_Click);
             // 
@@ -128,11 +130,13 @@
             // 
             // topContainer.Panel2
             // 
+            this.topContainer.Panel2.Controls.Add(this.button2);
+            this.topContainer.Panel2.Controls.Add(this.button1);
             this.topContainer.Panel2.Controls.Add(this.lblFilter);
             this.topContainer.Panel2.Controls.Add(this.pnlDestinations);
             this.topContainer.Panel2.Controls.Add(this.btnAddDestination);
             this.topContainer.Panel2.Controls.Add(this.lblFileCount);
-            this.topContainer.Panel2.Controls.Add(this.btnCheck);
+            this.topContainer.Panel2.Controls.Add(this.btnRun);
             this.topContainer.Panel2.Controls.Add(this.txtFilter);
             this.topContainer.Panel2.Controls.Add(this.lblTaskName);
             this.topContainer.Panel2.Controls.Add(this.pathSource);
@@ -214,15 +218,15 @@
             this.lblFileCount.Text = "x files found";
             this.lblFileCount.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // btnCheck
+            // btnRun
             // 
-            this.btnCheck.Location = new System.Drawing.Point(12, 48);
-            this.btnCheck.Name = "btnCheck";
-            this.btnCheck.Size = new System.Drawing.Size(88, 24);
-            this.btnCheck.TabIndex = 5;
-            this.btnCheck.Text = "Run";
-            this.btnCheck.UseVisualStyleBackColor = true;
-            this.btnCheck.Click += new System.EventHandler(this.btnCheck_Click);
+            this.btnRun.Location = new System.Drawing.Point(12, 48);
+            this.btnRun.Name = "btnRun";
+            this.btnRun.Size = new System.Drawing.Size(88, 24);
+            this.btnRun.TabIndex = 5;
+            this.btnRun.Text = "Run";
+            this.btnRun.UseVisualStyleBackColor = true;
+            this.btnRun.Click += new System.EventHandler(this.btnCheck_Click);
             // 
             // txtFilter
             // 
@@ -240,17 +244,6 @@
             this.lblTaskName.Size = new System.Drawing.Size(43, 20);
             this.lblTaskName.TabIndex = 2;
             this.lblTaskName.Text = "Task";
-            // 
-            // pathSource
-            // 
-            this.pathSource.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.pathSource.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.pathSource.Location = new System.Drawing.Point(12, 89);
-            this.pathSource.Margin = new System.Windows.Forms.Padding(0);
-            this.pathSource.Name = "pathSource";
-            this.pathSource.Size = new System.Drawing.Size(762, 27);
-            this.pathSource.TabIndex = 1;
             // 
             // toolStrip
             // 
@@ -301,9 +294,40 @@
             // 
             this.mnuRefresh.Name = "mnuRefresh";
             this.mnuRefresh.ShortcutKeys = System.Windows.Forms.Keys.F5;
-            this.mnuRefresh.Size = new System.Drawing.Size(152, 22);
+            this.mnuRefresh.Size = new System.Drawing.Size(132, 22);
             this.mnuRefresh.Text = "&Refresh";
             this.mnuRefresh.Click += new System.EventHandler(this.mnuRefresh_Click);
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(470, 31);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(103, 31);
+            this.button1.TabIndex = 10;
+            this.button1.Text = "Read";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click_1);
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(592, 31);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(103, 31);
+            this.button2.TabIndex = 11;
+            this.button2.Text = "Cancel";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
+            // 
+            // pathSource
+            // 
+            this.pathSource.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.pathSource.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.pathSource.Location = new System.Drawing.Point(12, 89);
+            this.pathSource.Margin = new System.Windows.Forms.Padding(0);
+            this.pathSource.Name = "pathSource";
+            this.pathSource.Size = new System.Drawing.Size(762, 27);
+            this.pathSource.TabIndex = 1;
             // 
             // MainForm
             // 
@@ -351,7 +375,7 @@
         private UserControls.PathBrowser pathSource;
         private System.Windows.Forms.Label lblTaskName;
         private System.Windows.Forms.TextBox txtFilter;
-        private System.Windows.Forms.Button btnCheck;
+        private System.Windows.Forms.Button btnRun;
         private System.Windows.Forms.ToolStripMenuItem mnuSave;
         private System.Windows.Forms.CheckedListBox lstTasks;
         private System.Windows.Forms.Label lblFileCount;
@@ -363,5 +387,7 @@
         private System.Windows.Forms.ToolStripMenuItem taskToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem mnuRefresh;
         private System.Windows.Forms.ToolStripButton toolStripButton1;
+        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button button1;
     }
 }

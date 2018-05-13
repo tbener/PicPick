@@ -22,6 +22,7 @@ namespace PicPick.Configuration
     public partial class PicPickConfigProjects
     {
 
+
         public PicPickConfigProjectsProject ProjectByName(string name)
         {
             PicPickConfigProjectsProject proj = this.Project.FirstOrDefault(p => p.Name == name);
@@ -51,6 +52,7 @@ namespace PicPick.Configuration
 
     public partial class PicPickConfigTask
     {
+
         public event CopyEventHandler OnCopyStatusChanged;
 
         private List<PicPickConfigTaskDestination> _destList = null;
@@ -85,6 +87,7 @@ namespace PicPick.Configuration
         Dictionary<string, DateTime> _dicFiles = new Dictionary<string, DateTime>();
         List<string> _errorFiles = new List<string>();
         Dictionary<string, bool> _dicFilesResult = new Dictionary<string, bool>();
+        HashSet<string> _fileList = new HashSet<string>();
 
         /*
          * Lists the files and their dates
@@ -97,7 +100,7 @@ namespace PicPick.Configuration
             _errorFiles.Clear();
 
             FileDateInfo fileDateInfo = new FileDateInfo();
-            string[] filters = Source.Filter.Split(new char[]{',', ';'},StringSplitOptions.RemoveEmptyEntries);
+            string[] filters = Source.Filter.Split(new char[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries);
             foreach (string fltr in filters)
             {
                 string filter = fltr.Trim();
@@ -124,21 +127,71 @@ namespace PicPick.Configuration
             }
         }
 
-        public async Task ReadFilesAsync()
+        public async Task<int> GetFileCount(CancellationToken cancellationToken)
+        {
+            _fileList.Clear();
+            List<string> lst = new List<string>();
+            string[] filters = Source.Filter.Split(new char[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries);
+
+            foreach (string fltr in filters)
+            {
+                string filter = fltr.Trim();
+                string[] fileEntries = new string[0];
+                for (int i = 0; i < 100; i++)
+                {
+                    fileEntries = await Task.Run(() => Directory.GetFiles(Source.Path, filter));
+                }
+                cancellationToken.ThrowIfCancellationRequested();
+                lst.AddRange(fileEntries);
+            }
+
+            _fileList = new HashSet<string>(lst);
+            return _fileList.Count();
+        }
+
+        public async Task ReadFilesAsync(CancellationToken cancellationToken)
         {
             //Task
             //await ReadFiles();
-            CancellationTokenSource cts = new CancellationTokenSource();
-            try
-            {
 
-            }
-            catch (OperationCanceledException ex)
-            {
+            DateTime dateTime = DateTime.MinValue;
 
-                throw;
+            _dicFiles.Clear();
+            _errorFiles.Clear();
+
+            FileDateInfo fileDateInfo = new FileDateInfo();
+            string[] filters = Source.Filter.Split(new char[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries);
+            foreach (string fltr in filters)
+            {
+                string filter = fltr.Trim();
+                Debug.Print($"-------------\r\nFilter: {filter}\r\n---------------");
+                string[] fileEntries = await Task.Run(() => Directory.GetFiles(Source.Path, filter));
+                cancellationToken.ThrowIfCancellationRequested();
+                foreach (string file in fileEntries)
+                {
+                    if (!_dicFiles.ContainsKey(file) && !_errorFiles.Contains(file))
+                        if (fileDateInfo.GetFileDate(file, out dateTime))
+                            _dicFiles.Add(file, dateTime);
+                        else
+                            _errorFiles.Add(file);
+                    //Debug.Print($"{Path.GetFileName(file)} - {_dicFiles[file].ToShortDateString()}");
+
+                    cancellationToken.ThrowIfCancellationRequested();
+                }
             }
-            
+            Debug.Print($"Found {_dicFiles.Count()} files");
+            if (_errorFiles.Count() > 0)
+            {
+                Debug.Print($"ERRORS: Couldn't get dates from {_errorFiles.Count()} files:");
+                foreach (string file in _errorFiles)
+                {
+                    Debug.Print($"\t{Path.GetFileName(file)}");
+                }
+            }
+
+
+
+
         }
 
         Dictionary<string, CopyFilesHandler> _mapping = new Dictionary<string, CopyFilesHandler>();
@@ -204,7 +257,7 @@ namespace PicPick.Configuration
 
                 //try
                 //{
-                    
+
                 //    if (ShellFileOperation.CopyItems(copyFilesInfo.FileList, fullPath))
                 //        copyFilesInfo.SetFinished();
                 //    else 
@@ -250,13 +303,13 @@ namespace PicPick.Configuration
         public int FileCount { get => _dicFiles.Count(); }
 
         [XmlIgnore]
-        public Dictionary<string, CopyFilesHandler> Mapping { get => _mapping;  }
+        public Dictionary<string, CopyFilesHandler> Mapping { get => _mapping; }
 
         public override string ToString() { return Name; }
     }
 
 
-    
+
 
 
     public partial class PicPickConfigTaskDestination
