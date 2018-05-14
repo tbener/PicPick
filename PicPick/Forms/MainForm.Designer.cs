@@ -54,6 +54,9 @@
             this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.pathSource = new PicPick.UserControls.PathBrowser();
+            this.progCopy = new System.Windows.Forms.ProgressBar();
+            this.btnStopCopy = new System.Windows.Forms.Button();
+            this.lblProgress = new System.Windows.Forms.Label();
             this.menuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.topContainer)).BeginInit();
             this.topContainer.Panel1.SuspendLayout();
@@ -140,7 +143,7 @@
             this.topContainer.Panel2.Controls.Add(this.txtFilter);
             this.topContainer.Panel2.Controls.Add(this.lblTaskName);
             this.topContainer.Panel2.Controls.Add(this.pathSource);
-            this.topContainer.Size = new System.Drawing.Size(1009, 393);
+            this.topContainer.Size = new System.Drawing.Size(1009, 355);
             this.topContainer.SplitterDistance = 219;
             this.topContainer.TabIndex = 2;
             // 
@@ -176,13 +179,12 @@
             // 
             this.rtbLog.BackColor = System.Drawing.Color.Black;
             this.rtbLog.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.rtbLog.Dock = System.Windows.Forms.DockStyle.Fill;
             this.rtbLog.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.rtbLog.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
-            this.rtbLog.Location = new System.Drawing.Point(0, 0);
+            this.rtbLog.Location = new System.Drawing.Point(12, 60);
             this.rtbLog.Name = "rtbLog";
             this.rtbLog.ReadOnly = true;
-            this.rtbLog.Size = new System.Drawing.Size(1009, 148);
+            this.rtbLog.Size = new System.Drawing.Size(985, 126);
             this.rtbLog.TabIndex = 8;
             this.rtbLog.Text = "Text text text";
             this.rtbLog.WordWrap = false;
@@ -196,7 +198,7 @@
             this.pnlDestinations.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pnlDestinations.Location = new System.Drawing.Point(12, 201);
             this.pnlDestinations.Name = "pnlDestinations";
-            this.pnlDestinations.Size = new System.Drawing.Size(762, 174);
+            this.pnlDestinations.Size = new System.Drawing.Size(762, 136);
             this.pnlDestinations.TabIndex = 0;
             // 
             // btnAddDestination
@@ -268,9 +270,12 @@
             // 
             // mainContainer.Panel2
             // 
+            this.mainContainer.Panel2.Controls.Add(this.lblProgress);
+            this.mainContainer.Panel2.Controls.Add(this.btnStopCopy);
+            this.mainContainer.Panel2.Controls.Add(this.progCopy);
             this.mainContainer.Panel2.Controls.Add(this.rtbLog);
             this.mainContainer.Size = new System.Drawing.Size(1009, 545);
-            this.mainContainer.SplitterDistance = 393;
+            this.mainContainer.SplitterDistance = 355;
             this.mainContainer.TabIndex = 4;
             // 
             // toolStripButton1
@@ -329,6 +334,34 @@
             this.pathSource.Size = new System.Drawing.Size(762, 27);
             this.pathSource.TabIndex = 1;
             // 
+            // progCopy
+            // 
+            this.progCopy.Location = new System.Drawing.Point(12, 27);
+            this.progCopy.Name = "progCopy";
+            this.progCopy.Size = new System.Drawing.Size(883, 24);
+            this.progCopy.Step = 1;
+            this.progCopy.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
+            this.progCopy.TabIndex = 9;
+            this.progCopy.Value = 30;
+            // 
+            // btnStopCopy
+            // 
+            this.btnStopCopy.Location = new System.Drawing.Point(909, 27);
+            this.btnStopCopy.Name = "btnStopCopy";
+            this.btnStopCopy.Size = new System.Drawing.Size(88, 24);
+            this.btnStopCopy.TabIndex = 10;
+            this.btnStopCopy.Text = "Stop";
+            this.btnStopCopy.UseVisualStyleBackColor = true;
+            // 
+            // lblProgress
+            // 
+            this.lblProgress.AutoSize = true;
+            this.lblProgress.BackColor = System.Drawing.SystemColors.Control;
+            this.lblProgress.Location = new System.Drawing.Point(9, 11);
+            this.lblProgress.Name = "lblProgress";
+            this.lblProgress.Size = new System.Drawing.Size(0, 13);
+            this.lblProgress.TabIndex = 11;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -355,6 +388,7 @@
             this.toolStrip.PerformLayout();
             this.mainContainer.Panel1.ResumeLayout(false);
             this.mainContainer.Panel2.ResumeLayout(false);
+            this.mainContainer.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.mainContainer)).EndInit();
             this.mainContainer.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -389,5 +423,8 @@
         private System.Windows.Forms.ToolStripButton toolStripButton1;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button btnStopCopy;
+        private System.Windows.Forms.ProgressBar progCopy;
+        private System.Windows.Forms.Label lblProgress;
     }
 }

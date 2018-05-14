@@ -1,9 +1,11 @@
-﻿using PicPick.Configuration;
+﻿using PicPick.Classes;
+using PicPick.Configuration;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using TalUtils;
 
@@ -181,6 +183,104 @@ namespace PicPick.Helpers
 
         }
 
+        internal async Task DoCopyAsync(IProgress<ProgressInformation> progress, CancellationToken cancellationToken)
+        {
+            FILE_EXISTS_RESPONSE fileExistsResponse = FILE_EXISTS_RESPONSE.ASK;
+            FILE_EXISTS_RESPONSE action = fileExistsResponse;
+            bool dontAsk = false;
+            string fileName = "";
+            ProgressInformation progressInfo = new ProgressInformation();
+            progressInfo.DestinationFolder = Destination;
+            progress.Report(progressInfo);
+
+            try
+            {
+                // iterate FileList and copy to dest
+                foreach (string file in FileList)
+                {
+                    fileName = Path.GetFileName(file);
+                    string dest = Path.Combine(Destination, fileName);
+
+                    // if the file exists in destination
+                    if (File.Exists(dest))
+                    {
+                        action = fileExistsResponse;
+                        if (fileExistsResponse == FILE_EXISTS_RESPONSE.ASK)
+                        {
+                            // ask the user.
+                            // the choices are: Skip, Overwrite or Rename (keep both)
+                            // todo: action = AskWhatToDo();
+
+                            // temp. because the UI is not supported yet...
+                            action = FILE_EXISTS_RESPONSE.SKIP;
+
+                            // temp. because the UI is not supported yet...
+                            dontAsk = true;
+
+                            if (dontAsk)
+                                // make this permanent
+                                fileExistsResponse = action;
+                        }
+
+                        if (action == FILE_EXISTS_RESPONSE.COMPARE)
+                        {
+                            // todo:
+                            // check other properties. if it seems like its the same file - overwrite
+                            // if not - rename
+
+                            if (AreSameFiles(file, dest))
+                                action = FILE_EXISTS_RESPONSE.SKIP;  // we can overwrite, but for testing purposes...
+                            else
+                                action = FILE_EXISTS_RESPONSE.RENAME;
+
+                            // temp. because we don't support comparing
+                            action = FILE_EXISTS_RESPONSE.SKIP;
+                        }
+
+                        switch (action)
+                        {
+                            case FILE_EXISTS_RESPONSE.OVERWRITE:
+                                await Task.Run(() => File.Copy(file, dest, true));
+                                break;
+                            case FILE_EXISTS_RESPONSE.SKIP:
+                                break;
+                            case FILE_EXISTS_RESPONSE.RENAME:
+                                // todo: get a new file name
+
+                                //temp
+                                dest = Path.Combine(TalUtils.PathHelper.GetFullPath(Destination, "Existing Files", true), Path.GetFileName(file));
+
+                                await Task.Run(() => File.Copy(file, dest, true));
+                                break;
+                            default:
+                                break;
+                        }
+                        
+                        ReportFileProcess(fileName, action, dest);
+                    }
+                    else
+                    {
+                        await Task.Run(() => File.Copy(file, dest));
+                        ReportFileProcess(fileName, $"Copied to {dest}", log4net.Core.Level.Info);
+                    }
+
+                    // report progress
+                    progressInfo.FileCopied = fileName;
+                    progressInfo.Advance();
+                    progress.Report(progressInfo);
+
+                    // check cancellation token
+                    cancellationToken.ThrowIfCancellationRequested();
+                }
+            }
+            catch (Exception ex)
+            {
+                ReportFileProcess(fileName, $"ERROR: {ex.Message}", log4net.Core.Level.Error);
+                if (!ErrorHandler.Handle(ex, "An error occurred. Do you want to continue to the next files?"))
+                    return;
+            }
+        }
+
         private bool AreSameFiles(string f1, string f2)
         {
             return false;
@@ -235,6 +335,8 @@ namespace PicPick.Helpers
         {
             return _statusStrings[Status];
         }
+
+        
     }
     
 }

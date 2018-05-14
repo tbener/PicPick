@@ -14,6 +14,7 @@ using System.Drawing;
 using System.Text.RegularExpressions;
 using System.Drawing.Imaging;
 using System.Windows.Media.Imaging;
+using PicPick.Classes;
 
 namespace PicPick.Configuration
 {
@@ -87,7 +88,29 @@ namespace PicPick.Configuration
         Dictionary<string, DateTime> _dicFiles = new Dictionary<string, DateTime>();
         List<string> _errorFiles = new List<string>();
         Dictionary<string, bool> _dicFilesResult = new Dictionary<string, bool>();
-        HashSet<string> _fileList = new HashSet<string>();
+
+        public async Task<int> GetFileCount(CancellationToken cancellationToken)
+        {
+            HashSet<string> fileList = new HashSet<string>();
+
+            List<string> lst = new List<string>();
+            string[] filters = Source.Filter.Split(new char[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries);
+
+            foreach (string fltr in filters)
+            {
+                string filter = fltr.Trim();
+                string[] fileEntries = new string[0];
+                for (int i = 0; i < 100; i++)
+                {
+                    fileEntries = await Task.Run(() => Directory.GetFiles(Source.Path, filter));
+                }
+                cancellationToken.ThrowIfCancellationRequested();
+                lst.AddRange(fileEntries);
+            }
+
+            fileList = new HashSet<string>(lst);
+            return fileList.Count();
+        }
 
         /*
          * Lists the files and their dates
@@ -127,32 +150,11 @@ namespace PicPick.Configuration
             }
         }
 
-        public async Task<int> GetFileCount(CancellationToken cancellationToken)
+        /*
+         * Lists the files and their dates
+         */
+        private async Task ReadFilesAsync(CancellationToken cancellationToken)
         {
-            _fileList.Clear();
-            List<string> lst = new List<string>();
-            string[] filters = Source.Filter.Split(new char[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries);
-
-            foreach (string fltr in filters)
-            {
-                string filter = fltr.Trim();
-                string[] fileEntries = new string[0];
-                for (int i = 0; i < 100; i++)
-                {
-                    fileEntries = await Task.Run(() => Directory.GetFiles(Source.Path, filter));
-                }
-                cancellationToken.ThrowIfCancellationRequested();
-                lst.AddRange(fileEntries);
-            }
-
-            _fileList = new HashSet<string>(lst);
-            return _fileList.Count();
-        }
-
-        public async Task ReadFilesAsync(CancellationToken cancellationToken)
-        {
-            //Task
-            //await ReadFiles();
 
             DateTime dateTime = DateTime.MinValue;
 
@@ -174,9 +176,6 @@ namespace PicPick.Configuration
                             _dicFiles.Add(file, dateTime);
                         else
                             _errorFiles.Add(file);
-                    //Debug.Print($"{Path.GetFileName(file)} - {_dicFiles[file].ToShortDateString()}");
-
-                    cancellationToken.ThrowIfCancellationRequested();
                 }
             }
             Debug.Print($"Found {_dicFiles.Count()} files");
@@ -189,18 +188,13 @@ namespace PicPick.Configuration
                 }
             }
 
-
-
-
         }
 
         Dictionary<string, CopyFilesHandler> _mapping = new Dictionary<string, CopyFilesHandler>();
 
-        public bool Init(bool readFiles = false)
+        public async Task<bool> InitAsync(CancellationToken cancellationToken)
         {
-            _mapping.Clear();
-            if (readFiles)
-                ReadFiles();
+            await ReadFilesAsync(cancellationToken);
 
             foreach (PicPickConfigTaskDestination destination in Destination)
             {
@@ -228,6 +222,7 @@ namespace PicPick.Configuration
                     _mapping[pathAbsolute].AddRange(_dicFiles.Keys.ToList());
                     //_mapping.Add("", new CopyFilesInfo("", _dicFiles.Keys.ToList()));
                 }
+                cancellationToken.ThrowIfCancellationRequested();
             }
 
             Destination.Last().Move = true;
@@ -237,9 +232,21 @@ namespace PicPick.Configuration
             return true;
         }
 
-        public void Execute()
+        
+        public async Task ExecuteAsync(IProgress<ProgressInformation> progress, CancellationToken cancellationToken)
         {
-            Init(true);
+            // Initialize. Fills the Mapping dictionary
+            await InitAsync(cancellationToken);
+            cancellationToken.ThrowIfCancellationRequested();
+
+            ProgressInformation.Total = 0;
+            //ProgressInformation.CountDone = 0;
+            // todo: linq
+            foreach (var kv in _mapping)
+            {
+                ProgressInformation.Total += kv.Value.FileList.Count();
+            }
+
             _dicFilesResult.Clear();
 
             foreach (var kv in _mapping)
@@ -253,26 +260,8 @@ namespace PicPick.Configuration
                 OnCopyStatusChanged?.Invoke(this, e);
 
                 Debug.Print("Copying {0} files to {1}", copyFilesHandler.FileList.Count(), fullPath);
-                copyFilesHandler.DoCopy();
-
-                //try
-                //{
-
-                //    if (ShellFileOperation.CopyItems(copyFilesInfo.FileList, fullPath))
-                //        copyFilesInfo.SetFinished();
-                //    else 
-                //        copyFilesInfo.SetCancelled();
-                //}
-                //catch (Exception ex)
-                //{
-                //    copyFilesInfo.SetError(ex);
-                //    throw;
-                //}
-
-                //OnCopyStatusChanged?.Invoke(this, e);
-
-                //if (copyFilesInfo.Status == COPY_STATUS.CANCELLED)
-                //    break;
+                await copyFilesHandler.DoCopyAsync(progress, cancellationToken);
+                cancellationToken.ThrowIfCancellationRequested();
             }
 
             try

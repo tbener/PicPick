@@ -1,5 +1,6 @@
 ﻿using log4net.Appender;
 using log4net.Core;
+using PicPick.Classes;
 using PicPick.Configuration;
 using PicPick.Helpers;
 using PicPick.UserControls;
@@ -81,20 +82,7 @@ namespace PicPick.Forms
             if (isDirty) _currentTask?.SetDirty();
         }
 
-        private async Task<int> CountFilesAsync()
-        {
-            try
-            {
-                await _currentTask.ReadFilesAsync(cts.Token);
-                return _currentTask.FileCount;
-            }
-            catch (OperationCanceledException)
-            {
-                return -1;
-            }
-        }
-
-        
+                
         async Task ReadSourceAsync()
         {
             try
@@ -110,7 +98,7 @@ namespace PicPick.Forms
                 cts = new CancellationTokenSource();
                 int count = await _currentTask.GetFileCount(cts.Token);
                 lblFileCount.Text = $"{count} files found";
-                btnRun.Enabled = _currentTask.FileCount > 0;
+                btnRun.Enabled = count > 0;
             }
             catch (OperationCanceledException)
             {
@@ -281,13 +269,19 @@ namespace PicPick.Forms
 
         private async Task StartTask(PicPickConfigTask task)
         {
+            Progress<ProgressInformation> progress = new Progress<ProgressInformation>();
+            progress.ProgressChanged += Progress_ProgressChanged;
             //_taskForm.Start(task);
             rtbLog.Clear();
             try
             {
                 LogHandler.Log($"Starting Task: {task.Name}");
-                task.Execute();
+                await task.ExecuteAsync(progress, cts.Token);
                 LogHandler.Log("Finished");
+            }
+            catch (OperationCanceledException)
+            {
+                LogHandler.Log("Canceled by user.");
             }
             catch (Exception ex)
             {
@@ -295,6 +289,20 @@ namespace PicPick.Forms
                 LogHandler.Log(ex.Message, Level.Error);
             }
             await ReadSourceAsync();
+        }
+
+        private void ResetProgress()
+        {
+            lblProgress.Text = "";
+            progCopy.Maximum = ProgressInformation.Total;
+            progCopy.Value = 0;
+            progCopy.Text = "";
+        }
+
+        private void Progress_ProgressChanged(object sender, ProgressInformation info)
+        {
+            lblProgress.Text = $"Copying to {info.DestinationFolder}";
+            progCopy.Text = $"{info.CountDone} of {progCopy.Maximum}";
         }
 
         private void MnuOpen_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
@@ -343,10 +351,6 @@ namespace PicPick.Forms
                 _taskForm.Dispose();
         }
 
-        private void button1_Click(object sender, EventArgs e)
-        {
-            _currentTask.ReadFiles();
-        }
 
         private void AppendLog(string text, Color color)
         {
