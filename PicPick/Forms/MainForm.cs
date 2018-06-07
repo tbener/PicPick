@@ -23,7 +23,6 @@ namespace PicPick.Forms
         PicPickConfigTask _currentTask;
         bool _isDirty;
         bool _isLoading;
-        PreviewForm _taskForm;
         CancellationTokenSource cts = new CancellationTokenSource();
 
         Dictionary<Level, Color> logColors = new Dictionary<Level, Color>()
@@ -42,9 +41,9 @@ namespace PicPick.Forms
             txtFilter.TextChanged += async (s, e) => await SetDirty(s);
             lstTasks.ItemCheck += async (s, e) => await SetDirty(s);
 
-            _taskForm = new PreviewForm();
-
             ((log4net.Repository.Hierarchy.Hierarchy)log4net.LogManager.GetRepository()).Root.AddAppender(this);
+
+            ResetProgress();
         }
 
 
@@ -346,9 +345,7 @@ namespace PicPick.Forms
                         e.Cancel = true;
                 }
             }
-
-            if (!e.Cancel)
-                _taskForm.Dispose();
+            
         }
 
 

@@ -68,9 +68,9 @@ namespace PicPick
                 Application.Run(new MainForm());
             else
             {
-                ProjectRunner projectRunner = new ProjectRunner(opts.Project);
-                if (projectRunner.Init())
-                    projectRunner.Run();
+                //ProjectRunner projectRunner = new ProjectRunner(opts.Project);
+                //if (projectRunner.Init())
+                //    projectRunner.Run();
             }
         }
     }

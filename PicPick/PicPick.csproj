@@ -70,30 +70,17 @@
     <Compile Include="Forms\MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\PreviewForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\PreviewForm.Designer.cs">
-      <DependentUpon>PreviewForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="Forms\ProgressForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\ProgressForm.Designer.cs">
       <DependentUpon>ProgressForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\TestForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\TestForm.Designer.cs">
-      <DependentUpon>TestForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="Helpers\BitmapImageCheck.cs" />
     <Compile Include="Helpers\CopyFilesHandler.cs" />
     <Compile Include="Helpers\FileInfo.cs" />
     <Compile Include="Helpers\HistoryComboHelper.cs" />
     <Compile Include="Helpers\LogHandler.cs" />
-    <Compile Include="Helpers\ProjectRunner.cs" />
     <Compile Include="Helpers\ShellFileOperations.cs" />
     <Compile Include="Helpers\Utils.cs" />
     <Compile Include="Program.cs" />
@@ -116,14 +103,8 @@
     <EmbeddedResource Include="Forms\MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\PreviewForm.resx">
-      <DependentUpon>PreviewForm.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Forms\ProgressForm.resx">
       <DependentUpon>ProgressForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\TestForm.resx">
-      <DependentUpon>TestForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

@@ -77,11 +77,8 @@ namespace PicPick.Configuration
         [XmlIgnore]
         public bool Initialized { get; private set; }
 
-        private bool isDirty;
-
         public void SetDirty()
         {
-            isDirty = true;
             Initialized = false;
         }
 
@@ -192,7 +189,15 @@ namespace PicPick.Configuration
 
         Dictionary<string, CopyFilesHandler> _mapping = new Dictionary<string, CopyFilesHandler>();
 
-        public async Task<bool> InitAsync(CancellationToken cancellationToken)
+        /// <summary>
+        /// Create the Mapping structure.
+        /// the Mapping is a list of CopyFilesHandler objects.
+        /// every CopyFilesHandler object holds a list of files that should be copied to a single folder.
+        /// This destination folder also used as the Mapping key.
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        public async Task<bool> MapFilesAsync(CancellationToken cancellationToken)
         {
             await ReadFilesAsync(cancellationToken);
 
@@ -208,7 +213,7 @@ namespace PicPick.Configuration
                         // add to mapping dictionary
                         if (!_mapping.ContainsKey(fullPath))
                         {
-                            Debug.Print($"New template path: {relPath} (in {fullPath})");
+                            // new destination path
                             _mapping.Add(fullPath, new CopyFilesHandler(fullPath));
                         }
                         _mapping[fullPath].AddFile(kv.Key);
@@ -236,7 +241,7 @@ namespace PicPick.Configuration
         public async Task ExecuteAsync(IProgress<ProgressInformation> progress, CancellationToken cancellationToken)
         {
             // Initialize. Fills the Mapping dictionary
-            await InitAsync(cancellationToken);
+            await MapFilesAsync(cancellationToken);
             cancellationToken.ThrowIfCancellationRequested();
 
             ProgressInformation.Total = 0;
@@ -267,9 +272,9 @@ namespace PicPick.Configuration
             try
             {
                 Debug.Print($"Moving all files to backup ({PathHelper.AppPath("backup")})");
-                string backupPath = PathHelper.GetFullPath(PathHelper.AppPath("backup"), false);
-                ShellFileOperation.DeleteCompletelySilent(backupPath);
-                ShellFileOperation.MoveItems(_dicFilesResult.Where(f => f.Value).Select(f => f.Key).ToList(), PathHelper.GetFullPath(backupPath, true));
+                //string backupPath = PathHelper.GetFullPath(PathHelper.AppPath("backup"), false);
+                //ShellFileOperation.DeleteCompletelySilent(backupPath);
+                //ShellFileOperation.MoveItems(_dicFilesResult.Where(f => f.Value).Select(f => f.Key).ToList(), PathHelper.GetFullPath(backupPath, true));
 
             }
             catch (Exception ex)
