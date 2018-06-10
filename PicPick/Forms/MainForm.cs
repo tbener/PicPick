@@ -44,6 +44,9 @@ namespace PicPick.Forms
             ((log4net.Repository.Hierarchy.Hierarchy)log4net.LogManager.GetRepository()).Root.AddAppender(this);
 
             ResetProgress();
+
+            
+
         }
 
 
@@ -54,6 +57,14 @@ namespace PicPick.Forms
 
             LoadFile();
             await SetDirty(sender, e, false);
+
+            string ss = "hello world";
+            using (Graphics gr = progCopy.CreateGraphics())
+            {
+                gr.DrawString(ss, Font, new SolidBrush(ForeColor), new PointF(0, 0));
+                //new PointF(Width / 2 - (gr.MeasureString(ss, Font).Width / 2.0F),
+                //Height / 2 - (gr.MeasureString(ss, Font).Height / 2.0F)));
+            }
         }
 
         public override async void Refresh()
@@ -61,6 +72,7 @@ namespace PicPick.Forms
             base.Refresh();
 
             await ReadSourceAsync();
+            
         }
 
 
@@ -268,24 +280,31 @@ namespace PicPick.Forms
 
         private async Task StartTask(PicPickConfigTask task)
         {
+            ResetProgress();
             Progress<ProgressInformation> progress = new Progress<ProgressInformation>();
             progress.ProgressChanged += Progress_ProgressChanged;
-            //_taskForm.Start(task);
             rtbLog.Clear();
             try
             {
+                SetProgress("Initializing...", "", 0);
+                await task.MapFilesAsync(cts.Token);
+                progCopy.Maximum = task.CountTotal;
+
                 LogHandler.Log($"Starting Task: {task.Name}");
                 await task.ExecuteAsync(progress, cts.Token);
                 LogHandler.Log("Finished");
+                SetProgress("Finished", "", 0);
             }
             catch (OperationCanceledException)
             {
-                LogHandler.Log("Canceled by user.");
+                LogHandler.Log("Canceled by user");
+                SetProgress("Canceled by user", "", 0);
             }
             catch (Exception ex)
             {
                 LogHandler.Log("Finished with errors:", Level.Error);
                 LogHandler.Log(ex.Message, Level.Error);
+                SetProgress("Finished with errors", "", 0);
             }
             await ReadSourceAsync();
         }
@@ -293,15 +312,21 @@ namespace PicPick.Forms
         private void ResetProgress()
         {
             lblProgress.Text = "";
-            progCopy.Maximum = ProgressInformation.Total;
+            progCopy.Maximum = 0;
             progCopy.Value = 0;
             progCopy.Text = "";
         }
 
+        private void SetProgress(string progressHeader, string progressText, int progressValue)
+        {
+            lblProgress.Text = progressHeader;
+            progCopy.Text = progressText;
+            progCopy.Value = progressValue;
+        }
+
         private void Progress_ProgressChanged(object sender, ProgressInformation info)
         {
-            lblProgress.Text = $"Copying to {info.DestinationFolder}";
-            progCopy.Text = $"{info.CountDone} of {progCopy.Maximum}";
+            SetProgress($"Copying to {info.DestinationFolder}", $"{info.CountDone} of {progCopy.Maximum}", info.CountDone);
         }
 
         private void MnuOpen_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)

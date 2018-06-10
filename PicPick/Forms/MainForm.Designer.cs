@@ -35,28 +35,28 @@
             this.mnuOpen = new System.Windows.Forms.ToolStripMenuItem();
             this.noProjectsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuSave = new System.Windows.Forms.ToolStripMenuItem();
+            this.taskToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuRefresh = new System.Windows.Forms.ToolStripMenuItem();
             this.topContainer = new System.Windows.Forms.SplitContainer();
             this.lstTasks = new System.Windows.Forms.CheckedListBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.button2 = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
             this.lblFilter = new System.Windows.Forms.Label();
-            this.rtbLog = new System.Windows.Forms.RichTextBox();
             this.pnlDestinations = new System.Windows.Forms.Panel();
             this.btnAddDestination = new System.Windows.Forms.Button();
             this.lblFileCount = new System.Windows.Forms.Label();
             this.btnRun = new System.Windows.Forms.Button();
             this.txtFilter = new System.Windows.Forms.TextBox();
             this.lblTaskName = new System.Windows.Forms.Label();
-            this.toolStrip = new System.Windows.Forms.ToolStrip();
-            this.mainContainer = new System.Windows.Forms.SplitContainer();
-            this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
-            this.taskToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnuRefresh = new System.Windows.Forms.ToolStripMenuItem();
-            this.button1 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
             this.pathSource = new PicPick.UserControls.PathBrowser();
-            this.progCopy = new System.Windows.Forms.ProgressBar();
-            this.btnStopCopy = new System.Windows.Forms.Button();
+            this.rtbLog = new System.Windows.Forms.RichTextBox();
+            this.toolStrip = new System.Windows.Forms.ToolStrip();
+            this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
+            this.mainContainer = new System.Windows.Forms.SplitContainer();
             this.lblProgress = new System.Windows.Forms.Label();
+            this.btnStopCopy = new System.Windows.Forms.Button();
+            this.progCopy = new System.Windows.Forms.ProgressBar();
             this.menuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.topContainer)).BeginInit();
             this.topContainer.Panel1.SuspendLayout();
@@ -120,6 +120,22 @@
             this.mnuSave.Text = "&Save";
             this.mnuSave.Click += new System.EventHandler(this.mnuSave_Click);
             // 
+            // taskToolStripMenuItem
+            // 
+            this.taskToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.mnuRefresh});
+            this.taskToolStripMenuItem.Name = "taskToolStripMenuItem";
+            this.taskToolStripMenuItem.Size = new System.Drawing.Size(63, 20);
+            this.taskToolStripMenuItem.Text = "&Window";
+            // 
+            // mnuRefresh
+            // 
+            this.mnuRefresh.Name = "mnuRefresh";
+            this.mnuRefresh.ShortcutKeys = System.Windows.Forms.Keys.F5;
+            this.mnuRefresh.Size = new System.Drawing.Size(132, 22);
+            this.mnuRefresh.Text = "&Refresh";
+            this.mnuRefresh.Click += new System.EventHandler(this.mnuRefresh_Click);
+            // 
             // topContainer
             // 
             this.topContainer.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -166,6 +182,26 @@
             this.label1.TabIndex = 1;
             this.label1.Text = "label1";
             // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(592, 31);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(103, 31);
+            this.button2.TabIndex = 11;
+            this.button2.Text = "Cancel";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(470, 31);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(103, 31);
+            this.button1.TabIndex = 10;
+            this.button1.Text = "Read";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click_1);
+            // 
             // lblFilter
             // 
             this.lblFilter.AutoSize = true;
@@ -174,20 +210,6 @@
             this.lblFilter.Size = new System.Drawing.Size(32, 13);
             this.lblFilter.TabIndex = 9;
             this.lblFilter.Text = "Filter:";
-            // 
-            // rtbLog
-            // 
-            this.rtbLog.BackColor = System.Drawing.Color.Black;
-            this.rtbLog.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.rtbLog.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.rtbLog.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
-            this.rtbLog.Location = new System.Drawing.Point(12, 60);
-            this.rtbLog.Name = "rtbLog";
-            this.rtbLog.ReadOnly = true;
-            this.rtbLog.Size = new System.Drawing.Size(985, 126);
-            this.rtbLog.TabIndex = 8;
-            this.rtbLog.Text = "Text text text";
-            this.rtbLog.WordWrap = false;
             // 
             // pnlDestinations
             // 
@@ -247,6 +269,31 @@
             this.lblTaskName.TabIndex = 2;
             this.lblTaskName.Text = "Task";
             // 
+            // pathSource
+            // 
+            this.pathSource.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.pathSource.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.pathSource.Location = new System.Drawing.Point(12, 89);
+            this.pathSource.Margin = new System.Windows.Forms.Padding(0);
+            this.pathSource.Name = "pathSource";
+            this.pathSource.Size = new System.Drawing.Size(762, 27);
+            this.pathSource.TabIndex = 1;
+            // 
+            // rtbLog
+            // 
+            this.rtbLog.BackColor = System.Drawing.Color.Black;
+            this.rtbLog.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.rtbLog.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rtbLog.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
+            this.rtbLog.Location = new System.Drawing.Point(12, 60);
+            this.rtbLog.Name = "rtbLog";
+            this.rtbLog.ReadOnly = true;
+            this.rtbLog.Size = new System.Drawing.Size(985, 126);
+            this.rtbLog.TabIndex = 8;
+            this.rtbLog.Text = "Text text text";
+            this.rtbLog.WordWrap = false;
+            // 
             // toolStrip
             // 
             this.toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -256,6 +303,15 @@
             this.toolStrip.Size = new System.Drawing.Size(1009, 25);
             this.toolStrip.TabIndex = 3;
             this.toolStrip.Text = "toolStrip1";
+            // 
+            // toolStripButton1
+            // 
+            this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton1.Image")));
+            this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButton1.Name = "toolStripButton1";
+            this.toolStripButton1.Size = new System.Drawing.Size(23, 22);
+            this.toolStripButton1.Text = "Refresh";
             // 
             // mainContainer
             // 
@@ -278,71 +334,14 @@
             this.mainContainer.SplitterDistance = 355;
             this.mainContainer.TabIndex = 4;
             // 
-            // toolStripButton1
+            // lblProgress
             // 
-            this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton1.Image")));
-            this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton1.Name = "toolStripButton1";
-            this.toolStripButton1.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButton1.Text = "Refresh";
-            // 
-            // taskToolStripMenuItem
-            // 
-            this.taskToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.mnuRefresh});
-            this.taskToolStripMenuItem.Name = "taskToolStripMenuItem";
-            this.taskToolStripMenuItem.Size = new System.Drawing.Size(63, 20);
-            this.taskToolStripMenuItem.Text = "&Window";
-            // 
-            // mnuRefresh
-            // 
-            this.mnuRefresh.Name = "mnuRefresh";
-            this.mnuRefresh.ShortcutKeys = System.Windows.Forms.Keys.F5;
-            this.mnuRefresh.Size = new System.Drawing.Size(132, 22);
-            this.mnuRefresh.Text = "&Refresh";
-            this.mnuRefresh.Click += new System.EventHandler(this.mnuRefresh_Click);
-            // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(470, 31);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(103, 31);
-            this.button1.TabIndex = 10;
-            this.button1.Text = "Read";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click_1);
-            // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(592, 31);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(103, 31);
-            this.button2.TabIndex = 11;
-            this.button2.Text = "Cancel";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
-            // 
-            // pathSource
-            // 
-            this.pathSource.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.pathSource.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.pathSource.Location = new System.Drawing.Point(12, 89);
-            this.pathSource.Margin = new System.Windows.Forms.Padding(0);
-            this.pathSource.Name = "pathSource";
-            this.pathSource.Size = new System.Drawing.Size(762, 27);
-            this.pathSource.TabIndex = 1;
-            // 
-            // progCopy
-            // 
-            this.progCopy.Location = new System.Drawing.Point(12, 27);
-            this.progCopy.Name = "progCopy";
-            this.progCopy.Size = new System.Drawing.Size(883, 24);
-            this.progCopy.Step = 1;
-            this.progCopy.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
-            this.progCopy.TabIndex = 9;
-            this.progCopy.Value = 30;
+            this.lblProgress.AutoSize = true;
+            this.lblProgress.BackColor = System.Drawing.SystemColors.Control;
+            this.lblProgress.Location = new System.Drawing.Point(9, 11);
+            this.lblProgress.Name = "lblProgress";
+            this.lblProgress.Size = new System.Drawing.Size(0, 13);
+            this.lblProgress.TabIndex = 11;
             // 
             // btnStopCopy
             // 
@@ -353,14 +352,15 @@
             this.btnStopCopy.Text = "Stop";
             this.btnStopCopy.UseVisualStyleBackColor = true;
             // 
-            // lblProgress
+            // progCopy
             // 
-            this.lblProgress.AutoSize = true;
-            this.lblProgress.BackColor = System.Drawing.SystemColors.Control;
-            this.lblProgress.Location = new System.Drawing.Point(9, 11);
-            this.lblProgress.Name = "lblProgress";
-            this.lblProgress.Size = new System.Drawing.Size(0, 13);
-            this.lblProgress.TabIndex = 11;
+            this.progCopy.Location = new System.Drawing.Point(12, 27);
+            this.progCopy.Name = "progCopy";
+            this.progCopy.Size = new System.Drawing.Size(883, 24);
+            this.progCopy.Step = 1;
+            this.progCopy.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
+            this.progCopy.TabIndex = 9;
+            this.progCopy.Value = 30;
             // 
             // MainForm
             // 

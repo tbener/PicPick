@@ -183,13 +183,12 @@ namespace PicPick.Helpers
 
         }
 
-        internal async Task DoCopyAsync(IProgress<ProgressInformation> progress, CancellationToken cancellationToken)
+        internal async Task DoCopyAsync(ProgressInformation progressInfo, IProgress<ProgressInformation> progress, CancellationToken cancellationToken)
         {
             FILE_EXISTS_RESPONSE fileExistsResponse = FILE_EXISTS_RESPONSE.ASK;
             FILE_EXISTS_RESPONSE action = fileExistsResponse;
             bool dontAsk = false;
             string fileName = "";
-            ProgressInformation progressInfo = new ProgressInformation();
             progressInfo.DestinationFolder = Destination;
             progress.Report(progressInfo);
 

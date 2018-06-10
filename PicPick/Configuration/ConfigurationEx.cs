@@ -232,6 +232,12 @@ namespace PicPick.Configuration
 
             Destination.Last().Move = true;
 
+            CountTotal = 0;
+            foreach (var map in _mapping.Values)
+            {
+                CountTotal += map.FileList.Count();
+            }
+
             Initialized = true;
 
             return true;
@@ -241,18 +247,15 @@ namespace PicPick.Configuration
         public async Task ExecuteAsync(IProgress<ProgressInformation> progress, CancellationToken cancellationToken)
         {
             // Initialize. Fills the Mapping dictionary
-            await MapFilesAsync(cancellationToken);
-            cancellationToken.ThrowIfCancellationRequested();
-
-            ProgressInformation.Total = 0;
-            //ProgressInformation.CountDone = 0;
-            // todo: linq
-            foreach (var kv in _mapping)
+            if (!Initialized)
             {
-                ProgressInformation.Total += kv.Value.FileList.Count();
+                await MapFilesAsync(cancellationToken);
+                cancellationToken.ThrowIfCancellationRequested();
             }
-
+            
             _dicFilesResult.Clear();
+
+            ProgressInformation progressInfo = new ProgressInformation();
 
             foreach (var kv in _mapping)
             {
@@ -265,7 +268,7 @@ namespace PicPick.Configuration
                 OnCopyStatusChanged?.Invoke(this, e);
 
                 Debug.Print("Copying {0} files to {1}", copyFilesHandler.FileList.Count(), fullPath);
-                await copyFilesHandler.DoCopyAsync(progress, cancellationToken);
+                await copyFilesHandler.DoCopyAsync(progressInfo, progress, cancellationToken);
                 cancellationToken.ThrowIfCancellationRequested();
             }
 
@@ -294,7 +297,7 @@ namespace PicPick.Configuration
         }
 
         [XmlIgnore]
-        public int FileCount { get => _dicFiles.Count(); }
+        public int CountTotal { get; private set; }
 
         [XmlIgnore]
         public Dictionary<string, CopyFilesHandler> Mapping { get => _mapping; }
