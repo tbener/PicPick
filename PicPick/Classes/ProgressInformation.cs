@@ -22,5 +22,27 @@ namespace PicPick.Classes
         {
             CountDone += 1;
         }
+
+        public bool Done { get; set; }
+
+        public void Start()
+        {
+            Done = false;
+            CountDone = 0;
+        }
+
+        private string _currentOperation = null;
+        public string CurrentOperationString
+        {
+            get {
+                string s = _currentOperation == null ? $"Copying to {DestinationFolder}" : _currentOperation;
+                _currentOperation = null;
+                return s;
+            }
+            set
+            {
+                _currentOperation = value;
+            }
+        }
     }
 }

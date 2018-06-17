@@ -199,6 +199,7 @@ namespace PicPick.Configuration
         /// <returns></returns>
         public async Task<bool> MapFilesAsync(CancellationToken cancellationToken)
         {
+            _mapping.Clear();
             await ReadFilesAsync(cancellationToken);
 
             foreach (PicPickConfigTaskDestination destination in Destination)
@@ -270,6 +271,8 @@ namespace PicPick.Configuration
                 Debug.Print("Copying {0} files to {1}", copyFilesHandler.FileList.Count(), fullPath);
                 await copyFilesHandler.DoCopyAsync(progressInfo, progress, cancellationToken);
                 cancellationToken.ThrowIfCancellationRequested();
+                progressInfo.Done = true;
+                await Task.Run(() => progress.Report(progressInfo));
             }
 
             try

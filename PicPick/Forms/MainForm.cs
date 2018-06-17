@@ -282,29 +282,30 @@ namespace PicPick.Forms
         {
             ResetProgress();
             Progress<ProgressInformation> progress = new Progress<ProgressInformation>();
+            IProgress<ProgressInformation> p = progress;
             progress.ProgressChanged += Progress_ProgressChanged;
             rtbLog.Clear();
             try
             {
-                SetProgress("Initializing...", "", 0);
+                SetProgress("Initializing...", 0);
                 await task.MapFilesAsync(cts.Token);
                 progCopy.Maximum = task.CountTotal;
 
                 LogHandler.Log($"Starting Task: {task.Name}");
                 await task.ExecuteAsync(progress, cts.Token);
                 LogHandler.Log("Finished");
-                SetProgress("Finished", "", 0);
+                SetProgress("Finished");
             }
             catch (OperationCanceledException)
             {
                 LogHandler.Log("Canceled by user");
-                SetProgress("Canceled by user", "", 0);
+                SetProgress("Canceled by user");
             }
             catch (Exception ex)
             {
                 LogHandler.Log("Finished with errors:", Level.Error);
                 LogHandler.Log(ex.Message, Level.Error);
-                SetProgress("Finished with errors", "", 0);
+                SetProgress("Finished with errors");
             }
             await ReadSourceAsync();
         }
@@ -317,16 +318,23 @@ namespace PicPick.Forms
             progCopy.Text = "";
         }
 
-        private void SetProgress(string progressHeader, string progressText, int progressValue)
+        private void SetProgress(string progressHeader, int progressValue=-1)
         {
             lblProgress.Text = progressHeader;
-            progCopy.Text = progressText;
-            progCopy.Value = progressValue;
+            if (progressValue > -1)
+                progCopy.Value = progressValue;
+        }
+
+        private void SetProgress(ProgressInformation progressInfo)
+        {
+            lblProgress.Text = progressInfo.CurrentOperationString;
+            progCopy.Value = progressInfo.CountDone;
         }
 
         private void Progress_ProgressChanged(object sender, ProgressInformation info)
         {
-            SetProgress($"Copying to {info.DestinationFolder}", $"{info.CountDone} of {progCopy.Maximum}", info.CountDone);
+            //SetProgress($"Copying to {info.DestinationFolder}", $"{info.CountDone} of {progCopy.Maximum}", info.CountDone);
+            SetProgress(info);
         }
 
         private void MnuOpen_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
