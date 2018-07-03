@@ -67,6 +67,10 @@ namespace PicPick.UserControls
                 Refresh();
             }
         }
-        
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            button2.ImageIndex = button2.ImageIndex == 0 ? 1 : 0;
+        }
     }
 }

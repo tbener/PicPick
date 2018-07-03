@@ -39,7 +39,6 @@ namespace PicPick.Forms
 
             pathSource.Changed += async (s, e) => await SetDirty(s);
             txtFilter.TextChanged += async (s, e) => await SetDirty(s);
-            lstTasks.ItemCheck += async (s, e) => await SetDirty(s);
 
             ((log4net.Repository.Hierarchy.Hierarchy)log4net.LogManager.GetRepository()).Root.AddAppender(this);
 
@@ -122,11 +121,7 @@ namespace PicPick.Forms
                 lblFileCount.Text = "---";
             }
         }
-
-        private async void button1_Click_1(object sender, EventArgs e)
-        {
-            await ReadSourceAsync();
-        }
+        
 
         private async Task SetDirty(bool isDirty)
         {
@@ -177,10 +172,6 @@ namespace PicPick.Forms
             {
                 _isLoading = true;
                 var taskList = proj.TaskRef.Select(t => t.Name).ToArray();
-                for (int i = 0; i < lstTasks.Items.Count; i++)
-                {
-                    lstTasks.SetItemChecked(i, taskList.Contains(lstTasks.Items[i].ToString()));
-                }
             }
             catch (Exception ex)
             {
@@ -235,23 +226,11 @@ namespace PicPick.Forms
             TemplatePath dstPath = new TemplatePath(dest);
             dstPath.Changed += (s, e) => SetDirty();
 
-            Panel pnl = new Panel()
-            {
-                BorderStyle = BorderStyle.FixedSingle
-            };
+            Panel pnl = new Panel();
 
-            Button btnDel = new Button()
-            {
-                Text = "X",
-                Size = new Size(25, 25),
-                Tag = dest
-            };
-            btnDel.Click += BtnDel_Click;
+            //btnDel.Click += BtnDel_Click;
 
             pnl.Controls.Add(dstPath);
-            pnl.Controls.Add(btnDel);
-
-            btnDel.Location = new Point(dstPath.Width, 0);
 
             pnl.Dock = DockStyle.Top;
             pnlDestinations.Controls.Add(pnl);

@@ -22,11 +22,25 @@ namespace PicPick.UserControls
         {
             InitializeComponent();
 
-            txtPath.AutoCompleteSource = AutoCompleteSource.FileSystemDirectories;
+            txtPath.AutoCompleteSource = AutoCompleteSource.FileSystem;
 
             ComboBox.TextChanged += ComboBox_TextChanged;
             btnOpenFolder.Enabled = PathHelper.Exists(txtPath.Text);
 
+        }
+
+        private void PathBrowser_Load(object sender, EventArgs e)
+        {
+            //btnOpenFolder.Left = this.Width - btnOpenFolder.Width;
+            //btnOpenFolder.Top = 0;
+
+            //btnBrowse.Width = btnOpenFolder.Width;
+            //btnBrowse.Left = btnOpenFolder.Left - 5 - btnBrowse.Width;
+            //btnBrowse.Top = 0;
+
+            //txtPath.Left = 0;
+            //txtPath.Width = btnBrowse.Left - 5;
+            //txtPath.Top = 0;
         }
 
         private void ComboBox_TextChanged(object sender, EventArgs e)
@@ -56,5 +70,8 @@ namespace PicPick.UserControls
             else
                 Msg.ShowE("Path doesn't exist.");
         }
+
+        
+        
     }
 }
