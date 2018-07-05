@@ -59,6 +59,7 @@
             this.btnRun = new System.Windows.Forms.Button();
             this.txtFilter = new System.Windows.Forms.TextBox();
             this.lblTaskName = new System.Windows.Forms.Label();
+            this.pathSource = new PicPick.UserControls.PathBrowser();
             this.rtbLog = new System.Windows.Forms.RichTextBox();
             this.toolStrip = new System.Windows.Forms.ToolStrip();
             this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
@@ -66,7 +67,6 @@
             this.lblProgress = new System.Windows.Forms.Label();
             this.btnStopCopy = new System.Windows.Forms.Button();
             this.progCopy = new System.Windows.Forms.ProgressBar();
-            this.pathSource = new PicPick.UserControls.PathBrowser();
             this.menuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.topContainer)).BeginInit();
             this.topContainer.Panel1.SuspendLayout();
@@ -145,7 +145,7 @@
             this.moveupToolStripMenuItem,
             this.movedownToolStripMenuItem});
             this.taskToolStripMenuItem1.Name = "taskToolStripMenuItem1";
-            this.taskToolStripMenuItem1.Size = new System.Drawing.Size(43, 20);
+            this.taskToolStripMenuItem1.Size = new System.Drawing.Size(42, 20);
             this.taskToolStripMenuItem1.Text = "&Task";
             // 
             // renameToolStripMenuItem
@@ -283,7 +283,7 @@
             this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(636, 47);
+            this.label3.Location = new System.Drawing.Point(635, 47);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(32, 13);
             this.label3.TabIndex = 13;
@@ -319,7 +319,7 @@
             this.pnlDestinations.Location = new System.Drawing.Point(14, 176);
             this.pnlDestinations.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.pnlDestinations.Name = "pnlDestinations";
-            this.pnlDestinations.Size = new System.Drawing.Size(885, 200);
+            this.pnlDestinations.Size = new System.Drawing.Size(884, 200);
             this.pnlDestinations.TabIndex = 0;
             // 
             // lblFileCount
@@ -357,7 +357,7 @@
             // 
             this.txtFilter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.txtFilter.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.txtFilter.Location = new System.Drawing.Point(639, 69);
+            this.txtFilter.Location = new System.Drawing.Point(638, 69);
             this.txtFilter.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtFilter.Name = "txtFilter";
             this.txtFilter.Size = new System.Drawing.Size(260, 21);
@@ -372,6 +372,19 @@
             this.lblTaskName.Size = new System.Drawing.Size(41, 18);
             this.lblTaskName.TabIndex = 2;
             this.lblTaskName.Text = "Task";
+            // 
+            // pathSource
+            // 
+            this.pathSource.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.pathSource.AutoSize = true;
+            this.pathSource.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.pathSource.BackColor = System.Drawing.SystemColors.Control;
+            this.pathSource.Location = new System.Drawing.Point(13, 69);
+            this.pathSource.Margin = new System.Windows.Forms.Padding(0);
+            this.pathSource.Name = "pathSource";
+            this.pathSource.Size = new System.Drawing.Size(664, 32);
+            this.pathSource.TabIndex = 1;
             // 
             // rtbLog
             // 
@@ -459,19 +472,6 @@
             this.progCopy.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             this.progCopy.TabIndex = 9;
             this.progCopy.Value = 30;
-            // 
-            // pathSource
-            // 
-            this.pathSource.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.pathSource.AutoSize = true;
-            this.pathSource.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.pathSource.BackColor = System.Drawing.SystemColors.ControlDark;
-            this.pathSource.Location = new System.Drawing.Point(13, 69);
-            this.pathSource.Margin = new System.Windows.Forms.Padding(0);
-            this.pathSource.Name = "pathSource";
-            this.pathSource.Size = new System.Drawing.Size(622, 26);
-            this.pathSource.TabIndex = 1;
             // 
             // MainForm
             // 
