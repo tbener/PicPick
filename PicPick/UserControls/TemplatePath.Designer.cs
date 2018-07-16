@@ -1,6 +1,6 @@
 ﻿namespace PicPick.UserControls
 {
-    partial class TemplatePath
+    partial class DestinationControl
     {
         /// <summary> 
         /// Required designer variable.
@@ -29,14 +29,14 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TemplatePath));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DestinationControl));
             this.txtTemplate = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.lblPreview = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
-            this.button1 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
+            this.btnRemove = new System.Windows.Forms.Button();
+            this.chkActive = new System.Windows.Forms.Button();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.pathControl = new PicPick.UserControls.PathBrowser();
             this.SuspendLayout();
@@ -89,29 +89,30 @@
             this.label3.TabIndex = 5;
             this.label3.Text = "Pattern:";
             // 
-            // button1
+            // btnRemove
             // 
-            this.button1.FlatAppearance.BorderSize = 0;
-            this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button1.Image = ((System.Drawing.Image)(resources.GetObject("button1.Image")));
-            this.button1.Location = new System.Drawing.Point(0, 20);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(36, 36);
-            this.button1.TabIndex = 6;
-            this.button1.UseVisualStyleBackColor = true;
+            this.btnRemove.FlatAppearance.BorderSize = 0;
+            this.btnRemove.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnRemove.Image = ((System.Drawing.Image)(resources.GetObject("btnRemove.Image")));
+            this.btnRemove.Location = new System.Drawing.Point(0, 20);
+            this.btnRemove.Name = "btnRemove";
+            this.btnRemove.Size = new System.Drawing.Size(36, 36);
+            this.btnRemove.TabIndex = 6;
+            this.btnRemove.UseVisualStyleBackColor = true;
+            this.btnRemove.Click += new System.EventHandler(this.btnRemove_Click);
             // 
-            // button2
+            // chkActive
             // 
-            this.button2.FlatAppearance.BorderSize = 0;
-            this.button2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button2.ImageIndex = 0;
-            this.button2.ImageList = this.imageList1;
-            this.button2.Location = new System.Drawing.Point(32, 20);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(36, 36);
-            this.button2.TabIndex = 7;
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.chkActive.FlatAppearance.BorderSize = 0;
+            this.chkActive.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.chkActive.ImageIndex = 0;
+            this.chkActive.ImageList = this.imageList1;
+            this.chkActive.Location = new System.Drawing.Point(32, 20);
+            this.chkActive.Name = "chkActive";
+            this.chkActive.Size = new System.Drawing.Size(36, 36);
+            this.chkActive.TabIndex = 7;
+            this.chkActive.UseVisualStyleBackColor = true;
+            this.chkActive.Click += new System.EventHandler(this.button2_Click);
             // 
             // imageList1
             // 
@@ -125,6 +126,7 @@
             this.pathControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pathControl.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.pathControl.BackColor = System.Drawing.SystemColors.Control;
             this.pathControl.Font = new System.Drawing.Font("Century Gothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.pathControl.Location = new System.Drawing.Point(75, 26);
             this.pathControl.Margin = new System.Windows.Forms.Padding(0);
@@ -132,12 +134,12 @@
             this.pathControl.Size = new System.Drawing.Size(429, 30);
             this.pathControl.TabIndex = 0;
             // 
-            // TemplatePath
+            // DestinationControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.button2);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.chkActive);
+            this.Controls.Add(this.btnRemove);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.lblPreview);
@@ -146,7 +148,7 @@
             this.Controls.Add(this.pathControl);
             this.Font = new System.Drawing.Font("Century Gothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.Name = "TemplatePath";
+            this.Name = "DestinationControl";
             this.Size = new System.Drawing.Size(765, 82);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -161,8 +163,8 @@
         private System.Windows.Forms.Label lblPreview;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button btnRemove;
+        private System.Windows.Forms.Button chkActive;
         private System.Windows.Forms.ImageList imageList1;
     }
 }

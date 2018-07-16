@@ -4,8 +4,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
-        xmlns:local="clr-namespace:PicPickUI"
-        mc:Ignorable="d"
+        xmlns:uc="clr-namespace:PicPickUI.UserControls.View"
+                      mc:Ignorable="d"
         Title="PicPick" Height="600" Width="800">
     <Grid>
         <Grid.ColumnDefinitions>
@@ -51,6 +51,7 @@
                 <TextBlock Text="Path:" Grid.Row="1"/>
                 <TextBlock Text="Filter:" Grid.Row="1" Grid.Column="1"/>
 
+                <uc:PathBrowserView Grid.Row="2"/>
                 <TextBox Grid.Row="2" Grid.Column="1"/>
 
                 <TextBlock Text="{Binding SourceFilesStatus}" Grid.Row="3"># files found</TextBlock>

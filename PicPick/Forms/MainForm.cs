@@ -56,14 +56,7 @@ namespace PicPick.Forms
 
             LoadFile();
             await SetDirty(sender, e, false);
-
-            string ss = "hello world";
-            using (Graphics gr = progCopy.CreateGraphics())
-            {
-                gr.DrawString(ss, Font, new SolidBrush(ForeColor), new PointF(0, 0));
-                //new PointF(Width / 2 - (gr.MeasureString(ss, Font).Width / 2.0F),
-                //Height / 2 - (gr.MeasureString(ss, Font).Height / 2.0F)));
-            }
+            
         }
 
         public override async void Refresh()
@@ -223,29 +216,27 @@ namespace PicPick.Forms
 
         private void AddDestinationControl(PicPickConfigTaskDestination dest)
         {
-            TemplatePath dstPath = new TemplatePath(dest);
-            dstPath.Changed += (s, e) => SetDirty();
+            // Create new destination control
+            DestinationControl dstCtl = new DestinationControl(dest);
+            dstCtl.Changed += (s, e) => SetDirty();
+            dstCtl.RemoveButtonClicked += RemoveDestination_Click;
+            dstCtl.Dock = DockStyle.Top;
 
-            Panel pnl = new Panel();
-
-            //btnDel.Click += BtnDel_Click;
-
-            pnl.Controls.Add(dstPath);
-
-            pnl.Dock = DockStyle.Top;
-            pnlDestinations.Controls.Add(pnl);
+            // Add it to the list
+            pnlDestinations.Controls.Add(dstCtl);
+            dstCtl.BringToFront();  // to add it last
         }
 
-        private void BtnDel_Click(object sender, EventArgs e)
+        private void RemoveDestination_Click(object sender, EventArgs e)
         {
-            // get the actual button
-            Button btn = (Button)sender;
-            // the Destination object is it's Tag
-            PicPickConfigTaskDestination dest = (PicPickConfigTaskDestination)btn.Tag;
+            // get the destination control
+            DestinationControl dstCtl = (DestinationControl)sender;
+            // get the Destination object 
+            PicPickConfigTaskDestination dest = dstCtl.Destination;
             // remove this destination from the list
             _currentTask.DestinationList.Remove(dest);
-            // remove the panel from the UI
-            btn.Parent.Dispose();
+            // remove the destination control from the UI
+            dstCtl.Dispose();
 
             SetDirty();
         }
@@ -261,13 +252,22 @@ namespace PicPick.Forms
         {
             ResetProgress();
             Progress<ProgressInformation> progress = new Progress<ProgressInformation>();
-            IProgress<ProgressInformation> p = progress;
+
+            // show progress dialog
+            ProgressForm pForm = new ProgressForm();
+            pForm.Progress = progress;
+            pForm.Show(this);
+
+            this.Enabled = false;
+            pForm.FormClosed += delegate { this.Enabled = true; };
+
             progress.ProgressChanged += Progress_ProgressChanged;
             rtbLog.Clear();
             try
             {
                 SetProgress("Initializing...", 0);
                 await task.MapFilesAsync(cts.Token);
+                pForm.Max = task.CountTotal;
                 progCopy.Maximum = task.CountTotal;
 
                 LogHandler.Log($"Starting Task: {task.Name}");
@@ -285,6 +285,12 @@ namespace PicPick.Forms
                 LogHandler.Log("Finished with errors:", Level.Error);
                 LogHandler.Log(ex.Message, Level.Error);
                 SetProgress("Finished with errors");
+            }
+            finally
+            {
+                // set pForm global, so we can show the final error\success message once we're done.
+                pForm.Close();
+                pForm = null;
             }
             await ReadSourceAsync();
         }

@@ -13,20 +13,21 @@ using PicPick.Configuration;
 
 namespace PicPick.UserControls
 {
-    public partial class TemplatePath : UserControl
+    public partial class DestinationControl : UserControl
     {
         public event EventHandler Changed;
+        public event EventHandler RemoveButtonClicked;
 
         private DateTime? _previewDate;
         private PicPickConfigTaskDestination _destination;
 
-        public TemplatePath(PicPickConfigTaskDestination destination)
+        public DestinationControl(PicPickConfigTaskDestination destination)
         {
             InitializeComponent();
 
-            _destination = destination;
-            pathControl.Text = _destination.Path;
-            txtTemplate.Text = _destination.Template;
+            Destination = destination;
+            pathControl.Text = Destination.Path;
+            txtTemplate.Text = Destination.Template;
 
             pathControl.ComboBox.TextChanged += Control_TextChanged;
             txtTemplate.TextChanged += Control_TextChanged;
@@ -36,8 +37,8 @@ namespace PicPick.UserControls
 
         private void Control_TextChanged(object sender, EventArgs e)
         {
-            _destination.Path = pathControl.Text;
-            _destination.Template = txtTemplate.Text;
+            Destination.Path = pathControl.Text;
+            Destination.Template = txtTemplate.Text;
             Refresh();
 
             Changed?.Invoke(this, new EventArgs());
@@ -49,7 +50,7 @@ namespace PicPick.UserControls
 
             try
             {
-                lblPreview.Text = _destination.GetFullPath(PreviewDate.Value);
+                lblPreview.Text = Destination.GetFullPath(PreviewDate.Value);
             }
             catch (Exception ex)
             {
@@ -68,9 +69,16 @@ namespace PicPick.UserControls
             }
         }
 
+        public PicPickConfigTaskDestination Destination { get => _destination; set => _destination = value; }
+
         private void button2_Click(object sender, EventArgs e)
         {
-            button2.ImageIndex = button2.ImageIndex == 0 ? 1 : 0;
+            chkActive.ImageIndex = chkActive.ImageIndex == 0 ? 1 : 0;
+        }
+
+        private void btnRemove_Click(object sender, EventArgs e)
+        {
+            RemoveButtonClicked?.Invoke(this, e);
         }
     }
 }
