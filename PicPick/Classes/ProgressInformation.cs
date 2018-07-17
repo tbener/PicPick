@@ -11,6 +11,8 @@ namespace PicPick.Classes
         public string FileCopied { get; set; }
         public string DestinationFolder { get; set; }
 
+        public Exception Exception { get; set; }
+
         public int CountDone { get; set; }
         //public static int Total { get; set; }
         //public int Percents()
@@ -29,6 +31,7 @@ namespace PicPick.Classes
         {
             Done = false;
             CountDone = 0;
+            Exception = null;
         }
 
         private string _currentOperation = null;

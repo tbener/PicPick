@@ -244,7 +244,7 @@ namespace PicPick.Configuration
             return true;
         }
 
-        
+
         public async Task ExecuteAsync(IProgress<ProgressInformation> progress, CancellationToken cancellationToken)
         {
             // Initialize. Fills the Mapping dictionary
@@ -253,39 +253,46 @@ namespace PicPick.Configuration
                 await MapFilesAsync(cancellationToken);
                 cancellationToken.ThrowIfCancellationRequested();
             }
-            
+
             _dicFilesResult.Clear();
 
             ProgressInformation progressInfo = new ProgressInformation();
-
-            foreach (var kv in _mapping)
-            {
-                CopyEventArgs e = new CopyEventArgs(kv.Value);
-
-                CopyFilesHandler copyFilesHandler = kv.Value;
-                copyFilesHandler.OnFileProcess += CopyFilesHandler_OnFileProcess;
-                string fullPath = PathHelper.GetFullPath(kv.Key, true);
-                copyFilesHandler.SetStart();
-                OnCopyStatusChanged?.Invoke(this, e);
-
-                Debug.Print("Copying {0} files to {1}", copyFilesHandler.FileList.Count(), fullPath);
-                await copyFilesHandler.DoCopyAsync(progressInfo, progress, cancellationToken);
-                cancellationToken.ThrowIfCancellationRequested();
-                progressInfo.Done = true;
-                await Task.Run(() => progress.Report(progressInfo));
-            }
-
+            string step = "";
             try
             {
-                Debug.Print($"Moving all files to backup ({PathHelper.AppPath("backup")})");
+                foreach (var kv in _mapping)
+                {
+                    CopyEventArgs e = new CopyEventArgs(kv.Value);
+
+                    CopyFilesHandler copyFilesHandler = kv.Value;
+                    copyFilesHandler.OnFileProcess += CopyFilesHandler_OnFileProcess;
+                    string fullPath = PathHelper.GetFullPath(kv.Key, true);
+                    copyFilesHandler.SetStart();
+                    OnCopyStatusChanged?.Invoke(this, e);
+
+                    step = $"copying to {fullPath}";
+                    Debug.Print("Copying {0} files to {1}", copyFilesHandler.FileList.Count(), fullPath);
+                    await copyFilesHandler.DoCopyAsync(progressInfo, progress, cancellationToken);
+                    cancellationToken.ThrowIfCancellationRequested();
+                    await Task.Run(() => progress.Report(progressInfo));
+                }
+
+                step = "backing up the files after the main operation has finished";
+                //Debug.Print($"Moving all files to backup ({PathHelper.AppPath("backup")})");
                 //string backupPath = PathHelper.GetFullPath(PathHelper.AppPath("backup"), false);
                 //ShellFileOperation.DeleteCompletelySilent(backupPath);
                 //ShellFileOperation.MoveItems(_dicFilesResult.Where(f => f.Value).Select(f => f.Key).ToList(), PathHelper.GetFullPath(backupPath, true));
 
+                progressInfo.Done = true;
+                await Task.Run(() => progress.Report(progressInfo));
+
             }
             catch (Exception ex)
             {
-                ErrorHandler.Handle(ex, "Error while backing up the files after the main operation has finished.");
+                progressInfo.Done = true;
+                progressInfo.Exception = ex;
+                await Task.Run(() => progress.Report(progressInfo));
+                ErrorHandler.Handle(ex, $"Error while {step}.");
             }
         }
 
