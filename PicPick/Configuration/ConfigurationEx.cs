@@ -257,6 +257,7 @@ namespace PicPick.Configuration
             _dicFilesResult.Clear();
 
             ProgressInformation progressInfo = new ProgressInformation();
+            progressInfo.Header = Name;
             string step = "";
             try
             {
@@ -270,7 +271,7 @@ namespace PicPick.Configuration
                     copyFilesHandler.SetStart();
                     OnCopyStatusChanged?.Invoke(this, e);
 
-                    step = $"copying to {fullPath}";
+                    progressInfo.MainOperationString = $"Copying to {fullPath}";
                     Debug.Print("Copying {0} files to {1}", copyFilesHandler.FileList.Count(), fullPath);
                     await copyFilesHandler.DoCopyAsync(progressInfo, progress, cancellationToken);
                     cancellationToken.ThrowIfCancellationRequested();
@@ -289,10 +290,13 @@ namespace PicPick.Configuration
             }
             catch (Exception ex)
             {
-                progressInfo.Done = true;
                 progressInfo.Exception = ex;
-                await Task.Run(() => progress.Report(progressInfo));
                 ErrorHandler.Handle(ex, $"Error while {step}.");
+            }
+            finally
+            {
+                progressInfo.Done = true;
+                await Task.Run(() => progress.Report(progressInfo));
             }
         }
 

@@ -47,5 +47,8 @@ namespace PicPick.Classes
                 _currentOperation = value;
             }
         }
+
+        public string MainOperationString { get; set; }
+        public string Header { get; set; }
     }
 }

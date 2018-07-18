@@ -16,7 +16,7 @@ namespace PicPick.Forms
     {
         Progress<ProgressInformation> _progress = null;
         CancellationTokenSource _cts = null;
-        bool _allowCloseForm = false;
+        bool _canClose = false;
 
         public ProgressForm()
         {
@@ -28,7 +28,7 @@ namespace PicPick.Forms
         {
             lblStatus.Text = "Initializing...";
             progressBar.Value = 0;
-            _allowCloseForm = false;
+            _canClose = false;
         }
 
 
@@ -38,14 +38,33 @@ namespace PicPick.Forms
             progressBar.Value = 0;
             btnCancel.Text = "Close";
             btnCancel.Enabled = true;
-            _allowCloseForm = true;
+            _canClose = true;
         }
 
        
         private void Progress_ProgressChanged(object sender, ProgressInformation info)
         {
-            lblStatus.Text = info.CurrentOperationString;
             progressBar.Value = info.CountDone;
+            if (info.Done)
+            {
+                btnCancel.Text = "Close";
+                btnCancel.Enabled = true;
+                _canClose = true;
+                if (info.Exception != null)
+                {
+                    lblMain.Text = "Finished with errors";
+                    lblStatus.Text = info.Exception.Message;
+                }
+                else
+                {
+                    lblMain.Text = "Done";
+                    lblStatus.Text = "";
+                }
+            }
+            else
+            {
+                lblStatus.Text = info.CurrentOperationString;
+            }
         }
 
         public override string Text { get => lblStatus.Text; set => lblStatus.Text = value; }
@@ -62,7 +81,7 @@ namespace PicPick.Forms
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            if (_allowCloseForm)
+            if (_canClose)
             {
                 Close();
             }
