@@ -245,7 +245,13 @@ namespace PicPick.Configuration
         }
 
 
-        public async Task ExecuteAsync(IProgress<ProgressInformation> progress, CancellationToken cancellationToken)
+        /// <summary>
+        /// Executes a whole task. Copying the files to ALL destinations
+        /// </summary>
+        /// <param name="progressInfo"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        public async Task ExecuteAsync(ProgressInformation progressInfo, CancellationToken cancellationToken)
         {
             // Initialize. Fills the Mapping dictionary
             if (!Initialized)
@@ -256,11 +262,11 @@ namespace PicPick.Configuration
 
             _dicFilesResult.Clear();
 
-            ProgressInformation progressInfo = new ProgressInformation();
-            progressInfo.Header = Name;
-            string step = "";
+            progressInfo.Activity = Name;
+            progressInfo.Total = CountTotal;
             try
             {
+                // loop on destinations
                 foreach (var kv in _mapping)
                 {
                     CopyEventArgs e = new CopyEventArgs(kv.Value);
@@ -271,32 +277,32 @@ namespace PicPick.Configuration
                     copyFilesHandler.SetStart();
                     OnCopyStatusChanged?.Invoke(this, e);
 
-                    progressInfo.MainOperationString = $"Copying to {fullPath}";
+                    progressInfo.MainOperation = $"Copying to {fullPath}";
+                    progressInfo.CurrentOperationTotal = copyFilesHandler.FileList.Count();
+                    progressInfo.Report();
+
                     Debug.Print("Copying {0} files to {1}", copyFilesHandler.FileList.Count(), fullPath);
-                    await copyFilesHandler.DoCopyAsync(progressInfo, progress, cancellationToken);
+                    await copyFilesHandler.DoCopyAsync(progressInfo, cancellationToken);
                     cancellationToken.ThrowIfCancellationRequested();
-                    await Task.Run(() => progress.Report(progressInfo));
                 }
 
-                step = "backing up the files after the main operation has finished";
+                progressInfo.MainOperation = "Backing up the files after the main operation has finished";
                 //Debug.Print($"Moving all files to backup ({PathHelper.AppPath("backup")})");
                 //string backupPath = PathHelper.GetFullPath(PathHelper.AppPath("backup"), false);
                 //ShellFileOperation.DeleteCompletelySilent(backupPath);
                 //ShellFileOperation.MoveItems(_dicFilesResult.Where(f => f.Value).Select(f => f.Key).ToList(), PathHelper.GetFullPath(backupPath, true));
-
-                progressInfo.Done = true;
-                await Task.Run(() => progress.Report(progressInfo));
-
+                
             }
             catch (Exception ex)
             {
                 progressInfo.Exception = ex;
-                ErrorHandler.Handle(ex, $"Error while {step}.");
+                
+                ErrorHandler.Handle(ex, $"Error in operation: {progressInfo.MainOperation}.");
             }
             finally
             {
                 progressInfo.Done = true;
-                await Task.Run(() => progress.Report(progressInfo));
+                await Task.Run(() => progressInfo.Report());
             }
         }
 

@@ -41,9 +41,10 @@ namespace PicPick.Forms
             _canClose = true;
         }
 
-       
-        private void Progress_ProgressChanged(object sender, ProgressInformation info)
+        public void Refresh(ProgressInformation info)
         {
+            base.Refresh();
+
             progressBar.Value = info.CountDone;
             if (info.Done)
             {
@@ -63,11 +64,16 @@ namespace PicPick.Forms
             }
             else
             {
-                lblStatus.Text = info.CurrentOperationString;
+                lblMain.Text = info.MainOperation;
+                lblStatus.Text = $"{(progressBar.Value * 100) / info.Total}%";
             }
         }
 
-        public override string Text { get => lblStatus.Text; set => lblStatus.Text = value; }
+        private void Progress_ProgressChanged(object sender, ProgressInformation info)
+        {
+            Refresh(info);
+        }
+        
         public int Max { get => progressBar.Maximum; set => progressBar.Maximum = value; }
 
         public Progress<ProgressInformation> Progress { get => _progress;

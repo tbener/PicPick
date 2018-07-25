@@ -183,14 +183,13 @@ namespace PicPick.Helpers
 
         }
 
-        internal async Task DoCopyAsync(ProgressInformation progressInfo, IProgress<ProgressInformation> progress, CancellationToken cancellationToken)
+        internal async Task DoCopyAsync(ProgressInformation progressInfo, CancellationToken cancellationToken)
         {
             FILE_EXISTS_RESPONSE fileExistsResponse = FILE_EXISTS_RESPONSE.ASK;
             FILE_EXISTS_RESPONSE action = fileExistsResponse;
             bool dontAsk = false;
             string fileName = "";
             progressInfo.DestinationFolder = Destination;
-            progress.Report(progressInfo);
 
             try
             {
@@ -199,6 +198,9 @@ namespace PicPick.Helpers
                 {
                     fileName = Path.GetFileName(file);
                     string dest = Path.Combine(Destination, fileName);
+
+                    progressInfo.CurrentOperation = $"Copying {fileName}";
+                    progressInfo.Report();
 
                     // if the file exists in destination
                     if (File.Exists(dest))
@@ -266,7 +268,6 @@ namespace PicPick.Helpers
                     // report progress
                     progressInfo.FileCopied = fileName;
                     progressInfo.Advance();
-                    progress.Report(progressInfo);
 
                     // check cancellation token
                     cancellationToken.ThrowIfCancellationRequested();

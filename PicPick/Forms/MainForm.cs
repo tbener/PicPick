@@ -251,17 +251,18 @@ namespace PicPick.Forms
         private async Task StartTask(PicPickConfigTask task)
         {
             ResetProgress();
-            Progress<ProgressInformation> progress = new Progress<ProgressInformation>();
+            ProgressInformation progressInfo = new ProgressInformation();
+            //Progress<ProgressInformation> progress = new Progress<ProgressInformation>();
 
             // show progress dialog
             ProgressForm pForm = new ProgressForm();
-            pForm.Progress = progress;
+            pForm.Progress = (Progress<ProgressInformation>)progressInfo.Progress;
             pForm.Show(this);
 
             this.Enabled = false;
             pForm.FormClosed += delegate { this.Enabled = true; };
 
-            progress.ProgressChanged += Progress_ProgressChanged;
+            //progress.ProgressChanged += Progress_ProgressChanged;
             rtbLog.Clear();
             try
             {
@@ -271,7 +272,7 @@ namespace PicPick.Forms
                 progCopy.Maximum = task.CountTotal;
 
                 LogHandler.Log($"Starting Task: {task.Name}");
-                await task.ExecuteAsync(progress, cts.Token);
+                await task.ExecuteAsync(progressInfo, cts.Token);
                 LogHandler.Log("Finished");
                 SetProgress("Finished");
             }
@@ -289,8 +290,8 @@ namespace PicPick.Forms
             finally
             {
                 // set pForm global, so we can show the final error\success message once we're done.
-                pForm.Close();
-                pForm = null;
+                //pForm.Close();
+                //pForm = null;
             }
             await ReadSourceAsync();
         }
@@ -312,7 +313,7 @@ namespace PicPick.Forms
 
         private void SetProgress(ProgressInformation progressInfo)
         {
-            lblProgress.Text = progressInfo.CurrentOperationString;
+            lblProgress.Text = progressInfo.CurrentOperation;
             progCopy.Value = progressInfo.CountDone;
         }
 
