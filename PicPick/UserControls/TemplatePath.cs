@@ -28,6 +28,7 @@ namespace PicPick.UserControls
             Destination = destination;
             pathControl.Text = Destination.Path;
             txtTemplate.Text = Destination.Template;
+            chkActive.ImageIndex = Destination.Active ? 1 : 0;
 
             pathControl.ComboBox.TextChanged += Control_TextChanged;
             txtTemplate.TextChanged += Control_TextChanged;
@@ -74,6 +75,8 @@ namespace PicPick.UserControls
         private void button2_Click(object sender, EventArgs e)
         {
             chkActive.ImageIndex = chkActive.ImageIndex == 0 ? 1 : 0;
+            Destination.Active = (chkActive.ImageIndex == 1);
+            Changed?.Invoke(this, new EventArgs());
         }
 
         private void btnRemove_Click(object sender, EventArgs e)

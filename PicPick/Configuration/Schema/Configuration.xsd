@@ -38,10 +38,12 @@
                       <xsd:complexType>
                         <xsd:attribute name="Path" type="xsd:string" use="required" />
                         <xsd:attribute name="Template" type="xsd:string" use="required" />
+                        <xsd:attribute name="Active" type="xsd:boolean" default="true" />
                       </xsd:complexType>
                     </xsd:element>
                   </xsd:sequence>
                   <xsd:attribute name="Name" type="xsd:string" use="required" />
+                  <xsd:attribute name="DeleteSourceFiles" type="xsd:boolean" default="false" />
                 </xsd:complexType>
               </xsd:element>
             </xsd:sequence>

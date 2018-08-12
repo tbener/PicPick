@@ -169,6 +169,12 @@ namespace PicPick.Configuration {
         
         private string nameField;
         
+        private bool deleteSourceFilesField;
+        
+        public PicPickConfigTask() {
+            this.deleteSourceFilesField = false;
+        }
+        
         /// <remarks/>
         public PicPickConfigTaskSource Source {
             get {
@@ -198,6 +204,18 @@ namespace PicPick.Configuration {
             }
             set {
                 this.nameField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        [System.ComponentModel.DefaultValueAttribute(false)]
+        public bool DeleteSourceFiles {
+            get {
+                return this.deleteSourceFilesField;
+            }
+            set {
+                this.deleteSourceFilesField = value;
             }
         }
     }
@@ -249,6 +267,12 @@ namespace PicPick.Configuration {
         
         private string templateField;
         
+        private bool activeField;
+        
+        public PicPickConfigTaskDestination() {
+            this.activeField = true;
+        }
+        
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string Path {
@@ -268,6 +292,18 @@ namespace PicPick.Configuration {
             }
             set {
                 this.templateField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        [System.ComponentModel.DefaultValueAttribute(true)]
+        public bool Active {
+            get {
+                return this.activeField;
+            }
+            set {
+                this.activeField = value;
             }
         }
     }

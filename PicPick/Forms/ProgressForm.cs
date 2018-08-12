@@ -43,9 +43,9 @@ namespace PicPick.Forms
 
         public void Refresh(ProgressInformation info)
         {
-            base.Refresh();
-
             progressBar.Value = info.CountDone;
+            Application.DoEvents();
+
             if (info.Done)
             {
                 btnCancel.Text = "Close";
@@ -62,22 +62,32 @@ namespace PicPick.Forms
                     lblStatus.Text = "";
                 }
             }
+            else if (info.CountDone == 0)
+            {
+                lblMain.Text = "initializing...";
+                lblStatus.Text = "";
+            }
             else
             {
                 lblMain.Text = info.MainOperation;
                 lblStatus.Text = $"{(progressBar.Value * 100) / info.Total}%";
             }
+
+            base.Refresh();
         }
 
         private void Progress_ProgressChanged(object sender, ProgressInformation info)
         {
             Refresh(info);
         }
-        
+
         public int Max { get => progressBar.Maximum; set => progressBar.Maximum = value; }
 
-        public Progress<ProgressInformation> Progress { get => _progress;
-            set {
+        public Progress<ProgressInformation> Progress
+        {
+            get => _progress;
+            set
+            {
                 if (_progress != null)
                     _progress.ProgressChanged -= Progress_ProgressChanged;
                 _progress = value;

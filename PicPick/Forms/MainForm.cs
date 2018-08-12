@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -36,6 +37,7 @@ namespace PicPick.Forms
         {
             InitializeComponent();
             rtbLog.Clear();
+            EnableTaskNameEdit(false);
 
             pathSource.Changed += async (s, e) => await SetDirty(s);
             txtFilter.TextChanged += async (s, e) => await SetDirty(s);
@@ -185,7 +187,7 @@ namespace PicPick.Forms
                 Task readSource = ReadSourceAsync();
 
                 // clear fields
-                lblTaskName.Text = "";
+                txtTaskName.Text = "";
                 pathSource.Text = "";
                 txtFilter.Text = "";
 
@@ -196,9 +198,10 @@ namespace PicPick.Forms
 
                 if (_currentTask == null) return;
 
-                lblTaskName.Text = _currentTask.Name;
+                txtTaskName.Text = _currentTask.Name;
                 pathSource.Text = _currentTask.Source.Path;
                 txtFilter.Text = _currentTask.Source.Filter;
+                chkDeleteSourceFiles.Checked = _currentTask.DeleteSourceFiles;
 
                 _currentTask.DestinationList.ForEach(AddDestinationControl);
                 await readSource;
@@ -258,6 +261,10 @@ namespace PicPick.Forms
             ProgressForm pForm = new ProgressForm();
             pForm.Progress = (Progress<ProgressInformation>)progressInfo.Progress;
             pForm.Show(this);
+            pForm.Refresh();
+
+            progressInfo.MainOperation = "Initializing...";
+            progressInfo.Report();
 
             this.Enabled = false;
             pForm.FormClosed += delegate { this.Enabled = true; };
@@ -266,7 +273,7 @@ namespace PicPick.Forms
             rtbLog.Clear();
             try
             {
-                SetProgress("Initializing...", 0);
+                //SetProgress("Initializing...", 0);
                 await task.MapFilesAsync(cts.Token);
                 pForm.Max = task.CountTotal;
                 progCopy.Maximum = task.CountTotal;
@@ -274,7 +281,7 @@ namespace PicPick.Forms
                 LogHandler.Log($"Starting Task: {task.Name}");
                 await task.ExecuteAsync(progressInfo, cts.Token);
                 LogHandler.Log("Finished");
-                SetProgress("Finished");
+                //SetProgress("Finished");
             }
             catch (OperationCanceledException)
             {
@@ -395,6 +402,90 @@ namespace PicPick.Forms
         private void button2_Click(object sender, EventArgs e)
         {
             cts.Cancel();
+        }
+
+        private void txtTaskName_DoubleClick(object sender, EventArgs e)
+        {
+            EnableTaskNameEdit(true);
+        }
+
+        bool _taskRename = false;
+
+        private void EnableTaskNameEdit(bool enable)
+        {
+            Debug.Print("EnableTaskNameEdit start");
+            if (!enable) { _taskRename = false; 
+                txtTaskName.Enabled = false;
+                txtTaskName.Enabled = true;
+            }
+            txtTaskName.ReadOnly = !enable;
+            txtTaskName.BorderStyle = enable ? BorderStyle.FixedSingle : BorderStyle.None;
+            
+            //if (!enable)
+            //    pathSource.Focus();
+            if (enable) _taskRename = true;
+            Debug.Print("EnableTaskNameEdit end");
+        }
+
+       
+
+        private bool TryRenameTask(string name)
+        {
+            if (name != string.Empty)
+            {
+                _currentTask.Name = name;
+                lstTasks.Items[lstTasks.SelectedIndex] = _currentTask;
+                SetDirty();
+
+                return true;
+            }
+
+            // undo
+            txtTaskName.Text = _currentTask.Name;
+            return false;
+        }
+
+      
+
+        private void txtTaskName_Leave(object sender, EventArgs e)
+        {
+            if (_taskRename)
+            {
+                Debug.Print("Leave");
+                if (!TryRenameTask(txtTaskName.Text))
+                {
+                    txtTaskName.Focus();
+                    return;
+                }
+                EnableTaskNameEdit(false);
+            }
+
+        }
+
+        private void txtTaskName_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            switch (e.KeyChar)
+            {
+                //ENTER key pressed
+                case '\r':
+                    TryRenameTask(txtTaskName.Text);
+                    EnableTaskNameEdit(false);
+                    break;
+                case (char)27:
+                    txtTaskName.Text = _currentTask.Name;
+                    EnableTaskNameEdit(false);
+                    break;
+                default:
+                    Debug.Print(e.KeyChar.ToString());
+                    break;
+            }
+            
+        }
+
+        private void chkDeleteSourceFiles_CheckedChanged(object sender, EventArgs e)
+        {
+            _currentTask.DeleteSourceFiles = chkDeleteSourceFiles.Checked;
+            SetDirty();
         }
     }
 }

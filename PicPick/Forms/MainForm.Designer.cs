@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.menuStrip = new System.Windows.Forms.MenuStrip();
@@ -49,6 +50,8 @@
             this.topContainer = new System.Windows.Forms.SplitContainer();
             this.lstTasks = new System.Windows.Forms.ListBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.chkDeleteSourceFiles = new System.Windows.Forms.CheckBox();
+            this.txtTaskName = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
@@ -57,13 +60,13 @@
             this.btnAddDestination = new System.Windows.Forms.Button();
             this.btnRun = new System.Windows.Forms.Button();
             this.txtFilter = new System.Windows.Forms.TextBox();
-            this.lblTaskName = new System.Windows.Forms.Label();
             this.rtbLog = new System.Windows.Forms.RichTextBox();
             this.toolStrip = new System.Windows.Forms.ToolStrip();
             this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
             this.mainContainer = new System.Windows.Forms.SplitContainer();
             this.lblProgress = new System.Windows.Forms.Label();
             this.progCopy = new System.Windows.Forms.ProgressBar();
+            this.toolTips = new System.Windows.Forms.ToolTip(this.components);
             this.pathSource = new PicPick.UserControls.PathBrowser();
             this.menuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.topContainer)).BeginInit();
@@ -222,6 +225,8 @@
             // 
             // topContainer.Panel2
             // 
+            this.topContainer.Panel2.Controls.Add(this.chkDeleteSourceFiles);
+            this.topContainer.Panel2.Controls.Add(this.txtTaskName);
             this.topContainer.Panel2.Controls.Add(this.label4);
             this.topContainer.Panel2.Controls.Add(this.label3);
             this.topContainer.Panel2.Controls.Add(this.label2);
@@ -230,7 +235,6 @@
             this.topContainer.Panel2.Controls.Add(this.btnAddDestination);
             this.topContainer.Panel2.Controls.Add(this.btnRun);
             this.topContainer.Panel2.Controls.Add(this.txtFilter);
-            this.topContainer.Panel2.Controls.Add(this.lblTaskName);
             this.topContainer.Panel2.Controls.Add(this.pathSource);
             this.topContainer.Size = new System.Drawing.Size(1126, 687);
             this.topContainer.SplitterDistance = 243;
@@ -265,6 +269,33 @@
             this.label1.TabIndex = 1;
             this.label1.Text = "Activities";
             // 
+            // chkDeleteSourceFiles
+            // 
+            this.chkDeleteSourceFiles.AutoSize = true;
+            this.chkDeleteSourceFiles.Location = new System.Drawing.Point(14, 649);
+            this.chkDeleteSourceFiles.Name = "chkDeleteSourceFiles";
+            this.chkDeleteSourceFiles.Size = new System.Drawing.Size(121, 20);
+            this.chkDeleteSourceFiles.TabIndex = 16;
+            this.chkDeleteSourceFiles.Text = "Delete source files";
+            this.toolTips.SetToolTip(this.chkDeleteSourceFiles, "Delete files that were successfully processed from their original location");
+            this.chkDeleteSourceFiles.UseVisualStyleBackColor = true;
+            this.chkDeleteSourceFiles.CheckedChanged += new System.EventHandler(this.chkDeleteSourceFiles_CheckedChanged);
+            // 
+            // txtTaskName
+            // 
+            this.txtTaskName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtTaskName.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtTaskName.Font = new System.Drawing.Font("Century Gothic", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtTaskName.Location = new System.Drawing.Point(13, 9);
+            this.txtTaskName.Name = "txtTaskName";
+            this.txtTaskName.ReadOnly = true;
+            this.txtTaskName.Size = new System.Drawing.Size(841, 27);
+            this.txtTaskName.TabIndex = 15;
+            this.txtTaskName.DoubleClick += new System.EventHandler(this.txtTaskName_DoubleClick);
+            this.txtTaskName.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtTaskName_KeyPress);
+            this.txtTaskName.Leave += new System.EventHandler(this.txtTaskName_Leave);
+            // 
             // label4
             // 
             this.label4.AutoSize = true;
@@ -280,7 +311,7 @@
             this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(638, 47);
+            this.label3.Location = new System.Drawing.Point(634, 47);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(32, 13);
             this.label3.TabIndex = 13;
@@ -305,7 +336,7 @@
             this.pnlDestinations.Location = new System.Drawing.Point(14, 176);
             this.pnlDestinations.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.pnlDestinations.Name = "pnlDestinations";
-            this.pnlDestinations.Size = new System.Drawing.Size(844, 440);
+            this.pnlDestinations.Size = new System.Drawing.Size(840, 440);
             this.pnlDestinations.TabIndex = 0;
             // 
             // lblFileCount
@@ -320,7 +351,7 @@
             // btnAddDestination
             // 
             this.btnAddDestination.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnAddDestination.Location = new System.Drawing.Point(681, 140);
+            this.btnAddDestination.Location = new System.Drawing.Point(677, 140);
             this.btnAddDestination.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnAddDestination.Name = "btnAddDestination";
             this.btnAddDestination.Size = new System.Drawing.Size(177, 28);
@@ -332,7 +363,7 @@
             // btnRun
             // 
             this.btnRun.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnRun.Location = new System.Drawing.Point(755, 643);
+            this.btnRun.Location = new System.Drawing.Point(751, 643);
             this.btnRun.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnRun.Name = "btnRun";
             this.btnRun.Size = new System.Drawing.Size(103, 30);
@@ -345,21 +376,11 @@
             // 
             this.txtFilter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.txtFilter.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.txtFilter.Location = new System.Drawing.Point(641, 69);
+            this.txtFilter.Location = new System.Drawing.Point(637, 69);
             this.txtFilter.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtFilter.Name = "txtFilter";
             this.txtFilter.Size = new System.Drawing.Size(217, 21);
             this.txtFilter.TabIndex = 3;
-            // 
-            // lblTaskName
-            // 
-            this.lblTaskName.AutoSize = true;
-            this.lblTaskName.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblTaskName.Location = new System.Drawing.Point(10, 9);
-            this.lblTaskName.Name = "lblTaskName";
-            this.lblTaskName.Size = new System.Drawing.Size(41, 18);
-            this.lblTaskName.TabIndex = 2;
-            this.lblTaskName.Text = "Task";
             // 
             // rtbLog
             // 
@@ -447,7 +468,7 @@
             this.pathSource.Location = new System.Drawing.Point(13, 69);
             this.pathSource.Margin = new System.Windows.Forms.Padding(0);
             this.pathSource.Name = "pathSource";
-            this.pathSource.Size = new System.Drawing.Size(614, 26);
+            this.pathSource.Size = new System.Drawing.Size(610, 26);
             this.pathSource.TabIndex = 1;
             // 
             // MainForm
@@ -497,7 +518,6 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ToolStripMenuItem noProjectsToolStripMenuItem;
         private UserControls.PathBrowser pathSource;
-        private System.Windows.Forms.Label lblTaskName;
         private System.Windows.Forms.TextBox txtFilter;
         private System.Windows.Forms.Button btnRun;
         private System.Windows.Forms.ToolStripMenuItem mnuSave;
@@ -524,5 +544,8 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.TextBox txtTaskName;
+        private System.Windows.Forms.CheckBox chkDeleteSourceFiles;
+        private System.Windows.Forms.ToolTip toolTips;
     }
 }

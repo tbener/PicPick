@@ -204,6 +204,9 @@ namespace PicPick.Configuration
 
             foreach (PicPickConfigTaskDestination destination in Destination)
             {
+                if (!destination.Active)
+                    continue;
+
                 string pathAbsolute = PathHelper.GetFullPath(Source.Path, destination.Path);
                 if (destination.HasTemplate)
                     foreach (var kv in _dicFiles)
@@ -254,11 +257,11 @@ namespace PicPick.Configuration
         public async Task ExecuteAsync(ProgressInformation progressInfo, CancellationToken cancellationToken)
         {
             // Initialize. Fills the Mapping dictionary
-            if (!Initialized)
-            {
+            //if (!Initialized)
+            //{
                 await MapFilesAsync(cancellationToken);
                 cancellationToken.ThrowIfCancellationRequested();
-            }
+            //}
 
             _dicFilesResult.Clear();
 
@@ -286,12 +289,15 @@ namespace PicPick.Configuration
                     cancellationToken.ThrowIfCancellationRequested();
                 }
 
-                progressInfo.MainOperation = "Backing up the files after the main operation has finished";
-                //Debug.Print($"Moving all files to backup ({PathHelper.AppPath("backup")})");
-                //string backupPath = PathHelper.GetFullPath(PathHelper.AppPath("backup"), false);
-                //ShellFileOperation.DeleteCompletelySilent(backupPath);
-                //ShellFileOperation.MoveItems(_dicFilesResult.Where(f => f.Value).Select(f => f.Key).ToList(), PathHelper.GetFullPath(backupPath, true));
-                
+                if (DeleteSourceFiles)
+                {
+                    progressInfo.MainOperation = "Cleaning up...";
+                    Debug.Print($"Moving all files to backup ({PathHelper.AppPath("backup")})");
+                    string backupPath = PathHelper.GetFullPath(PathHelper.AppPath("backup"), false);
+                    ShellFileOperation.DeleteCompletelySilent(backupPath);
+                    ShellFileOperation.MoveItems(_dicFilesResult.Where(f => f.Value).Select(f => f.Key).ToList(), PathHelper.GetFullPath(backupPath, true));
+                }
+
             }
             catch (Exception ex)
             {
