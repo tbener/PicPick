@@ -82,9 +82,8 @@ namespace PicPick.Configuration
             Initialized = false;
         }
 
-        Dictionary<string, DateTime> _dicFiles = new Dictionary<string, DateTime>();
+        Dictionary<string, FileInfoItem> _dicFiles = new Dictionary<string, FileInfoItem>();
         List<string> _errorFiles = new List<string>();
-        Dictionary<string, bool> _dicFilesResult = new Dictionary<string, bool>();
 
         public async Task<int> GetFileCount(CancellationToken cancellationToken)
         {
@@ -130,7 +129,7 @@ namespace PicPick.Configuration
                 {
                     if (!_dicFiles.ContainsKey(file) && !_errorFiles.Contains(file))
                         if (fileDateInfo.GetFileDate(file, out dateTime))
-                            _dicFiles.Add(file, dateTime);
+                            _dicFiles.Add(file, new FileInfoItem(dateTime));
                         else
                             _errorFiles.Add(file);
                     //Debug.Print($"{Path.GetFileName(file)} - {_dicFiles[file].ToShortDateString()}");
@@ -170,7 +169,7 @@ namespace PicPick.Configuration
                 {
                     if (!_dicFiles.ContainsKey(file) && !_errorFiles.Contains(file))
                         if (fileDateInfo.GetFileDate(file, out dateTime))
-                            _dicFiles.Add(file, dateTime);
+                            _dicFiles.Add(file, new FileInfoItem(dateTime));
                         else
                             _errorFiles.Add(file);
                 }
@@ -212,7 +211,7 @@ namespace PicPick.Configuration
                     foreach (var kv in _dicFiles)
                     {
                         // create the string from template
-                        string relPath = destination.GetTemplatePath(kv.Value);
+                        string relPath = destination.GetTemplatePath(kv.Value.DateTime);
                         string fullPath = PathHelper.GetFullPath(pathAbsolute, relPath);
                         // add to mapping dictionary
                         if (!_mapping.ContainsKey(fullPath))
@@ -259,11 +258,12 @@ namespace PicPick.Configuration
             // Initialize. Fills the Mapping dictionary
             //if (!Initialized)
             //{
-                await MapFilesAsync(cancellationToken);
-                cancellationToken.ThrowIfCancellationRequested();
+            //////////////////////
+            // if we don't recall MapFiles every time make sure to reset FileInfoItem.Status values
+            //////////////////////
+            await MapFilesAsync(cancellationToken);
+            cancellationToken.ThrowIfCancellationRequested();
             //}
-
-            _dicFilesResult.Clear();
 
             progressInfo.Activity = Name;
             progressInfo.Total = CountTotal;
@@ -276,6 +276,7 @@ namespace PicPick.Configuration
 
                     CopyFilesHandler copyFilesHandler = kv.Value;
                     copyFilesHandler.OnFileProcess += CopyFilesHandler_OnFileProcess;
+                    copyFilesHandler.OnFileStatusChanged += CopyFilesHandler_OnFileStatusChanged;
                     string fullPath = PathHelper.GetFullPath(kv.Key, true);
                     copyFilesHandler.SetStart();
                     OnCopyStatusChanged?.Invoke(this, e);
@@ -292,10 +293,11 @@ namespace PicPick.Configuration
                 if (DeleteSourceFiles)
                 {
                     progressInfo.MainOperation = "Cleaning up...";
-                    Debug.Print($"Moving all files to backup ({PathHelper.AppPath("backup")})");
+                    var copiedFileList = _dicFiles.Where(f => f.Value.Status == FILE_STATUS.COPIED).Select(f => f.Key).ToList();
+                    Debug.Print($"Moving {copiedFileList.Count()} files to backup ({PathHelper.AppPath("backup")})");
                     string backupPath = PathHelper.GetFullPath(PathHelper.AppPath("backup"), false);
                     ShellFileOperation.DeleteCompletelySilent(backupPath);
-                    ShellFileOperation.MoveItems(_dicFilesResult.Where(f => f.Value).Select(f => f.Key).ToList(), PathHelper.GetFullPath(backupPath, true));
+                    ShellFileOperation.MoveItems(copiedFileList, PathHelper.GetFullPath(backupPath, true));
                 }
 
             }
@@ -312,14 +314,24 @@ namespace PicPick.Configuration
             }
         }
 
+        private void CopyFilesHandler_OnFileStatusChanged(object sender, string fileFullName, FILE_STATUS status)
+        {
+            // if status is COPIED we set it only if it didn't fail before
+            if (status == FILE_STATUS.COPIED)
+                // so if it was set we don't touch it
+                if (_dicFiles[fileFullName].Status != FILE_STATUS.NONE)
+                    return;
+            _dicFiles[fileFullName].Status = status;
+        }
+
         private void CopyFilesHandler_OnFileProcess(object sender, string file, string msg, bool success = true)
         {
             // if success we set it only if it didn't fail before
-            if (success)
-                // so if it exists we don't touch it
-                if (_dicFilesResult.ContainsKey(file))
-                    return;
-            _dicFilesResult[file] = success;
+            //if (success)
+            //    // so if it exists we don't touch it
+            //    if (_dicFilesResult.ContainsKey(file))
+            //        return;
+            //_dicFilesResult[file] = success;
         }
 
         [XmlIgnore]

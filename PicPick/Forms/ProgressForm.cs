@@ -26,7 +26,8 @@ namespace PicPick.Forms
 
         public void Init()
         {
-            lblStatus.Text = "Initializing...";
+            lblMain.Text = "Initializing...";
+            lblStatus.Text = "";
             progressBar.Value = 0;
             _canClose = false;
         }

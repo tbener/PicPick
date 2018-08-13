@@ -12,7 +12,7 @@ using TalUtils;
 namespace PicPick.Helpers
 {
     public delegate void FileProcessEventHandler(object sender, string file, string msg, bool success=true);
-    //public delegate void FileProcessEventHandler(object sender, bool success);
+    public delegate void FileStatusChangedEventHandler(object sender, string fileFullName, FILE_STATUS status);
 
     public enum FILE_EXISTS_RESPONSE
     {
@@ -21,6 +21,14 @@ namespace PicPick.Helpers
         SKIP,
         RENAME,     // save both
         COMPARE     // check if same files or just same names. then act accordingly...
+    }
+
+    public enum FILE_STATUS
+    {
+        NONE,
+        COPIED,
+        SKIPPED,
+        ERROR
     }
 
     public enum COPY_STATUS
@@ -32,16 +40,13 @@ namespace PicPick.Helpers
         ERROR = 9
     }
 
-    public enum FILE_STATUS
-    {
-        NOT_STARTED = 0,
-        COPIED = 1
-    }
+    
 
     public class CopyFilesHandler
     {
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         public event FileProcessEventHandler OnFileProcess;
+        public event FileStatusChangedEventHandler OnFileStatusChanged;
 
         static readonly Dictionary<COPY_STATUS, string> _statusStrings = new Dictionary<COPY_STATUS, string>()
             {
@@ -187,8 +192,10 @@ namespace PicPick.Helpers
         {
             FILE_EXISTS_RESPONSE fileExistsResponse = FILE_EXISTS_RESPONSE.ASK;
             FILE_EXISTS_RESPONSE action = fileExistsResponse;
+            FILE_STATUS fileStatus;
             bool dontAsk = false;
             string fileName = "";
+            string fullFileName = "";
             progressInfo.DestinationFolder = Destination;
 
             try
@@ -197,6 +204,8 @@ namespace PicPick.Helpers
                 foreach (string file in FileList)
                 {
                     fileName = Path.GetFileName(file);
+                    fullFileName = file;
+                    fileStatus = FILE_STATUS.NONE;
                     string dest = Path.Combine(Destination, fileName);
 
                     progressInfo.CurrentOperation = $"Copying {fileName}";
@@ -242,8 +251,10 @@ namespace PicPick.Helpers
                         {
                             case FILE_EXISTS_RESPONSE.OVERWRITE:
                                 await Task.Run(() => File.Copy(file, dest, true));
+                                fileStatus = FILE_STATUS.COPIED;
                                 break;
                             case FILE_EXISTS_RESPONSE.SKIP:
+                                fileStatus = FILE_STATUS.SKIPPED;
                                 break;
                             case FILE_EXISTS_RESPONSE.RENAME:
                                 // todo: get a new file name
@@ -252,6 +263,7 @@ namespace PicPick.Helpers
                                 dest = Path.Combine(TalUtils.PathHelper.GetFullPath(Destination, "Existing Files", true), Path.GetFileName(file));
 
                                 await Task.Run(() => File.Copy(file, dest, true));
+                                fileStatus = FILE_STATUS.COPIED;
                                 break;
                             default:
                                 break;
@@ -262,8 +274,11 @@ namespace PicPick.Helpers
                     else
                     {
                         await Task.Run(() => File.Copy(file, dest));
+                        fileStatus = FILE_STATUS.COPIED;
                         ReportFileProcess(fileName, $"Copied to {dest}", log4net.Core.Level.Info);
                     }
+
+                    OnFileStatusChanged?.Invoke(this, file, fileStatus);
 
                     // report progress
                     progressInfo.FileCopied = fileName;
@@ -276,6 +291,7 @@ namespace PicPick.Helpers
             catch (Exception ex)
             {
                 ReportFileProcess(fileName, $"ERROR: {ex.Message}", log4net.Core.Level.Error);
+                OnFileStatusChanged?.Invoke(this, fullFileName, FILE_STATUS.ERROR);
                 if (!ErrorHandler.Handle(ex, "An error occurred. Do you want to continue to the next files?"))
                     return;
             }
