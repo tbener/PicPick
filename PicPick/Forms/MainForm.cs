@@ -249,6 +249,7 @@ namespace PicPick.Forms
             PicPickConfigTaskDestination dest = new PicPickConfigTaskDestination();
             _currentTask.DestinationList.Add(dest);
             AddDestinationControl(dest);
+            SetDirty();
         }
 
         private async Task StartTask(PicPickConfigTask task)

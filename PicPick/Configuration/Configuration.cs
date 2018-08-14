@@ -30,6 +30,10 @@ namespace PicPick.Configuration {
         
         private string verField;
         
+        public PicPickConfig() {
+            this.verField = "1.0";
+        }
+        
         /// <remarks/>
         public PicPickConfigProjects Projects {
             get {
@@ -53,6 +57,7 @@ namespace PicPick.Configuration {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [System.ComponentModel.DefaultValueAttribute("1.0")]
         public string ver {
             get {
                 return this.verField;
@@ -172,6 +177,7 @@ namespace PicPick.Configuration {
         private bool deleteSourceFilesField;
         
         public PicPickConfigTask() {
+            this.nameField = "My Pictures";
             this.deleteSourceFilesField = false;
         }
         
@@ -198,6 +204,7 @@ namespace PicPick.Configuration {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [System.ComponentModel.DefaultValueAttribute("My Pictures")]
         public string Name {
             get {
                 return this.nameField;
@@ -232,8 +239,14 @@ namespace PicPick.Configuration {
         
         private string filterField;
         
+        public PicPickConfigTaskSource() {
+            this.pathField = "";
+            this.filterField = "*.jpg";
+        }
+        
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [System.ComponentModel.DefaultValueAttribute("")]
         public string Path {
             get {
                 return this.pathField;
@@ -245,6 +258,7 @@ namespace PicPick.Configuration {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [System.ComponentModel.DefaultValueAttribute("*.jpg")]
         public string Filter {
             get {
                 return this.filterField;
@@ -270,11 +284,14 @@ namespace PicPick.Configuration {
         private bool activeField;
         
         public PicPickConfigTaskDestination() {
+            this.pathField = "";
+            this.templateField = "yyyy-MM";
             this.activeField = true;
         }
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [System.ComponentModel.DefaultValueAttribute("")]
         public string Path {
             get {
                 return this.pathField;
@@ -286,6 +303,7 @@ namespace PicPick.Configuration {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
+        [System.ComponentModel.DefaultValueAttribute("yyyy-MM")]
         public string Template {
             get {
                 return this.templateField;

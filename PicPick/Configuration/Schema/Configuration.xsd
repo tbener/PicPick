@@ -30,19 +30,19 @@
                   <xsd:sequence>
                     <xsd:element name="Source">
                       <xsd:complexType>
-                        <xsd:attribute name="Path" type="xsd:string" use="required" />
-                        <xsd:attribute name="Filter" type="xsd:string" use="required" />
+                        <xsd:attribute name="Path" type="xsd:string" default="" />
+                        <xsd:attribute name="Filter" type="xsd:string" default="*.jpg" />
                       </xsd:complexType>
                     </xsd:element>
                     <xsd:element maxOccurs="unbounded" name="Destination">
                       <xsd:complexType>
-                        <xsd:attribute name="Path" type="xsd:string" use="required" />
-                        <xsd:attribute name="Template" type="xsd:string" use="required" />
+                        <xsd:attribute name="Path" type="xsd:string" default=""/>
+                        <xsd:attribute name="Template" type="xsd:string" default="yyyy-MM" />
                         <xsd:attribute name="Active" type="xsd:boolean" default="true" />
                       </xsd:complexType>
                     </xsd:element>
                   </xsd:sequence>
-                  <xsd:attribute name="Name" type="xsd:string" use="required" />
+                  <xsd:attribute name="Name" type="xsd:string" default="My Pictures" />
                   <xsd:attribute name="DeleteSourceFiles" type="xsd:boolean" default="false" />
                 </xsd:complexType>
               </xsd:element>
@@ -50,7 +50,7 @@
           </xsd:complexType>
         </xsd:element>
       </xsd:sequence>
-      <xsd:attribute name="ver" type="xsd:string" use="required" />
+      <xsd:attribute name="ver" type="xsd:string" default="1.0" />
     </xsd:complexType>
   </xsd:element>
 </xs:schema>
