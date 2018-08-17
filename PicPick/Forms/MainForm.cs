@@ -11,7 +11,6 @@ using System.Data;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -46,48 +45,68 @@ namespace PicPick.Forms
 
             ResetProgress();
 
-            
+            mnuAutoSave.Checked = Properties.Settings.Default.AutoSave;
+
+            ShareTaskContextMenu_TempWorkaround();
 
         }
-
-
 
         private async void MainForm_Load(object sender, EventArgs e)
         {
 
-
             LoadFile();
             await SetDirty(sender, e, false);
-            
+
         }
+
+        #region Share Task Context Menu - Temporary Workaround
+
+        ToolStripItem[] items;
+
+        private void ShareTaskContextMenu_TempWorkaround()
+        {
+            items = new ToolStripItem[mnuTask.DropDownItems.Count];
+            mnuTask.DropDownItems.CopyTo(items, 0);
+
+            contextMenuTask.Items.Clear();
+            lstTasks.MouseDown += LstTasks_MouseDown;
+            contextMenuTask.Closed += ContextMenuTask_Closed;
+
+            contextMenuTask.Opening += ContextMenuTask_Opening;
+        }
+
+        private void ContextMenuTask_Opening(object sender, CancelEventArgs e)
+        {
+            items[0].Enabled = !items[0].Enabled;
+        }
+
+        private void ContextMenuTask_Closed(object sender, ToolStripDropDownClosedEventArgs e)
+        {
+            mnuTask.DropDownItems.AddRange(items);
+        }
+
+
+        private void LstTasks_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+                if (contextMenuTask.Items.Count == 0)
+                    contextMenuTask.Items.AddRange(items);
+        }
+
+
+        #endregion
 
         public override async void Refresh()
         {
             base.Refresh();
 
             await ReadSourceAsync();
-            
+
         }
 
 
-        private async Task SetDirty(object sender, EventArgs e = null, bool isDirty = true)
-        {
-            if (_isLoading) return;
 
-            this.Text = AppInfo.AppName + (isDirty ? " *" : "");
-            _isDirty = isDirty;
 
-            if (sender == pathSource) _currentTask.Source.Path = pathSource.Text;
-            if (sender == txtFilter) _currentTask.Source.Filter = txtFilter.Text;
-            if (sender == pathSource || sender == txtFilter)
-            {
-                await ReadSourceAsync();
-            }
-
-            if (isDirty) _currentTask?.SetDirty();
-        }
-
-                
         async Task ReadSourceAsync()
         {
             try
@@ -116,7 +135,36 @@ namespace PicPick.Forms
                 lblFileCount.Text = "---";
             }
         }
-        
+
+
+        private async Task SetDirty(object sender, EventArgs e = null, bool isDirty = true)
+        {
+            if (_isLoading) return;
+
+            SetStatus("");
+
+            if (Properties.Settings.Default.AutoSave && isDirty)
+            {
+                await Save();
+                return;
+            }
+
+            this.Text = AppInfo.AppName + (isDirty ? " *" : "");
+            _isDirty = isDirty;
+
+            if (isDirty)
+            {
+                if (sender == pathSource) _currentTask.Source.Path = pathSource.Text;
+                if (sender == txtFilter) _currentTask.Source.Filter = txtFilter.Text;
+                if (sender == pathSource || sender == txtFilter)
+                {
+                    await ReadSourceAsync();
+                }
+
+                _currentTask?.SetDirty();
+
+            }
+        }
 
         private async Task SetDirty(bool isDirty)
         {
@@ -125,6 +173,18 @@ namespace PicPick.Forms
         private async Task SetDirty()
         {
             await SetDirty(true);
+        }
+
+        private async Task Save()
+        {
+            ConfigurationHelper.Save();
+            await SetDirty(false);
+            SetStatus("Saved");
+        }
+
+        private void SetStatus(string s)
+        {
+            toolStripStatusLabel.Text = s;
         }
 
         private void LoadFile()
@@ -254,6 +314,8 @@ namespace PicPick.Forms
 
         private async Task StartTask(PicPickConfigTask task)
         {
+            SetStatus($"Running {task.Name}");
+
             ResetProgress();
             ProgressInformation progressInfo = new ProgressInformation();
             //Progress<ProgressInformation> progress = new Progress<ProgressInformation>();
@@ -283,14 +345,17 @@ namespace PicPick.Forms
                 await task.ExecuteAsync(progressInfo, cts.Token);
                 LogHandler.Log("Finished");
                 //SetProgress("Finished");
+                SetStatus("Finished");
             }
             catch (OperationCanceledException)
             {
+                SetStatus("Canceled by user");
                 LogHandler.Log("Canceled by user");
                 SetProgress("Canceled by user");
             }
             catch (Exception ex)
             {
+                SetStatus("Finished with errors: " + ex.Message);
                 LogHandler.Log("Finished with errors:", Level.Error);
                 LogHandler.Log(ex.Message, Level.Error);
                 SetProgress("Finished with errors");
@@ -300,8 +365,8 @@ namespace PicPick.Forms
                 // set pForm global, so we can show the final error\success message once we're done.
                 //pForm.Close();
                 //pForm = null;
+                await ReadSourceAsync();
             }
-            await ReadSourceAsync();
         }
 
         private void ResetProgress()
@@ -312,7 +377,7 @@ namespace PicPick.Forms
             progCopy.Text = "";
         }
 
-        private void SetProgress(string progressHeader, int progressValue=-1)
+        private void SetProgress(string progressHeader, int progressValue = -1)
         {
             lblProgress.Text = progressHeader;
             if (progressValue > -1)
@@ -347,17 +412,14 @@ namespace PicPick.Forms
                 await LoadTask(lstTasks.SelectedItem as PicPickConfigTask);
         }
 
-        private void btnCheck_Click(object sender, EventArgs e)
+        private async void btnCheck_Click(object sender, EventArgs e)
         {
-            StartTask(_currentTask);
-
-
+            await StartTask(_currentTask);
         }
 
         private async void mnuSave_Click(object sender, EventArgs e)
         {
-            ConfigurationHelper.Save();
-            await SetDirty(false);
+            await Save();
         }
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -372,7 +434,7 @@ namespace PicPick.Forms
                         e.Cancel = true;
                 }
             }
-            
+
         }
 
 
@@ -415,20 +477,22 @@ namespace PicPick.Forms
         private void EnableTaskNameEdit(bool enable)
         {
             Debug.Print("EnableTaskNameEdit start");
-            if (!enable) { _taskRename = false; 
+            if (!enable)
+            {
+                _taskRename = false;
                 txtTaskName.Enabled = false;
                 txtTaskName.Enabled = true;
             }
             txtTaskName.ReadOnly = !enable;
             txtTaskName.BorderStyle = enable ? BorderStyle.FixedSingle : BorderStyle.None;
-            
+
             //if (!enable)
             //    pathSource.Focus();
             if (enable) _taskRename = true;
             Debug.Print("EnableTaskNameEdit end");
         }
 
-       
+
 
         private bool TryRenameTask(string name)
         {
@@ -446,7 +510,7 @@ namespace PicPick.Forms
             return false;
         }
 
-      
+
 
         private void txtTaskName_Leave(object sender, EventArgs e)
         {
@@ -480,13 +544,20 @@ namespace PicPick.Forms
                     Debug.Print(e.KeyChar.ToString());
                     break;
             }
-            
+
         }
 
         private void chkDeleteSourceFiles_CheckedChanged(object sender, EventArgs e)
         {
             _currentTask.DeleteSourceFiles = chkDeleteSourceFiles.Checked;
             SetDirty();
+        }
+
+        private void mnuAutoSave_Click(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.AutoSave = mnuAutoSave.Checked;
+            Properties.Settings.Default.Save();
+            SetStatus("Auto save is " + (Properties.Settings.Default.AutoSave ? "on" : "off"));
         }
     }
 }

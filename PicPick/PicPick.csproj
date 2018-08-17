@@ -41,6 +41,7 @@
     <Reference Include="PresentationCore" />
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Console, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Console.4.0.0\lib\net46\System.Console.dll</HintPath>
       <Private>True</Private>
@@ -89,6 +90,7 @@
     <Compile Include="Configuration\Configuration.cs" />
     <Compile Include="Helpers\ConfigurationHelper.cs" />
     <Compile Include="Helpers\TaskRunner.cs" />
+    <Compile Include="Settings.cs" />
     <Compile Include="UserControls\PathBrowser.cs">
       <SubType>UserControl</SubType>
     </Compile>

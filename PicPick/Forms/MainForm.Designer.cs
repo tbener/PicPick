@@ -36,7 +36,7 @@
             this.mnuOpen = new System.Windows.Forms.ToolStripMenuItem();
             this.noProjectsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuSave = new System.Windows.Forms.ToolStripMenuItem();
-            this.taskToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuTask = new System.Windows.Forms.ToolStripMenuItem();
             this.renameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.runToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
@@ -44,11 +44,15 @@
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.moveupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.movedownToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.taskToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuWindow = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuRefresh = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.testToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.topContainer = new System.Windows.Forms.SplitContainer();
             this.lstTasks = new System.Windows.Forms.ListBox();
+            this.contextMenuTask = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripMenuItem();
             this.label1 = new System.Windows.Forms.Label();
             this.chkDeleteSourceFiles = new System.Windows.Forms.CheckBox();
             this.txtTaskName = new System.Windows.Forms.TextBox();
@@ -67,12 +71,16 @@
             this.lblProgress = new System.Windows.Forms.Label();
             this.progCopy = new System.Windows.Forms.ProgressBar();
             this.toolTips = new System.Windows.Forms.ToolTip(this.components);
+            this.mnuAutoSave = new System.Windows.Forms.ToolStripMenuItem();
             this.pathSource = new PicPick.UserControls.PathBrowser();
+            this.toolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.statusStrip.SuspendLayout();
             this.menuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.topContainer)).BeginInit();
             this.topContainer.Panel1.SuspendLayout();
             this.topContainer.Panel2.SuspendLayout();
             this.topContainer.SuspendLayout();
+            this.contextMenuTask.SuspendLayout();
             this.toolStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.mainContainer)).BeginInit();
             this.mainContainer.Panel1.SuspendLayout();
@@ -82,6 +90,8 @@
             // 
             // statusStrip
             // 
+            this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripStatusLabel});
             this.statusStrip.Location = new System.Drawing.Point(0, 736);
             this.statusStrip.Name = "statusStrip";
             this.statusStrip.Padding = new System.Windows.Forms.Padding(1, 0, 16, 0);
@@ -93,9 +103,10 @@
             // 
             this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mnuProject,
-            this.taskToolStripMenuItem1,
-            this.taskToolStripMenuItem,
-            this.toolStripMenuItem1});
+            this.mnuTask,
+            this.mnuWindow,
+            this.toolStripMenuItem1,
+            this.testToolStripMenuItem});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
             this.menuStrip.Padding = new System.Windows.Forms.Padding(7, 2, 0, 2);
@@ -107,7 +118,8 @@
             // 
             this.mnuProject.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mnuOpen,
-            this.mnuSave});
+            this.mnuSave,
+            this.mnuAutoSave});
             this.mnuProject.Name = "mnuProject";
             this.mnuProject.Size = new System.Drawing.Size(56, 20);
             this.mnuProject.Text = "&Project";
@@ -117,7 +129,7 @@
             this.mnuOpen.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.noProjectsToolStripMenuItem});
             this.mnuOpen.Name = "mnuOpen";
-            this.mnuOpen.Size = new System.Drawing.Size(138, 22);
+            this.mnuOpen.Size = new System.Drawing.Size(152, 22);
             this.mnuOpen.Text = "&Open";
             this.mnuOpen.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.MnuOpen_DropDownItemClicked);
             // 
@@ -131,13 +143,13 @@
             // 
             this.mnuSave.Name = "mnuSave";
             this.mnuSave.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-            this.mnuSave.Size = new System.Drawing.Size(138, 22);
+            this.mnuSave.Size = new System.Drawing.Size(152, 22);
             this.mnuSave.Text = "&Save";
             this.mnuSave.Click += new System.EventHandler(this.mnuSave_Click);
             // 
-            // taskToolStripMenuItem1
+            // mnuTask
             // 
-            this.taskToolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.mnuTask.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.renameToolStripMenuItem,
             this.runToolStripMenuItem,
             this.toolStripSeparator1,
@@ -145,9 +157,9 @@
             this.toolStripSeparator2,
             this.moveupToolStripMenuItem,
             this.movedownToolStripMenuItem});
-            this.taskToolStripMenuItem1.Name = "taskToolStripMenuItem1";
-            this.taskToolStripMenuItem1.Size = new System.Drawing.Size(43, 20);
-            this.taskToolStripMenuItem1.Text = "&Task";
+            this.mnuTask.Name = "mnuTask";
+            this.mnuTask.Size = new System.Drawing.Size(59, 20);
+            this.mnuTask.Text = "&Activity";
             // 
             // renameToolStripMenuItem
             // 
@@ -189,13 +201,13 @@
             this.movedownToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
             this.movedownToolStripMenuItem.Text = "Move &down";
             // 
-            // taskToolStripMenuItem
+            // mnuWindow
             // 
-            this.taskToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.mnuWindow.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mnuRefresh});
-            this.taskToolStripMenuItem.Name = "taskToolStripMenuItem";
-            this.taskToolStripMenuItem.Size = new System.Drawing.Size(63, 20);
-            this.taskToolStripMenuItem.Text = "&Window";
+            this.mnuWindow.Name = "mnuWindow";
+            this.mnuWindow.Size = new System.Drawing.Size(63, 20);
+            this.mnuWindow.Text = "&Window";
             // 
             // mnuRefresh
             // 
@@ -209,6 +221,12 @@
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
             this.toolStripMenuItem1.Size = new System.Drawing.Size(12, 20);
+            // 
+            // testToolStripMenuItem
+            // 
+            this.testToolStripMenuItem.Name = "testToolStripMenuItem";
+            this.testToolStripMenuItem.Size = new System.Drawing.Size(38, 20);
+            this.testToolStripMenuItem.Text = "test";
             // 
             // topContainer
             // 
@@ -248,6 +266,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lstTasks.BackColor = System.Drawing.SystemColors.ControlLightLight;
             this.lstTasks.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lstTasks.ContextMenuStrip = this.contextMenuTask;
             this.lstTasks.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lstTasks.ForeColor = System.Drawing.SystemColors.Highlight;
             this.lstTasks.FormattingEnabled = true;
@@ -258,6 +277,26 @@
             this.lstTasks.Size = new System.Drawing.Size(226, 602);
             this.lstTasks.TabIndex = 2;
             this.lstTasks.SelectedIndexChanged += new System.EventHandler(this.lstTasks_SelectedIndexChanged);
+            // 
+            // contextMenuTask
+            // 
+            this.contextMenuTask.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripMenuItem2,
+            this.toolStripMenuItem3});
+            this.contextMenuTask.Name = "contextMenuTask";
+            this.contextMenuTask.Size = new System.Drawing.Size(181, 48);
+            // 
+            // toolStripMenuItem2
+            // 
+            this.toolStripMenuItem2.Name = "toolStripMenuItem2";
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(180, 22);
+            this.toolStripMenuItem2.Text = "toolStripMenuItem2";
+            // 
+            // toolStripMenuItem3
+            // 
+            this.toolStripMenuItem3.Name = "toolStripMenuItem3";
+            this.toolStripMenuItem3.Size = new System.Drawing.Size(180, 22);
+            this.toolStripMenuItem3.Text = "toolStripMenuItem3";
             // 
             // label1
             // 
@@ -290,7 +329,7 @@
             this.txtTaskName.Location = new System.Drawing.Point(13, 9);
             this.txtTaskName.Name = "txtTaskName";
             this.txtTaskName.ReadOnly = true;
-            this.txtTaskName.Size = new System.Drawing.Size(841, 27);
+            this.txtTaskName.Size = new System.Drawing.Size(839, 27);
             this.txtTaskName.TabIndex = 15;
             this.txtTaskName.DoubleClick += new System.EventHandler(this.txtTaskName_DoubleClick);
             this.txtTaskName.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtTaskName_KeyPress);
@@ -311,7 +350,7 @@
             this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(634, 47);
+            this.label3.Location = new System.Drawing.Point(632, 47);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(32, 13);
             this.label3.TabIndex = 13;
@@ -336,7 +375,7 @@
             this.pnlDestinations.Location = new System.Drawing.Point(14, 176);
             this.pnlDestinations.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.pnlDestinations.Name = "pnlDestinations";
-            this.pnlDestinations.Size = new System.Drawing.Size(840, 440);
+            this.pnlDestinations.Size = new System.Drawing.Size(838, 440);
             this.pnlDestinations.TabIndex = 0;
             // 
             // lblFileCount
@@ -351,7 +390,7 @@
             // btnAddDestination
             // 
             this.btnAddDestination.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnAddDestination.Location = new System.Drawing.Point(677, 140);
+            this.btnAddDestination.Location = new System.Drawing.Point(675, 140);
             this.btnAddDestination.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnAddDestination.Name = "btnAddDestination";
             this.btnAddDestination.Size = new System.Drawing.Size(177, 28);
@@ -363,7 +402,7 @@
             // btnRun
             // 
             this.btnRun.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnRun.Location = new System.Drawing.Point(751, 643);
+            this.btnRun.Location = new System.Drawing.Point(749, 643);
             this.btnRun.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnRun.Name = "btnRun";
             this.btnRun.Size = new System.Drawing.Size(103, 30);
@@ -376,7 +415,7 @@
             // 
             this.txtFilter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.txtFilter.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.txtFilter.Location = new System.Drawing.Point(637, 69);
+            this.txtFilter.Location = new System.Drawing.Point(635, 69);
             this.txtFilter.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtFilter.Name = "txtFilter";
             this.txtFilter.Size = new System.Drawing.Size(217, 21);
@@ -459,6 +498,15 @@
             this.progCopy.TabIndex = 9;
             this.progCopy.Value = 30;
             // 
+            // mnuAutoSave
+            // 
+            this.mnuAutoSave.CheckOnClick = true;
+            this.mnuAutoSave.Name = "mnuAutoSave";
+            this.mnuAutoSave.Size = new System.Drawing.Size(152, 22);
+            this.mnuAutoSave.Text = "&Auto save";
+            this.mnuAutoSave.ToolTipText = "Save your changes automatically";
+            this.mnuAutoSave.Click += new System.EventHandler(this.mnuAutoSave_Click);
+            // 
             // pathSource
             // 
             this.pathSource.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -468,8 +516,15 @@
             this.pathSource.Location = new System.Drawing.Point(13, 69);
             this.pathSource.Margin = new System.Windows.Forms.Padding(0);
             this.pathSource.Name = "pathSource";
-            this.pathSource.Size = new System.Drawing.Size(610, 26);
+            this.pathSource.Size = new System.Drawing.Size(608, 26);
             this.pathSource.TabIndex = 1;
+            // 
+            // toolStripStatusLabel
+            // 
+            this.toolStripStatusLabel.Name = "toolStripStatusLabel";
+            this.toolStripStatusLabel.Size = new System.Drawing.Size(1078, 17);
+            this.toolStripStatusLabel.Spring = true;
+            this.toolStripStatusLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // MainForm
             // 
@@ -487,6 +542,8 @@
             this.Text = "MainForm";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.Load += new System.EventHandler(this.MainForm_Load);
+            this.statusStrip.ResumeLayout(false);
+            this.statusStrip.PerformLayout();
             this.menuStrip.ResumeLayout(false);
             this.menuStrip.PerformLayout();
             this.topContainer.Panel1.ResumeLayout(false);
@@ -495,6 +552,7 @@
             this.topContainer.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.topContainer)).EndInit();
             this.topContainer.ResumeLayout(false);
+            this.contextMenuTask.ResumeLayout(false);
             this.toolStrip.ResumeLayout(false);
             this.toolStrip.PerformLayout();
             this.mainContainer.Panel1.ResumeLayout(false);
@@ -526,14 +584,14 @@
         private System.Windows.Forms.Panel pnlDestinations;
         private System.Windows.Forms.RichTextBox rtbLog;
         private System.Windows.Forms.SplitContainer mainContainer;
-        private System.Windows.Forms.ToolStripMenuItem taskToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem mnuWindow;
         private System.Windows.Forms.ToolStripMenuItem mnuRefresh;
         private System.Windows.Forms.ToolStripButton toolStripButton1;
         private System.Windows.Forms.ProgressBar progCopy;
         private System.Windows.Forms.Label lblProgress;
         private System.Windows.Forms.ListBox lstTasks;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
-        private System.Windows.Forms.ToolStripMenuItem taskToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem mnuTask;
         private System.Windows.Forms.ToolStripMenuItem renameToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem runToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
@@ -547,5 +605,11 @@
         private System.Windows.Forms.TextBox txtTaskName;
         private System.Windows.Forms.CheckBox chkDeleteSourceFiles;
         private System.Windows.Forms.ToolTip toolTips;
+        private System.Windows.Forms.ContextMenuStrip contextMenuTask;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem2;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem3;
+        private System.Windows.Forms.ToolStripMenuItem testToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem mnuAutoSave;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel;
     }
 }
