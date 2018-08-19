@@ -50,7 +50,7 @@ namespace TalUtils
 
         public static bool Handle(Exception error, string msg, bool displayMessage=true)
         {
-            return Handle(error, msg, displayMessage);
+            return Handle(error, msg, displayMessage, null);
         }
 
 

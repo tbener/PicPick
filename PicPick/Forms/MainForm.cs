@@ -342,6 +342,7 @@ namespace PicPick.Forms
                 progCopy.Maximum = task.CountTotal;
 
                 LogHandler.Log($"Starting Task: {task.Name}");
+                AskWhatToDoForm.CancellationTokenSource = cts;
                 await task.ExecuteAsync(progressInfo, cts.Token);
                 LogHandler.Log("Finished");
                 //SetProgress("Finished");
@@ -349,6 +350,7 @@ namespace PicPick.Forms
             }
             catch (OperationCanceledException)
             {
+                pForm.Close();
                 SetStatus("Canceled by user");
                 LogHandler.Log("Canceled by user");
                 SetProgress("Canceled by user");
@@ -362,9 +364,6 @@ namespace PicPick.Forms
             }
             finally
             {
-                // set pForm global, so we can show the final error\success message once we're done.
-                //pForm.Close();
-                //pForm = null;
                 await ReadSourceAsync();
             }
         }

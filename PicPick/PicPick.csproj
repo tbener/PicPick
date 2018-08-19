@@ -66,6 +66,12 @@
     <Compile Include="Classes\ProgressInformation.cs" />
     <Compile Include="Configuration\ConfigurationEx.cs" />
     <Compile Include="Configuration\EventHandlers.cs" />
+    <Compile Include="Forms\AskWhatToDoForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\AskWhatToDoForm.Designer.cs">
+      <DependentUpon>AskWhatToDoForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -80,7 +86,7 @@
     </Compile>
     <Compile Include="Helpers\BitmapImageCheck.cs" />
     <Compile Include="Helpers\CopyFilesHandler.cs" />
-    <Compile Include="Helpers\FileInfo.cs" />
+    <Compile Include="Helpers\ImageFileInfo.cs" />
     <Compile Include="Helpers\HistoryComboHelper.cs" />
     <Compile Include="Helpers\LogHandler.cs" />
     <Compile Include="Helpers\ShellFileOperations.cs" />
@@ -91,6 +97,18 @@
     <Compile Include="Helpers\ConfigurationHelper.cs" />
     <Compile Include="Helpers\TaskRunner.cs" />
     <Compile Include="Settings.cs" />
+    <Compile Include="UserControls\CopyActionDisplay.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UserControls\CopyActionDisplay.Designer.cs">
+      <DependentUpon>CopyActionDisplay.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\ImageInfo.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UserControls\ImageInfo.Designer.cs">
+      <DependentUpon>ImageInfo.cs</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\PathBrowser.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -103,6 +121,9 @@
     <Compile Include="UserControls\TemplatePath.Designer.cs">
       <DependentUpon>TemplatePath.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="Forms\AskWhatToDoForm.resx">
+      <DependentUpon>AskWhatToDoForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -119,6 +140,12 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="UserControls\CopyActionDisplay.resx">
+      <DependentUpon>CopyActionDisplay.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserControls\ImageInfo.resx">
+      <DependentUpon>ImageInfo.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UserControls\PathBrowser.resx">
       <DependentUpon>PathBrowser.cs</DependentUpon>
     </EmbeddedResource>

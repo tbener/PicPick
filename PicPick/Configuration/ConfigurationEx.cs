@@ -118,7 +118,7 @@ namespace PicPick.Configuration
             _dicFiles.Clear();
             _errorFiles.Clear();
 
-            FileDateInfo fileDateInfo = new FileDateInfo();
+            ImageFileInfo fileDateInfo = new ImageFileInfo();
             string[] filters = Source.Filter.Split(new char[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries);
             foreach (string fltr in filters)
             {
@@ -157,7 +157,7 @@ namespace PicPick.Configuration
             _dicFiles.Clear();
             _errorFiles.Clear();
 
-            FileDateInfo fileDateInfo = new FileDateInfo();
+            ImageFileInfo fileDateInfo = new ImageFileInfo();
             string[] filters = Source.Filter.Split(new char[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries);
             foreach (string fltr in filters)
             {
@@ -259,7 +259,7 @@ namespace PicPick.Configuration
             //if (!Initialized)
             //{
             //////////////////////
-            // if we don't recall MapFiles every time make sure to reset FileInfoItem.Status values
+            // if you don't recall MapFiles every time make sure to reset FileInfoItem.Status values
             //////////////////////
             await MapFilesAsync(cancellationToken);
             cancellationToken.ThrowIfCancellationRequested();
@@ -300,6 +300,10 @@ namespace PicPick.Configuration
                     ShellFileOperation.MoveItems(copiedFileList, PathHelper.GetFullPath(backupPath, true));
                 }
 
+            }
+            catch (OperationCanceledException)
+            {
+                throw;
             }
             catch (Exception ex)
             {

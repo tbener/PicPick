@@ -61,6 +61,15 @@ namespace PicPick.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The file {0} already exists in this location:.
+        /// </summary>
+        internal static string DLG_FILE_EXISTS_TITLE {
+            get {
+                return ResourceManager.GetString("DLG_FILE_EXISTS_TITLE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap Folder_16x16 {

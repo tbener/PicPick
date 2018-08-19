@@ -1,5 +1,6 @@
 ﻿using PicPick.Classes;
 using PicPick.Configuration;
+using PicPick.Forms;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -193,7 +194,7 @@ namespace PicPick.Helpers
             FILE_EXISTS_RESPONSE fileExistsResponse = FILE_EXISTS_RESPONSE.ASK;
             FILE_EXISTS_RESPONSE action = fileExistsResponse;
             FILE_STATUS fileStatus;
-            bool dontAsk = false;
+            bool dontAskAgain = false;
             string fileName = "";
             string fullFileName = "";
             progressInfo.DestinationFolder = Destination;
@@ -219,15 +220,12 @@ namespace PicPick.Helpers
                         {
                             // ask the user.
                             // the choices are: Skip, Overwrite or Rename (keep both)
-                            // todo: action = AskWhatToDo();
+                            action = AskWhatToDo(fileName, Path.GetDirectoryName(file), Destination, out dontAskAgain);
 
-                            // temp. because the UI is not supported yet...
-                            action = FILE_EXISTS_RESPONSE.SKIP;
+                            // if the user clicked cancel, this will be triggered
+                            cancellationToken.ThrowIfCancellationRequested();
 
-                            // temp. because the UI is not supported yet...
-                            dontAsk = true;
-
-                            if (dontAsk)
+                            if (dontAskAgain)
                                 // make this permanent
                                 fileExistsResponse = action;
                         }
@@ -288,6 +286,10 @@ namespace PicPick.Helpers
                     cancellationToken.ThrowIfCancellationRequested();
                 }
             }
+            catch (OperationCanceledException)
+            {
+                throw;
+            }
             catch (Exception ex)
             {
                 ReportFileProcess(fileName, $"ERROR: {ex.Message}", log4net.Core.Level.Error);
@@ -295,6 +297,19 @@ namespace PicPick.Helpers
                 if (!ErrorHandler.Handle(ex, "An error occurred. Do you want to continue to the next files?"))
                     return;
             }
+        }
+
+        AskWhatToDoForm askWhatToDoForm;
+
+        private FILE_EXISTS_RESPONSE AskWhatToDo(string fileName, string sourcePath, string destPath, out bool dontAskAgain)
+        {
+            if (askWhatToDoForm == null)
+                askWhatToDoForm = new AskWhatToDoForm();
+
+            askWhatToDoForm.ShowDialog(fileName, sourcePath, destPath);
+
+            dontAskAgain = askWhatToDoForm.DontAskAgain;
+            return askWhatToDoForm.SelectedAction;
         }
 
         private bool AreSameFiles(string f1, string f2)

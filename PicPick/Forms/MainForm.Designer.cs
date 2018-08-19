@@ -31,11 +31,13 @@
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.statusStrip = new System.Windows.Forms.StatusStrip();
+            this.toolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.mnuProject = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuOpen = new System.Windows.Forms.ToolStripMenuItem();
             this.noProjectsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuSave = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuAutoSave = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuTask = new System.Windows.Forms.ToolStripMenuItem();
             this.renameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.runToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -64,6 +66,7 @@
             this.btnAddDestination = new System.Windows.Forms.Button();
             this.btnRun = new System.Windows.Forms.Button();
             this.txtFilter = new System.Windows.Forms.TextBox();
+            this.pathSource = new PicPick.UserControls.PathBrowser();
             this.rtbLog = new System.Windows.Forms.RichTextBox();
             this.toolStrip = new System.Windows.Forms.ToolStrip();
             this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
@@ -71,9 +74,6 @@
             this.lblProgress = new System.Windows.Forms.Label();
             this.progCopy = new System.Windows.Forms.ProgressBar();
             this.toolTips = new System.Windows.Forms.ToolTip(this.components);
-            this.mnuAutoSave = new System.Windows.Forms.ToolStripMenuItem();
-            this.pathSource = new PicPick.UserControls.PathBrowser();
-            this.toolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.statusStrip.SuspendLayout();
             this.menuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.topContainer)).BeginInit();
@@ -98,6 +98,13 @@
             this.statusStrip.Size = new System.Drawing.Size(1126, 22);
             this.statusStrip.TabIndex = 0;
             this.statusStrip.Text = "statusStrip1";
+            // 
+            // toolStripStatusLabel
+            // 
+            this.toolStripStatusLabel.Name = "toolStripStatusLabel";
+            this.toolStripStatusLabel.Size = new System.Drawing.Size(1109, 17);
+            this.toolStripStatusLabel.Spring = true;
+            this.toolStripStatusLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // menuStrip
             // 
@@ -129,7 +136,7 @@
             this.mnuOpen.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.noProjectsToolStripMenuItem});
             this.mnuOpen.Name = "mnuOpen";
-            this.mnuOpen.Size = new System.Drawing.Size(152, 22);
+            this.mnuOpen.Size = new System.Drawing.Size(138, 22);
             this.mnuOpen.Text = "&Open";
             this.mnuOpen.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.MnuOpen_DropDownItemClicked);
             // 
@@ -143,9 +150,18 @@
             // 
             this.mnuSave.Name = "mnuSave";
             this.mnuSave.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-            this.mnuSave.Size = new System.Drawing.Size(152, 22);
+            this.mnuSave.Size = new System.Drawing.Size(138, 22);
             this.mnuSave.Text = "&Save";
             this.mnuSave.Click += new System.EventHandler(this.mnuSave_Click);
+            // 
+            // mnuAutoSave
+            // 
+            this.mnuAutoSave.CheckOnClick = true;
+            this.mnuAutoSave.Name = "mnuAutoSave";
+            this.mnuAutoSave.Size = new System.Drawing.Size(138, 22);
+            this.mnuAutoSave.Text = "&Auto save";
+            this.mnuAutoSave.ToolTipText = "Save your changes automatically";
+            this.mnuAutoSave.Click += new System.EventHandler(this.mnuAutoSave_Click);
             // 
             // mnuTask
             // 
@@ -329,7 +345,7 @@
             this.txtTaskName.Location = new System.Drawing.Point(13, 9);
             this.txtTaskName.Name = "txtTaskName";
             this.txtTaskName.ReadOnly = true;
-            this.txtTaskName.Size = new System.Drawing.Size(839, 27);
+            this.txtTaskName.Size = new System.Drawing.Size(838, 27);
             this.txtTaskName.TabIndex = 15;
             this.txtTaskName.DoubleClick += new System.EventHandler(this.txtTaskName_DoubleClick);
             this.txtTaskName.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtTaskName_KeyPress);
@@ -350,7 +366,7 @@
             this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(632, 47);
+            this.label3.Location = new System.Drawing.Point(631, 47);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(32, 13);
             this.label3.TabIndex = 13;
@@ -375,7 +391,7 @@
             this.pnlDestinations.Location = new System.Drawing.Point(14, 176);
             this.pnlDestinations.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.pnlDestinations.Name = "pnlDestinations";
-            this.pnlDestinations.Size = new System.Drawing.Size(838, 440);
+            this.pnlDestinations.Size = new System.Drawing.Size(837, 440);
             this.pnlDestinations.TabIndex = 0;
             // 
             // lblFileCount
@@ -390,7 +406,7 @@
             // btnAddDestination
             // 
             this.btnAddDestination.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnAddDestination.Location = new System.Drawing.Point(675, 140);
+            this.btnAddDestination.Location = new System.Drawing.Point(674, 140);
             this.btnAddDestination.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnAddDestination.Name = "btnAddDestination";
             this.btnAddDestination.Size = new System.Drawing.Size(177, 28);
@@ -402,7 +418,7 @@
             // btnRun
             // 
             this.btnRun.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnRun.Location = new System.Drawing.Point(749, 643);
+            this.btnRun.Location = new System.Drawing.Point(748, 643);
             this.btnRun.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnRun.Name = "btnRun";
             this.btnRun.Size = new System.Drawing.Size(103, 30);
@@ -415,11 +431,23 @@
             // 
             this.txtFilter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.txtFilter.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.txtFilter.Location = new System.Drawing.Point(635, 69);
+            this.txtFilter.Location = new System.Drawing.Point(634, 69);
             this.txtFilter.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtFilter.Name = "txtFilter";
             this.txtFilter.Size = new System.Drawing.Size(217, 21);
             this.txtFilter.TabIndex = 3;
+            // 
+            // pathSource
+            // 
+            this.pathSource.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.pathSource.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.pathSource.BackColor = System.Drawing.SystemColors.Control;
+            this.pathSource.Location = new System.Drawing.Point(13, 69);
+            this.pathSource.Margin = new System.Windows.Forms.Padding(0);
+            this.pathSource.Name = "pathSource";
+            this.pathSource.Size = new System.Drawing.Size(607, 26);
+            this.pathSource.TabIndex = 1;
             // 
             // rtbLog
             // 
@@ -498,34 +526,6 @@
             this.progCopy.TabIndex = 9;
             this.progCopy.Value = 30;
             // 
-            // mnuAutoSave
-            // 
-            this.mnuAutoSave.CheckOnClick = true;
-            this.mnuAutoSave.Name = "mnuAutoSave";
-            this.mnuAutoSave.Size = new System.Drawing.Size(152, 22);
-            this.mnuAutoSave.Text = "&Auto save";
-            this.mnuAutoSave.ToolTipText = "Save your changes automatically";
-            this.mnuAutoSave.Click += new System.EventHandler(this.mnuAutoSave_Click);
-            // 
-            // pathSource
-            // 
-            this.pathSource.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.pathSource.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.pathSource.BackColor = System.Drawing.SystemColors.Control;
-            this.pathSource.Location = new System.Drawing.Point(13, 69);
-            this.pathSource.Margin = new System.Windows.Forms.Padding(0);
-            this.pathSource.Name = "pathSource";
-            this.pathSource.Size = new System.Drawing.Size(608, 26);
-            this.pathSource.TabIndex = 1;
-            // 
-            // toolStripStatusLabel
-            // 
-            this.toolStripStatusLabel.Name = "toolStripStatusLabel";
-            this.toolStripStatusLabel.Size = new System.Drawing.Size(1078, 17);
-            this.toolStripStatusLabel.Spring = true;
-            this.toolStripStatusLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 16F);
@@ -539,6 +539,7 @@
             this.MainMenuStrip = this.menuStrip;
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.Name = "MainForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "MainForm";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.Load += new System.EventHandler(this.MainForm_Load);
