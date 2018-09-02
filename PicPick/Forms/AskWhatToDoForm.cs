@@ -36,6 +36,10 @@ namespace PicPick.Forms
         {
             DontAskAgain = chkDontAskAgain.Checked;
             SelectedAction = (FILE_EXISTS_RESPONSE)((CopyActionDisplay)sender).Tag;
+
+            copyActionOverwrite.ImageInfo.ReleaseImage();
+            copyActionSkip.ImageInfo.ReleaseImage();
+
             Close();
         }
 
@@ -55,6 +59,8 @@ namespace PicPick.Forms
             copyActionSkip.ImageInfo.Refresh();
 
             ShowDialog();
+
+            
         }
 
         public bool DontAskAgain { get; set; }

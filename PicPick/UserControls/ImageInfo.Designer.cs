@@ -28,51 +28,49 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.pictureBox = new System.Windows.Forms.PictureBox();
             this.lblPath = new System.Windows.Forms.Label();
             this.lblDate = new System.Windows.Forms.Label();
             this.lblSize = new System.Windows.Forms.Label();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
+            this.panelPic = new System.Windows.Forms.Panel();
             this.SuspendLayout();
-            // 
-            // pictureBox
-            // 
-            this.pictureBox.Dock = System.Windows.Forms.DockStyle.Left;
-            this.pictureBox.Location = new System.Drawing.Point(0, 0);
-            this.pictureBox.Name = "pictureBox";
-            this.pictureBox.Size = new System.Drawing.Size(113, 95);
-            this.pictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.pictureBox.TabIndex = 0;
-            this.pictureBox.TabStop = false;
             // 
             // lblPath
             // 
             this.lblPath.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lblPath.Location = new System.Drawing.Point(113, 0);
+            this.lblPath.Location = new System.Drawing.Point(92, 0);
             this.lblPath.Name = "lblPath";
-            this.lblPath.Size = new System.Drawing.Size(271, 47);
+            this.lblPath.Size = new System.Drawing.Size(292, 47);
             this.lblPath.TabIndex = 1;
             this.lblPath.Text = "C:\\....";
             // 
             // lblDate
             // 
             this.lblDate.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.lblDate.Location = new System.Drawing.Point(113, 71);
+            this.lblDate.Location = new System.Drawing.Point(92, 71);
             this.lblDate.Name = "lblDate";
-            this.lblDate.Size = new System.Drawing.Size(271, 24);
+            this.lblDate.Size = new System.Drawing.Size(292, 24);
             this.lblDate.TabIndex = 2;
             this.lblDate.Text = "Date:";
-            this.lblDate.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.lblDate.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
             // 
             // lblSize
             // 
             this.lblSize.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.lblSize.Location = new System.Drawing.Point(113, 47);
+            this.lblSize.Location = new System.Drawing.Point(92, 47);
             this.lblSize.Name = "lblSize";
-            this.lblSize.Size = new System.Drawing.Size(271, 24);
+            this.lblSize.Size = new System.Drawing.Size(292, 24);
             this.lblSize.TabIndex = 3;
             this.lblSize.Text = "Size:";
-            this.lblSize.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.lblSize.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
+            // 
+            // panelPic
+            // 
+            this.panelPic.Dock = System.Windows.Forms.DockStyle.Left;
+            this.panelPic.Location = new System.Drawing.Point(0, 0);
+            this.panelPic.Name = "panelPic";
+            this.panelPic.Size = new System.Drawing.Size(92, 95);
+            this.panelPic.TabIndex = 4;
+            this.panelPic.Paint += new System.Windows.Forms.PaintEventHandler(this.panelPic_Paint);
             // 
             // ImageInfo
             // 
@@ -81,21 +79,18 @@
             this.Controls.Add(this.lblPath);
             this.Controls.Add(this.lblSize);
             this.Controls.Add(this.lblDate);
-            this.Controls.Add(this.pictureBox);
+            this.Controls.Add(this.panelPic);
             this.Name = "ImageInfo";
             this.Size = new System.Drawing.Size(384, 95);
-            this.Load += new System.EventHandler(this.ImageInfo_Load);
             this.Resize += new System.EventHandler(this.ImageInfo_Resize);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).EndInit();
             this.ResumeLayout(false);
 
         }
 
         #endregion
-
-        private System.Windows.Forms.PictureBox pictureBox;
         private System.Windows.Forms.Label lblPath;
         private System.Windows.Forms.Label lblDate;
         private System.Windows.Forms.Label lblSize;
+        private System.Windows.Forms.Panel panelPic;
     }
 }

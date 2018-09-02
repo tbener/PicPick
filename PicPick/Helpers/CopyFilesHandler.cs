@@ -290,13 +290,13 @@ namespace PicPick.Helpers
             {
                 throw;
             }
-            catch (Exception ex)
-            {
-                ReportFileProcess(fileName, $"ERROR: {ex.Message}", log4net.Core.Level.Error);
-                OnFileStatusChanged?.Invoke(this, fullFileName, FILE_STATUS.ERROR);
-                if (!ErrorHandler.Handle(ex, "An error occurred. Do you want to continue to the next files?"))
-                    return;
-            }
+            //catch (Exception ex)
+            //{
+            //    ReportFileProcess(fileName, $"ERROR: {ex.Message}", log4net.Core.Level.Error);
+            //    OnFileStatusChanged?.Invoke(this, fullFileName, FILE_STATUS.ERROR);
+            //    if (!ErrorHandler.Handle(ex, "An error occurred. Do you want to continue to the next files?"))
+            //        return;
+            //}
         }
 
         AskWhatToDoForm askWhatToDoForm;

@@ -62,7 +62,6 @@
             // 
             // panel4
             // 
-            this.panel4.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panel4.Controls.Add(this.copyActionKeepBoth);
             this.panel4.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel4.Location = new System.Drawing.Point(0, 254);
@@ -79,12 +78,11 @@
             this.copyActionKeepBoth.Location = new System.Drawing.Point(0, 0);
             this.copyActionKeepBoth.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.copyActionKeepBoth.Name = "copyActionKeepBoth";
-            this.copyActionKeepBoth.Size = new System.Drawing.Size(510, 73);
+            this.copyActionKeepBoth.Size = new System.Drawing.Size(512, 75);
             this.copyActionKeepBoth.TabIndex = 0;
             // 
             // panel3
             // 
-            this.panel3.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panel3.Controls.Add(this.copyActionSkip);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel3.Location = new System.Drawing.Point(0, 127);
@@ -101,12 +99,11 @@
             this.copyActionSkip.Location = new System.Drawing.Point(0, 0);
             this.copyActionSkip.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.copyActionSkip.Name = "copyActionSkip";
-            this.copyActionSkip.Size = new System.Drawing.Size(510, 125);
+            this.copyActionSkip.Size = new System.Drawing.Size(512, 127);
             this.copyActionSkip.TabIndex = 0;
             // 
             // panel2
             // 
-            this.panel2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panel2.Controls.Add(this.copyActionOverwrite);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel2.Location = new System.Drawing.Point(0, 0);
@@ -123,7 +120,7 @@
             this.copyActionOverwrite.Location = new System.Drawing.Point(0, 0);
             this.copyActionOverwrite.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.copyActionOverwrite.Name = "copyActionOverwrite";
-            this.copyActionOverwrite.Size = new System.Drawing.Size(510, 125);
+            this.copyActionOverwrite.Size = new System.Drawing.Size(512, 127);
             this.copyActionOverwrite.TabIndex = 0;
             // 
             // lblHeader

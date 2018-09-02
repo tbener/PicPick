@@ -14,16 +14,19 @@ namespace PicPick.UserControls
     public partial class ImageInfo : UserControl
     {
         ImageFileInfo _imageInfo;
+        Image _image;
 
         public ImageInfo()
         {
             InitializeComponent();
             _imageInfo = new ImageFileInfo(true);
+
         }
 
-        private void ImageInfo_Load(object sender, EventArgs e)
+        public void ReleaseImage()
         {
-
+            _image.Dispose();
+            _image = null;
         }
 
         public override void Refresh()
@@ -39,7 +42,7 @@ namespace PicPick.UserControls
 
             try
             {
-                pictureBox.Image = Image.FromFile(ImagePath);
+                //pictureBox.Image = Image.FromFile(ImagePath);
                 _imageInfo.SetFileStream(ImagePath);
                 lblSize.Text += _imageInfo.FileSize(ImagePath);
 
@@ -59,12 +62,30 @@ namespace PicPick.UserControls
 
         private void ImageInfo_Resize(object sender, EventArgs e)
         {
-            pictureBox.Width = this.Height;
+            panelPic.Width = this.Height;
         }
 
         public string ImagePath
         {
             get; set;
+        }
+
+    
+        private void panelPic_Paint(object sender, PaintEventArgs e)
+        {
+            if (!DesignMode)
+            {
+                if (_image == null && !String.IsNullOrEmpty(ImagePath))
+                    _image = Image.FromFile(ImagePath);
+
+                if (_image == null)
+                    return;
+
+                Graphics g = e.Graphics;
+                Rectangle rect = new Rectangle(0, 0, Height, Height);
+                g.DrawImage(_image, rect);
+            }
+
         }
     }
 }

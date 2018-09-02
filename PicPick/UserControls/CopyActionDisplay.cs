@@ -8,20 +8,18 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
+using System.Diagnostics;
 
 namespace PicPick.UserControls
 {
     public partial class CopyActionDisplay : UserControl
     {
-        private readonly Color BackColorDefault;
         public CopyActionDisplay()
         {
             InitializeComponent();
 
-            BackColorDefault = BackColor;
             WireAllControls(this);
 
-            this.SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.DoubleBuffer, true);
         }
 
         private void WireAllControls(Control cont)
@@ -39,21 +37,6 @@ namespace PicPick.UserControls
             }
         }
 
-        [DllImport("user32.dll")]
-        public static extern int SendMessage(IntPtr hWnd, Int32 wMsg, bool wParam, Int32 lParam);
-
-        private const int WM_SETREDRAW = 11;
-
-        public static void SuspendDrawing(Control parent)
-        {
-            SendMessage(parent.Handle, WM_SETREDRAW, false, 0);
-        }
-
-        public static void ResumeDrawing(Control parent)
-        {
-            SendMessage(parent.Handle, WM_SETREDRAW, true, 0);
-            parent.Refresh();
-        }
 
         public ImageInfo ImageInfo { get => imageInfoControl; }
 
@@ -68,18 +51,25 @@ namespace PicPick.UserControls
         {
             if (active)
             {
-                if (_mouseOver) return;
+                if (_mouseOver)
+                {
+                    Debug.Print($"{DateTime.Now} Still in");
+                    return;
+                }
                 _mouseOver = true;
-                SuspendDrawing(this);
-                BackColor = Color.LightSkyBlue;
-                ResumeDrawing(this);
+                Debug.Print($"{DateTime.Now} Draw");
+                BackColor = Color.GhostWhite;
             }
             else if (!IsMouseOver())
             {
+                Debug.Print($"{DateTime.Now} Clear");
                 _mouseOver = false;
                 BackColor = SystemColors.Control;
             }
         }
+
+
+
 
         private void CopyActionDisplay_MouseEnter(object sender, EventArgs e)
         {
@@ -94,7 +84,9 @@ namespace PicPick.UserControls
 
         private bool IsMouseOver()
         {
+            Debug.Print($"{MousePosition} ===>  {this.PointToClient(MousePosition)}");
             return this.GetChildAtPoint(this.PointToClient(MousePosition)) != null;
         }
+
     }
 }

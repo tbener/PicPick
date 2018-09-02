@@ -345,7 +345,7 @@
             this.txtTaskName.Location = new System.Drawing.Point(13, 9);
             this.txtTaskName.Name = "txtTaskName";
             this.txtTaskName.ReadOnly = true;
-            this.txtTaskName.Size = new System.Drawing.Size(838, 27);
+            this.txtTaskName.Size = new System.Drawing.Size(837, 27);
             this.txtTaskName.TabIndex = 15;
             this.txtTaskName.DoubleClick += new System.EventHandler(this.txtTaskName_DoubleClick);
             this.txtTaskName.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtTaskName_KeyPress);
@@ -366,7 +366,7 @@
             this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(631, 47);
+            this.label3.Location = new System.Drawing.Point(630, 47);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(32, 13);
             this.label3.TabIndex = 13;
@@ -391,7 +391,7 @@
             this.pnlDestinations.Location = new System.Drawing.Point(14, 176);
             this.pnlDestinations.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.pnlDestinations.Name = "pnlDestinations";
-            this.pnlDestinations.Size = new System.Drawing.Size(837, 440);
+            this.pnlDestinations.Size = new System.Drawing.Size(836, 440);
             this.pnlDestinations.TabIndex = 0;
             // 
             // lblFileCount
@@ -406,7 +406,7 @@
             // btnAddDestination
             // 
             this.btnAddDestination.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnAddDestination.Location = new System.Drawing.Point(674, 140);
+            this.btnAddDestination.Location = new System.Drawing.Point(673, 140);
             this.btnAddDestination.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnAddDestination.Name = "btnAddDestination";
             this.btnAddDestination.Size = new System.Drawing.Size(177, 28);
@@ -418,7 +418,7 @@
             // btnRun
             // 
             this.btnRun.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnRun.Location = new System.Drawing.Point(748, 643);
+            this.btnRun.Location = new System.Drawing.Point(747, 643);
             this.btnRun.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnRun.Name = "btnRun";
             this.btnRun.Size = new System.Drawing.Size(103, 30);
@@ -431,7 +431,7 @@
             // 
             this.txtFilter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.txtFilter.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.txtFilter.Location = new System.Drawing.Point(634, 69);
+            this.txtFilter.Location = new System.Drawing.Point(633, 69);
             this.txtFilter.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtFilter.Name = "txtFilter";
             this.txtFilter.Size = new System.Drawing.Size(217, 21);
@@ -446,7 +446,7 @@
             this.pathSource.Location = new System.Drawing.Point(13, 69);
             this.pathSource.Margin = new System.Windows.Forms.Padding(0);
             this.pathSource.Name = "pathSource";
-            this.pathSource.Size = new System.Drawing.Size(607, 26);
+            this.pathSource.Size = new System.Drawing.Size(606, 26);
             this.pathSource.TabIndex = 1;
             // 
             // rtbLog

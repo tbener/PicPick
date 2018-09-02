@@ -558,5 +558,7 @@ namespace PicPick.Forms
             Properties.Settings.Default.Save();
             SetStatus("Auto save is " + (Properties.Settings.Default.AutoSave ? "on" : "off"));
         }
+
+       
     }
 }
