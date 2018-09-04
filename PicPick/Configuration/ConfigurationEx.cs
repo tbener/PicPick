@@ -269,6 +269,7 @@ namespace PicPick.Configuration
             progressInfo.Total = CountTotal;
             try
             {
+                CopyFilesHandler.FileExistsResponse = (FILE_EXISTS_RESPONSE)Enum.Parse(typeof(FILE_EXISTS_RESPONSE), Properties.Settings.Default.FileExistsResponse, true);
                 // loop on destinations
                 foreach (var kv in _mapping)
                 {

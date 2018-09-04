@@ -32,33 +32,43 @@
             this.lblStatus = new System.Windows.Forms.Label();
             this.btnCancel = new System.Windows.Forms.Button();
             this.lblMain = new System.Windows.Forms.Label();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.panel2 = new System.Windows.Forms.Panel();
+            this.panel1.SuspendLayout();
+            this.panel2.SuspendLayout();
             this.SuspendLayout();
             // 
             // progressBar
             // 
-            this.progressBar.Location = new System.Drawing.Point(33, 121);
+            this.progressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.progressBar.Location = new System.Drawing.Point(20, 20);
             this.progressBar.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.progressBar.Name = "progressBar";
-            this.progressBar.Size = new System.Drawing.Size(811, 41);
+            this.progressBar.Size = new System.Drawing.Size(833, 29);
             this.progressBar.TabIndex = 0;
             // 
             // lblStatus
             // 
             this.lblStatus.AutoEllipsis = true;
-            this.lblStatus.Location = new System.Drawing.Point(30, 87);
+            this.lblStatus.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblStatus.Location = new System.Drawing.Point(0, 54);
             this.lblStatus.Name = "lblStatus";
-            this.lblStatus.Size = new System.Drawing.Size(814, 30);
+            this.lblStatus.Padding = new System.Windows.Forms.Padding(20, 0, 20, 0);
+            this.lblStatus.Size = new System.Drawing.Size(883, 45);
             this.lblStatus.TabIndex = 1;
             this.lblStatus.Text = "Ready";
+            this.lblStatus.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // btnCancel
             // 
+            this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnCancel.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnCancel.Location = new System.Drawing.Point(355, 183);
+            this.btnCancel.Location = new System.Drawing.Point(736, 11);
             this.btnCancel.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(162, 55);
+            this.btnCancel.Size = new System.Drawing.Size(117, 36);
             this.btnCancel.TabIndex = 2;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
@@ -66,32 +76,54 @@
             // 
             // lblMain
             // 
-            this.lblMain.AutoSize = true;
-            this.lblMain.Font = new System.Drawing.Font("Century Gothic", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblMain.Location = new System.Drawing.Point(29, 41);
+            this.lblMain.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
+            this.lblMain.Dock = System.Windows.Forms.DockStyle.Top;
+            this.lblMain.Font = new System.Drawing.Font("Century Gothic", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblMain.Location = new System.Drawing.Point(0, 0);
             this.lblMain.Name = "lblMain";
-            this.lblMain.Size = new System.Drawing.Size(52, 19);
+            this.lblMain.Padding = new System.Windows.Forms.Padding(20, 0, 20, 0);
+            this.lblMain.Size = new System.Drawing.Size(883, 54);
             this.lblMain.TabIndex = 3;
             this.lblMain.Text = "label1";
+            this.lblMain.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.btnCancel);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panel1.Location = new System.Drawing.Point(0, 166);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(883, 62);
+            this.panel1.TabIndex = 4;
+            // 
+            // panel2
+            // 
+            this.panel2.Controls.Add(this.progressBar);
+            this.panel2.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panel2.Location = new System.Drawing.Point(0, 99);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(883, 67);
+            this.panel2.TabIndex = 5;
             // 
             // ProgressForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnCancel;
-            this.ClientSize = new System.Drawing.Size(872, 276);
+            this.ClientSize = new System.Drawing.Size(883, 228);
             this.ControlBox = false;
-            this.Controls.Add(this.lblMain);
-            this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.lblStatus);
-            this.Controls.Add(this.progressBar);
+            this.Controls.Add(this.panel2);
+            this.Controls.Add(this.panel1);
+            this.Controls.Add(this.lblMain);
             this.Font = new System.Drawing.Font("Century Gothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.Name = "ProgressForm";
             this.ShowInTaskbar = false;
             this.Text = "ProgressForm";
+            this.panel1.ResumeLayout(false);
+            this.panel2.ResumeLayout(false);
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -101,5 +133,7 @@
         private System.Windows.Forms.Label lblStatus;
         private System.Windows.Forms.Button btnCancel;
         private System.Windows.Forms.Label lblMain;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Panel panel2;
     }
 }

@@ -189,10 +189,12 @@ namespace PicPick.Helpers
 
         }
 
+        // this is static because an activity (task) can use a few instances of this class
+        public static FILE_EXISTS_RESPONSE FileExistsResponse { get; set; }
+
         internal async Task DoCopyAsync(ProgressInformation progressInfo, CancellationToken cancellationToken)
         {
-            FILE_EXISTS_RESPONSE fileExistsResponse = FILE_EXISTS_RESPONSE.ASK;
-            FILE_EXISTS_RESPONSE action = fileExistsResponse;
+            FILE_EXISTS_RESPONSE action = FileExistsResponse;
             FILE_STATUS fileStatus;
             bool dontAskAgain = false;
             string fileName = "";
@@ -215,8 +217,8 @@ namespace PicPick.Helpers
                     // if the file exists in destination
                     if (File.Exists(dest))
                     {
-                        action = fileExistsResponse;
-                        if (fileExistsResponse == FILE_EXISTS_RESPONSE.ASK)
+                        action = FileExistsResponse;
+                        if (FileExistsResponse == FILE_EXISTS_RESPONSE.ASK)
                         {
                             // ask the user.
                             // the choices are: Skip, Overwrite or Rename (keep both)
@@ -226,8 +228,8 @@ namespace PicPick.Helpers
                             cancellationToken.ThrowIfCancellationRequested();
 
                             if (dontAskAgain)
-                                // make this permanent
-                                fileExistsResponse = action;
+                                // make this permanent for this activity
+                                FileExistsResponse = action;
                         }
 
                         if (action == FILE_EXISTS_RESPONSE.COMPARE)
@@ -255,10 +257,8 @@ namespace PicPick.Helpers
                                 fileStatus = FILE_STATUS.SKIPPED;
                                 break;
                             case FILE_EXISTS_RESPONSE.RENAME:
-                                // todo: get a new file name
 
-                                //temp
-                                dest = Path.Combine(TalUtils.PathHelper.GetFullPath(Destination, "Existing Files", true), Path.GetFileName(file));
+                                dest = GetNewFileName(dest);
 
                                 await Task.Run(() => File.Copy(file, dest, true));
                                 fileStatus = FILE_STATUS.COPIED;
@@ -315,6 +315,25 @@ namespace PicPick.Helpers
         private bool AreSameFiles(string f1, string f2)
         {
             return false;
+        }
+
+        private string GetNewFileName(string fullPath)
+        {
+            int count = 2;
+
+            string fileNameOnly = Path.GetFileNameWithoutExtension(fullPath);
+            string extension = Path.GetExtension(fullPath);
+            string path = Path.GetDirectoryName(fullPath);
+            string newFullPath = fullPath;
+
+            while (File.Exists(newFullPath))
+            {
+                string tempFileName = string.Format("{0} ({1})", fileNameOnly, count++);
+                newFullPath = Path.Combine(path, tempFileName + extension);
+            }
+
+            return newFullPath;
+
         }
 
         private void ReportFileProcess(string file, string msg, log4net.Core.Level level)

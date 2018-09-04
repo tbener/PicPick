@@ -5,5 +5,8 @@
     <Setting Name="AutoSave" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
+    <Setting Name="FileExistsResponse" Type="System.String" Scope="User">
+      <Value Profile="(Default)">ASK</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

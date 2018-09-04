@@ -82,7 +82,7 @@ namespace PicPick.Helpers
             int order = 0;
             while (len >= 1024 && order < sizes.Length - 1)
             {
-                order++;
+                order++; 
                 len = len / 1024;
             }
 

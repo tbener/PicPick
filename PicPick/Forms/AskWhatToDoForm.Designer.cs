@@ -71,6 +71,8 @@
             // 
             // copyActionKeepBoth
             // 
+            this.copyActionKeepBoth.BackColor = System.Drawing.SystemColors.Control;
+            this.copyActionKeepBoth.Cursor = System.Windows.Forms.Cursors.Hand;
             this.copyActionKeepBoth.Details = "The file you are copying will be renamed";
             this.copyActionKeepBoth.Dock = System.Windows.Forms.DockStyle.Fill;
             this.copyActionKeepBoth.Header = "Copy, but keep both files";
@@ -78,6 +80,7 @@
             this.copyActionKeepBoth.Location = new System.Drawing.Point(0, 0);
             this.copyActionKeepBoth.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.copyActionKeepBoth.Name = "copyActionKeepBoth";
+            this.copyActionKeepBoth.Padding = new System.Windows.Forms.Padding(0, 3, 0, 6);
             this.copyActionKeepBoth.Size = new System.Drawing.Size(512, 75);
             this.copyActionKeepBoth.TabIndex = 0;
             // 
@@ -92,6 +95,8 @@
             // 
             // copyActionSkip
             // 
+            this.copyActionSkip.BackColor = System.Drawing.SystemColors.Control;
+            this.copyActionSkip.Cursor = System.Windows.Forms.Cursors.Hand;
             this.copyActionSkip.Details = "No files will be changed. Leave this file in the destination folder:";
             this.copyActionSkip.Dock = System.Windows.Forms.DockStyle.Fill;
             this.copyActionSkip.Header = "Don\'t copy";
@@ -99,6 +104,7 @@
             this.copyActionSkip.Location = new System.Drawing.Point(0, 0);
             this.copyActionSkip.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.copyActionSkip.Name = "copyActionSkip";
+            this.copyActionSkip.Padding = new System.Windows.Forms.Padding(0, 3, 0, 6);
             this.copyActionSkip.Size = new System.Drawing.Size(512, 127);
             this.copyActionSkip.TabIndex = 0;
             // 
@@ -113,6 +119,8 @@
             // 
             // copyActionOverwrite
             // 
+            this.copyActionOverwrite.BackColor = System.Drawing.SystemColors.Control;
+            this.copyActionOverwrite.Cursor = System.Windows.Forms.Cursors.Hand;
             this.copyActionOverwrite.Details = "Replace the file in the destination folder.";
             this.copyActionOverwrite.Dock = System.Windows.Forms.DockStyle.Fill;
             this.copyActionOverwrite.Header = "Copy and Replace";
@@ -120,6 +128,7 @@
             this.copyActionOverwrite.Location = new System.Drawing.Point(0, 0);
             this.copyActionOverwrite.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.copyActionOverwrite.Name = "copyActionOverwrite";
+            this.copyActionOverwrite.Padding = new System.Windows.Forms.Padding(0, 3, 0, 6);
             this.copyActionOverwrite.Size = new System.Drawing.Size(512, 127);
             this.copyActionOverwrite.TabIndex = 0;
             // 
@@ -146,9 +155,10 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(27, 78);
+            this.label2.Font = new System.Drawing.Font("Century Gothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.Location = new System.Drawing.Point(27, 77);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(110, 16);
+            this.label2.Size = new System.Drawing.Size(123, 17);
             this.label2.TabIndex = 3;
             this.label2.Text = "Select your choice:";
             // 

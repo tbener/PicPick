@@ -34,5 +34,17 @@ namespace PicPick.Properties {
                 this["AutoSave"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("ASK")]
+        public string FileExistsResponse {
+            get {
+                return ((string)(this["FileExistsResponse"]));
+            }
+            set {
+                this["FileExistsResponse"] = value;
+            }
+        }
     }
 }
