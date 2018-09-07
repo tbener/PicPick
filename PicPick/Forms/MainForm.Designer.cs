@@ -39,17 +39,16 @@
             this.mnuSave = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuAutoSave = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuTask = new System.Windows.Forms.ToolStripMenuItem();
-            this.renameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.runToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuTaskRename = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuTaskRun = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuTaskDelete = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-            this.moveupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.movedownToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuTaskMoveUp = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuTaskMoveDown = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuWindow = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuRefresh = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.testToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.topContainer = new System.Windows.Forms.SplitContainer();
             this.lstTasks = new System.Windows.Forms.ListBox();
             this.contextMenuTask = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -74,6 +73,8 @@
             this.lblProgress = new System.Windows.Forms.Label();
             this.progCopy = new System.Windows.Forms.ProgressBar();
             this.toolTips = new System.Windows.Forms.ToolTip(this.components);
+            this.mnuTaskAdd = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.statusStrip.SuspendLayout();
             this.menuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.topContainer)).BeginInit();
@@ -112,8 +113,7 @@
             this.mnuProject,
             this.mnuTask,
             this.mnuWindow,
-            this.toolStripMenuItem1,
-            this.testToolStripMenuItem});
+            this.toolStripMenuItem1});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
             this.menuStrip.Padding = new System.Windows.Forms.Padding(7, 2, 0, 2);
@@ -136,7 +136,7 @@
             this.mnuOpen.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.noProjectsToolStripMenuItem});
             this.mnuOpen.Name = "mnuOpen";
-            this.mnuOpen.Size = new System.Drawing.Size(138, 22);
+            this.mnuOpen.Size = new System.Drawing.Size(152, 22);
             this.mnuOpen.Text = "&Open";
             this.mnuOpen.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.MnuOpen_DropDownItemClicked);
             // 
@@ -150,7 +150,7 @@
             // 
             this.mnuSave.Name = "mnuSave";
             this.mnuSave.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-            this.mnuSave.Size = new System.Drawing.Size(138, 22);
+            this.mnuSave.Size = new System.Drawing.Size(152, 22);
             this.mnuSave.Text = "&Save";
             this.mnuSave.Click += new System.EventHandler(this.mnuSave_Click);
             // 
@@ -158,7 +158,7 @@
             // 
             this.mnuAutoSave.CheckOnClick = true;
             this.mnuAutoSave.Name = "mnuAutoSave";
-            this.mnuAutoSave.Size = new System.Drawing.Size(138, 22);
+            this.mnuAutoSave.Size = new System.Drawing.Size(152, 22);
             this.mnuAutoSave.Text = "&Auto save";
             this.mnuAutoSave.ToolTipText = "Save your changes automatically";
             this.mnuAutoSave.Click += new System.EventHandler(this.mnuAutoSave_Click);
@@ -166,56 +166,63 @@
             // mnuTask
             // 
             this.mnuTask.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.renameToolStripMenuItem,
-            this.runToolStripMenuItem,
+            this.mnuTaskAdd,
+            this.toolStripSeparator3,
+            this.mnuTaskRename,
+            this.mnuTaskRun,
             this.toolStripSeparator1,
-            this.deleteToolStripMenuItem,
+            this.mnuTaskDelete,
             this.toolStripSeparator2,
-            this.moveupToolStripMenuItem,
-            this.movedownToolStripMenuItem});
+            this.mnuTaskMoveUp,
+            this.mnuTaskMoveDown});
             this.mnuTask.Name = "mnuTask";
             this.mnuTask.Size = new System.Drawing.Size(59, 20);
             this.mnuTask.Text = "&Activity";
             // 
-            // renameToolStripMenuItem
+            // mnuTaskRename
             // 
-            this.renameToolStripMenuItem.Name = "renameToolStripMenuItem";
-            this.renameToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
-            this.renameToolStripMenuItem.Text = "Re&name...";
+            this.mnuTaskRename.Name = "mnuTaskRename";
+            this.mnuTaskRename.ShortcutKeys = System.Windows.Forms.Keys.F2;
+            this.mnuTaskRename.Size = new System.Drawing.Size(152, 22);
+            this.mnuTaskRename.Text = "Re&name...";
+            this.mnuTaskRename.Click += new System.EventHandler(this.mnuTaskRename_Click);
             // 
-            // runToolStripMenuItem
+            // mnuTaskRun
             // 
-            this.runToolStripMenuItem.Name = "runToolStripMenuItem";
-            this.runToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
-            this.runToolStripMenuItem.Text = "&Run";
+            this.mnuTaskRun.Name = "mnuTaskRun";
+            this.mnuTaskRun.ShortcutKeys = System.Windows.Forms.Keys.F5;
+            this.mnuTaskRun.Size = new System.Drawing.Size(152, 22);
+            this.mnuTaskRun.Text = "&Run";
+            this.mnuTaskRun.Click += new System.EventHandler(this.mnuTaskRun_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(134, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(149, 6);
             // 
-            // deleteToolStripMenuItem
+            // mnuTaskDelete
             // 
-            this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
-            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
-            this.deleteToolStripMenuItem.Text = "&Delete";
+            this.mnuTaskDelete.Name = "mnuTaskDelete";
+            this.mnuTaskDelete.Size = new System.Drawing.Size(152, 22);
+            this.mnuTaskDelete.Text = "&Delete...";
+            this.mnuTaskDelete.Click += new System.EventHandler(this.mnuTaskDelete_Click);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(134, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(149, 6);
             // 
-            // moveupToolStripMenuItem
+            // mnuTaskMoveUp
             // 
-            this.moveupToolStripMenuItem.Name = "moveupToolStripMenuItem";
-            this.moveupToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
-            this.moveupToolStripMenuItem.Text = "Move &up";
+            this.mnuTaskMoveUp.Name = "mnuTaskMoveUp";
+            this.mnuTaskMoveUp.Size = new System.Drawing.Size(152, 22);
+            this.mnuTaskMoveUp.Text = "Move &up";
             // 
-            // movedownToolStripMenuItem
+            // mnuTaskMoveDown
             // 
-            this.movedownToolStripMenuItem.Name = "movedownToolStripMenuItem";
-            this.movedownToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
-            this.movedownToolStripMenuItem.Text = "Move &down";
+            this.mnuTaskMoveDown.Name = "mnuTaskMoveDown";
+            this.mnuTaskMoveDown.Size = new System.Drawing.Size(152, 22);
+            this.mnuTaskMoveDown.Text = "Move &down";
             // 
             // mnuWindow
             // 
@@ -228,8 +235,7 @@
             // mnuRefresh
             // 
             this.mnuRefresh.Name = "mnuRefresh";
-            this.mnuRefresh.ShortcutKeys = System.Windows.Forms.Keys.F5;
-            this.mnuRefresh.Size = new System.Drawing.Size(132, 22);
+            this.mnuRefresh.Size = new System.Drawing.Size(152, 22);
             this.mnuRefresh.Text = "&Refresh";
             this.mnuRefresh.Click += new System.EventHandler(this.mnuRefresh_Click);
             // 
@@ -237,12 +243,6 @@
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
             this.toolStripMenuItem1.Size = new System.Drawing.Size(12, 20);
-            // 
-            // testToolStripMenuItem
-            // 
-            this.testToolStripMenuItem.Name = "testToolStripMenuItem";
-            this.testToolStripMenuItem.Size = new System.Drawing.Size(38, 20);
-            this.testToolStripMenuItem.Text = "test";
             // 
             // topContainer
             // 
@@ -326,6 +326,7 @@
             // 
             // chkDeleteSourceFiles
             // 
+            this.chkDeleteSourceFiles.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.chkDeleteSourceFiles.AutoSize = true;
             this.chkDeleteSourceFiles.Location = new System.Drawing.Point(14, 649);
             this.chkDeleteSourceFiles.Name = "chkDeleteSourceFiles";
@@ -345,7 +346,7 @@
             this.txtTaskName.Location = new System.Drawing.Point(13, 9);
             this.txtTaskName.Name = "txtTaskName";
             this.txtTaskName.ReadOnly = true;
-            this.txtTaskName.Size = new System.Drawing.Size(837, 27);
+            this.txtTaskName.Size = new System.Drawing.Size(836, 27);
             this.txtTaskName.TabIndex = 15;
             this.txtTaskName.DoubleClick += new System.EventHandler(this.txtTaskName_DoubleClick);
             this.txtTaskName.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtTaskName_KeyPress);
@@ -366,7 +367,7 @@
             this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(630, 47);
+            this.label3.Location = new System.Drawing.Point(629, 47);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(32, 13);
             this.label3.TabIndex = 13;
@@ -391,7 +392,7 @@
             this.pnlDestinations.Location = new System.Drawing.Point(14, 176);
             this.pnlDestinations.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.pnlDestinations.Name = "pnlDestinations";
-            this.pnlDestinations.Size = new System.Drawing.Size(836, 440);
+            this.pnlDestinations.Size = new System.Drawing.Size(835, 440);
             this.pnlDestinations.TabIndex = 0;
             // 
             // lblFileCount
@@ -406,7 +407,7 @@
             // btnAddDestination
             // 
             this.btnAddDestination.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnAddDestination.Location = new System.Drawing.Point(673, 140);
+            this.btnAddDestination.Location = new System.Drawing.Point(672, 140);
             this.btnAddDestination.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnAddDestination.Name = "btnAddDestination";
             this.btnAddDestination.Size = new System.Drawing.Size(177, 28);
@@ -418,7 +419,7 @@
             // btnRun
             // 
             this.btnRun.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnRun.Location = new System.Drawing.Point(747, 643);
+            this.btnRun.Location = new System.Drawing.Point(746, 643);
             this.btnRun.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnRun.Name = "btnRun";
             this.btnRun.Size = new System.Drawing.Size(103, 30);
@@ -431,7 +432,7 @@
             // 
             this.txtFilter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.txtFilter.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.txtFilter.Location = new System.Drawing.Point(633, 69);
+            this.txtFilter.Location = new System.Drawing.Point(632, 69);
             this.txtFilter.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtFilter.Name = "txtFilter";
             this.txtFilter.Size = new System.Drawing.Size(217, 21);
@@ -446,7 +447,7 @@
             this.pathSource.Location = new System.Drawing.Point(13, 69);
             this.pathSource.Margin = new System.Windows.Forms.Padding(0);
             this.pathSource.Name = "pathSource";
-            this.pathSource.Size = new System.Drawing.Size(606, 26);
+            this.pathSource.Size = new System.Drawing.Size(605, 26);
             this.pathSource.TabIndex = 1;
             // 
             // rtbLog
@@ -526,6 +527,18 @@
             this.progCopy.TabIndex = 9;
             this.progCopy.Value = 30;
             // 
+            // mnuTaskAdd
+            // 
+            this.mnuTaskAdd.Name = "mnuTaskAdd";
+            this.mnuTaskAdd.Size = new System.Drawing.Size(152, 22);
+            this.mnuTaskAdd.Text = "Add new";
+            this.mnuTaskAdd.Click += new System.EventHandler(this.mnuTaskAdd_Click);
+            // 
+            // toolStripSeparator3
+            // 
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(149, 6);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 16F);
@@ -593,13 +606,13 @@
         private System.Windows.Forms.ListBox lstTasks;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem mnuTask;
-        private System.Windows.Forms.ToolStripMenuItem renameToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem runToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem mnuTaskRename;
+        private System.Windows.Forms.ToolStripMenuItem mnuTaskRun;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
-        private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem mnuTaskDelete;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
-        private System.Windows.Forms.ToolStripMenuItem moveupToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem movedownToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem mnuTaskMoveUp;
+        private System.Windows.Forms.ToolStripMenuItem mnuTaskMoveDown;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label4;
@@ -609,8 +622,9 @@
         private System.Windows.Forms.ContextMenuStrip contextMenuTask;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem2;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem3;
-        private System.Windows.Forms.ToolStripMenuItem testToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem mnuAutoSave;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel;
+        private System.Windows.Forms.ToolStripMenuItem mnuTaskAdd;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
     }
 }

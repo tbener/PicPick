@@ -204,6 +204,9 @@ namespace PicPick.Forms
                     mnuOpen.DropDownItems[0].Enabled = false;
                 }
 
+                // 
+                mnuOpen.Visible = false;
+
                 lstTasks.Items.AddRange(
                     ConfigurationHelper.Default.Tasks
                     );
@@ -221,22 +224,24 @@ namespace PicPick.Forms
             }
         }
 
-        private void LoadProject(PicPickConfigProjectsProject proj)
-        {
-            try
-            {
-                _isLoading = true;
-                var taskList = proj.TaskRef.Select(t => t.Name).ToArray();
-            }
-            catch (Exception ex)
-            {
-                ErrorHandler.Handle(ex, "Error while loading project.");
-            }
-            finally
-            {
-                _isLoading = false;
-            }
-        }
+        //private void LoadProject(PicPickConfigProjectsProject proj)
+        //{
+        //    try
+        //    {
+        //        _isLoading = true;
+        //        var taskList = proj.TaskRef.Select(t => t.Name).ToArray();
+        //        //lstTasks.Items.AddRange(taskList);
+        //        lstTasks.SetSelected(0, true);              // this will invoke LoadTask()
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        ErrorHandler.Handle(ex, "Error while loading project.");
+        //    }
+        //    finally
+        //    {
+        //        _isLoading = false;
+        //    }
+        //}
 
         private async Task LoadTask(PicPickConfigTask task)
         {
@@ -398,9 +403,9 @@ namespace PicPick.Forms
         private void MnuOpen_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
 
-            PicPickConfigProjectsProject p = e.ClickedItem.Tag as PicPickConfigProjectsProject;
-            if (p != null)
-                LoadProject(p);
+            //PicPickConfigProjectsProject p = e.ClickedItem.Tag as PicPickConfigProjectsProject;
+            //if (p != null)
+            //    LoadProject(p);
         }
 
         // Todo: avoid reload when clicking on the selected task
@@ -559,6 +564,28 @@ namespace PicPick.Forms
             SetStatus("Auto save is " + (Properties.Settings.Default.AutoSave ? "on" : "off"));
         }
 
-       
+        private void mnuTaskRename_Click(object sender, EventArgs e)
+        {
+            EnableTaskNameEdit(true);
+            txtTaskName.Focus();
+        }
+
+        private async void mnuTaskRun_Click(object sender, EventArgs e)
+        {
+            await StartTask(_currentTask);
+        }
+
+        private void mnuTaskDelete_Click(object sender, EventArgs e)
+        {
+            if (Msg.ShowQ($"Are you sure you want to delete {_currentTask.Name}?"))
+            {
+
+            }
+        }
+
+        private void mnuTaskAdd_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

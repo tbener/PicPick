@@ -42,10 +42,10 @@
             // 
             this.progressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.progressBar.Location = new System.Drawing.Point(20, 20);
+            this.progressBar.Location = new System.Drawing.Point(20, 14);
             this.progressBar.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.progressBar.Name = "progressBar";
-            this.progressBar.Size = new System.Drawing.Size(833, 29);
+            this.progressBar.Size = new System.Drawing.Size(563, 26);
             this.progressBar.TabIndex = 0;
             // 
             // lblStatus
@@ -55,7 +55,7 @@
             this.lblStatus.Location = new System.Drawing.Point(0, 54);
             this.lblStatus.Name = "lblStatus";
             this.lblStatus.Padding = new System.Windows.Forms.Padding(20, 0, 20, 0);
-            this.lblStatus.Size = new System.Drawing.Size(883, 45);
+            this.lblStatus.Size = new System.Drawing.Size(613, 59);
             this.lblStatus.TabIndex = 1;
             this.lblStatus.Text = "Ready";
             this.lblStatus.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -65,7 +65,7 @@
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnCancel.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnCancel.Location = new System.Drawing.Point(736, 11);
+            this.btnCancel.Location = new System.Drawing.Point(466, 13);
             this.btnCancel.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(117, 36);
@@ -82,7 +82,7 @@
             this.lblMain.Location = new System.Drawing.Point(0, 0);
             this.lblMain.Name = "lblMain";
             this.lblMain.Padding = new System.Windows.Forms.Padding(20, 0, 20, 0);
-            this.lblMain.Size = new System.Drawing.Size(883, 54);
+            this.lblMain.Size = new System.Drawing.Size(613, 54);
             this.lblMain.TabIndex = 3;
             this.lblMain.Text = "label1";
             this.lblMain.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -93,16 +93,16 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel1.Location = new System.Drawing.Point(0, 166);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(883, 62);
+            this.panel1.Size = new System.Drawing.Size(613, 62);
             this.panel1.TabIndex = 4;
             // 
             // panel2
             // 
             this.panel2.Controls.Add(this.progressBar);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel2.Location = new System.Drawing.Point(0, 99);
+            this.panel2.Location = new System.Drawing.Point(0, 113);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(883, 67);
+            this.panel2.Size = new System.Drawing.Size(613, 53);
             this.panel2.TabIndex = 5;
             // 
             // ProgressForm
@@ -110,7 +110,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnCancel;
-            this.ClientSize = new System.Drawing.Size(883, 228);
+            this.ClientSize = new System.Drawing.Size(613, 228);
             this.ControlBox = false;
             this.Controls.Add(this.lblStatus);
             this.Controls.Add(this.panel2);
