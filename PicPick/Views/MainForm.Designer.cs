@@ -1,4 +1,4 @@
-﻿namespace PicPick.Forms
+﻿namespace PicPick.Views
 {
     partial class MainForm
     {
@@ -217,12 +217,14 @@
             this.mnuTaskMoveUp.Name = "mnuTaskMoveUp";
             this.mnuTaskMoveUp.Size = new System.Drawing.Size(152, 22);
             this.mnuTaskMoveUp.Text = "Move &up";
+            this.mnuTaskMoveUp.Click += new System.EventHandler(this.mnuTaskMoveUp_Click);
             // 
             // mnuTaskMoveDown
             // 
             this.mnuTaskMoveDown.Name = "mnuTaskMoveDown";
             this.mnuTaskMoveDown.Size = new System.Drawing.Size(152, 22);
             this.mnuTaskMoveDown.Text = "Move &down";
+            this.mnuTaskMoveDown.Click += new System.EventHandler(this.mnuTaskMoveDown_Click);
             // 
             // mnuWindow
             // 

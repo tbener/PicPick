@@ -12,7 +12,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace PicPick.Forms
+namespace PicPick.Views
 {
     public partial class AskWhatToDoForm : Form
     {

@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using TalUtils;
 
-namespace PicPick.Forms
+namespace PicPick.Views
 {
     public partial class MainForm : Form, IAppender
     {
@@ -77,7 +77,7 @@ namespace PicPick.Forms
 
         private void ContextMenuTask_Opening(object sender, CancelEventArgs e)
         {
-            items[0].Enabled = !items[0].Enabled;
+            //items[0].Enabled = !items[0].Enabled;
         }
 
         private void ContextMenuTask_Closed(object sender, ToolStripDropDownClosedEventArgs e)
@@ -207,12 +207,9 @@ namespace PicPick.Forms
                 // 
                 mnuOpen.Visible = false;
 
-                lstTasks.Items.AddRange(
-                    ConfigurationHelper.Default.Tasks
-                    );
+                LoadTasks();
 
-                mnuOpen.DropDownItems[0].PerformClick();    // this will invoke LoadProject()
-                lstTasks.SetSelected(0, true);              // this will invoke LoadTask()
+                //mnuOpen.DropDownItems[0].PerformClick();    // this will invoke LoadProject()
             }
             catch (Exception ex)
             {
@@ -223,6 +220,34 @@ namespace PicPick.Forms
                 _isLoading = false;
             }
         }
+
+        private void LoadTasks(PicPickConfigTask activeTask = null)
+        {
+            if (activeTask == null)
+                // if there are existing tasks in the list, try saving the selected one to select it later
+                if (lstTasks.Items.Count > 0)
+                    activeTask = lstTasks.SelectedItem as PicPickConfigTask;
+
+            // clear and fill the tasks
+            lstTasks.Items.Clear();
+            lstTasks.Items.AddRange(
+                    ConfigurationHelper.Default.TaskList.ToArray()
+                    );
+
+            // select a task
+            if (activeTask != null)
+            {
+                if (ConfigurationHelper.Default.TaskList.Contains(activeTask))
+                    lstTasks.SelectedItem = activeTask;
+                else
+                    lstTasks.SetSelected(0, true);              // this will invoke LoadTask()
+            }
+            else
+                lstTasks.SetSelected(0, true);              // this will invoke LoadTask()
+        }
+
+        // At this point we don't use project.
+        // There is one project that includes all tasks.
 
         //private void LoadProject(PicPickConfigProjectsProject proj)
         //{
@@ -579,13 +604,45 @@ namespace PicPick.Forms
         {
             if (Msg.ShowQ($"Are you sure you want to delete {_currentTask.Name}?"))
             {
-
+                PicPickConfigTask taskToDelete = lstTasks.SelectedItem as PicPickConfigTask;
+                ConfigurationHelper.Default.TaskList.Remove(taskToDelete);
+                LoadTasks();
             }
         }
 
         private void mnuTaskAdd_Click(object sender, EventArgs e)
         {
+            PicPickConfigTask newTask = (PicPickConfigTask)_currentTask.Clone();
+            ConfigurationHelper.Default.TaskList.Add(newTask);
+            LoadTasks(newTask);
+        }
 
+        private void mnuTaskMoveUp_Click(object sender, EventArgs e)
+        {
+            if (_currentTask == null)
+                return;
+
+            int index = ConfigurationHelper.Default.TaskList.IndexOf(_currentTask);
+            if (index > 0)
+            {
+                ConfigurationHelper.Default.TaskList.Remove(_currentTask);
+                ConfigurationHelper.Default.TaskList.Insert(index - 1, _currentTask);
+                LoadTasks(_currentTask);
+            }
+        }
+
+        private void mnuTaskMoveDown_Click(object sender, EventArgs e)
+        {
+            if (_currentTask == null)
+                return;
+
+            int index = ConfigurationHelper.Default.TaskList.IndexOf(_currentTask);
+            if (index < (ConfigurationHelper.Default.TaskList.Count-1))
+            {
+                ConfigurationHelper.Default.TaskList.Remove(_currentTask);
+                ConfigurationHelper.Default.TaskList.Insert(index + 1, _currentTask);
+                LoadTasks(_currentTask);
+            }
         }
     }
 }

@@ -18,31 +18,48 @@ using PicPick.Classes;
 
 namespace PicPick.Configuration
 {
+    public partial class PicPickConfig
+    {
+        private List<PicPickConfigTask> _taskList = null;
 
+        [XmlIgnore]
+        // Use this list rather than the Task Array for easyer manipulations and editing.
+        // This will be converted back to the Task Array in ConfigurationHelper.Save()
+        public List<PicPickConfigTask> TaskList
+        {
+            get
+            {
+                if (_taskList == null)
+                    _taskList = new List<PicPickConfigTask>(this.Tasks);
+                return _taskList;
+            }
+        }
+    }
 
     public partial class PicPickConfigProjects
     {
 
+        // TODO: if this is used, make sure not to use ConfigurationHelper.Default.Tasks
+        // instead use ConfigurationHelper.Default.TaskList
+        //public PicPickConfigProjectsProject ProjectByName(string name)
+        //{
+        //    PicPickConfigProjectsProject proj = this.Project.FirstOrDefault(p => p.Name == name);
+        //    if (proj != null)
+        //    {
+        //        if (proj.Tasks == null)
+        //        {
+        //            proj.Tasks = new List<PicPickConfigTask>();
+        //            foreach (var taskRef in proj.TaskRef)
+        //            {
+        //                PicPickConfigTask task = ConfigurationHelper.Default.Tasks.FirstOrDefault(t => t.Name == taskRef.Name);
+        //                if (task != null)
+        //                    proj.Tasks.Add(task);
+        //            }
+        //        }
+        //    }
 
-        public PicPickConfigProjectsProject ProjectByName(string name)
-        {
-            PicPickConfigProjectsProject proj = this.Project.FirstOrDefault(p => p.Name == name);
-            if (proj != null)
-            {
-                if (proj.Tasks == null)
-                {
-                    proj.Tasks = new List<PicPickConfigTask>();
-                    foreach (var taskRef in proj.TaskRef)
-                    {
-                        PicPickConfigTask task = ConfigurationHelper.Default.Tasks.FirstOrDefault(t => t.Name == taskRef.Name);
-                        if (task != null)
-                            proj.Tasks.Add(task);
-                    }
-                }
-            }
-
-            return proj;
-        }
+        //    return proj;
+        //}
     }
 
     public partial class PicPickConfigProjectsProject
@@ -51,7 +68,7 @@ namespace PicPick.Configuration
         public List<PicPickConfigTask> Tasks { get; set; }
     }
 
-    public partial class PicPickConfigTask
+    public partial class PicPickConfigTask : ICloneable
     {
 
         public event CopyEventHandler OnCopyStatusChanged;
@@ -346,6 +363,21 @@ namespace PicPick.Configuration
         public Dictionary<string, CopyFilesHandler> Mapping { get => _mapping; }
 
         public override string ToString() { return Name; }
+
+        public object Clone()
+        {
+            PicPickConfigTask newTask = new PicPickConfigTask()
+            {
+                Name = Name + "_1",
+                Source = Source,
+                Destination = Destination,
+                DeleteSourceFiles = DeleteSourceFiles
+            };
+
+            return newTask;
+
+        }
+
     }
 
 

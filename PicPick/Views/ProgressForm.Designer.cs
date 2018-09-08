@@ -1,4 +1,4 @@
-﻿namespace PicPick.Forms
+﻿namespace PicPick.Views
 {
     partial class ProgressForm
     {

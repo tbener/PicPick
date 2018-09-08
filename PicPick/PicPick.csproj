@@ -66,22 +66,22 @@
     <Compile Include="Classes\ProgressInformation.cs" />
     <Compile Include="Configuration\ConfigurationEx.cs" />
     <Compile Include="Configuration\EventHandlers.cs" />
-    <Compile Include="Forms\AskWhatToDoForm.cs">
+    <Compile Include="Views\AskWhatToDoForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\AskWhatToDoForm.Designer.cs">
+    <Compile Include="Views\AskWhatToDoForm.Designer.cs">
       <DependentUpon>AskWhatToDoForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\MainForm.cs">
+    <Compile Include="Views\MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\MainForm.Designer.cs">
+    <Compile Include="Views\MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\ProgressForm.cs">
+    <Compile Include="Views\ProgressForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\ProgressForm.Designer.cs">
+    <Compile Include="Views\ProgressForm.Designer.cs">
       <DependentUpon>ProgressForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Helpers\BitmapImageCheck.cs" />
@@ -97,37 +97,37 @@
     <Compile Include="Helpers\ConfigurationHelper.cs" />
     <Compile Include="Helpers\TaskRunner.cs" />
     <Compile Include="Settings.cs" />
-    <Compile Include="UserControls\CopyActionDisplay.cs">
+    <Compile Include="Views\UserControls\CopyActionDisplay.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="UserControls\CopyActionDisplay.Designer.cs">
+    <Compile Include="Views\UserControls\CopyActionDisplay.Designer.cs">
       <DependentUpon>CopyActionDisplay.cs</DependentUpon>
     </Compile>
-    <Compile Include="UserControls\ImageInfo.cs">
+    <Compile Include="Views\UserControls\ImageInfo.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="UserControls\ImageInfo.Designer.cs">
+    <Compile Include="Views\UserControls\ImageInfo.Designer.cs">
       <DependentUpon>ImageInfo.cs</DependentUpon>
     </Compile>
-    <Compile Include="UserControls\PathBrowser.cs">
+    <Compile Include="Views\UserControls\PathBrowser.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="UserControls\PathBrowser.Designer.cs">
+    <Compile Include="Views\UserControls\PathBrowser.Designer.cs">
       <DependentUpon>PathBrowser.cs</DependentUpon>
     </Compile>
-    <Compile Include="UserControls\TemplatePath.cs">
+    <Compile Include="Views\UserControls\TemplatePath.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="UserControls\TemplatePath.Designer.cs">
+    <Compile Include="Views\UserControls\TemplatePath.Designer.cs">
       <DependentUpon>TemplatePath.cs</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="Forms\AskWhatToDoForm.resx">
+    <EmbeddedResource Include="Views\AskWhatToDoForm.resx">
       <DependentUpon>AskWhatToDoForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\MainForm.resx">
+    <EmbeddedResource Include="Views\MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\ProgressForm.resx">
+    <EmbeddedResource Include="Views\ProgressForm.resx">
       <DependentUpon>ProgressForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -140,16 +140,16 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <EmbeddedResource Include="UserControls\CopyActionDisplay.resx">
+    <EmbeddedResource Include="Views\UserControls\CopyActionDisplay.resx">
       <DependentUpon>CopyActionDisplay.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UserControls\ImageInfo.resx">
+    <EmbeddedResource Include="Views\UserControls\ImageInfo.resx">
       <DependentUpon>ImageInfo.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UserControls\PathBrowser.resx">
+    <EmbeddedResource Include="Views\UserControls\PathBrowser.resx">
       <DependentUpon>PathBrowser.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UserControls\TemplatePath.resx">
+    <EmbeddedResource Include="Views\UserControls\TemplatePath.resx">
       <DependentUpon>TemplatePath.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="packages.config" />

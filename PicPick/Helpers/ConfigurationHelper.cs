@@ -53,8 +53,14 @@ namespace PicPick.Helpers
 
             try
             {
+                // get tasks array
+                _PicPickConfig.Tasks = _PicPickConfig.TaskList.ToArray();
+
+                // get destination array in each task
                 foreach (PicPickConfigTask task in _PicPickConfig.Tasks)
                     task.Destination = task.DestinationList.ToArray();
+
+                // save
                 return SerializeHelper.Save(_PicPickConfig, file);
             }
             catch (Exception ex)

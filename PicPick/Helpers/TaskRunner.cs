@@ -1,5 +1,5 @@
 ﻿using PicPick.Configuration;
-using PicPick.Forms;
+using PicPick.Views;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
