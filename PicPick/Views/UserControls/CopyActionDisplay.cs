@@ -10,7 +10,7 @@ using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
 
-namespace PicPick.UserControls
+namespace PicPick.UserControls 
 {
     public partial class CopyActionDisplay : UserControl
     {

@@ -22,7 +22,7 @@ namespace PicPick.Configuration {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
     [System.Xml.Serialization.XmlRootAttribute(Namespace="", IsNullable=false)]
-    public partial class PicPickConfig {
+    public partial class PicPickConfig : object, System.ComponentModel.INotifyPropertyChanged {
         
         private PicPickConfigProjects projectsField;
         
@@ -41,6 +41,7 @@ namespace PicPick.Configuration {
             }
             set {
                 this.projectsField = value;
+                this.RaisePropertyChanged("Projects");
             }
         }
         
@@ -52,6 +53,7 @@ namespace PicPick.Configuration {
             }
             set {
                 this.tasksField = value;
+                this.RaisePropertyChanged("Tasks");
             }
         }
         
@@ -64,6 +66,16 @@ namespace PicPick.Configuration {
             }
             set {
                 this.verField = value;
+                this.RaisePropertyChanged("ver");
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
             }
         }
     }
@@ -74,7 +86,7 @@ namespace PicPick.Configuration {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
-    public partial class PicPickConfigProjects {
+    public partial class PicPickConfigProjects : object, System.ComponentModel.INotifyPropertyChanged {
         
         private PicPickConfigProjectsProject[] projectField;
         
@@ -88,6 +100,7 @@ namespace PicPick.Configuration {
             }
             set {
                 this.projectField = value;
+                this.RaisePropertyChanged("Project");
             }
         }
         
@@ -99,6 +112,16 @@ namespace PicPick.Configuration {
             }
             set {
                 this.idField = value;
+                this.RaisePropertyChanged("id");
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
             }
         }
     }
@@ -109,7 +132,7 @@ namespace PicPick.Configuration {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
-    public partial class PicPickConfigProjectsProject {
+    public partial class PicPickConfigProjectsProject : object, System.ComponentModel.INotifyPropertyChanged {
         
         private PicPickConfigProjectsProjectTaskRef[] taskRefField;
         
@@ -123,6 +146,7 @@ namespace PicPick.Configuration {
             }
             set {
                 this.taskRefField = value;
+                this.RaisePropertyChanged("TaskRef");
             }
         }
         
@@ -134,6 +158,16 @@ namespace PicPick.Configuration {
             }
             set {
                 this.nameField = value;
+                this.RaisePropertyChanged("Name");
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
             }
         }
     }
@@ -144,7 +178,7 @@ namespace PicPick.Configuration {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
-    public partial class PicPickConfigProjectsProjectTaskRef {
+    public partial class PicPickConfigProjectsProjectTaskRef : object, System.ComponentModel.INotifyPropertyChanged {
         
         private string nameField;
         
@@ -156,6 +190,16 @@ namespace PicPick.Configuration {
             }
             set {
                 this.nameField = value;
+                this.RaisePropertyChanged("Name");
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
             }
         }
     }
@@ -166,7 +210,7 @@ namespace PicPick.Configuration {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
-    public partial class PicPickConfigTask {
+    public partial class PicPickConfigTask : object, System.ComponentModel.INotifyPropertyChanged {
         
         private PicPickConfigTaskSource sourceField;
         
@@ -188,6 +232,7 @@ namespace PicPick.Configuration {
             }
             set {
                 this.sourceField = value;
+                this.RaisePropertyChanged("Source");
             }
         }
         
@@ -199,6 +244,7 @@ namespace PicPick.Configuration {
             }
             set {
                 this.destinationField = value;
+                this.RaisePropertyChanged("Destination");
             }
         }
         
@@ -211,6 +257,7 @@ namespace PicPick.Configuration {
             }
             set {
                 this.nameField = value;
+                this.RaisePropertyChanged("Name");
             }
         }
         
@@ -223,6 +270,16 @@ namespace PicPick.Configuration {
             }
             set {
                 this.deleteSourceFilesField = value;
+                this.RaisePropertyChanged("DeleteSourceFiles");
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
             }
         }
     }
@@ -233,7 +290,7 @@ namespace PicPick.Configuration {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
-    public partial class PicPickConfigTaskSource {
+    public partial class PicPickConfigTaskSource : object, System.ComponentModel.INotifyPropertyChanged {
         
         private string pathField;
         
@@ -253,6 +310,7 @@ namespace PicPick.Configuration {
             }
             set {
                 this.pathField = value;
+                this.RaisePropertyChanged("Path");
             }
         }
         
@@ -265,6 +323,16 @@ namespace PicPick.Configuration {
             }
             set {
                 this.filterField = value;
+                this.RaisePropertyChanged("Filter");
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
             }
         }
     }
@@ -275,7 +343,7 @@ namespace PicPick.Configuration {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
-    public partial class PicPickConfigTaskDestination {
+    public partial class PicPickConfigTaskDestination : object, System.ComponentModel.INotifyPropertyChanged {
         
         private string pathField;
         
@@ -298,6 +366,7 @@ namespace PicPick.Configuration {
             }
             set {
                 this.pathField = value;
+                this.RaisePropertyChanged("Path");
             }
         }
         
@@ -310,6 +379,7 @@ namespace PicPick.Configuration {
             }
             set {
                 this.templateField = value;
+                this.RaisePropertyChanged("Template");
             }
         }
         
@@ -322,6 +392,16 @@ namespace PicPick.Configuration {
             }
             set {
                 this.activeField = value;
+                this.RaisePropertyChanged("Active");
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
             }
         }
     }

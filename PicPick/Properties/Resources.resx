@@ -124,4 +124,16 @@
   <data name="Folder_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Folder_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="WIZARD_TITLE_0" xml:space="preserve">
+    <value>Source</value>
+  </data>
+  <data name="WIZARD_TITLE_1" xml:space="preserve">
+    <value>Destination Base Path</value>
+  </data>
+  <data name="WIZARD_TITLE_2" xml:space="preserve">
+    <value>Destination Pattern</value>
+  </data>
+  <data name="WIZARD_TITLE_3" xml:space="preserve">
+    <value>Finish</value>
+  </data>
 </root>

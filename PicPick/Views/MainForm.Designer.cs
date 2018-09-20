@@ -39,6 +39,8 @@
             this.mnuSave = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuAutoSave = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuTask = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuTaskAdd = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.mnuTaskRename = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuTaskRun = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
@@ -46,6 +48,8 @@
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.mnuTaskMoveUp = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuTaskMoveDown = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
+            this.mnuTaskWizard = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuWindow = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuRefresh = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
@@ -65,7 +69,6 @@
             this.btnAddDestination = new System.Windows.Forms.Button();
             this.btnRun = new System.Windows.Forms.Button();
             this.txtFilter = new System.Windows.Forms.TextBox();
-            this.pathSource = new PicPick.UserControls.PathBrowser();
             this.rtbLog = new System.Windows.Forms.RichTextBox();
             this.toolStrip = new System.Windows.Forms.ToolStrip();
             this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
@@ -73,8 +76,7 @@
             this.lblProgress = new System.Windows.Forms.Label();
             this.progCopy = new System.Windows.Forms.ProgressBar();
             this.toolTips = new System.Windows.Forms.ToolTip(this.components);
-            this.mnuTaskAdd = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            this.pathSource = new PicPick.UserControls.PathBrowser();
             this.statusStrip.SuspendLayout();
             this.menuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.topContainer)).BeginInit();
@@ -136,7 +138,7 @@
             this.mnuOpen.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.noProjectsToolStripMenuItem});
             this.mnuOpen.Name = "mnuOpen";
-            this.mnuOpen.Size = new System.Drawing.Size(152, 22);
+            this.mnuOpen.Size = new System.Drawing.Size(138, 22);
             this.mnuOpen.Text = "&Open";
             this.mnuOpen.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.MnuOpen_DropDownItemClicked);
             // 
@@ -150,7 +152,7 @@
             // 
             this.mnuSave.Name = "mnuSave";
             this.mnuSave.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-            this.mnuSave.Size = new System.Drawing.Size(152, 22);
+            this.mnuSave.Size = new System.Drawing.Size(138, 22);
             this.mnuSave.Text = "&Save";
             this.mnuSave.Click += new System.EventHandler(this.mnuSave_Click);
             // 
@@ -158,7 +160,7 @@
             // 
             this.mnuAutoSave.CheckOnClick = true;
             this.mnuAutoSave.Name = "mnuAutoSave";
-            this.mnuAutoSave.Size = new System.Drawing.Size(152, 22);
+            this.mnuAutoSave.Size = new System.Drawing.Size(138, 22);
             this.mnuAutoSave.Text = "&Auto save";
             this.mnuAutoSave.ToolTipText = "Save your changes automatically";
             this.mnuAutoSave.Click += new System.EventHandler(this.mnuAutoSave_Click);
@@ -174,16 +176,31 @@
             this.mnuTaskDelete,
             this.toolStripSeparator2,
             this.mnuTaskMoveUp,
-            this.mnuTaskMoveDown});
+            this.mnuTaskMoveDown,
+            this.toolStripSeparator4,
+            this.mnuTaskWizard});
             this.mnuTask.Name = "mnuTask";
             this.mnuTask.Size = new System.Drawing.Size(59, 20);
             this.mnuTask.Text = "&Activity";
+            // 
+            // mnuTaskAdd
+            // 
+            this.mnuTaskAdd.Name = "mnuTaskAdd";
+            this.mnuTaskAdd.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
+            this.mnuTaskAdd.Size = new System.Drawing.Size(173, 22);
+            this.mnuTaskAdd.Text = "&Add new...";
+            this.mnuTaskAdd.Click += new System.EventHandler(this.mnuTaskAdd_Click);
+            // 
+            // toolStripSeparator3
+            // 
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(170, 6);
             // 
             // mnuTaskRename
             // 
             this.mnuTaskRename.Name = "mnuTaskRename";
             this.mnuTaskRename.ShortcutKeys = System.Windows.Forms.Keys.F2;
-            this.mnuTaskRename.Size = new System.Drawing.Size(152, 22);
+            this.mnuTaskRename.Size = new System.Drawing.Size(173, 22);
             this.mnuTaskRename.Text = "Re&name...";
             this.mnuTaskRename.Click += new System.EventHandler(this.mnuTaskRename_Click);
             // 
@@ -191,40 +208,52 @@
             // 
             this.mnuTaskRun.Name = "mnuTaskRun";
             this.mnuTaskRun.ShortcutKeys = System.Windows.Forms.Keys.F5;
-            this.mnuTaskRun.Size = new System.Drawing.Size(152, 22);
+            this.mnuTaskRun.Size = new System.Drawing.Size(173, 22);
             this.mnuTaskRun.Text = "&Run";
             this.mnuTaskRun.Click += new System.EventHandler(this.mnuTaskRun_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(149, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(170, 6);
             // 
             // mnuTaskDelete
             // 
             this.mnuTaskDelete.Name = "mnuTaskDelete";
-            this.mnuTaskDelete.Size = new System.Drawing.Size(152, 22);
+            this.mnuTaskDelete.Size = new System.Drawing.Size(173, 22);
             this.mnuTaskDelete.Text = "&Delete...";
             this.mnuTaskDelete.Click += new System.EventHandler(this.mnuTaskDelete_Click);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(149, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(170, 6);
             // 
             // mnuTaskMoveUp
             // 
             this.mnuTaskMoveUp.Name = "mnuTaskMoveUp";
-            this.mnuTaskMoveUp.Size = new System.Drawing.Size(152, 22);
+            this.mnuTaskMoveUp.Size = new System.Drawing.Size(173, 22);
             this.mnuTaskMoveUp.Text = "Move &up";
             this.mnuTaskMoveUp.Click += new System.EventHandler(this.mnuTaskMoveUp_Click);
             // 
             // mnuTaskMoveDown
             // 
             this.mnuTaskMoveDown.Name = "mnuTaskMoveDown";
-            this.mnuTaskMoveDown.Size = new System.Drawing.Size(152, 22);
+            this.mnuTaskMoveDown.Size = new System.Drawing.Size(173, 22);
             this.mnuTaskMoveDown.Text = "Move &down";
             this.mnuTaskMoveDown.Click += new System.EventHandler(this.mnuTaskMoveDown_Click);
+            // 
+            // toolStripSeparator4
+            // 
+            this.toolStripSeparator4.Name = "toolStripSeparator4";
+            this.toolStripSeparator4.Size = new System.Drawing.Size(170, 6);
+            // 
+            // mnuTaskWizard
+            // 
+            this.mnuTaskWizard.Name = "mnuTaskWizard";
+            this.mnuTaskWizard.Size = new System.Drawing.Size(173, 22);
+            this.mnuTaskWizard.Text = "&Wizard...";
+            this.mnuTaskWizard.Click += new System.EventHandler(this.mnuTaskWizard_Click);
             // 
             // mnuWindow
             // 
@@ -237,7 +266,7 @@
             // mnuRefresh
             // 
             this.mnuRefresh.Name = "mnuRefresh";
-            this.mnuRefresh.Size = new System.Drawing.Size(152, 22);
+            this.mnuRefresh.Size = new System.Drawing.Size(113, 22);
             this.mnuRefresh.Text = "&Refresh";
             this.mnuRefresh.Click += new System.EventHandler(this.mnuRefresh_Click);
             // 
@@ -348,7 +377,7 @@
             this.txtTaskName.Location = new System.Drawing.Point(13, 9);
             this.txtTaskName.Name = "txtTaskName";
             this.txtTaskName.ReadOnly = true;
-            this.txtTaskName.Size = new System.Drawing.Size(836, 27);
+            this.txtTaskName.Size = new System.Drawing.Size(834, 27);
             this.txtTaskName.TabIndex = 15;
             this.txtTaskName.DoubleClick += new System.EventHandler(this.txtTaskName_DoubleClick);
             this.txtTaskName.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtTaskName_KeyPress);
@@ -369,7 +398,7 @@
             this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(629, 47);
+            this.label3.Location = new System.Drawing.Point(627, 47);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(32, 13);
             this.label3.TabIndex = 13;
@@ -394,7 +423,7 @@
             this.pnlDestinations.Location = new System.Drawing.Point(14, 176);
             this.pnlDestinations.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.pnlDestinations.Name = "pnlDestinations";
-            this.pnlDestinations.Size = new System.Drawing.Size(835, 440);
+            this.pnlDestinations.Size = new System.Drawing.Size(833, 440);
             this.pnlDestinations.TabIndex = 0;
             // 
             // lblFileCount
@@ -409,7 +438,7 @@
             // btnAddDestination
             // 
             this.btnAddDestination.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnAddDestination.Location = new System.Drawing.Point(672, 140);
+            this.btnAddDestination.Location = new System.Drawing.Point(670, 140);
             this.btnAddDestination.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnAddDestination.Name = "btnAddDestination";
             this.btnAddDestination.Size = new System.Drawing.Size(177, 28);
@@ -421,7 +450,7 @@
             // btnRun
             // 
             this.btnRun.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnRun.Location = new System.Drawing.Point(746, 643);
+            this.btnRun.Location = new System.Drawing.Point(744, 643);
             this.btnRun.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnRun.Name = "btnRun";
             this.btnRun.Size = new System.Drawing.Size(103, 30);
@@ -434,23 +463,11 @@
             // 
             this.txtFilter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.txtFilter.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.txtFilter.Location = new System.Drawing.Point(632, 69);
+            this.txtFilter.Location = new System.Drawing.Point(630, 69);
             this.txtFilter.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtFilter.Name = "txtFilter";
             this.txtFilter.Size = new System.Drawing.Size(217, 21);
             this.txtFilter.TabIndex = 3;
-            // 
-            // pathSource
-            // 
-            this.pathSource.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.pathSource.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.pathSource.BackColor = System.Drawing.SystemColors.Control;
-            this.pathSource.Location = new System.Drawing.Point(13, 69);
-            this.pathSource.Margin = new System.Windows.Forms.Padding(0);
-            this.pathSource.Name = "pathSource";
-            this.pathSource.Size = new System.Drawing.Size(605, 26);
-            this.pathSource.TabIndex = 1;
             // 
             // rtbLog
             // 
@@ -529,17 +546,18 @@
             this.progCopy.TabIndex = 9;
             this.progCopy.Value = 30;
             // 
-            // mnuTaskAdd
+            // pathSource
             // 
-            this.mnuTaskAdd.Name = "mnuTaskAdd";
-            this.mnuTaskAdd.Size = new System.Drawing.Size(152, 22);
-            this.mnuTaskAdd.Text = "Add new";
-            this.mnuTaskAdd.Click += new System.EventHandler(this.mnuTaskAdd_Click);
-            // 
-            // toolStripSeparator3
-            // 
-            this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(149, 6);
+            this.pathSource.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.pathSource.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.pathSource.BackColor = System.Drawing.SystemColors.Control;
+            this.pathSource.Location = new System.Drawing.Point(13, 69);
+            this.pathSource.Margin = new System.Windows.Forms.Padding(0);
+            this.pathSource.Name = "pathSource";
+            this.pathSource.ShowExplorerButton = true;
+            this.pathSource.Size = new System.Drawing.Size(603, 26);
+            this.pathSource.TabIndex = 1;
             // 
             // MainForm
             // 
@@ -628,5 +646,7 @@
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel;
         private System.Windows.Forms.ToolStripMenuItem mnuTaskAdd;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
+        private System.Windows.Forms.ToolStripMenuItem mnuTaskWizard;
     }
 }

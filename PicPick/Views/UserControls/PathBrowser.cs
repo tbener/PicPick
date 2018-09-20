@@ -15,6 +15,7 @@ namespace PicPick.UserControls
     public partial class PathBrowser : UserControl
     {
         HistoryComboHelper _historyComboHelper = null;
+        private bool _showExplorerButton;
 
         public event EventHandler Changed;
 
@@ -26,6 +27,8 @@ namespace PicPick.UserControls
 
             ComboBox.TextChanged += ComboBox_TextChanged;
             btnOpenFolder.Enabled = PathHelper.Exists(txtPath.Text);
+
+            ShowExplorerButton = true;
 
         }
 
@@ -52,7 +55,8 @@ namespace PicPick.UserControls
         private void btnBrowse_Click(object sender, EventArgs e)
         {
             string path = txtPath.Text;
-            if (DialogHelper.BrowseOpenFolderDialog(ref path)){
+            if (DialogHelper.BrowseOpenFolderDialog(ref path))
+            {
                 txtPath.Text = path;
             }
 
@@ -71,7 +75,9 @@ namespace PicPick.UserControls
                 Msg.ShowE("Path doesn't exist.");
         }
 
-        
-        
+        public bool ShowExplorerButton { get => tableLayoutPanel.ColumnStyles[2].Width > 0; set => tableLayoutPanel.ColumnStyles[2].Width = (value ? tableLayoutPanel.ColumnStyles[1].Width : 0); }
+
+
+
     }
 }

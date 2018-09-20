@@ -83,7 +83,11 @@ namespace PicPick.Configuration
             get
             {
                 if (_destList == null)
+                {
+                    if (this.Destination == null)
+                        this.Destination = new PicPickConfigTaskDestination[0];
                     _destList = new List<PicPickConfigTaskDestination>(this.Destination);
+                }
                 return _destList;
             }
         }
@@ -109,19 +113,20 @@ namespace PicPick.Configuration
             List<string> lst = new List<string>();
             string[] filters = Source.Filter.Split(new char[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries);
 
+            // loop on filters
             foreach (string fltr in filters)
             {
                 string filter = fltr.Trim();
-                string[] fileEntries = new string[0];
-                for (int i = 0; i < 100; i++)
-                {
-                    fileEntries = await Task.Run(() => Directory.GetFiles(Source.Path, filter));
-                }
+                // get file list for current filter
+                string[] fileEntries = await Task.Run(() => Directory.GetFiles(Source.Path, filter));
                 cancellationToken.ThrowIfCancellationRequested();
+                // add to main file list - we're not just counting in case of duplications
                 lst.AddRange(fileEntries);
             }
 
+            // create a unique file list
             fileList = new HashSet<string>(lst);
+            // return the count
             return fileList.Count();
         }
 
@@ -368,11 +373,18 @@ namespace PicPick.Configuration
         {
             PicPickConfigTask newTask = new PicPickConfigTask()
             {
-                Name = Name + "_1",
-                Source = Source,
-                Destination = Destination,
+                Name = Name,
                 DeleteSourceFiles = DeleteSourceFiles
             };
+            if (Source != null)
+                newTask.Source = new PicPickConfigTaskSource()
+                {
+                    Path = Source.Path,
+                    Filter = Source.Filter
+                };
+
+            if (Destination != null)
+                newTask.Destination = (PicPickConfigTaskDestination[])Destination.Clone();
 
             return newTask;
 

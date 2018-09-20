@@ -610,13 +610,7 @@ namespace PicPick.Views
             }
         }
 
-        private void mnuTaskAdd_Click(object sender, EventArgs e)
-        {
-            PicPickConfigTask newTask = (PicPickConfigTask)_currentTask.Clone();
-            ConfigurationHelper.Default.TaskList.Add(newTask);
-            LoadTasks(newTask);
-        }
-
+        
         private void mnuTaskMoveUp_Click(object sender, EventArgs e)
         {
             if (_currentTask == null)
@@ -643,6 +637,20 @@ namespace PicPick.Views
                 ConfigurationHelper.Default.TaskList.Insert(index + 1, _currentTask);
                 LoadTasks(_currentTask);
             }
+        }
+
+        private void mnuTaskWizard_Click(object sender, EventArgs e)
+        {
+            WizardForm wiz = new WizardForm(_currentTask);
+            wiz.ShowDialog();
+        }
+
+        private void mnuTaskAdd_Click(object sender, EventArgs e)
+        {
+            PicPickConfigTask newTask = new PicPickConfigTask();
+            WizardForm wiz = new WizardForm(newTask);
+            if (wiz.ShowDialog() == DialogResult.OK)
+                LoadTasks(newTask);
         }
     }
 }

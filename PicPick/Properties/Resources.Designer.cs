@@ -78,5 +78,41 @@ namespace PicPick.Properties {
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Source.
+        /// </summary>
+        internal static string WIZARD_TITLE_0 {
+            get {
+                return ResourceManager.GetString("WIZARD_TITLE_0", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Destination Base Path.
+        /// </summary>
+        internal static string WIZARD_TITLE_1 {
+            get {
+                return ResourceManager.GetString("WIZARD_TITLE_1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Destination Pattern.
+        /// </summary>
+        internal static string WIZARD_TITLE_2 {
+            get {
+                return ResourceManager.GetString("WIZARD_TITLE_2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Finish.
+        /// </summary>
+        internal static string WIZARD_TITLE_3 {
+            get {
+                return ResourceManager.GetString("WIZARD_TITLE_3", resourceCulture);
+            }
+        }
     }
 }

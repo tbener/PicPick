@@ -115,11 +115,20 @@
     <Compile Include="Views\UserControls\PathBrowser.Designer.cs">
       <DependentUpon>PathBrowser.cs</DependentUpon>
     </Compile>
+    <Compile Include="Views\UserControls\PatternComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Views\UserControls\TemplatePath.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Views\UserControls\TemplatePath.Designer.cs">
       <DependentUpon>TemplatePath.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\WizardForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\WizardForm.Designer.cs">
+      <DependentUpon>WizardForm.cs</DependentUpon>
     </Compile>
     <EmbeddedResource Include="Views\AskWhatToDoForm.resx">
       <DependentUpon>AskWhatToDoForm.cs</DependentUpon>
@@ -152,6 +161,9 @@
     <EmbeddedResource Include="Views\UserControls\TemplatePath.resx">
       <DependentUpon>TemplatePath.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Views\WizardForm.resx">
+      <DependentUpon>WizardForm.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -183,6 +195,8 @@
       <Name>TalUtils</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Views\Wizard\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
