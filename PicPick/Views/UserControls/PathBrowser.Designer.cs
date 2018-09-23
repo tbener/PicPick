@@ -33,7 +33,7 @@
             this.btnOpenFolder = new System.Windows.Forms.Button();
             this.btnBrowse = new System.Windows.Forms.Button();
             this.tableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
-            this.txtPath = new System.Windows.Forms.ComboBox();
+            this.cboPath = new System.Windows.Forms.ComboBox();
             this.tableLayoutPanel.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -74,7 +74,7 @@
             this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 30F));
             this.tableLayoutPanel.Controls.Add(this.btnOpenFolder, 0, 0);
             this.tableLayoutPanel.Controls.Add(this.btnBrowse, 0, 0);
-            this.tableLayoutPanel.Controls.Add(this.txtPath, 0, 0);
+            this.tableLayoutPanel.Controls.Add(this.cboPath, 0, 0);
             this.tableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Top;
             this.tableLayoutPanel.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel.Name = "tableLayoutPanel";
@@ -83,16 +83,16 @@
             this.tableLayoutPanel.Size = new System.Drawing.Size(538, 29);
             this.tableLayoutPanel.TabIndex = 4;
             // 
-            // txtPath
+            // cboPath
             // 
-            this.txtPath.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtPath.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtPath.FormattingEnabled = true;
-            this.txtPath.Location = new System.Drawing.Point(0, 0);
-            this.txtPath.Margin = new System.Windows.Forms.Padding(0);
-            this.txtPath.Name = "txtPath";
-            this.txtPath.Size = new System.Drawing.Size(478, 23);
-            this.txtPath.TabIndex = 5;
+            this.cboPath.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.cboPath.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cboPath.FormattingEnabled = true;
+            this.cboPath.Location = new System.Drawing.Point(0, 0);
+            this.cboPath.Margin = new System.Windows.Forms.Padding(0);
+            this.cboPath.Name = "cboPath";
+            this.cboPath.Size = new System.Drawing.Size(478, 23);
+            this.cboPath.TabIndex = 5;
             // 
             // PathBrowser
             // 
@@ -114,6 +114,6 @@
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel;
         private System.Windows.Forms.Button btnOpenFolder;
         private System.Windows.Forms.Button btnBrowse;
-        private System.Windows.Forms.ComboBox txtPath;
+        private System.Windows.Forms.ComboBox cboPath;
     }
 }

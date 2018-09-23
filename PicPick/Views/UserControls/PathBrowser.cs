@@ -23,10 +23,10 @@ namespace PicPick.UserControls
         {
             InitializeComponent();
 
-            txtPath.AutoCompleteSource = AutoCompleteSource.FileSystem;
+            cboPath.AutoCompleteSource = AutoCompleteSource.FileSystem;
 
             ComboBox.TextChanged += ComboBox_TextChanged;
-            btnOpenFolder.Enabled = PathHelper.Exists(txtPath.Text);
+            btnOpenFolder.Enabled = PathHelper.Exists(cboPath.Text);
 
             ShowExplorerButton = true;
 
@@ -48,28 +48,37 @@ namespace PicPick.UserControls
 
         private void ComboBox_TextChanged(object sender, EventArgs e)
         {
-            btnOpenFolder.Enabled = PathHelper.Exists(txtPath.Text);
+            btnOpenFolder.Enabled = PathHelper.Exists(cboPath.Text);
             Changed?.Invoke(this, e);
         }
 
         private void btnBrowse_Click(object sender, EventArgs e)
         {
-            string path = txtPath.Text;
-            if (DialogHelper.BrowseOpenFolderDialog(ref path))
-            {
-                txtPath.Text = path;
-            }
-
+            ShowOpenFolderDialog();
         }
 
-        public override string Text { get => txtPath.Text; set => txtPath.Text = value; }
+        public void ShowOpenFolderDialog()
+        {
+            string path = cboPath.Text;
+            if (DialogHelper.BrowseOpenFolderDialog(ref path, DialogHeader))
+            {
+                cboPath.Text = path;
+            }
+        }
 
-        public ComboBox ComboBox { get => txtPath; }
+        public override string Text { get => cboPath.Text; set => cboPath.Text = value; }
+
+        
+        public ComboBox ComboBox { get => cboPath; }
+
+        public new ControlBindingsCollection DataBindings { get => cboPath.DataBindings; }
+
+        public string DialogHeader { get; set; }
 
         private void btnOpenFolder_Click(object sender, EventArgs e)
         {
-            string path = txtPath.Text;
-            if (PathHelper.Exists(txtPath.Text))
+            string path = cboPath.Text;
+            if (PathHelper.Exists(cboPath.Text))
                 Utils.OpenPath(path);
             else
                 Msg.ShowE("Path doesn't exist.");

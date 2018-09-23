@@ -26,6 +26,18 @@ namespace PicPick.Views
         bool _openSourceDialogDirectly;
         bool _openDestinationDialogDirectly;
 
+        private void WizardForm_Load(object sender, EventArgs e)
+        {
+            // set initial layout properties
+            //_panelPages.ToList().ForEach(p => p.Dock = DockStyle.Fill);
+
+            this.Size = new Size(750, 500);
+
+            lblFileCount.Text = "";
+
+            Refresh();
+        }
+
         public WizardForm(PicPickConfigTask task)
         {
             InitializeComponent();
@@ -35,11 +47,12 @@ namespace PicPick.Views
                 // NEW TASK
                 _isNew = true;
                 _openSourceDialogDirectly = true;
-                _openDestinationDialogDirectly = true;
+                //_openDestinationDialogDirectly = true;    // this is found to be a bit confusing. plus, it can be left empty.
 
                 this.Text = "New Activity Wizard";
 
                 CurrentTask = new PicPickConfigTask();
+                CurrentTask.Name = "My Activity";
             }
             else {
                 // set the Task in context
@@ -64,16 +77,26 @@ namespace PicPick.Views
 
             ctlPattern.TextChanged += (s, e) => RefreshPatternPreview();
 
-            _panelPages = new Panel[] { panel0, panel1, panel2, panel3 };
+            _panelPages = new Panel[] { panelStart, panelSource, panelDestination, panelPattern, panelOptions, panelFinish };
 
         }
 
         void BindControls()
         {
-            pathSource.DataBindings.Add("Text", CurrentTask.Source, "Path");
+            txtName.DataBindings.Add("Text", CurrentTask, "Name");
+            pathSource.DataBindings.Add("Text", CurrentTask.Source, "Path", false, DataSourceUpdateMode.OnPropertyChanged);
             txtFilter.DataBindings.Add("Text", CurrentTask.Source, "Filter");
-            pathDestination.DataBindings.Add("Text", _activeDestination, "Path");
-            ctlPattern.DataBindings.Add("Text", _activeDestination, "Template");
+            pathDestination.DataBindings.Add("Text", _activeDestination, "Path", false, DataSourceUpdateMode.OnPropertyChanged);
+            ctlPattern.DataBindings.Add("Text", _activeDestination, "Template", false, DataSourceUpdateMode.OnPropertyChanged);
+
+            // Bind radio buttons
+            Binding bind = new Binding("Checked", CurrentTask, "DeleteSourceFiles");
+            bind.Format += (s1, e1) => e1.Value = !(bool)e1.Value;
+            bind.Parse += (s1, e1) => e1.Value = !(bool)e1.Value;
+            // add the negetive binding
+            radioDontDeleteSource.DataBindings.Add(bind);
+            // add the normal binding
+            radioDeleteSource.DataBindings.Add("Checked", CurrentTask, "DeleteSourceFiles");
         }
 
 
@@ -115,15 +138,7 @@ namespace PicPick.Views
             }
         }
 
-        private void WizardForm_Load(object sender, EventArgs e)
-        {
-            // set initial layout properties
-            //_panelPages.ToList().ForEach(p => p.Dock = DockStyle.Fill);
-
-            lblFileCount.Text = "";
-
-            Refresh();
-        }
+        
 
         
 
@@ -136,12 +151,31 @@ namespace PicPick.Views
 
             _isLastPage = _currentPageIndex == _panelPages.Length - 1;
 
-            btnNext.Text = _isLastPage ? "Finish" : "Next >";
+            btnNext.Text = _isLastPage ? "Done" : "Next >";
             btnBack.Enabled = _currentPageIndex > 0;
 
-            _panelPages[_currentPageIndex].Dock = DockStyle.Fill;
-            _panelPages[_currentPageIndex].BringToFront();
-            lblPageTitle.Text = res.GetString($"WIZARD_TITLE_{_currentPageIndex}");
+            Panel activePanel = _panelPages[_currentPageIndex];
+
+            activePanel.Dock = DockStyle.Fill;
+            activePanel.BringToFront();
+            lblPageTitle.Text = activePanel.Tag.ToString();  // res.GetString($"WIZARD_TITLE_{_currentPageIndex}");
+
+            if (activePanel == panelSource)
+            {
+                if (_openSourceDialogDirectly)
+                {
+                    _openSourceDialogDirectly = false;
+                    pathSource.ShowOpenFolderDialog();
+                }
+            }
+            if (activePanel == panelDestination)
+            {
+                if (_openDestinationDialogDirectly)
+                {
+                    _openDestinationDialogDirectly = false;
+                    pathDestination.ShowOpenFolderDialog();
+                }
+            }
         }
 
         private void SaveChanges()
@@ -158,6 +192,9 @@ namespace PicPick.Views
             _originalTask.Source.Filter = CurrentTask.Source.Filter;
             _originalTask.DestinationList[0].Path = _activeDestination.Path;
             _originalTask.DestinationList[0].Template = _activeDestination.Template;
+
+            _originalTask.DeleteSourceFiles = CurrentTask.DeleteSourceFiles;
+            _originalTask.Name = CurrentTask.Name;
         }
 
         private void btnNext_Click(object sender, EventArgs e)

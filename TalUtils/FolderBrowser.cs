@@ -32,7 +32,7 @@ namespace TalUtils
     {
         public string DirectoryPath { get; set; }
 
-        public DialogResult ShowDialog(IWin32Window owner)
+        public DialogResult ShowDialog(IWin32Window owner, string title="")
         {
             IntPtr hwndOwner = owner != null ? owner.Handle : GetActiveWindow();
 
@@ -53,6 +53,7 @@ namespace TalUtils
                     }
                 }
                 dialog.SetOptions(FOS.FOS_PICKFOLDERS | FOS.FOS_FORCEFILESYSTEM);
+                dialog.SetTitle(title);
                 uint hr = dialog.Show(hwndOwner);
                 if (hr == ERROR_CANCELLED)
                     return DialogResult.Cancel;

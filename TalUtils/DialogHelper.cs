@@ -46,12 +46,12 @@ namespace TalUtils
             return false;
         }
 
-        public static bool BrowseOpenFolderDialog(ref string folder)
+        public static bool BrowseOpenFolderDialog(ref string folder, string title = "")
         {
             var dlg = new FolderBrowser2();
             dlg.DirectoryPath = folder;
 
-            if (dlg.ShowDialog(null) == DialogResult.OK)
+            if (dlg.ShowDialog(null, title) == DialogResult.OK)
             {
                 folder = dlg.DirectoryPath;
                 return true;

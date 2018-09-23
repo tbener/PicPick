@@ -647,10 +647,15 @@ namespace PicPick.Views
 
         private void mnuTaskAdd_Click(object sender, EventArgs e)
         {
-            PicPickConfigTask newTask = new PicPickConfigTask();
-            WizardForm wiz = new WizardForm(newTask);
+            // open the wizard for new task
+            WizardForm wiz = new WizardForm(null);
             if (wiz.ShowDialog() == DialogResult.OK)
+            {
+                // display the new task
+                PicPickConfigTask newTask = wiz.CurrentTask;
+                ConfigurationHelper.Default.TaskList.Add(newTask);
                 LoadTasks(newTask);
+            }
         }
     }
 }
