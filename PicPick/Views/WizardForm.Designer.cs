@@ -43,9 +43,11 @@
             this.label10 = new System.Windows.Forms.Label();
             this.panelDestination = new System.Windows.Forms.Panel();
             this.label8 = new System.Windows.Forms.Label();
+            this.pathDestination = new PicPick.UserControls.PathBrowser();
             this.label1 = new System.Windows.Forms.Label();
             this.panelPattern = new System.Windows.Forms.Panel();
             this.dtSample = new System.Windows.Forms.DateTimePicker();
+            this.ctlPattern = new PicPick.Views.UserControls1.PatternComboBox();
             this.lblPatternPreview = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
@@ -56,14 +58,13 @@
             this.label2 = new System.Windows.Forms.Label();
             this.lblFileCount = new System.Windows.Forms.Label();
             this.txtFilter = new System.Windows.Forms.TextBox();
+            this.pathSource = new PicPick.UserControls.PathBrowser();
             this.panelFinish = new System.Windows.Forms.Panel();
             this.label5 = new System.Windows.Forms.Label();
-            this.lblPageTitle = new System.Windows.Forms.Label();
             this.txtName = new System.Windows.Forms.TextBox();
             this.label9 = new System.Windows.Forms.Label();
-            this.pathDestination = new PicPick.UserControls.PathBrowser();
-            this.ctlPattern = new PicPick.Views.UserControls1.PatternComboBox();
-            this.pathSource = new PicPick.UserControls.PathBrowser();
+            this.lblPageTitle = new System.Windows.Forms.Label();
+            this.btnDone = new System.Windows.Forms.Button();
             this.panelControls.SuspendLayout();
             this.panelContent.SuspendLayout();
             this.panelPanels.SuspendLayout();
@@ -79,6 +80,7 @@
             // 
             this.panelControls.Controls.Add(this.btnCancel);
             this.panelControls.Controls.Add(this.btnBack);
+            this.panelControls.Controls.Add(this.btnDone);
             this.panelControls.Controls.Add(this.btnNext);
             this.panelControls.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panelControls.Location = new System.Drawing.Point(0, 525);
@@ -102,7 +104,7 @@
             // btnBack
             // 
             this.btnBack.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnBack.Location = new System.Drawing.Point(778, 18);
+            this.btnBack.Location = new System.Drawing.Point(630, 18);
             this.btnBack.Name = "btnBack";
             this.btnBack.Size = new System.Drawing.Size(119, 33);
             this.btnBack.TabIndex = 0;
@@ -113,7 +115,7 @@
             // btnNext
             // 
             this.btnNext.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnNext.Location = new System.Drawing.Point(912, 18);
+            this.btnNext.Location = new System.Drawing.Point(764, 18);
             this.btnNext.Name = "btnNext";
             this.btnNext.Size = new System.Drawing.Size(119, 33);
             this.btnNext.TabIndex = 0;
@@ -230,8 +232,22 @@
             this.label8.Size = new System.Drawing.Size(151, 167);
             this.label8.TabIndex = 16;
             this.label8.Text = "- Leave empty to use the same path as the Source.\r\n- If the folder does not exist" +
-    ", it will be automatically created.\r\n- You can as many Destinations as you want " +
-    "in the main editor.";
+    ", it will be automatically created.\r\n- You can add as many Destinations as you w" +
+    "ant in the main editor.";
+            // 
+            // pathDestination
+            // 
+            this.pathDestination.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.pathDestination.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.pathDestination.BackColor = System.Drawing.SystemColors.Control;
+            this.pathDestination.DialogHeader = "Select Destination Folder";
+            this.pathDestination.Location = new System.Drawing.Point(23, 58);
+            this.pathDestination.Margin = new System.Windows.Forms.Padding(0);
+            this.pathDestination.Name = "pathDestination";
+            this.pathDestination.ShowExplorerButton = false;
+            this.pathDestination.Size = new System.Drawing.Size(149, 34);
+            this.pathDestination.TabIndex = 15;
             // 
             // label1
             // 
@@ -263,6 +279,19 @@
             this.dtSample.Size = new System.Drawing.Size(200, 24);
             this.dtSample.TabIndex = 10;
             this.dtSample.ValueChanged += new System.EventHandler(this.dtSample_ValueChanged);
+            // 
+            // ctlPattern
+            // 
+            this.ctlPattern.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.ctlPattern.FormattingEnabled = true;
+            this.ctlPattern.Items.AddRange(new object[] {
+            "YYYY\\MM",
+            "asdf"});
+            this.ctlPattern.Location = new System.Drawing.Point(23, 58);
+            this.ctlPattern.Name = "ctlPattern";
+            this.ctlPattern.Size = new System.Drawing.Size(206, 25);
+            this.ctlPattern.TabIndex = 9;
             // 
             // lblPatternPreview
             // 
@@ -364,6 +393,20 @@
             this.txtFilter.Size = new System.Drawing.Size(292, 24);
             this.txtFilter.TabIndex = 15;
             // 
+            // pathSource
+            // 
+            this.pathSource.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.pathSource.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.pathSource.BackColor = System.Drawing.SystemColors.Control;
+            this.pathSource.DialogHeader = "Select Source Folder";
+            this.pathSource.Location = new System.Drawing.Point(23, 58);
+            this.pathSource.Margin = new System.Windows.Forms.Padding(0);
+            this.pathSource.Name = "pathSource";
+            this.pathSource.ShowExplorerButton = false;
+            this.pathSource.Size = new System.Drawing.Size(168, 34);
+            this.pathSource.TabIndex = 14;
+            // 
             // panelFinish
             // 
             this.panelFinish.Controls.Add(this.label5);
@@ -386,18 +429,6 @@
             this.label5.Text = "Click Done when finished.";
             this.label5.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
             // 
-            // lblPageTitle
-            // 
-            this.lblPageTitle.Dock = System.Windows.Forms.DockStyle.Top;
-            this.lblPageTitle.Font = new System.Drawing.Font("Century Gothic", 16F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblPageTitle.Location = new System.Drawing.Point(0, 0);
-            this.lblPageTitle.Name = "lblPageTitle";
-            this.lblPageTitle.Padding = new System.Windows.Forms.Padding(26, 0, 0, 0);
-            this.lblPageTitle.Size = new System.Drawing.Size(1057, 55);
-            this.lblPageTitle.TabIndex = 2;
-            this.lblPageTitle.Text = "Title";
-            this.lblPageTitle.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
             // txtName
             // 
             this.txtName.Dock = System.Windows.Forms.DockStyle.Top;
@@ -416,46 +447,28 @@
             this.label9.TabIndex = 2;
             this.label9.Text = "Type a name for your Activity:";
             // 
-            // pathDestination
+            // lblPageTitle
             // 
-            this.pathDestination.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.pathDestination.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.pathDestination.BackColor = System.Drawing.SystemColors.Control;
-            this.pathDestination.DialogHeader = "Select Destination Folder";
-            this.pathDestination.Location = new System.Drawing.Point(23, 58);
-            this.pathDestination.Margin = new System.Windows.Forms.Padding(0);
-            this.pathDestination.Name = "pathDestination";
-            this.pathDestination.ShowExplorerButton = false;
-            this.pathDestination.Size = new System.Drawing.Size(149, 34);
-            this.pathDestination.TabIndex = 15;
+            this.lblPageTitle.Dock = System.Windows.Forms.DockStyle.Top;
+            this.lblPageTitle.Font = new System.Drawing.Font("Century Gothic", 16F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblPageTitle.Location = new System.Drawing.Point(0, 0);
+            this.lblPageTitle.Name = "lblPageTitle";
+            this.lblPageTitle.Padding = new System.Windows.Forms.Padding(26, 0, 0, 0);
+            this.lblPageTitle.Size = new System.Drawing.Size(1057, 55);
+            this.lblPageTitle.TabIndex = 2;
+            this.lblPageTitle.Text = "Title";
+            this.lblPageTitle.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // ctlPattern
+            // btnDone
             // 
-            this.ctlPattern.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.ctlPattern.FormattingEnabled = true;
-            this.ctlPattern.Items.AddRange(new object[] {
-            "YYYY\\MM",
-            "asdf"});
-            this.ctlPattern.Location = new System.Drawing.Point(23, 58);
-            this.ctlPattern.Name = "ctlPattern";
-            this.ctlPattern.Size = new System.Drawing.Size(206, 25);
-            this.ctlPattern.TabIndex = 9;
-            // 
-            // pathSource
-            // 
-            this.pathSource.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.pathSource.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.pathSource.BackColor = System.Drawing.SystemColors.Control;
-            this.pathSource.DialogHeader = "Select Source Folder";
-            this.pathSource.Location = new System.Drawing.Point(23, 58);
-            this.pathSource.Margin = new System.Windows.Forms.Padding(0);
-            this.pathSource.Name = "pathSource";
-            this.pathSource.ShowExplorerButton = false;
-            this.pathSource.Size = new System.Drawing.Size(168, 34);
-            this.pathSource.TabIndex = 14;
+            this.btnDone.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnDone.Location = new System.Drawing.Point(926, 18);
+            this.btnDone.Name = "btnDone";
+            this.btnDone.Size = new System.Drawing.Size(119, 33);
+            this.btnDone.TabIndex = 0;
+            this.btnDone.Text = "Done";
+            this.btnDone.UseVisualStyleBackColor = true;
+            this.btnDone.Click += new System.EventHandler(this.btnDone_Click);
             // 
             // WizardForm
             // 
@@ -529,5 +542,6 @@
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.TextBox txtName;
         private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Button btnDone;
     }
 }

@@ -54,7 +54,8 @@ namespace PicPick.Views
                 CurrentTask = new PicPickConfigTask();
                 CurrentTask.Name = "My Activity";
             }
-            else {
+            else
+            {
                 // set the Task in context
                 _originalTask = task;
                 CurrentTask = (PicPickConfigTask)task.Clone();
@@ -62,7 +63,7 @@ namespace PicPick.Views
                 this.Text = $"Activity Wizard - {task.Name}";
             }
 
-            
+
             if (CurrentTask.Source == null)
                 CurrentTask.Source = new PicPickConfigTaskSource();
             if (CurrentTask.DestinationList.Count == 0)
@@ -138,21 +139,23 @@ namespace PicPick.Views
             }
         }
 
-        
 
-        
+
+
 
         ResourceManager res = new ResourceManager("PicPick.Properties.Resources", typeof(Properties.Resources).Assembly);
-        bool _isLastPage;
+        bool _isLastPage, _isFirstPage;
 
         public override void Refresh()
         {
             base.Refresh();
 
             _isLastPage = _currentPageIndex == _panelPages.Length - 1;
+            _isFirstPage = _currentPageIndex == 0;
 
-            btnNext.Text = _isLastPage ? "Done" : "Next >";
-            btnBack.Enabled = _currentPageIndex > 0;
+            btnNext.Enabled = !_isLastPage;
+            btnBack.Enabled = !_isFirstPage;
+            btnDone.Enabled = !_isFirstPage;
 
             Panel activePanel = _panelPages[_currentPageIndex];
 
@@ -197,19 +200,27 @@ namespace PicPick.Views
             _originalTask.Name = CurrentTask.Name;
         }
 
+       
+
+
+        public PicPickConfigTask CurrentTask { get; private set; }
+
+        private async void btnFindFiles_Click(object sender, EventArgs e)
+        {
+            await ReadFilesAsync();
+        }
+
+        private void dtSample_ValueChanged(object sender, EventArgs e)
+        {
+            RefreshPatternPreview();
+        }
+
+
+
         private void btnNext_Click(object sender, EventArgs e)
         {
-            if (_isLastPage)
-            {
-                SaveChanges();
-                DialogResult = DialogResult.OK;
-                Close();
-            }
-            else
-            {
-                _currentPageIndex++;
-                Refresh();
-            }
+            _currentPageIndex++;
+            Refresh();
         }
 
         private void btnBack_Click(object sender, EventArgs e)
@@ -223,18 +234,11 @@ namespace PicPick.Views
             DialogResult = DialogResult.Cancel;
             Close();
         }
-
-
-        public PicPickConfigTask CurrentTask { get; private set; }
-
-        private async void btnFindFiles_Click(object sender, EventArgs e)
+        private void btnDone_Click(object sender, EventArgs e)
         {
-            await ReadFilesAsync();
-        }
-
-        private void dtSample_ValueChanged(object sender, EventArgs e)
-        {
-            RefreshPatternPreview();
+            SaveChanges();
+            DialogResult = DialogResult.OK;
+            Close();
         }
     }
 }

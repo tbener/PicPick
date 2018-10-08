@@ -222,7 +222,7 @@ namespace PicPick.Configuration {
         
         public PicPickConfigTask() {
             this.nameField = "My Pictures";
-            this.deleteSourceFilesField = false;
+            this.deleteSourceFilesField = true;
         }
         
         /// <remarks/>
@@ -263,7 +263,7 @@ namespace PicPick.Configuration {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
-        [System.ComponentModel.DefaultValueAttribute(false)]
+        [System.ComponentModel.DefaultValueAttribute(true)]
         public bool DeleteSourceFiles {
             get {
                 return this.deleteSourceFilesField;
