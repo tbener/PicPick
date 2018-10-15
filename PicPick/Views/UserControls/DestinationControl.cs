@@ -20,29 +20,20 @@ namespace PicPick.UserControls
 
         private DateTime? _previewDate;
         private PicPickConfigTaskDestination _destination;
+        private BindingSource _bindingSource;
 
         public DestinationControl(PicPickConfigTaskDestination destination)
         {
             InitializeComponent();
 
             Destination = destination;
-            pathControl.Text = Destination.Path;
-            txtTemplate.Text = Destination.Template;
-            chkActive.ImageIndex = Destination.Active ? 1 : 0;
+            Destination.PropertyChanged += (s, e) => Refresh();
 
-            pathControl.ComboBox.TextChanged += Control_TextChanged;
-            txtTemplate.TextChanged += Control_TextChanged;
+            pathControl.DataBindings.Add("Text", Destination, "Path", false, DataSourceUpdateMode.OnPropertyChanged);
+            txtTemplate.DataBindings.Add("Text", Destination, "Template", false, DataSourceUpdateMode.OnPropertyChanged);
+            chkActive.DataBindings.Add("Checked", Destination, "Active");
 
             Refresh();
-        }
-
-        private void Control_TextChanged(object sender, EventArgs e)
-        {
-            Destination.Path = pathControl.Text;
-            Destination.Template = txtTemplate.Text;
-            Refresh();
-
-            Changed?.Invoke(this, new EventArgs());
         }
 
         public override void Refresh()
@@ -74,8 +65,8 @@ namespace PicPick.UserControls
 
         private void button2_Click(object sender, EventArgs e)
         {
-            chkActive.ImageIndex = chkActive.ImageIndex == 0 ? 1 : 0;
-            Destination.Active = (chkActive.ImageIndex == 1);
+            chkActiveOld.ImageIndex = chkActiveOld.ImageIndex == 0 ? 1 : 0;
+            Destination.Active = (chkActiveOld.ImageIndex == 1);
             Changed?.Invoke(this, new EventArgs());
         }
 

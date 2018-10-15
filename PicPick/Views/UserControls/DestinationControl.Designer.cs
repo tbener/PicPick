@@ -36,9 +36,10 @@
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.btnRemove = new System.Windows.Forms.Button();
-            this.chkActive = new System.Windows.Forms.Button();
+            this.chkActiveOld = new System.Windows.Forms.Button();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.pathControl = new PicPick.UserControls.PathBrowser();
+            this.chkActive = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // txtTemplate
@@ -102,18 +103,18 @@
             this.btnRemove.UseVisualStyleBackColor = true;
             this.btnRemove.Click += new System.EventHandler(this.btnRemove_Click);
             // 
-            // chkActive
+            // chkActiveOld
             // 
-            this.chkActive.FlatAppearance.BorderSize = 0;
-            this.chkActive.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chkActive.ImageIndex = 0;
-            this.chkActive.ImageList = this.imageList1;
-            this.chkActive.Location = new System.Drawing.Point(32, 20);
-            this.chkActive.Name = "chkActive";
-            this.chkActive.Size = new System.Drawing.Size(36, 36);
-            this.chkActive.TabIndex = 7;
-            this.chkActive.UseVisualStyleBackColor = true;
-            this.chkActive.Click += new System.EventHandler(this.button2_Click);
+            this.chkActiveOld.FlatAppearance.BorderSize = 0;
+            this.chkActiveOld.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.chkActiveOld.ImageIndex = 0;
+            this.chkActiveOld.ImageList = this.imageList1;
+            this.chkActiveOld.Location = new System.Drawing.Point(696, 46);
+            this.chkActiveOld.Name = "chkActiveOld";
+            this.chkActiveOld.Size = new System.Drawing.Size(36, 36);
+            this.chkActiveOld.TabIndex = 7;
+            this.chkActiveOld.UseVisualStyleBackColor = true;
+            this.chkActiveOld.Click += new System.EventHandler(this.button2_Click);
             // 
             // imageList1
             // 
@@ -128,18 +129,30 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pathControl.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.pathControl.BackColor = System.Drawing.SystemColors.Control;
+            this.pathControl.DialogHeader = null;
             this.pathControl.Font = new System.Drawing.Font("Century Gothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.pathControl.Location = new System.Drawing.Point(75, 26);
             this.pathControl.Margin = new System.Windows.Forms.Padding(0);
             this.pathControl.Name = "pathControl";
+            this.pathControl.ShowExplorerButton = true;
             this.pathControl.Size = new System.Drawing.Size(429, 30);
             this.pathControl.TabIndex = 0;
+            // 
+            // chkActive
+            // 
+            this.chkActive.AutoSize = true;
+            this.chkActive.Location = new System.Drawing.Point(42, 31);
+            this.chkActive.Name = "chkActive";
+            this.chkActive.Size = new System.Drawing.Size(15, 14);
+            this.chkActive.TabIndex = 8;
+            this.chkActive.UseVisualStyleBackColor = true;
             // 
             // DestinationControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.chkActive);
+            this.Controls.Add(this.chkActiveOld);
             this.Controls.Add(this.btnRemove);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
@@ -165,7 +178,8 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button btnRemove;
-        private System.Windows.Forms.Button chkActive;
+        private System.Windows.Forms.Button chkActiveOld;
         private System.Windows.Forms.ImageList imageList1;
+        private System.Windows.Forms.CheckBox chkActive;
     }
 }

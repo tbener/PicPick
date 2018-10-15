@@ -118,11 +118,11 @@
     <Compile Include="Views\UserControls\PatternComboBox.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Views\UserControls\TemplatePath.cs">
+    <Compile Include="Views\UserControls\DestinationControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Views\UserControls\TemplatePath.Designer.cs">
-      <DependentUpon>TemplatePath.cs</DependentUpon>
+    <Compile Include="Views\UserControls\DestinationControl.Designer.cs">
+      <DependentUpon>DestinationControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Views\WizardForm.cs">
       <SubType>Form</SubType>
@@ -158,8 +158,8 @@
     <EmbeddedResource Include="Views\UserControls\PathBrowser.resx">
       <DependentUpon>PathBrowser.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Views\UserControls\TemplatePath.resx">
-      <DependentUpon>TemplatePath.cs</DependentUpon>
+    <EmbeddedResource Include="Views\UserControls\DestinationControl.resx">
+      <DependentUpon>DestinationControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Views\WizardForm.resx">
       <DependentUpon>WizardForm.cs</DependentUpon>

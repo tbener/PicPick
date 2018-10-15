@@ -24,6 +24,7 @@ namespace PicPick.Views
         bool _isDirty;
         bool _isLoading;
         CancellationTokenSource cts = new CancellationTokenSource();
+        private BindingSource _bindingSource;
 
         Dictionary<Level, Color> logColors = new Dictionary<Level, Color>()
         {
@@ -36,6 +37,8 @@ namespace PicPick.Views
         {
             InitializeComponent();
             rtbLog.Clear();
+
+            InitDatabindings();
             EnableTaskNameEdit(false);
 
             pathSource.Changed += async (s, e) => await SetDirty(s);
@@ -49,6 +52,16 @@ namespace PicPick.Views
 
             ShareTaskContextMenu_TempWorkaround();
 
+        }
+
+        private void InitDatabindings()
+        {
+            _bindingSource = new BindingSource { DataSource = typeof(PicPickConfigTask) };
+
+            txtTaskName.DataBindings.Add("Text", _bindingSource, "Name");
+            pathSource.DataBindings.Add("Text", _bindingSource, "Source.Path");
+            txtFilter.DataBindings.Add("Text", _bindingSource, "Source.Filter");
+            chkDeleteSourceFiles.DataBindings.Add("Checked", _bindingSource, "DeleteSourceFiles");
         }
 
         private async void MainForm_Load(object sender, EventArgs e)
@@ -277,9 +290,9 @@ namespace PicPick.Views
                 Task readSource = ReadSourceAsync();
 
                 // clear fields
-                txtTaskName.Text = "";
-                pathSource.Text = "";
-                txtFilter.Text = "";
+                //txtTaskName.Text = "";
+                //pathSource.Text = "";
+                //txtFilter.Text = "";
 
                 foreach (var ctl in pnlDestinations.Controls.Cast<Control>().ToArray())
                 {
@@ -288,10 +301,11 @@ namespace PicPick.Views
 
                 if (_currentTask == null) return;
 
-                txtTaskName.Text = _currentTask.Name;
-                pathSource.Text = _currentTask.Source.Path;
-                txtFilter.Text = _currentTask.Source.Filter;
-                chkDeleteSourceFiles.Checked = _currentTask.DeleteSourceFiles;
+                _bindingSource.DataSource = _currentTask;
+                //txtTaskName.Text = _currentTask.Name;
+                //pathSource.Text = _currentTask.Source.Path;
+                //txtFilter.Text = _currentTask.Source.Filter;
+                //chkDeleteSourceFiles.Checked = _currentTask.DeleteSourceFiles;
 
                 _currentTask.DestinationList.ForEach(AddDestinationControl);
                 await readSource;
