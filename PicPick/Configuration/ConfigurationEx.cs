@@ -92,6 +92,11 @@ namespace PicPick.Configuration
             }
         }
 
+        internal void Initialize()
+        {
+            DestinationList.ForEach(d => d.PropertyChanged += (s, e) => this.RaisePropertyChanged("Destination"));
+        }
+
         [XmlIgnore]
         public TaskRunner Runner { get; set; }
 
@@ -399,6 +404,7 @@ namespace PicPick.Configuration
     public partial class PicPickConfigTaskDestination
     {
         public event CopyEventHandler OnCopyStatusChanged;
+
 
         [XmlIgnore]
         public Dictionary<string, CopyFilesHandler> Mapping { get; set; }
