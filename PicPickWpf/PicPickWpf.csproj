@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{9FE40C84-6BEA-4A36-88E3-6FDC98C3D827}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>PicPickUI</RootNamespace>
-    <AssemblyName>PicPickUI</AssemblyName>
+    <RootNamespace>PicPick</RootNamespace>
+    <AssemblyName>PicPickWpf</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -67,15 +67,18 @@
     </ApplicationDefinition>
     <Compile Include="Commands\RelayCommand.cs" />
     <Compile Include="Helpers\NotifyPropertyChangedHelper.cs" />
+    <Compile Include="Interfaces\IPath.cs" />
+    <Compile Include="Model\PathClass.cs" />
     <Compile Include="UserControls\ViewModel\PathBrowserViewModel.cs" />
     <Compile Include="UserControls\View\PathBrowserView.xaml.cs">
       <DependentUpon>PathBrowserView.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModel\BaseViewModel.cs" />
+    <Compile Include="ViewModel\MainWindowViewModel.cs" />
     <Compile Include="View\PathBrowserView.xaml.cs">
       <DependentUpon>PathBrowserView.xaml</DependentUpon>
     </Compile>
-    <Page Include="MainWindow.xaml">
+    <Page Include="View\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -83,7 +86,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="MainWindow.xaml.cs">
+    <Compile Include="View\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
@@ -155,10 +158,12 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <Folder Include="Model\" />
-  </ItemGroup>
-  <ItemGroup>
+    <ProjectReference Include="..\PicPickEngine\PicPickEngine.csproj">
+      <Project>{bad96848-e666-43b0-b1b0-0def317025fb}</Project>
+      <Name>PicPickEngine</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TalUtils\TalUtils.csproj">
       <Project>{c172ed60-5307-47b2-a243-c2e864870608}</Project>
       <Name>TalUtils</Name>

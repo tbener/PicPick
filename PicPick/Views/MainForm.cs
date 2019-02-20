@@ -1,6 +1,6 @@
 ﻿using log4net.Appender;
 using log4net.Core;
-using PicPick.Classes;
+using PicPick.Models;
 using PicPick.Configuration;
 using PicPick.Helpers;
 using PicPick.UserControls;

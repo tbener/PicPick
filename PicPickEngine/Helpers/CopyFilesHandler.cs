@@ -1,11 +1,8 @@
-﻿using PicPick.Models;
-using PicPick.Configuration;
-using PicPick.Views;
+﻿using PicPick.Interfaces;
+using PicPick.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using TalUtils;
@@ -14,6 +11,7 @@ namespace PicPick.Helpers
 {
     public delegate void FileProcessEventHandler(object sender, string file, string msg, bool success=true);
     public delegate void FileStatusChangedEventHandler(object sender, string fileFullName, FILE_STATUS status);
+    public delegate void FileExistsEventHandler(object sender, string fileFullName, FILE_STATUS status);
 
     public enum FILE_EXISTS_RESPONSE
     {
@@ -299,17 +297,18 @@ namespace PicPick.Helpers
             //}
         }
 
-        AskWhatToDoForm askWhatToDoForm;
+        //AskWhatToDoForm askWhatToDoForm;
+        public static IFileExistsDialog FileExistsDialog { get; set; }
 
         private FILE_EXISTS_RESPONSE AskWhatToDo(string fileName, string sourcePath, string destPath, out bool dontAskAgain)
         {
-            if (askWhatToDoForm == null)
-                askWhatToDoForm = new AskWhatToDoForm();
+            //if (askWhatToDoForm == null)
+            //    askWhatToDoForm = new AskWhatToDoForm();
 
-            askWhatToDoForm.ShowDialog(fileName, sourcePath, destPath);
+            FileExistsDialog.ShowDialog(fileName, sourcePath, destPath);
 
-            dontAskAgain = askWhatToDoForm.DontAskAgain;
-            return askWhatToDoForm.SelectedAction;
+            dontAskAgain = FileExistsDialog.DontAskAgain;
+            return FileExistsDialog.SelectedAction;
         }
 
         private bool AreSameFiles(string f1, string f2)

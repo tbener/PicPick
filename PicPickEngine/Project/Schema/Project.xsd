@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xs="http://www.w3.org/2001/XMLSchema" attributeFormDefault="unqualified" elementFormDefault="qualified">
+  <xsd:element name="PicPickProject">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="Activities">
+          <xsd:complexType>
+            <xsd:sequence>
+              <xsd:element maxOccurs="unbounded" name="Activity">
+                <xsd:complexType>
+                  <xsd:sequence>
+                    <xsd:element name="Source">
+                      <xsd:complexType>
+                        <xsd:attribute name="Path" type="xsd:string" default="" />
+                        <xsd:attribute name="Filter" type="xsd:string" default="*.jpg" />
+                      </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element maxOccurs="unbounded" name="Destination">
+                      <xsd:complexType>
+                        <xsd:attribute name="Path" type="xsd:string" default=""/>
+                        <xsd:attribute name="Template" type="xsd:string" default="yyyy-MM" />
+                        <xsd:attribute name="Active" type="xsd:boolean" default="true" />
+                      </xsd:complexType>
+                    </xsd:element>
+                  </xsd:sequence>
+                  <xsd:attribute name="Name" type="xsd:string" default="My Pictures" />
+                  <xsd:attribute name="DeleteSourceFiles" type="xsd:boolean" default="true" />
+                  <xsd:attribute name="Active" type="xsd:boolean" default="true" />
+                </xsd:complexType>
+              </xsd:element>
+            </xsd:sequence>
+          </xsd:complexType>
+        </xsd:element>
+      </xsd:sequence>
+      <xsd:attribute name="ver" type="xsd:string" default="1.1" />
+    </xsd:complexType>
+  </xsd:element>
+</xs:schema>

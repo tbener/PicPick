@@ -1,92 +1,42 @@
 ﻿using PicPick.Helpers;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using TalUtils;
-using System.Drawing;
-using System.Text.RegularExpressions;
-using System.Drawing.Imaging;
-using System.Windows.Media.Imaging;
 using PicPick.Models;
 
-namespace PicPick.Configuration
+namespace PicPick.Project
 {
-    public partial class PicPickConfig
-    {
-        private List<PicPickConfigTask> _taskList = null;
 
-        [XmlIgnore]
-        // Use this list rather than the Task Array for easyer manipulations and editing.
-        // This will be converted back to the Task Array in ConfigurationHelper.Save()
-        public List<PicPickConfigTask> TaskList
-        {
-            get
-            {
-                if (_taskList == null)
-                    _taskList = new List<PicPickConfigTask>(this.Tasks);
-                return _taskList;
-            }
-        }
-    }
-
-    public partial class PicPickConfigProjects
-    {
-
-        // TODO: if this is used, make sure not to use ConfigurationHelper.Default.Tasks
-        // instead use ConfigurationHelper.Default.TaskList
-        //public PicPickConfigProjectsProject ProjectByName(string name)
-        //{
-        //    PicPickConfigProjectsProject proj = this.Project.FirstOrDefault(p => p.Name == name);
-        //    if (proj != null)
-        //    {
-        //        if (proj.Tasks == null)
-        //        {
-        //            proj.Tasks = new List<PicPickConfigTask>();
-        //            foreach (var taskRef in proj.TaskRef)
-        //            {
-        //                PicPickConfigTask task = ConfigurationHelper.Default.Tasks.FirstOrDefault(t => t.Name == taskRef.Name);
-        //                if (task != null)
-        //                    proj.Tasks.Add(task);
-        //            }
-        //        }
-        //    }
-
-        //    return proj;
-        //}
-    }
-
-    public partial class PicPickConfigProjectsProject
-    {
-        [XmlIgnore]
-        public List<PicPickConfigTask> Tasks { get; set; }
-    }
-
-    public partial class PicPickConfigTask : ICloneable
+    /// <summary>
+    /// This class extends PicPickProjectActivity and includes:
+    /// 1. Extension properties
+    /// 2. Execution methods
+    /// </summary>
+    public partial class PicPickProjectActivity : ICloneable
     {
 
         public event CopyEventHandler OnCopyStatusChanged;
 
-        private List<PicPickConfigTaskDestination> _destList = null;
+        private List<PicPickProjectActivityDestination> _destList = null;
 
         [XmlIgnore]
         // Use this list rather than the Destination Array for easyer manipulations and editing.
         // This will be converted back to the Destination Array in ConfigurationHelper.Save()
-        public List<PicPickConfigTaskDestination> DestinationList
+        public List<PicPickProjectActivityDestination> DestinationList
         {
             get
             {
                 if (_destList == null)
                 {
                     if (this.Destination == null)
-                        this.Destination = new PicPickConfigTaskDestination[0];
-                    _destList = new List<PicPickConfigTaskDestination>(this.Destination);
+                        this.Destination = new PicPickProjectActivityDestination[0];
+                    _destList = new List<PicPickProjectActivityDestination>(this.Destination);
                 }
                 return _destList;
             }
@@ -98,9 +48,6 @@ namespace PicPick.Configuration
         }
 
         [XmlIgnore]
-        public TaskRunner Runner { get; set; }
-
-        [XmlIgnore]
         public bool Initialized { get; private set; }
 
         public void SetDirty()
@@ -108,7 +55,7 @@ namespace PicPick.Configuration
             Initialized = false;
         }
 
-        Dictionary<string, FileInfoItem> _dicFiles = new Dictionary<string, FileInfoItem>();
+        Dictionary<string, PicPickFileInfo> _dicFiles = new Dictionary<string, PicPickFileInfo>();
         List<string> _errorFiles = new List<string>();
 
         public async Task<int> GetFileCount(CancellationToken cancellationToken)
@@ -156,7 +103,7 @@ namespace PicPick.Configuration
                 {
                     if (!_dicFiles.ContainsKey(file) && !_errorFiles.Contains(file))
                         if (fileDateInfo.GetFileDate(file, out dateTime))
-                            _dicFiles.Add(file, new FileInfoItem(dateTime));
+                            _dicFiles.Add(file, new PicPickFileInfo(dateTime));
                         else
                             _errorFiles.Add(file);
                     //Debug.Print($"{Path.GetFileName(file)} - {_dicFiles[file].ToShortDateString()}");
@@ -196,7 +143,7 @@ namespace PicPick.Configuration
                 {
                     if (!_dicFiles.ContainsKey(file) && !_errorFiles.Contains(file))
                         if (fileDateInfo.GetFileDate(file, out dateTime))
-                            _dicFiles.Add(file, new FileInfoItem(dateTime));
+                            _dicFiles.Add(file, new PicPickFileInfo(dateTime));
                         else
                             _errorFiles.Add(file);
                 }
@@ -228,7 +175,7 @@ namespace PicPick.Configuration
             _mapping.Clear();
             await ReadFilesAsync(cancellationToken);
 
-            foreach (PicPickConfigTaskDestination destination in Destination)
+            foreach (PicPickProjectActivityDestination destination in Destination)
             {
                 if (!destination.Active)
                     continue;
@@ -336,7 +283,7 @@ namespace PicPick.Configuration
             catch (Exception ex)
             {
                 progressInfo.Exception = ex;
-                
+
                 ErrorHandler.Handle(ex, $"Error in operation: {progressInfo.MainOperation}.");
             }
             finally
@@ -376,144 +323,25 @@ namespace PicPick.Configuration
 
         public object Clone()
         {
-            PicPickConfigTask newTask = new PicPickConfigTask()
+            PicPickProjectActivity newTask = new PicPickProjectActivity()
             {
                 Name = Name,
                 DeleteSourceFiles = DeleteSourceFiles
             };
             if (Source != null)
-                newTask.Source = new PicPickConfigTaskSource()
+                newTask.Source = new PicPickProjectActivitySource()
                 {
                     Path = Source.Path,
                     Filter = Source.Filter
                 };
 
             if (Destination != null)
-                newTask.Destination = (PicPickConfigTaskDestination[])Destination.Clone();
+                newTask.Destination = (PicPickProjectActivityDestination[])Destination.Clone();
 
             return newTask;
 
         }
 
     }
-
-
-
-
-
-    public partial class PicPickConfigTaskDestination
-    {
-        public event CopyEventHandler OnCopyStatusChanged;
-
-
-        [XmlIgnore]
-        public Dictionary<string, CopyFilesHandler> Mapping { get; set; }
-
-        [XmlIgnore]
-        public bool Move { get; set; }
-
-        [XmlIgnore]
-        public bool HasTemplate { get => !string.IsNullOrEmpty(Template); }
-
-        [XmlIgnore]
-        public string PathAbsolute { get; set; }
-
-        public string GetTemplatePath(DateTime dt)
-        {
-            return HasTemplate ? dt.ToString(Template) : string.Empty;
-        }
-
-        //public string GetTemplatePath(string file)
-        //{
-        //    return HasTemplate ? GetTemplatePath(GetFileDate(file, true)) : string.Empty;
-        //}
-
-        //public DateTime GetFileDate(string file, bool usePicDateTaken)
-        //{
-        //    if (usePicDateTaken)
-        //        return GetDateTaken(file);
-        //    else
-        //        return File.GetLastWriteTime(file);
-        //}
-
-        //public static DateTime GetDateTaken(string inFullPath)
-        //{
-        //    DateTime returnDateTime = DateTime.MinValue;
-        //    FileStream picStream = null;
-        //    try
-        //    {
-        //        picStream = new FileStream(inFullPath, FileMode.Open, FileAccess.Read, FileShare.Read);
-        //        BitmapSource bitSource = BitmapFrame.Create(picStream);
-        //        BitmapMetadata metaData = (BitmapMetadata)bitSource.Metadata;
-        //        returnDateTime = DateTime.Parse(metaData.DateTaken);
-
-        //        //JpegBitmapDecoder decoder = new JpegBitmapDecoder(picStream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.None);
-        //        //BitmapMetadata metaData = new BitmapMetadata("jpg");
-        //        //BitmapFrame frame = BitmapFrame.Create(decoder.Frames[0]);
-
-        //    }
-        //    catch(Exception ex)
-        //    {
-        //        Debug.Print($"{System.IO.Path.GetFileName(inFullPath)} - {ex.Message}");
-        //        returnDateTime = File.GetLastWriteTime(inFullPath);
-        //    }
-        //    finally
-        //    {
-        //        picStream?.Close();
-        //    }
-        //    return returnDateTime;
-        //}
-
-        public string GetFullPath(DateTime dt)
-        {
-            return PathHelper.GetFullPath(Path, GetTemplatePath(dt), false);
-        }
-
-        internal string GetPath(string path, bool buildPath = false)
-        {
-            return PathHelper.GetFullPath(PathAbsolute, path, buildPath);
-        }
-
-        public void Execute()
-        {
-            foreach (var kv in Mapping)
-            {
-                CopyEventArgs e = new CopyEventArgs(kv.Value);
-
-                // get the full path and CREATE it if not exists
-                string fullPath = GetPath(kv.Key, true);
-                CopyFilesHandler map = kv.Value;
-                map.SetStart();
-                OnCopyStatusChanged?.Invoke(this, e);
-
-                try
-                {
-
-                    // The operation is done on a banch of files at once!
-                    if (Move)
-                    {
-                        Debug.Print("Moving {0} files to {1}", map.FileList.Count(), fullPath);
-                        ShellFileOperation.MoveItems(map.FileList, fullPath);
-                    }
-                    else
-                    {
-                        Debug.Print("Copying {0} files to {1}", map.FileList.Count(), fullPath);
-                        ShellFileOperation.CopyItems(map.FileList, fullPath);
-                    }
-                    map.SetFinished();
-                }
-                catch (Exception ex)
-                {
-                    map.SetError(ex);
-                    throw;
-                }
-
-                OnCopyStatusChanged?.Invoke(this, e);
-            }
-        }
-
-
-    }
-
 
 }

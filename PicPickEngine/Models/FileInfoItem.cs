@@ -1,24 +1,17 @@
 ﻿using PicPick.Helpers;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PicPick.Models
 {
-
     
-
-    internal class FileInfoItem
+    internal class PicPickFileInfo
     {
-        public FileInfoItem()
+        public PicPickFileInfo()
         {
             Status = FILE_STATUS.NONE;
         }
 
-        public FileInfoItem(DateTime dateTime)
+        public PicPickFileInfo(DateTime dateTime)
         {
             this.DateTime = dateTime;
         }
