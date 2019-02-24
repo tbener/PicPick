@@ -63,21 +63,20 @@
                         <TextBlock Text="Filter" DockPanel.Dock="Top"/>
                         <TextBox DockPanel.Dock="Top" Text="{Binding CurrentActivity.Source.Filter}"/>
                     </DockPanel>
-                    
+
                     <!--<TextBlock Text="{Binding SourceFilesStatus}" Grid.Row="3"># files found</TextBlock>-->
 
                 </Grid>
 
                 <DockPanel Grid.Row="2" LastChildFill="True">
-                    <TextBlock Text="Destinations" DockPanel.Dock="Top"/>
-                    <ListBox ItemsSource="{Binding CurrentActivity.DestinationList}">
+                    <DockPanel DockPanel.Dock="Top">
+                        <TextBlock Text="Destinations" DockPanel.Dock="Left"/>
+                        <Button Content="Add" Width="72" DockPanel.Dock="Right" Command="{Binding AddDestinationCommand}"/>
+                    </DockPanel>
+                    <ListBox ItemsSource="{Binding DestinationList}">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
-                                <DockPanel LastChildFill="True">
-                                    <CheckBox IsChecked="{Binding Active}" DockPanel.Dock="Left"/>
-                                    <!--<uc:PathBrowserView Path="{Binding Path}" DockPanel.Dock="Left"/>-->
-                                    <TextBox Text="{Binding Template}"/>
-                                </DockPanel>
+                                <uc:DestinationView/>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>

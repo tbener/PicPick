@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using TalUtils;
+using System.Collections.ObjectModel;
 
 namespace PicPick.ViewModel
 {
@@ -19,11 +20,13 @@ namespace PicPick.ViewModel
         private PathBrowserViewModel _activitySourceViewModel;
 
         public ICommand OpenFileCommand { get; set; }
+        public ICommand AddDestinationCommand { get; set; }
 
 
         public MainWindowViewModel()
         {
             OpenFileCommand = new RelayCommand(OpenFile);
+            AddDestinationCommand = new RelayCommand(AddDestination);
 
             CurrentProject = new PicPickProject(true)
             {
@@ -53,7 +56,41 @@ namespace PicPick.ViewModel
                 Template = "dd-YY"
             };
             act1.DestinationList.AddRange(new[] { dest1, dest2 });
+
+            // TODO: DestinationList should be produced inside the Activity class
+            // so that when the activity is changed, the DestinationList will change too.
+            DestinationList = new ObservableCollection<DestinationViewModel>();
+            foreach (PicPickProjectActivityDestination dest in act1.DestinationList)
+            {
+                var vm = new DestinationViewModel(dest);
+                vm.OnDeleteClicked += OnDestinationDelete;
+                DestinationList.Add(vm);
+            }
+
+            // set the current activity
+            CurrentActivity = act1;
         }
+
+        private void OnDestinationDelete(object sender, EventArgs e)
+        {
+            DestinationViewModel vm = sender as DestinationViewModel;
+            if (vm == null) return;
+            if (vm.Destination != null)
+                CurrentActivity.DestinationList.Remove(vm.Destination);
+            DestinationList.Remove(vm);
+        }
+
+        private void AddDestination()
+        {
+            PicPickProjectActivityDestination dest = new PicPickProjectActivityDestination()
+            {
+                Path = "",
+                Template = "dd-YY"
+            };
+            CurrentActivity.DestinationList.Add(dest);
+            DestinationList.Add(new DestinationViewModel(dest));
+        }
+
 
         private void CurrentProject_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
@@ -96,5 +133,7 @@ namespace PicPick.ViewModel
                 OnPropertyChanged("ActivitySourceViewModel");
             }
         }
+
+        public ObservableCollection<DestinationViewModel> DestinationList { get; set; }
     }
 }
