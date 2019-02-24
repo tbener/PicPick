@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PicPickUI.Interfaces
+namespace PicPick.Interfaces
 {
     public interface IPath
     {

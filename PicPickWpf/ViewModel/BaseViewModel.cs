@@ -3,9 +3,9 @@ using System.ComponentModel;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Windows;
-using PicPickUI.Helpers;
+using PicPick.Helpers;
 
-namespace PicPickUI.ViewModel
+namespace PicPick.ViewModel
 {
     public abstract class BaseViewModel : DependencyObject, INotifyPropertyChanged
     {

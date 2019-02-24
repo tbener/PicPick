@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace PicPickUI.UserControls.View
+namespace PicPick.UserControls.View
 {
     /// <summary>
     /// Interaction logic for PathBrowser.xaml

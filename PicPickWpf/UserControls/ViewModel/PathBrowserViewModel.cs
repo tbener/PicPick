@@ -1,14 +1,11 @@
-﻿using PicPickUI.Commands;
-using PicPickUI.ViewModel;
-using PicPick.Project;
+﻿using PicPick.Commands;
+using PicPick.ViewModel;
 using System;
-using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
 using TalUtils;
-using PicPickUI.Interfaces;
 
-namespace PicPickUI.UserControls.ViewModel
+namespace PicPick.UserControls.ViewModel
 {
     public class GenericPathClass<T>
     {

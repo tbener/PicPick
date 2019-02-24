@@ -1,8 +1,8 @@
 ﻿using PicPick.Project;
-using PicPickUI.Commands;
-using PicPickUI.Interfaces;
-using PicPickUI.Model;
-using PicPickUI.UserControls.ViewModel;
+using PicPick.Commands;
+using PicPick.Interfaces;
+using PicPick.Model;
+using PicPick.UserControls.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using TalUtils;
 
-namespace PicPickUI.ViewModel
+namespace PicPick.ViewModel
 {
     class MainWindowViewModel : BaseViewModel
     {

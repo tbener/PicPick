@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Input;
 
-namespace PicPickUI.Commands
+namespace PicPick.Commands
 {
 	public delegate bool PredicateDelegate();
 

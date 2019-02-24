@@ -13,14 +13,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace PicPickUI.View
+namespace PicPick.UserControls.View
 {
     /// <summary>
-    /// Interaction logic for PathBrowserView.xaml
+    /// Interaction logic for DestinationView.xaml
     /// </summary>
-    public partial class PathBrowserView : UserControl
+    public partial class DestinationView : UserControl
     {
-        public PathBrowserView()
+        public DestinationView()
         {
             InitializeComponent();
         }

@@ -1,12 +1,12 @@
 ﻿using PicPick.Project;
-using PicPickUI.Interfaces;
+using PicPick.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PicPickUI.Model
+namespace PicPick.Model
 {
     internal class SourcePath : PicPickProjectActivitySource, IPath
     {

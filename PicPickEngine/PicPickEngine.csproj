@@ -47,7 +47,6 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
     <Compile Include="Helpers\BitmapImageCheck.cs" />
     <Compile Include="Helpers\CopyFilesHandler.cs" />
     <Compile Include="Helpers\ImageFileInfo.cs" />

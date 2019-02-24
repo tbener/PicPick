@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 
-namespace PicPickUI.Helpers
+namespace PicPick.Helpers
 {
     public class NotifyPropertyChangedHelper
     {
