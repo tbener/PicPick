@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using TalUtils;
 using System.Collections.ObjectModel;
+using System.Windows;
 
 namespace PicPick.ViewModel
 {
@@ -18,15 +19,14 @@ namespace PicPick.ViewModel
     {
         private PicPickProjectActivity _currentActivity;
         private PathBrowserViewModel _activitySourceViewModel;
+        private ActivityViewModel _activityViewModel;
 
         public ICommand OpenFileCommand { get; set; }
-        public ICommand AddDestinationCommand { get; set; }
 
 
         public MainWindowViewModel()
         {
             OpenFileCommand = new RelayCommand(OpenFile);
-            AddDestinationCommand = new RelayCommand(AddDestination);
 
             CurrentProject = new PicPickProject(true)
             {
@@ -34,8 +34,8 @@ namespace PicPick.ViewModel
             };
             CurrentProject.PropertyChanged += CurrentProject_PropertyChanged;
 
-            PicPickProjectActivity act1 = new PicPickProjectActivity() { Name = "Test" };
-            PicPickProjectActivity act2 = new PicPickProjectActivity() { Name = "Blah blah" };
+            PicPickProjectActivity act1 = new PicPickProjectActivity("Test");
+            PicPickProjectActivity act2 = new PicPickProjectActivity("Blah blah");
             CurrentProject.ActivityList.Add(act1);
             CurrentProject.ActivityList.Add(act2);
 
@@ -57,39 +57,10 @@ namespace PicPick.ViewModel
             };
             act1.DestinationList.AddRange(new[] { dest1, dest2 });
 
-            // TODO: DestinationList should be produced inside the Activity class
-            // so that when the activity is changed, the DestinationList will change too.
-            DestinationList = new ObservableCollection<DestinationViewModel>();
-            foreach (PicPickProjectActivityDestination dest in act1.DestinationList)
-            {
-                var vm = new DestinationViewModel(dest);
-                vm.OnDeleteClicked += OnDestinationDelete;
-                DestinationList.Add(vm);
-            }
-
             // set the current activity
             CurrentActivity = act1;
         }
-
-        private void OnDestinationDelete(object sender, EventArgs e)
-        {
-            DestinationViewModel vm = sender as DestinationViewModel;
-            if (vm == null) return;
-            if (vm.Destination != null)
-                CurrentActivity.DestinationList.Remove(vm.Destination);
-            DestinationList.Remove(vm);
-        }
-
-        private void AddDestination()
-        {
-            PicPickProjectActivityDestination dest = new PicPickProjectActivityDestination()
-            {
-                Path = "",
-                Template = "dd-YY"
-            };
-            CurrentActivity.DestinationList.Add(dest);
-            DestinationList.Add(new DestinationViewModel(dest));
-        }
+        
 
 
         private void CurrentProject_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -109,7 +80,22 @@ namespace PicPick.ViewModel
             get { return string.Format("{0}{1} - PicPick", CurrentProject.Name, CurrentProject.IsDirty ? "*" : ""); }
         }
 
+
         public PicPickProject CurrentProject { get; set; }
+        
+
+        public ActivityViewModel ActivityViewModel
+        {
+            get { return (ActivityViewModel)GetValue(ActivityViewModelProperty); }
+            set { SetValue(ActivityViewModelProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for ActivityViewModel.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty ActivityViewModelProperty =
+            DependencyProperty.Register("ActivityViewModel", typeof(ActivityViewModel), typeof(MainWindowViewModel), new PropertyMetadata(null));
+
+
+
         public PicPickProjectActivity CurrentActivity
         {
             get => _currentActivity;
@@ -118,22 +104,11 @@ namespace PicPick.ViewModel
                 if (_currentActivity != value)
                 {
                     _currentActivity = value;
-                    ActivitySourceViewModel = new PathBrowserViewModel(_currentActivity.Source);
+                    ActivityViewModel = new ActivityViewModel(_currentActivity);
                 }
                 OnPropertyChanged("CurrentActivity");
             }
         }
-
-        public PathBrowserViewModel ActivitySourceViewModel
-        {
-            get => _activitySourceViewModel;
-            set
-            {
-                _activitySourceViewModel = value;
-                OnPropertyChanged("ActivitySourceViewModel");
-            }
-        }
-
-        public ObservableCollection<DestinationViewModel> DestinationList { get; set; }
+        
     }
 }

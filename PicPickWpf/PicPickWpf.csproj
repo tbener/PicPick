@@ -77,6 +77,7 @@
     <Compile Include="UserControls\View\PathBrowserView.xaml.cs">
       <DependentUpon>PathBrowserView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ViewModel\ActivityViewModel.cs" />
     <Compile Include="ViewModel\BaseViewModel.cs" />
     <Compile Include="ViewModel\MainWindowViewModel.cs" />
     <Page Include="UserControls\View\DestinationView.xaml">

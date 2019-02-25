@@ -31,7 +31,7 @@
 
             </DockPanel>
 
-            <Grid Grid.Column="1">
+            <Grid Grid.Column="1" DataContext="{Binding ActivityViewModel}">
                 <Grid.RowDefinitions>
                     <RowDefinition Name="title" Height="Auto"/>
                     <RowDefinition Name="source"/>
@@ -39,7 +39,7 @@
                     <RowDefinition Name="buttons"/>
                 </Grid.RowDefinitions>
 
-                <TextBlock Grid.Row="0" Text="{Binding CurrentActivity.Name}"/>
+                <TextBlock Grid.Row="0" Text="{Binding Activity.Name}"/>
 
                 <Grid Grid.Row="1">
                     <Grid.RowDefinitions>
@@ -57,11 +57,11 @@
 
                     <DockPanel Grid.Row="0">
                         <TextBlock Text="Source" DockPanel.Dock="Top"/>
-                        <uc:PathBrowserView DockPanel.Dock="Top" DataContext="{Binding ActivitySourceViewModel}"/>
+                        <uc:PathBrowserView DockPanel.Dock="Top" DataContext="{Binding SourceViewModel}"/>
                     </DockPanel>
                     <DockPanel Grid.Row="0" Grid.Column="1">
                         <TextBlock Text="Filter" DockPanel.Dock="Top"/>
-                        <TextBox DockPanel.Dock="Top" Text="{Binding CurrentActivity.Source.Filter}"/>
+                        <TextBox DockPanel.Dock="Top" Text="{Binding Activity.Source.Filter}"/>
                     </DockPanel>
 
                     <!--<TextBlock Text="{Binding SourceFilesStatus}" Grid.Row="3"># files found</TextBlock>-->
@@ -69,11 +69,11 @@
                 </Grid>
 
                 <DockPanel Grid.Row="2" LastChildFill="True">
-                    <DockPanel DockPanel.Dock="Top">
+                    <DockPanel DockPanel.Dock="Top" LastChildFill="False">
                         <TextBlock Text="Destinations" DockPanel.Dock="Left"/>
                         <Button Content="Add" Width="72" DockPanel.Dock="Right" Command="{Binding AddDestinationCommand}"/>
                     </DockPanel>
-                    <ListBox ItemsSource="{Binding DestinationList}">
+                    <ListBox ItemsSource="{Binding DestinationViewModelList}" HorizontalContentAlignment="Stretch">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <uc:DestinationView/>

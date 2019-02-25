@@ -25,6 +25,12 @@ namespace PicPick.Project
 
         private List<PicPickProjectActivityDestination> _destList = null;
 
+        public PicPickProjectActivity(string name)
+        {
+            Name = name;
+            Source = new PicPickProjectActivitySource();
+        }
+
         [XmlIgnore]
         // Use this list rather than the Destination Array for easyer manipulations and editing.
         // This will be converted back to the Destination Array in ConfigurationHelper.Save()
