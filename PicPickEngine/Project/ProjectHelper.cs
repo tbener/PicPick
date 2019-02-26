@@ -36,14 +36,18 @@ namespace PicPick.Project
 
         public static PicPickProject CreateNew(string projectName)
         {
-            PicPickProject proj = new PicPickProject(true)
+            PicPickProject proj = new PicPickProject()
             {
                 Name = projectName
             };
             proj.ActivityList.Add(new PicPickProjectActivity("Default Activity"));
 
+            if (SupportIsDirty) proj.StartSupportFullPropertyChanged();
+
             return proj;
         }
+
+        public static bool SupportIsDirty { get; set; }
 
         public static PicPickProject Project { get; set; }
 
@@ -55,6 +59,7 @@ namespace PicPick.Project
             {
                 Project = SerializeHelper.Load(typeof(PicPickProject), file) as PicPickProject;
                 FileName = file;
+                if (SupportIsDirty) Project.StartSupportFullPropertyChanged();
                 return true;
             }
             catch (Exception ex)

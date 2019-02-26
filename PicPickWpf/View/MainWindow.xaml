@@ -34,7 +34,13 @@
 
             <DockPanel Grid.Column="0">
                 <TextBlock Text="Activities" DockPanel.Dock="Top" Margin="0,5"/>
-                <ListBox x:Name="lstActivities" ItemsSource="{Binding CurrentProject.ActivityList}" SelectedItem="{Binding CurrentActivity}"/>
+                <ListBox x:Name="lstActivities" ItemsSource="{Binding CurrentProject.ActivityList}" SelectedItem="{Binding CurrentActivity}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Name}"/>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
 
             </DockPanel>
 
@@ -46,7 +52,7 @@
                     <RowDefinition x:Name="buttons"/>
                 </Grid.RowDefinitions>
 
-                <TextBlock Grid.Row="0" Text="{Binding Activity.Name}"/>
+                <TextBox Grid.Row="0" Text="{Binding Activity.Name}"/>
 
                 <Grid Grid.Row="1">
                     <Grid.RowDefinitions>
@@ -56,17 +62,18 @@
                         <RowDefinition/>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="3*"/>
-                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="9*"/>
+                        <ColumnDefinition Width="214*"/>
+                        <ColumnDefinition Width="74*"/>
                     </Grid.ColumnDefinitions>
 
-                    <GridSplitter Grid.Column="0" HorizontalAlignment="Right" Width="3" Grid.RowSpan="3"/>
+                    <GridSplitter Grid.Column="1" HorizontalAlignment="Right" Width="3" Grid.RowSpan="3"/>
 
-                    <DockPanel Grid.Row="0">
+                    <DockPanel Grid.Row="0" Grid.ColumnSpan="2">
                         <TextBlock Text="Source" DockPanel.Dock="Top"/>
                         <uc:PathBrowserView DockPanel.Dock="Top" DataContext="{Binding SourceViewModel}"/>
                     </DockPanel>
-                    <DockPanel Grid.Row="0" Grid.Column="1">
+                    <DockPanel Grid.Row="0" Grid.Column="2">
                         <TextBlock Text="Filter" DockPanel.Dock="Top"/>
                         <TextBox DockPanel.Dock="Top" Text="{Binding Activity.Source.Filter}"/>
                     </DockPanel>

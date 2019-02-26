@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 using System.Xml.Serialization;
 using TalUtils;
 using PicPick.Models;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 
 namespace PicPick.Project
 {
@@ -23,7 +25,8 @@ namespace PicPick.Project
 
         public event CopyEventHandler OnCopyStatusChanged;
 
-        private List<PicPickProjectActivityDestination> _destList = null;
+        private ObservableCollection<PicPickProjectActivityDestination> _destList = null;
+        private bool _propertyChangedSupportInitlized;
 
         public PicPickProjectActivity(string name)
         {
@@ -31,10 +34,35 @@ namespace PicPick.Project
             Source = new PicPickProjectActivitySource();
         }
 
+        public void StartSupportFullPropertyChanged()
+        {
+            if (_propertyChangedSupportInitlized) return;
+
+            if (Source == null)
+                Source = new PicPickProjectActivitySource();
+            Source.PropertyChanged += (s, e) => RaisePropertyChanged("Source");
+
+            _propertyChangedSupportInitlized = true;
+        }
+
+        private void DestinationList_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action == NotifyCollectionChangedAction.Add)
+            {
+                foreach (PicPickProjectActivityDestination item in e.NewItems)
+                {
+                    //Added items
+                    item.PropertyChanged += (s, e1) => this.RaisePropertyChanged("Destination"); ;
+                }
+            }
+
+            RaisePropertyChanged("DestinationList");
+        }
+
         [XmlIgnore]
         // Use this list rather than the Destination Array for easyer manipulations and editing.
         // This will be converted back to the Destination Array in ConfigurationHelper.Save()
-        public List<PicPickProjectActivityDestination> DestinationList
+        public ObservableCollection<PicPickProjectActivityDestination> DestinationList
         {
             get
             {
@@ -42,16 +70,20 @@ namespace PicPick.Project
                 {
                     if (this.Destination == null)
                         this.Destination = new PicPickProjectActivityDestination[0];
-                    _destList = new List<PicPickProjectActivityDestination>(this.Destination);
+                    _destList = new ObservableCollection<PicPickProjectActivityDestination>();
+                    DestinationList.CollectionChanged += DestinationList_CollectionChanged;
+                    foreach (PicPickProjectActivityDestination dest in this.Destination)
+                    {
+                        // this will trigger the CollectionChanged event
+                        _destList.Add(dest);
+                    }
                 }
                 return _destList;
             }
         }
+        
 
-        internal void Initialize()
-        {
-            DestinationList.ForEach(d => d.PropertyChanged += (s, e) => this.RaisePropertyChanged("Destination"));
-        }
+        #region Execution
 
         [XmlIgnore]
         public bool Initialized { get; private set; }
@@ -325,7 +357,9 @@ namespace PicPick.Project
         [XmlIgnore]
         public Dictionary<string, CopyFilesHandler> Mapping { get => _mapping; }
 
-        public override string ToString() { return Name; }
+        #endregion
+
+        
 
         public object Clone()
         {

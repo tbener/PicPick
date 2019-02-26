@@ -24,6 +24,9 @@ namespace PicPick.ViewModel
             Activity = activity;
         }
 
+        /// <summary>
+        /// Associate the ViewModels to the inner objects
+        /// </summary>
         private void InitActivity()
         {
             // source
@@ -31,7 +34,8 @@ namespace PicPick.ViewModel
 
             // destinations
             DestinationViewModelList = new ObservableCollection<DestinationViewModel>();
-            Activity.DestinationList.ForEach(AddDestinationViewModel);
+            foreach (PicPickProjectActivityDestination dest in Activity.DestinationList)
+                AddDestinationViewModel(dest);
         }
 
         private void OnDestinationDelete(object sender, EventArgs e)

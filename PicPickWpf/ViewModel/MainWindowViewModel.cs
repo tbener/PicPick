@@ -34,6 +34,8 @@ namespace PicPick.ViewModel
             SaveAsCommand = new RelayCommand(SaveAs);
             AddActivityCommand = new RelayCommand(AddNewActivity);
 
+            ProjectHelper.SupportIsDirty = true;
+
             if (string.IsNullOrEmpty(Properties.Settings.Default.LastFile))
                 ProjectHelper.LoadCreateDefault();
             else
@@ -111,7 +113,7 @@ namespace PicPick.ViewModel
         public string WindowTitle
         {
             get {
-                return string.Format("{0}{1} - PicPick", Path.GetFileName(ProjectHelper.FileName), CurrentProject.IsDirty ? "*" : "");
+                return string.Format("PicPick - {0}{1}", Path.GetFileName(ProjectHelper.FileName), CurrentProject.IsDirty ? "*" : "");
             }
         }
 

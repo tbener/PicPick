@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Linq;
 using System.Xml.Serialization;
@@ -14,13 +15,21 @@ namespace PicPick.Project
         private ObservableCollection<PicPickProjectActivity> _activityList = null;
         private string _name;
         private bool _isDirty;
+        private bool _propertyChangedSupportInitlized;
 
-        public PicPickProject(bool supportIsDirty)
+
+        public void StartSupportFullPropertyChanged()
         {
-            if (supportIsDirty)
-                // any property change (except for IsDirty...) will set IsDirty to true
-                this.PropertyChanged += (s, e) => {
-                    if (!e.PropertyName.Equals("IsDirty")) IsDirty = true; };
+            if (_propertyChangedSupportInitlized) return;
+
+            // any property change (except for IsDirty...) will set IsDirty to true
+            this.PropertyChanged += (s, e) =>
+            {
+                if (!e.PropertyName.Equals("IsDirty")) IsDirty = true;
+            };
+
+            _propertyChangedSupportInitlized = true;
+
         }
 
 
@@ -60,16 +69,39 @@ namespace PicPick.Project
             {
                 if (_activityList == null)
                 {
-                    List<PicPickProjectActivity> initialList = new List<PicPickProjectActivity>();
+                    _activityList = new ObservableCollection<PicPickProjectActivity>();
+                    _activityList.CollectionChanged += ActivityList_CollectionChanged;
                     if (this.Activities != null)
-                        initialList.AddRange(this.Activities);
-                    _activityList = new ObservableCollection<PicPickProjectActivity>(initialList);
+                        foreach (PicPickProjectActivity activity in this.Activities)
+                        {
+                            _activityList.Add(activity);
+                        }
                 }
                 return _activityList;
             }
         }
+
+        private void ActivityList_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action == NotifyCollectionChangedAction.Add)
+            {
+                foreach (PicPickProjectActivity activity in e.NewItems)
+                {
+                    //Added items
+                    activity.StartSupportFullPropertyChanged();
+                    activity.PropertyChanged += Activity_PropertyChanged;
+                }
+            }
+
+            this.RaisePropertyChanged("ActivityList");
+        }
+
+        private void Activity_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            this.RaisePropertyChanged("Activity");
+        }
     }
-    
+
 
     public partial class PicPickProjectActivityDestination
     {
