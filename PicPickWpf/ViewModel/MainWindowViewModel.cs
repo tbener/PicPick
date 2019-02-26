@@ -12,6 +12,7 @@ using System.Windows.Input;
 using TalUtils;
 using System.Collections.ObjectModel;
 using System.Windows;
+using System.IO;
 
 namespace PicPick.ViewModel
 {
@@ -22,43 +23,33 @@ namespace PicPick.ViewModel
         private ActivityViewModel _activityViewModel;
 
         public ICommand OpenFileCommand { get; set; }
-
+        public ICommand SaveCommand { get; set; }
+        public ICommand SaveAsCommand { get; set; }
+        public ICommand AddActivityCommand { get; set; }
 
         public MainWindowViewModel()
         {
             OpenFileCommand = new RelayCommand(OpenFile);
+            SaveCommand = new RelayCommand(Save);
+            SaveAsCommand = new RelayCommand(SaveAs);
+            AddActivityCommand = new RelayCommand(AddNewActivity);
 
-            CurrentProject = new PicPickProject(true)
-            {
-                Name = "New Project"
-            };
+            if (string.IsNullOrEmpty(Properties.Settings.Default.LastFile))
+                ProjectHelper.LoadCreateDefault();
+            else
+                OpenFile(Properties.Settings.Default.LastFile);
+
             CurrentProject.PropertyChanged += CurrentProject_PropertyChanged;
 
-            PicPickProjectActivity act1 = new PicPickProjectActivity("Test");
-            PicPickProjectActivity act2 = new PicPickProjectActivity("Blah blah");
-            CurrentProject.ActivityList.Add(act1);
-            CurrentProject.ActivityList.Add(act2);
-
-            act1.Source = new PicPickProjectActivitySource()
-            {
-                Path = "C:\\temp",
-                Filter = "*.jpg"
-            };
-
-            PicPickProjectActivityDestination dest1 = new PicPickProjectActivityDestination()
-            {
-                Path = "Folder1",
-                Template = "YYYY-mm"
-            };
-            PicPickProjectActivityDestination dest2 = new PicPickProjectActivityDestination()
-            {
-                Path = "Folder2",
-                Template = "dd-YY"
-            };
-            act1.DestinationList.AddRange(new[] { dest1, dest2 });
-
             // set the current activity
-            CurrentActivity = act1;
+            CurrentActivity = CurrentProject.ActivityList.FirstOrDefault();
+        }
+
+        private void AddNewActivity()
+        {
+            PicPickProjectActivity act = new PicPickProjectActivity("New Activity");
+            CurrentProject.ActivityList.Add(act);
+            CurrentActivity = act;
         }
         
 
@@ -71,17 +62,61 @@ namespace PicPick.ViewModel
 
         void OpenFile()
         {
-            Msg.Show("hello");
+            string file = "";
+            if (DialogHelper.BrowseOpenFileByExtensions(new[] { "picpick" }, true, ref file))
+            {
+                OpenFile(file);
+            }
+            
         }
 
+        private void UpdateFileName()
+        {
+            OnPropertyChanged("CurrentProject");
+            Properties.Settings.Default.LastFile = ProjectHelper.FileName;
+            Properties.Settings.Default.Save();
+            OnPropertyChanged("WindowTitle");
+        }
+
+        private void OpenFile(string file)
+        {
+            if (!ProjectHelper.Load(file)) return;
+            UpdateFileName();
+        }
+
+        private void Save(string file)
+        {
+            if (!ProjectHelper.Save(file)) return;
+            UpdateFileName();
+        }
+
+        private void Save()
+        {
+            if (ProjectHelper.FileName == null)
+                SaveAs();
+            else
+                ProjectHelper.Save();
+            
+        }
+
+        private void SaveAs()
+        {
+            string file = "";
+            if (DialogHelper.BrowseSaveFileByExtensions(new[] { "picpick" }, true, ref file))
+            {
+                Save(file);
+            }
+        }
 
         public string WindowTitle
         {
-            get { return string.Format("{0}{1} - PicPick", CurrentProject.Name, CurrentProject.IsDirty ? "*" : ""); }
+            get {
+                return string.Format("{0}{1} - PicPick", Path.GetFileName(ProjectHelper.FileName), CurrentProject.IsDirty ? "*" : "");
+            }
         }
 
 
-        public PicPickProject CurrentProject { get; set; }
+        public PicPickProject CurrentProject { get => ProjectHelper.Project; }
         
 
         public ActivityViewModel ActivityViewModel
@@ -109,6 +144,7 @@ namespace PicPick.ViewModel
                 OnPropertyChanged("CurrentActivity");
             }
         }
+
         
     }
 }

@@ -29,6 +29,7 @@ namespace PicPick.UserControls.ViewModel
         {
             BrowseCommand = new RelayCommand(BrowseFolder);
             _pathClass = pathClass;
+            BasePath = "";
         }
 
 
