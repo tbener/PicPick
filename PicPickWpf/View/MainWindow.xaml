@@ -52,7 +52,7 @@
                     <RowDefinition x:Name="buttons"/>
                 </Grid.RowDefinitions>
 
-                <TextBox Grid.Row="0" Text="{Binding Activity.Name}"/>
+                <TextBox Grid.Row="0" Text="{Binding Activity.Name, UpdateSourceTrigger=PropertyChanged}"/>
 
                 <Grid Grid.Row="1">
                     <Grid.RowDefinitions>
