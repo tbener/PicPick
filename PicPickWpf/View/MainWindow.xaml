@@ -44,7 +44,7 @@
 
             </DockPanel>
 
-            <Grid Grid.Column="1" DataContext="{Binding ActivityViewModel}">
+            <Grid x:Name="Content" Grid.Column="1" DataContext="{Binding ActivityViewModel}">
                 <Grid.RowDefinitions>
                     <RowDefinition x:Name="title" Height="Auto"/>
                     <RowDefinition x:Name="source"/>
@@ -56,8 +56,6 @@
 
                 <Grid Grid.Row="1">
                     <Grid.RowDefinitions>
-                        <RowDefinition/>
-                        <RowDefinition/>
                         <RowDefinition/>
                         <RowDefinition/>
                     </Grid.RowDefinitions>
@@ -75,7 +73,7 @@
                     </DockPanel>
                     <DockPanel Grid.Row="0" Grid.Column="2">
                         <TextBlock Text="Filter" DockPanel.Dock="Top"/>
-                        <TextBox DockPanel.Dock="Top" Text="{Binding Activity.Source.Filter}"/>
+                        <TextBox DockPanel.Dock="Top" Text="{Binding Activity.Source.Filter}" Height="23"/>
                     </DockPanel>
 
                     <!--<TextBlock Text="{Binding SourceFilesStatus}" Grid.Row="3"># files found</TextBlock>-->
@@ -95,6 +93,8 @@
                         </ListBox.ItemTemplate>
                     </ListBox>
                 </DockPanel>
+
+                <uc:ExecutionView Grid.Row="3" />
 
 
             </Grid>

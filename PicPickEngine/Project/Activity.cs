@@ -42,8 +42,12 @@ namespace PicPick.Project
                 Source = new PicPickProjectActivitySource();
             Source.PropertyChanged += (s, e) => RaisePropertyChanged("Source");
 
+            //this.PropertyChanged += (s, e) => delegate { Initialized = false; }
+
             _propertyChangedSupportInitlized = true;
         }
+
+
 
         private void DestinationList_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
@@ -83,7 +87,6 @@ namespace PicPick.Project
         }
         
 
-        #region Execution
 
         [XmlIgnore]
         public bool Initialized { get; private set; }
@@ -92,6 +95,8 @@ namespace PicPick.Project
         {
             Initialized = false;
         }
+
+        #region Execution
 
         Dictionary<string, PicPickFileInfo> _dicFiles = new Dictionary<string, PicPickFileInfo>();
         List<string> _errorFiles = new List<string>();
@@ -208,7 +213,7 @@ namespace PicPick.Project
         /// </summary>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public async Task<bool> MapFilesAsync(CancellationToken cancellationToken)
+        public async Task<bool> Analyze(CancellationToken cancellationToken)
         {
             _mapping.Clear();
             await ReadFilesAsync(cancellationToken);
@@ -260,20 +265,20 @@ namespace PicPick.Project
 
 
         /// <summary>
-        /// Executes a whole task. Copying the files to ALL destinations
+        /// Executes the whole task. Copying the files to ALL destinations
         /// </summary>
         /// <param name="progressInfo"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public async Task ExecuteAsync(ProgressInformation progressInfo, CancellationToken cancellationToken)
+        public async Task Start(ProgressInformation progressInfo, CancellationToken cancellationToken)
         {
             // Initialize. Fills the Mapping dictionary
             //if (!Initialized)
             //{
             //////////////////////
-            // if you don't recall MapFiles every time make sure to reset FileInfoItem.Status values
+            // if you don't recall Analyze every time make sure to reset FileInfoItem.Status values
             //////////////////////
-            await MapFilesAsync(cancellationToken);
+            await Analyze(cancellationToken);
             cancellationToken.ThrowIfCancellationRequested();
             //}
 
