@@ -197,7 +197,7 @@ namespace PicPick.Project
             }
 
             progressInfo.Total = CountTotal;
-            progressInfo.MainOperation = "";
+            progressInfo.MainOperation = "Finished Analyzing";
 
             Initialized = true;
             return true;

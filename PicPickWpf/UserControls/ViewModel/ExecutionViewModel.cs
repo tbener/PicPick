@@ -22,6 +22,7 @@ namespace PicPick.UserControls.ViewModel
 
         #region Commands
 
+        public ICommand AnalyzeCommand { get; set; }
         public ICommand StartCommand { get; set; }
         public ICommand StopCommand { get; set; }
 
@@ -38,6 +39,7 @@ namespace PicPick.UserControls.ViewModel
             cts = new CancellationTokenSource();
             Activity = activity;
 
+            AnalyzeCommand = new RelayCommand(Analyze);
             StartCommand = new RelayCommand(Start, CanStart);
             StopCommand = new RelayCommand(Stop, CanStop);
         }
@@ -48,11 +50,23 @@ namespace PicPick.UserControls.ViewModel
         {
             try
             {
+                await Activity.Start(progressInfo, cts.Token);
+
+                OnPropertyChanged("ProgressInfo");
+            }
+            catch (OperationCanceledException)
+            {
+                // user cancelled...
+            }
+        }
+
+        public async void Analyze()
+        {
+            try
+            {
                 await Activity.Analyze(progressInfo, cts.Token);
 
                 OnPropertyChanged("ProgressInfo");
-
-                //await Activity.Start(progressInfo, cts.Token);
             }
             catch (OperationCanceledException)
             {
@@ -88,7 +102,7 @@ namespace PicPick.UserControls.ViewModel
 
         private void UpdateProgress()
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
         #region Public Properties

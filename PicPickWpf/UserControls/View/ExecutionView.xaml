@@ -13,11 +13,23 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
 
-        <Button Content="Run" Command="{Binding StartCommand}" Height="34" Width="100" HorizontalAlignment="Left" Margin="20,0,0,0" />
+        <Button Content="Analyze" Command="{Binding AnalyzeCommand}" Height="34" Width="100" HorizontalAlignment="Left" Margin="20,0,0,0" />
+        <Button Content="Run" Command="{Binding StartCommand}" Height="34" Width="100" HorizontalAlignment="Left" Margin="180,0,0,0" />
 
-        <ProgressBar Grid.Row="1" Height="26" Margin="20" Value="{Binding ProgressInfo.CurrentDone}" Maximum="{Binding ProgressInfo.Total}"/>
+        <ProgressBar Grid.Row="1" Height="26" Margin="20" Maximum="{Binding ProgressInfo.Total}"/>
 
         <TextBlock Grid.Row="1" Text="{Binding ProgressInfo.MainOperation}" Margin="20,0" />
+
+        <StackPanel Grid.Row="2" Orientation="Vertical">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Total: " />
+                <TextBlock Text="{Binding ProgressInfo.Total}"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Done: " />
+                <TextBlock Text="{Binding ProgressInfo.CountDone}"/>
+            </StackPanel>
+        </StackPanel>
 
     </Grid>
 </UserControl>
