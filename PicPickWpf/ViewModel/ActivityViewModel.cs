@@ -36,6 +36,8 @@ namespace PicPick.ViewModel
             DestinationViewModelList = new ObservableCollection<DestinationViewModel>();
             foreach (PicPickProjectActivityDestination dest in Activity.DestinationList)
                 AddDestinationViewModel(dest);
+
+            ExecutionViewModel = new ExecutionViewModel(Activity);
         }
 
         private void OnDestinationDelete(object sender, EventArgs e)
@@ -87,6 +89,20 @@ namespace PicPick.ViewModel
 
         public static readonly DependencyProperty SourceViewModelProperty =
             DependencyProperty.Register("SourceViewModel", typeof(PathBrowserViewModel), typeof(ActivityViewModel), new PropertyMetadata(null));
+
+
+
+
+        public ExecutionViewModel ExecutionViewModel
+        {
+            get { return (ExecutionViewModel)GetValue(ExecutionViewModelProperty); }
+            set { SetValue(ExecutionViewModelProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for ExecutionViewModel.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty ExecutionViewModelProperty =
+            DependencyProperty.Register("ExecutionViewModel", typeof(ExecutionViewModel), typeof(ActivityViewModel), new PropertyMetadata(null));
+
 
 
     }

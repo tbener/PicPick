@@ -19,8 +19,6 @@ namespace PicPick.ViewModel
     class MainWindowViewModel : BaseViewModel
     {
         private PicPickProjectActivity _currentActivity;
-        private PathBrowserViewModel _activitySourceViewModel;
-        private ActivityViewModel _activityViewModel;
 
         public ICommand OpenFileCommand { get; set; }
         public ICommand SaveCommand { get; set; }

@@ -1,6 +1,7 @@
 ﻿using PicPick.Commands;
 using PicPick.Models;
 using PicPick.Project;
+using PicPick.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +13,7 @@ using System.Windows.Input;
 namespace PicPick.UserControls.ViewModel
 {
 
-    public class ExecutionViewModel
+    public class ExecutionViewModel : BaseViewModel
     {
         #region Private Members
 
@@ -21,8 +22,8 @@ namespace PicPick.UserControls.ViewModel
 
         #region Commands
 
-        ICommand StartCommand { get; set; }
-        ICommand StopCommand { get; set; }
+        public ICommand StartCommand { get; set; }
+        public ICommand StopCommand { get; set; }
 
         #endregion
 
@@ -32,8 +33,8 @@ namespace PicPick.UserControls.ViewModel
 
         public ExecutionViewModel(PicPickProjectActivity activity)
         {
-            progressInfo = new ProgressInformation();
-            ((Progress<ProgressInformation>)progressInfo.Progress).ProgressChanged += ProgressInformation_ProgressChanged;
+            ProgressInfo = new ProgressInformation();
+            ((Progress<ProgressInformation>)ProgressInfo.Progress).ProgressChanged += ProgressInformation_ProgressChanged;
             cts = new CancellationTokenSource();
             Activity = activity;
 
@@ -47,8 +48,11 @@ namespace PicPick.UserControls.ViewModel
         {
             try
             {
-                await Activity.Analyze(cts.Token);
-                await Activity.Start(progressInfo, cts.Token);
+                await Activity.Analyze(progressInfo, cts.Token);
+
+                OnPropertyChanged("ProgressInfo");
+
+                //await Activity.Start(progressInfo, cts.Token);
             }
             catch (OperationCanceledException)
             {
@@ -58,7 +62,7 @@ namespace PicPick.UserControls.ViewModel
 
         private bool CanStart()
         {
-            return true;
+            return !string.IsNullOrEmpty(Activity.Source.Path);
         }
 
 
@@ -92,6 +96,7 @@ namespace PicPick.UserControls.ViewModel
         PicPickProjectActivity Activity { get; set; }
 
         public int ProgressValue { get; set; }
+        public ProgressInformation ProgressInfo { get => progressInfo; set => progressInfo = value; }
 
         #endregion
     }

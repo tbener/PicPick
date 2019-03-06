@@ -63,9 +63,11 @@ namespace PicPick.Project
             RaisePropertyChanged("DestinationList");
         }
 
+        /// <summary>
+        /// Use this list rather than the Destination Array for easyer manipulations and editing.
+        /// This will be converted back to the Destination Array in ConfigurationHelper.Save()
+        /// </summary>
         [XmlIgnore]
-        // Use this list rather than the Destination Array for easyer manipulations and editing.
-        // This will be converted back to the Destination Array in ConfigurationHelper.Save()
         public ObservableCollection<PicPickProjectActivityDestination> DestinationList
         {
             get
@@ -91,78 +93,13 @@ namespace PicPick.Project
         [XmlIgnore]
         public bool Initialized { get; private set; }
 
-        public void SetDirty()
-        {
-            Initialized = false;
-        }
 
         #region Execution
 
         Dictionary<string, PicPickFileInfo> _dicFiles = new Dictionary<string, PicPickFileInfo>();
         List<string> _errorFiles = new List<string>();
 
-        public async Task<int> GetFileCount(CancellationToken cancellationToken)
-        {
-            HashSet<string> fileList = new HashSet<string>();
-
-            List<string> lst = new List<string>();
-            string[] filters = Source.Filter.Split(new char[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries);
-
-            // loop on filters
-            foreach (string fltr in filters)
-            {
-                string filter = fltr.Trim();
-                // get file list for current filter
-                string[] fileEntries = await Task.Run(() => Directory.GetFiles(Source.Path, filter));
-                cancellationToken.ThrowIfCancellationRequested();
-                // add to main file list - we're not just counting in case of duplications
-                lst.AddRange(fileEntries);
-            }
-
-            // create a unique file list
-            fileList = new HashSet<string>(lst);
-            // return the count
-            return fileList.Count();
-        }
-
-        /*
-         * Lists the files and their dates
-         */
-        public void ReadFiles()
-        {
-            DateTime dateTime = DateTime.MinValue;
-
-            _dicFiles.Clear();
-            _errorFiles.Clear();
-
-            ImageFileInfo fileDateInfo = new ImageFileInfo();
-            string[] filters = Source.Filter.Split(new char[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries);
-            foreach (string fltr in filters)
-            {
-                string filter = fltr.Trim();
-                Debug.Print($"-------------\r\nFilter: {filter}\r\n---------------");
-                string[] fileEntries = Directory.GetFiles(Source.Path, filter);
-                foreach (string file in fileEntries)
-                {
-                    if (!_dicFiles.ContainsKey(file) && !_errorFiles.Contains(file))
-                        if (fileDateInfo.GetFileDate(file, out dateTime))
-                            _dicFiles.Add(file, new PicPickFileInfo(dateTime));
-                        else
-                            _errorFiles.Add(file);
-                    //Debug.Print($"{Path.GetFileName(file)} - {_dicFiles[file].ToShortDateString()}");
-                }
-            }
-            Debug.Print($"Found {_dicFiles.Count()} files");
-            if (_errorFiles.Count() > 0)
-            {
-                Debug.Print($"ERRORS: Couldn't get dates from {_errorFiles.Count()} files:");
-                foreach (string file in _errorFiles)
-                {
-                    Debug.Print($"\t{Path.GetFileName(file)}");
-                }
-            }
-        }
-
+                       
         /*
          * Lists the files and their dates
          */
@@ -213,8 +150,9 @@ namespace PicPick.Project
         /// </summary>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public async Task<bool> Analyze(CancellationToken cancellationToken)
+        public async Task<bool> Analyze(ProgressInformation progressInfo, CancellationToken cancellationToken)
         {
+            progressInfo.MainOperation = "Analyzing...";
             _mapping.Clear();
             await ReadFilesAsync(cancellationToken);
 
@@ -258,8 +196,10 @@ namespace PicPick.Project
                 CountTotal += map.FileList.Count();
             }
 
-            Initialized = true;
+            progressInfo.Total = CountTotal;
+            progressInfo.MainOperation = "";
 
+            Initialized = true;
             return true;
         }
 
@@ -272,18 +212,16 @@ namespace PicPick.Project
         /// <returns></returns>
         public async Task Start(ProgressInformation progressInfo, CancellationToken cancellationToken)
         {
-            // Initialize. Fills the Mapping dictionary
-            //if (!Initialized)
-            //{
-            //////////////////////
-            // if you don't recall Analyze every time make sure to reset FileInfoItem.Status values
-            //////////////////////
-            await Analyze(cancellationToken);
-            cancellationToken.ThrowIfCancellationRequested();
-            //}
-
             progressInfo.Activity = Name;
-            progressInfo.Total = CountTotal;
+
+            // Initialize.Fills the Mapping dictionary
+            if (!Initialized)
+            {
+                // When using UI, the Analyze is usually called beforehand, as it gives the initial progress and status information.
+                await Analyze(progressInfo, cancellationToken);
+                cancellationToken.ThrowIfCancellationRequested();
+            }
+
             try
             {
                 CopyFilesHandler.FileExistsResponse = (FILE_EXISTS_RESPONSE)Enum.Parse(typeof(FILE_EXISTS_RESPONSE), Properties.Settings.Default.FileExistsResponse, true);
@@ -304,7 +242,10 @@ namespace PicPick.Project
                     progressInfo.Report();
 
                     Debug.Print("Copying {0} files to {1}", copyFilesHandler.FileList.Count(), fullPath);
+                    
+                    // # DO THE ACTUAL COPY
                     await copyFilesHandler.DoCopyAsync(progressInfo, cancellationToken);
+
                     cancellationToken.ThrowIfCancellationRequested();
                 }
 
@@ -331,6 +272,7 @@ namespace PicPick.Project
             }
             finally
             {
+                Initialized = false;
                 progressInfo.Done = true;
                 await Task.Run(() => progressInfo.Report());
             }
@@ -359,12 +301,10 @@ namespace PicPick.Project
         [XmlIgnore]
         public int CountTotal { get; private set; }
 
-        [XmlIgnore]
-        public Dictionary<string, CopyFilesHandler> Mapping { get => _mapping; }
 
         #endregion
 
-        
+        #region ICloneable
 
         public object Clone()
         {
@@ -387,6 +327,7 @@ namespace PicPick.Project
 
         }
 
+        #endregion
     }
 
 }

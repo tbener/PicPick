@@ -94,7 +94,7 @@
                     </ListBox>
                 </DockPanel>
 
-                <uc:ExecutionView Grid.Row="3" />
+                <uc:ExecutionView Grid.Row="3" DataContext="{Binding ExecutionViewModel}"/>
 
 
             </Grid>
