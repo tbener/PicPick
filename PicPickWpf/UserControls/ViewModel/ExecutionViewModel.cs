@@ -19,6 +19,7 @@ namespace PicPick.UserControls.ViewModel
 
         ProgressInformation progressInfo;
         CancellationTokenSource cts;
+        private bool _canExecute;
 
         #region Commands
 
@@ -43,7 +44,7 @@ namespace PicPick.UserControls.ViewModel
             StartCommand = new RelayCommand(Start, CanStart);
             StopCommand = new RelayCommand(Stop, CanStop);
         }
-        
+
         #endregion
 
         public async void Start()
@@ -111,6 +112,17 @@ namespace PicPick.UserControls.ViewModel
 
         public int ProgressValue { get; set; }
         public ProgressInformation ProgressInfo { get => progressInfo; set => progressInfo = value; }
+
+        public bool CanExecute
+        {
+            get => _canExecute;
+            set
+            {
+                _canExecute = value;
+                OnPropertyChanged("CanExecute");
+            }
+        }
+
 
         #endregion
     }

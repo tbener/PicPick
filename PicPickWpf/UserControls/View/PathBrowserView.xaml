@@ -9,6 +9,6 @@
              DataContext="PathBrowserViewModel">
     <DockPanel LastChildFill="True">
         <Button Width="24" DockPanel.Dock="Right" Command="{Binding BrowseCommand}">...</Button>
-        <TextBox Text="{Binding Path}" HorizontalAlignment="Stretch"/>
+        <TextBox Text="{Binding Path, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch"/>
     </DockPanel>
 </UserControl>

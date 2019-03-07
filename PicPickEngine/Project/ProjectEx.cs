@@ -128,6 +128,10 @@ namespace PicPick.Project
 
             // create a unique file list
             fileList = new HashSet<string>(lst);
+
+            // if cancelled - don't return
+            cancellationToken.ThrowIfCancellationRequested();
+
             // return the count
             return fileList.Count();
         }

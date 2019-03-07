@@ -3,22 +3,28 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using PicPick.Commands;
 using PicPick.Project;
 using PicPick.UserControls.ViewModel;
+using TalUtils;
 
 namespace PicPick.ViewModel
 {
     public class ActivityViewModel : BaseViewModel
     {
         private PicPickProjectActivity _activity;
+        private string _sourceFilesStatus;
+        CancellationTokenSource ctsSourceCheck;
+
         public ICommand AddDestinationCommand { get; set; }
 
         public ActivityViewModel(PicPickProjectActivity activity)
         {
+            
             AddDestinationCommand = new RelayCommand(AddDestination);
 
             Activity = activity;
@@ -31,6 +37,11 @@ namespace PicPick.ViewModel
         {
             // source
             SourceViewModel = new PathBrowserViewModel(Activity.Source);
+            Activity.Source.PropertyChanged += Source_PropertyChanged;
+
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+            CheckSourceStatus();
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
 
             // destinations
             DestinationViewModelList = new ObservableCollection<DestinationViewModel>();
@@ -38,6 +49,42 @@ namespace PicPick.ViewModel
                 AddDestinationViewModel(dest);
 
             ExecutionViewModel = new ExecutionViewModel(Activity);
+        }
+
+        private async Task CheckSourceStatus()
+        {
+            
+
+            try
+            {
+                // Cancel previous operations
+                ctsSourceCheck?.Cancel();
+
+                // reset state
+                SourceFilesStatus = "";
+
+                if (!PathHelper.Exists(Activity.Source.Path))
+                    return;
+
+                // Create a new cancellations token and await a new task to count files
+                ctsSourceCheck = new CancellationTokenSource();
+                int count = await Activity.Source.GetFileCount(ctsSourceCheck.Token);
+                SourceFilesStatus = $"{count} files found";
+            }
+            catch (OperationCanceledException)
+            {
+                // operation was canceled
+            }
+            catch (Exception)
+            {
+                // error in counting files. most probably because folder doesn't exist.
+                SourceFilesStatus = "---";
+            }
+        }
+
+        private async void Source_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            await CheckSourceStatus();
         }
 
         private void OnDestinationDelete(object sender, EventArgs e)
@@ -107,12 +154,15 @@ namespace PicPick.ViewModel
 
         public string SourceFilesStatus
         {
-            get
+            get => _sourceFilesStatus;
+            set
             {
-                //int fileCount = await Activity.Source.GetFileCount();
-                return $"[Found X files]";
+                _sourceFilesStatus = value;
+                OnPropertyChanged("SourceFilesStatus");
             }
         }
+
+        
 
     }
 }

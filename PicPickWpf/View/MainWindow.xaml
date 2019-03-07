@@ -73,7 +73,7 @@
                     </DockPanel>
                     <DockPanel Grid.Row="0" Grid.Column="1" LastChildFill="False">
                         <TextBlock Text="Filter" DockPanel.Dock="Top" Height="23"/>
-                        <TextBox DockPanel.Dock="Top" Text="{Binding Activity.Source.Filter}" Height="23"/>
+                        <TextBox DockPanel.Dock="Top" Text="{Binding Activity.Source.Filter, UpdateSourceTrigger=PropertyChanged}" Height="23"/>
                     </DockPanel>
 
 
