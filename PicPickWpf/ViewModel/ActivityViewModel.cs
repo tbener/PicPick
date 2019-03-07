@@ -105,5 +105,14 @@ namespace PicPick.ViewModel
 
 
 
+        public string SourceFilesStatus
+        {
+            get
+            {
+                //int fileCount = await Activity.Source.GetFileCount();
+                return $"[Found X files]";
+            }
+        }
+
     }
 }

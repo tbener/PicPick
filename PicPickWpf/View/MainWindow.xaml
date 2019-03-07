@@ -60,23 +60,22 @@
                         <RowDefinition/>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="9*"/>
-                        <ColumnDefinition Width="214*"/>
-                        <ColumnDefinition Width="74*"/>
+                        <ColumnDefinition Width="3*"/>
+                        <ColumnDefinition Width="1*"/>
                     </Grid.ColumnDefinitions>
 
-                    <GridSplitter Grid.Column="1" HorizontalAlignment="Right" Width="3" Grid.RowSpan="3"/>
+                    <GridSplitter Grid.Column="0" HorizontalAlignment="Right" Width="3" Grid.RowSpan="2"/>
 
-                    <DockPanel Grid.Row="0" Grid.ColumnSpan="2">
-                        <TextBlock Text="Source" DockPanel.Dock="Top"/>
+                    <DockPanel Grid.Row="0" Margin="0,0,5,0" LastChildFill="False">
+                        <TextBlock Text="Source" DockPanel.Dock="Top" Height="23"/>
                         <uc:PathBrowserView DockPanel.Dock="Top" DataContext="{Binding SourceViewModel}"/>
+                        <TextBlock  DockPanel.Dock="Bottom" Text="{Binding SourceFilesStatus, FallbackValue=No files found}" Grid.Row="1"/>
                     </DockPanel>
-                    <DockPanel Grid.Row="0" Grid.Column="2">
-                        <TextBlock Text="Filter" DockPanel.Dock="Top"/>
+                    <DockPanel Grid.Row="0" Grid.Column="1" LastChildFill="False">
+                        <TextBlock Text="Filter" DockPanel.Dock="Top" Height="23"/>
                         <TextBox DockPanel.Dock="Top" Text="{Binding Activity.Source.Filter}" Height="23"/>
                     </DockPanel>
 
-                    <!--<TextBlock Text="{Binding SourceFilesStatus}" Grid.Row="3"># files found</TextBlock>-->
 
                 </Grid>
 
