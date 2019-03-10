@@ -87,7 +87,7 @@ namespace PicPick.Project
                 return _destList;
             }
         }
-        
+
 
 
         [XmlIgnore]
@@ -99,42 +99,40 @@ namespace PicPick.Project
         Dictionary<string, PicPickFileInfo> _dicFiles = new Dictionary<string, PicPickFileInfo>();
         List<string> _errorFiles = new List<string>();
 
-                       
+
         /*
          * Lists the files and their dates
          */
-        private async Task ReadFilesAsync(CancellationToken cancellationToken)
+        private async Task ReadFilesDatesAsync(ProgressInformation progressInfo, CancellationToken cancellationToken)
         {
 
             DateTime dateTime = DateTime.MinValue;
+            ImageFileInfo fileDateInfo = new ImageFileInfo();
 
             _dicFiles.Clear();
             _errorFiles.Clear();
 
-            ImageFileInfo fileDateInfo = new ImageFileInfo();
-            string[] filters = Source.Filter.Split(new char[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries);
-            foreach (string fltr in filters)
+            progressInfo.CurrentOperation = "Reading files dates";
+            progressInfo.Maximum = Source.FileList.Count;
+            progressInfo.Start();
+
+            foreach (string file in Source.FileList)
             {
-                string filter = fltr.Trim();
-                Debug.Print($"-------------\r\nFilter: {filter}\r\n---------------");
-                string[] fileEntries = await Task.Run(() => Directory.GetFiles(Source.Path, filter));
+                if (fileDateInfo.GetFileDate(file, out dateTime))
+                    _dicFiles.Add(file, new PicPickFileInfo(dateTime));
+                else
+                    _errorFiles.Add(file);
+                await Task.Run(() => progressInfo.Advance());
                 cancellationToken.ThrowIfCancellationRequested();
-                foreach (string file in fileEntries)
-                {
-                    if (!_dicFiles.ContainsKey(file) && !_errorFiles.Contains(file))
-                        if (fileDateInfo.GetFileDate(file, out dateTime))
-                            _dicFiles.Add(file, new PicPickFileInfo(dateTime));
-                        else
-                            _errorFiles.Add(file);
-                }
             }
+
             Debug.Print($"Found {_dicFiles.Count()} files");
             if (_errorFiles.Count() > 0)
             {
                 Debug.Print($"ERRORS: Couldn't get dates from {_errorFiles.Count()} files:");
                 foreach (string file in _errorFiles)
                 {
-                    Debug.Print($"\t{Path.GetFileName(file)}");
+                    Debug.Print($"\t{file}");
                 }
             }
 
@@ -154,13 +152,16 @@ namespace PicPick.Project
         {
             progressInfo.MainOperation = "Analyzing...";
             _mapping.Clear();
-            await ReadFilesAsync(cancellationToken);
+            await ReadFilesDatesAsync(progressInfo, cancellationToken);
 
-            foreach (PicPickProjectActivityDestination destination in Destination)
+            progressInfo.CurrentOperation = "Mapping files to destinations";
+            
+            var activeDestinations = DestinationList.Where(d => d.Active).ToList();
+            progressInfo.Maximum = _dicFiles.Count * activeDestinations.Count;
+            progressInfo.Start();
+
+            foreach (PicPickProjectActivityDestination destination in activeDestinations)
             {
-                if (!destination.Active)
-                    continue;
-
                 string pathAbsolute = PathHelper.GetFullPath(Source.Path, destination.Path);
                 if (destination.HasTemplate)
                     foreach (var kv in _dicFiles)
@@ -175,6 +176,7 @@ namespace PicPick.Project
                             _mapping.Add(fullPath, new CopyFilesHandler(fullPath));
                         }
                         _mapping[fullPath].AddFile(kv.Key);
+                        await Task.Run(() => progressInfo.Advance());
                     }
                 else
                 {
@@ -183,12 +185,10 @@ namespace PicPick.Project
                         _mapping.Add(pathAbsolute, new CopyFilesHandler(pathAbsolute));
                     }
                     _mapping[pathAbsolute].AddRange(_dicFiles.Keys.ToList());
-                    //_mapping.Add("", new CopyFilesInfo("", _dicFiles.Keys.ToList()));
+                    await Task.Run(() => progressInfo.Advance(_dicFiles.Count));
                 }
                 cancellationToken.ThrowIfCancellationRequested();
             }
-
-            Destination.Last().Move = true;
 
             CountTotal = 0;
             foreach (var map in _mapping.Values)
@@ -196,7 +196,7 @@ namespace PicPick.Project
                 CountTotal += map.FileList.Count();
             }
 
-            progressInfo.Total = CountTotal;
+            progressInfo.Maximum = CountTotal;
             progressInfo.MainOperation = "Finished Analyzing";
 
             Initialized = true;
@@ -242,7 +242,7 @@ namespace PicPick.Project
                     progressInfo.Report();
 
                     Debug.Print("Copying {0} files to {1}", copyFilesHandler.FileList.Count(), fullPath);
-                    
+
                     // # DO THE ACTUAL COPY
                     await copyFilesHandler.DoCopyAsync(progressInfo, cancellationToken);
 

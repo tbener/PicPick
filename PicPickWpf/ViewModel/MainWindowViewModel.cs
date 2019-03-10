@@ -22,17 +22,16 @@ namespace PicPick.ViewModel
 
         public ICommand OpenFileCommand { get; set; }
         public ICommand SaveCommand { get; set; }
-        public ICommand SaveAsCommand { get; set; }
         public ICommand AddActivityCommand { get; set; }
 
         public MainWindowViewModel()
         {
             OpenFileCommand = new RelayCommand(OpenFile);
-            SaveCommand = new RelayCommand(Save);
-            SaveAsCommand = new RelayCommand(SaveAs);
+            SaveCommand = new SaveCommand();
             AddActivityCommand = new RelayCommand(AddNewActivity);
 
             ProjectHelper.SupportIsDirty = true;
+            ProjectHelper.OnSaveEventHandler += (s, e) => UpdateFileName();
 
             if (string.IsNullOrEmpty(Properties.Settings.Default.LastFile))
                 ProjectHelper.LoadCreateDefault();
@@ -83,30 +82,9 @@ namespace PicPick.ViewModel
             if (!ProjectHelper.Load(file)) return;
             UpdateFileName();
         }
-
-        private void Save(string file)
-        {
-            if (!ProjectHelper.Save(file)) return;
-            UpdateFileName();
-        }
-
-        private void Save()
-        {
-            if (ProjectHelper.FileName == null)
-                SaveAs();
-            else
-                ProjectHelper.Save();
-            
-        }
-
-        private void SaveAs()
-        {
-            string file = "";
-            if (DialogHelper.BrowseSaveFileByExtensions(new[] { "picpick" }, true, ref file))
-            {
-                Save(file);
-            }
-        }
+        
+        
+        
 
         public string WindowTitle
         {

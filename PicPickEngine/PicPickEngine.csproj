@@ -56,6 +56,7 @@
     <Compile Include="Models\FileInfoItem.cs" />
     <Compile Include="Models\ProgressInformation.cs" />
     <Compile Include="Project\Activity.cs" />
+    <Compile Include="Project\Source.cs" />
     <Compile Include="Project\ProjectEx.cs" />
     <Compile Include="Project\CopyEventArgs.cs" />
     <Compile Include="Project\ProjectHelper.cs" />

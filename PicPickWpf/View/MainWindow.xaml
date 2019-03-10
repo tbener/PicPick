@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
+        xmlns:commands="clr-namespace:PicPick.Commands"
         xmlns:uc="clr-namespace:PicPick.UserControls.View"
                       xmlns:controlzex="urn:controlzex" x:Class="PicPick.MainWindow"
                       mc:Ignorable="d"
@@ -20,7 +21,7 @@
             <MenuItem Header="_File">
                 <MenuItem Header="_Open..." Command="{Binding OpenFileCommand}" InputGestureText="Ctrl+O"/>
                 <MenuItem Header="_Save" Command="{Binding SaveCommand}" InputGestureText="Ctrl+S"/>
-                <MenuItem Header="Save _As..." Command="{Binding SaveAsCommand}" />
+                <MenuItem Header="Save _As..." Command="{Binding SaveCommand}" CommandParameter="true" />
             </MenuItem>
             <MenuItem Header="Activity">
                 <MenuItem Header="_Add..." Command="{Binding AddActivityCommand}" InputGestureText="Ctrl+N"/>
@@ -47,12 +48,13 @@
             <Grid x:Name="Content" Grid.Column="1" DataContext="{Binding ActivityViewModel}">
                 <Grid.RowDefinitions>
                     <RowDefinition x:Name="title" Height="Auto"/>
-                    <RowDefinition x:Name="source"/>
-                    <RowDefinition x:Name="destinations"/>
-                    <RowDefinition x:Name="buttons"/>
+                    <RowDefinition x:Name="source" Height="Auto"/>
+                    <RowDefinition x:Name="destinations" Height="*"/>
+                    <RowDefinition x:Name="more_properties" Height="Auto"/>
+                    <RowDefinition x:Name="buttons" Height="Auto"/>
                 </Grid.RowDefinitions>
 
-                <TextBox Grid.Row="0" Text="{Binding Activity.Name, UpdateSourceTrigger=PropertyChanged}"/>
+                <TextBox Grid.Row="0" Text="{Binding Activity.Name, UpdateSourceTrigger=PropertyChanged, FallbackValue=Activity Name}" FontSize="16" FontWeight="Bold" Margin="0, 0, 0, 10"/>
 
                 <Grid Grid.Row="1">
                     <Grid.RowDefinitions>
@@ -69,6 +71,7 @@
                     <DockPanel Grid.Row="0" Margin="0,0,5,0" LastChildFill="False">
                         <TextBlock Text="Source" DockPanel.Dock="Top" Height="23"/>
                         <uc:PathBrowserView DockPanel.Dock="Top" DataContext="{Binding SourceViewModel}"/>
+                        <CheckBox DockPanel.Dock="Top" IsChecked="{Binding Activity.Source.IncludeSubFolders}" Margin="0,4">Include sub folders</CheckBox>
                         <TextBlock  DockPanel.Dock="Bottom" Text="{Binding SourceFilesStatus, FallbackValue=No files found}" Grid.Row="1"/>
                     </DockPanel>
                     <DockPanel Grid.Row="0" Grid.Column="1" LastChildFill="False">
@@ -93,7 +96,11 @@
                     </ListBox>
                 </DockPanel>
 
-                <uc:ExecutionView Grid.Row="3" DataContext="{Binding ExecutionViewModel}"/>
+                <Border Grid.Row="3" BorderBrush="Black" BorderThickness="0,1,0,1" Margin="0,5" Padding="5">
+                    <CheckBox IsChecked="{Binding Activity.DeleteSourceFiles}" Margin="0,4">Delete source files</CheckBox>
+                </Border>
+
+                <uc:ExecutionView Grid.Row="4" DataContext="{Binding ExecutionViewModel}"/>
 
 
             </Grid>

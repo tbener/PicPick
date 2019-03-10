@@ -14,8 +14,8 @@ namespace PicPick.Models
 
         private string _currentOperation = null;
         private string _mainOperation;
-        private int _countDone;
-        private int _total;
+        private int _value;
+        private int _maximum;
 
         #endregion
 
@@ -36,12 +36,12 @@ namespace PicPick.Models
 
         public Exception Exception { get; set; }
 
-        public int CountDone
+        public int Value
         {
-            get => _countDone; set
+            get => _value; set
             {
-                _countDone = value;
-                RaisePropertyChanged("CountDone");
+                _value = value;
+                RaisePropertyChanged("Value");
             }
         }
 
@@ -75,13 +75,13 @@ namespace PicPick.Models
         }
         public string Activity { get; set; }
         public int CurrentOperationTotal { get; internal set; }
-        public int Total
+        public int Maximum
         {
-            get => _total;
+            get => _maximum;
             internal set
             {
-                _total = value;
-                RaisePropertyChanged("Total");
+                _maximum = value;
+                RaisePropertyChanged("Maximum");
             }
         }
 
@@ -89,9 +89,9 @@ namespace PicPick.Models
 
         #region Methods
 
-        public void Advance()
+        public void Advance(int step=1)
         {
-            CountDone += 1;
+            Value += step;
             Report();
         }
 
@@ -103,7 +103,7 @@ namespace PicPick.Models
         public void Start()
         {
             Done = false;
-            CountDone = 0;
+            Value = 0;
             Exception = null;
         }
 

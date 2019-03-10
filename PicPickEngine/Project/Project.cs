@@ -175,9 +175,12 @@ namespace PicPick.Project {
         
         private string filterField;
         
+        private bool includeSubFoldersField;
+        
         public PicPickProjectActivitySource() {
             this.pathField = "";
             this.filterField = "*.jpg";
+            this.includeSubFoldersField = true;
         }
         
         /// <remarks/>
@@ -203,6 +206,19 @@ namespace PicPick.Project {
             set {
                 this.filterField = value;
                 this.RaisePropertyChanged("Filter");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        [System.ComponentModel.DefaultValueAttribute(true)]
+        public bool IncludeSubFolders {
+            get {
+                return this.includeSubFoldersField;
+            }
+            set {
+                this.includeSubFoldersField = value;
+                this.RaisePropertyChanged("IncludeSubFolders");
             }
         }
         
