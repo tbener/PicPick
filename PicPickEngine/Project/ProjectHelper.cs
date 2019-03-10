@@ -8,6 +8,8 @@ namespace PicPick.Project
 {
     public static class ProjectHelper
     {
+        public static EventHandler OnSaveEventHandler;
+
         private static readonly string DEFAULT_FILE = PathHelper.GetFullPath(PathHelper.AppPath(), "Default.picpick");
 
         private static readonly ILog _log =
@@ -85,6 +87,7 @@ namespace PicPick.Project
                 SerializeHelper.Save(Project, file);
                 Project.IsDirty = false;
                 FileName = file;
+                OnSaveEventHandler?.Invoke(null, null);
                 return true;
             }
             catch (Exception ex)

@@ -65,9 +65,12 @@ namespace PicPick.UserControls.ViewModel
         {
             try
             {
-                await Activity.Analyze(progressInfo, cts.Token);
+                if (new SaveCommand().Save())
+                {
+                    await Activity.Analyze(progressInfo, cts.Token);
 
-                OnPropertyChanged("ProgressInfo");
+                    OnPropertyChanged("ProgressInfo");
+                }
             }
             catch (OperationCanceledException)
             {

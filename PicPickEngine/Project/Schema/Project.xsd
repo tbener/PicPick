@@ -13,6 +13,7 @@
                       <xsd:complexType>
                         <xsd:attribute name="Path" type="xsd:string" default="" />
                         <xsd:attribute name="Filter" type="xsd:string" default="*.jpg" />
+                        <xsd:attribute name="IncludeSubFolders" type="xsd:boolean" default="true" />
                       </xsd:complexType>
                     </xsd:element>
                     <xsd:element maxOccurs="unbounded" name="Destination">

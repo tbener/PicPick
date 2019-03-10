@@ -67,7 +67,8 @@ namespace PicPick.Helpers
 
         public void AddFile(string file)
         {
-            FileList.Add(file);
+            if (!FileList.Contains(file))
+                FileList.Add(file);
         }
 
         public void AddRange(IEnumerable<string> fileList)

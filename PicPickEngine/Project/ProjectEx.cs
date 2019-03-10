@@ -4,10 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Xml.Serialization;
 using TalUtils;
 
@@ -103,37 +100,6 @@ namespace PicPick.Project
         private void Activity_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             this.RaisePropertyChanged("Activity");
-        }
-    }
-
-    public partial class PicPickProjectActivitySource
-    {
-        public async Task<int> GetFileCount(CancellationToken cancellationToken)
-        {
-            HashSet<string> fileList = new HashSet<string>();
-
-            List<string> lst = new List<string>();
-            string[] filters = this.Filter.Split(new char[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries);
-
-            // loop on filters
-            foreach (string fltr in filters)
-            {
-                string filter = fltr.Trim();
-                // get file list for current filter
-                string[] fileEntries = await Task.Run(() => Directory.GetFiles(this.Path, filter));
-                cancellationToken.ThrowIfCancellationRequested();
-                // add to main file list - we're not just counting in case of duplications
-                lst.AddRange(fileEntries);
-            }
-
-            // create a unique file list
-            fileList = new HashSet<string>(lst);
-
-            // if cancelled - don't return
-            cancellationToken.ThrowIfCancellationRequested();
-
-            // return the count
-            return fileList.Count();
         }
     }
 

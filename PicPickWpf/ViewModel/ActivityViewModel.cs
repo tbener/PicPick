@@ -68,7 +68,7 @@ namespace PicPick.ViewModel
 
                 // Create a new cancellations token and await a new task to count files
                 ctsSourceCheck = new CancellationTokenSource();
-                int count = await Activity.Source.GetFileCount(ctsSourceCheck.Token);
+                int count = await Task.Run(() => Activity.Source.FileList.Count);
                 SourceFilesStatus = $"{count} files found";
             }
             catch (OperationCanceledException)
