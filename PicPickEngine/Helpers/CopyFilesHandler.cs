@@ -11,7 +11,7 @@ namespace PicPick.Helpers
 {
     public delegate void FileProcessEventHandler(object sender, string file, string msg, bool success=true);
     public delegate void FileStatusChangedEventHandler(object sender, string fileFullName, FILE_STATUS status);
-    public delegate void FileExistsEventHandler(object sender, string fileFullName, FILE_STATUS status);
+    public delegate FILE_EXISTS_RESPONSE FileExistsEventHandler(object sender, FileExistsEventArgs eventArgs, out bool dontAskAgain);
 
     public enum FILE_EXISTS_RESPONSE
     {
@@ -19,7 +19,7 @@ namespace PicPick.Helpers
         OVERWRITE,
         SKIP,
         RENAME,     // save both
-        COMPARE     // check if same files or just same names. then act accordingly...
+        COMPARE     // check if same files or just same names. then, if same, skip, if not, keep them both (rename)
     }
 
     public enum FILE_STATUS
@@ -39,13 +39,18 @@ namespace PicPick.Helpers
         ERROR = 9
     }
 
-    
+    public class FileExistsEventArgs : EventArgs
+    {
+        public string FileName { get; set; }
+        public string Destination { get; set; }
+    }
 
     public class CopyFilesHandler
     {
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         public event FileProcessEventHandler OnFileProcess;
         public event FileStatusChangedEventHandler OnFileStatusChanged;
+        public event FileExistsEventHandler OnFileExists;
 
         static readonly Dictionary<COPY_STATUS, string> _statusStrings = new Dictionary<COPY_STATUS, string>()
             {
@@ -216,7 +221,18 @@ namespace PicPick.Helpers
                     // if the file exists in destination
                     if (File.Exists(dest))
                     {
-                        action = FileExistsResponse;
+                        if (OnFileExists != null)
+                        {
+                            FileExistsEventArgs e = new FileExistsEventArgs()
+                            {
+                                FileName = fileName,
+                                Destination = Destination
+                            };
+                            action = OnFileExists(this, e, out dontAskAgain);
+                        }
+                        else
+                            action = FileExistsResponse;
+
                         if (FileExistsResponse == FILE_EXISTS_RESPONSE.ASK)
                         {
                             // ask the user.

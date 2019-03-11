@@ -190,13 +190,7 @@ namespace PicPick.Project
                 cancellationToken.ThrowIfCancellationRequested();
             }
 
-            CountTotal = 0;
-            foreach (var map in _mapping.Values)
-            {
-                CountTotal += map.FileList.Count();
-            }
-
-            progressInfo.Maximum = CountTotal;
+            progressInfo.Done = true;
             progressInfo.MainOperation = "Finished Analyzing";
 
             Initialized = true;
@@ -224,6 +218,14 @@ namespace PicPick.Project
 
             try
             {
+                // init progress
+                int countTotal = 0;
+                foreach (var map in _mapping.Values)
+                {
+                    countTotal += map.FileList.Count();
+                }
+                progressInfo.Maximum = countTotal;
+
                 CopyFilesHandler.FileExistsResponse = (FILE_EXISTS_RESPONSE)Enum.Parse(typeof(FILE_EXISTS_RESPONSE), Properties.Settings.Default.FileExistsResponse, true);
                 // loop on destinations
                 foreach (var kv in _mapping)
@@ -298,8 +300,7 @@ namespace PicPick.Project
             //_dicFilesResult[file] = success;
         }
 
-        [XmlIgnore]
-        public int CountTotal { get; private set; }
+       
 
 
         #endregion

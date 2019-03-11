@@ -1,4 +1,5 @@
 ﻿using PicPick.Commands;
+using PicPick.Helpers;
 using PicPick.Models;
 using PicPick.Project;
 using PicPick.ViewModel;
@@ -43,6 +44,10 @@ namespace PicPick.UserControls.ViewModel
             AnalyzeCommand = new RelayCommand(Analyze);
             StartCommand = new RelayCommand(Start, CanStart);
             StopCommand = new RelayCommand(Stop, CanStop);
+
+            /// Activity.DefaultFileExistsResponse = FER.COMPARE\.RENAME.
+            /// Activity.OnFileExists += MyFunc
+            ///
         }
 
         #endregion
