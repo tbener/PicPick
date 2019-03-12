@@ -11,11 +11,11 @@ namespace PicPick.Helpers
 {
     public delegate void FileProcessEventHandler(object sender, string file, string msg, bool success=true);
     public delegate void FileStatusChangedEventHandler(object sender, string fileFullName, FILE_STATUS status);
-    public delegate FILE_EXISTS_RESPONSE FileExistsEventHandler(object sender, FileExistsEventArgs eventArgs, out bool dontAskAgain);
+    public delegate FILE_EXISTS_RESPONSE FileExistsEventHandler(object sender, FileExistsEventArgs eventArgs);
 
     public enum FILE_EXISTS_RESPONSE
     {
-        ASK,
+        //ASK,
         OVERWRITE,
         SKIP,
         RENAME,     // save both
@@ -106,93 +106,6 @@ namespace PicPick.Helpers
             SetStatus(COPY_STATUS.ERROR, ex);
         }
 
-        public void DoCopy()
-        {
-            FILE_EXISTS_RESPONSE fileExistsResponse = FILE_EXISTS_RESPONSE.ASK;
-            FILE_EXISTS_RESPONSE action = fileExistsResponse;
-            bool dontAsk = false;
-            string fileName = "";
-
-            try
-            {
-                // iterate FileList and copy to dest
-                foreach (string file in FileList)
-                {
-                    fileName = Path.GetFileName(file);
-                    string dest = Path.Combine(Destination, fileName);
-
-                    // if the file exists in destination
-                    if (File.Exists(dest))
-                    {
-                        action = fileExistsResponse;
-                        if (fileExistsResponse == FILE_EXISTS_RESPONSE.ASK)
-                        {
-                            // ask the user.
-                            // the choices are: Skip, Overwrite or Rename (keep both)
-                            // todo: action = AskWhatToDo();
-
-                            // temp. because the UI is not supported yet...
-                            action = FILE_EXISTS_RESPONSE.SKIP;
-
-                            // temp. because the UI is not supported yet...
-                            dontAsk = true;
-
-                            if (dontAsk)
-                                // make this permanent
-                                fileExistsResponse = action;
-                        }
-
-                        if (action == FILE_EXISTS_RESPONSE.COMPARE)
-                        {
-                            // todo:
-                            // check other properties. if it seems like its the same file - overwrite
-                            // if not - rename
-
-                            if (AreSameFiles(file, dest))
-                                action = FILE_EXISTS_RESPONSE.SKIP;  // we can overwrite, but for testing purposes...
-                            else
-                                action = FILE_EXISTS_RESPONSE.RENAME;
-
-                            // temp. because we don't support comparing
-                            action = FILE_EXISTS_RESPONSE.SKIP;
-                        }
-
-                        switch (action)
-                        {
-                            case FILE_EXISTS_RESPONSE.OVERWRITE:
-                                File.Copy(file, dest, true);
-                                break;
-                            case FILE_EXISTS_RESPONSE.SKIP:
-                                break;
-                            case FILE_EXISTS_RESPONSE.RENAME:
-                                // todo: get a new file name
-
-                                //temp
-                                dest = Path.Combine(TalUtils.PathHelper.GetFullPath(Destination, "Existing Files", true), Path.GetFileName(file));
-
-                                File.Copy(file, dest, true);
-                                break;
-                            default:
-                                break;
-                        }
-                        ReportFileProcess(fileName, action, dest);
-                    }
-                    else
-                    {
-                        File.Copy(file, dest);
-                        ReportFileProcess(fileName, $"Copied to {dest}", log4net.Core.Level.Info);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                ReportFileProcess(fileName, $"ERROR: {ex.Message}", log4net.Core.Level.Error);
-                if (!ErrorHandler.Handle(ex, "An error occurred. Do you want to continue to the next files?"))
-                    return;
-            }
-
-        }
-
         // this is static because an activity (task) can use a few instances of this class
         public static FILE_EXISTS_RESPONSE FileExistsResponse { get; set; }
 
@@ -228,24 +141,10 @@ namespace PicPick.Helpers
                                 FileName = fileName,
                                 Destination = Destination
                             };
-                            action = OnFileExists(this, e, out dontAskAgain);
+                            action = OnFileExists(this, e);
                         }
                         else
                             action = FileExistsResponse;
-
-                        if (FileExistsResponse == FILE_EXISTS_RESPONSE.ASK)
-                        {
-                            // ask the user.
-                            // the choices are: Skip, Overwrite or Rename (keep both)
-                            action = AskWhatToDo(fileName, Path.GetDirectoryName(file), Destination, out dontAskAgain);
-
-                            // if the user clicked cancel, this will be triggered
-                            cancellationToken.ThrowIfCancellationRequested();
-
-                            if (dontAskAgain)
-                                // make this permanent for this activity
-                                FileExistsResponse = action;
-                        }
 
                         if (action == FILE_EXISTS_RESPONSE.COMPARE)
                         {
