@@ -25,7 +25,6 @@ namespace PicPick
         public MainWindow()
         {
             InitializeComponent();
-            DataContext = new MainWindowViewModel();
         }
     }
 }

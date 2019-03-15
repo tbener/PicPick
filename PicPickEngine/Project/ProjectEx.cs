@@ -71,12 +71,12 @@ namespace PicPick.Project
                 if (_activityList == null)
                 {
                     _activityList = new ObservableCollection<PicPickProjectActivity>();
-                    _activityList.CollectionChanged += ActivityList_CollectionChanged;
                     if (this.Activities != null)
                         foreach (PicPickProjectActivity activity in this.Activities)
                         {
                             _activityList.Add(activity);
                         }
+                    _activityList.CollectionChanged += ActivityList_CollectionChanged;
                 }
                 return _activityList;
             }
