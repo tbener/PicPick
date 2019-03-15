@@ -63,8 +63,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Classes\FileInfoItem.cs" />
-    <Compile Include="Classes\PicPickActivity.cs" />
-    <Compile Include="Classes\PicPickProject.cs" />
     <Compile Include="Classes\ProgressInformation.cs" />
     <Compile Include="Configuration\ConfigurationEx.cs" />
     <Compile Include="Configuration\EventHandlers.cs" />

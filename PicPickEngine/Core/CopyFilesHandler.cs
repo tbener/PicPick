@@ -1,5 +1,6 @@
 ﻿using PicPick.Interfaces;
 using PicPick.Models;
+using Prism.Events;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -39,15 +40,14 @@ namespace PicPick.Helpers
         ERROR = 9
     }
 
-    public class FileExistsEventArgs : EventArgs
-    {
-        public string FileName { get; set; }
-        public string Destination { get; set; }
-    }
+    
 
     public class CopyFilesHandler
     {
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        private IEventAggregator _eventAggregator;
+        private string pathAbsolute;
+
         public event FileProcessEventHandler OnFileProcess;
         public event FileStatusChangedEventHandler OnFileStatusChanged;
         public event FileExistsEventHandler OnFileExists;
@@ -61,14 +61,24 @@ namespace PicPick.Helpers
                 { COPY_STATUS.ERROR, "Error" }
             };
 
-        public CopyFilesHandler(string dest, List<string> fileList)
+        #region CTOR
+
+        public CopyFilesHandler(IEventAggregator eventAggregator, string dest, List<string> fileList)
         {
+            _eventAggregator = eventAggregator;
             Destination = dest;
             FileList = fileList;
             Status = COPY_STATUS.NOT_STARTED;
         }
-        public CopyFilesHandler(string dest) : this(dest, new List<string>())
+        public CopyFilesHandler(IEventAggregator eventAggregator, string dest) : this(eventAggregator, dest, new List<string>())
         { }
+
+        public CopyFilesHandler(string pathAbsolute)
+        {
+            this.pathAbsolute = pathAbsolute;
+        }
+
+        #endregion
 
         public void AddFile(string file)
         {
@@ -141,6 +151,7 @@ namespace PicPick.Helpers
                                 FileName = fileName,
                                 Destination = Destination
                             };
+                            _eventAggregator.GetEvent<FileExistsEvent>().Publish(e);
                             action = OnFileExists(this, e);
                         }
                         else
