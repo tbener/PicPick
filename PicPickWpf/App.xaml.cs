@@ -8,6 +8,7 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using Prism.Events;
 
 namespace PicPick
 {
@@ -19,6 +20,8 @@ namespace PicPick
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
+
+            PicPick.Helpers.EventServices.EventAggregator = Helpers.ApplicationService.Instance.EventAggregator;
 
             MainWindowViewModel vm = new MainWindowViewModel();
             MainWindow view = new MainWindow();

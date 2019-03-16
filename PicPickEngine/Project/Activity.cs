@@ -93,6 +93,9 @@ namespace PicPick.Project
         [XmlIgnore]
         public bool Initialized { get; private set; }
 
+        [XmlIgnore]
+        public FILE_EXISTS_RESPONSE FileExistsResponse { get; set; }
+
 
         #region Execution
 
@@ -226,7 +229,7 @@ namespace PicPick.Project
                 }
                 progressInfo.Maximum = countTotal;
 
-                CopyFilesHandler.FileExistsResponse = (FILE_EXISTS_RESPONSE)Enum.Parse(typeof(FILE_EXISTS_RESPONSE), Properties.Settings.Default.FileExistsResponse, true);
+                CopyFilesHandler.FileExistsResponse = FileExistsResponse;
                 // loop on destinations
                 foreach (var kv in _mapping)
                 {

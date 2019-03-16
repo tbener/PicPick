@@ -13,12 +13,17 @@ using TalUtils;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.IO;
+using PicPick.Helpers;
+using System.ComponentModel;
 
 namespace PicPick.ViewModel
 {
     class MainWindowViewModel : BaseViewModel
     {
+        const FILE_EXISTS_RESPONSE DEFAULT_FILE_EXISTS_RESPONSE = FILE_EXISTS_RESPONSE.ASK;
+
         private PicPickProjectActivity _currentActivity;
+        private Dictionary<FILE_EXISTS_RESPONSE, KeyValuePair<string, string>> _fileExistsResponses;
 
         public ICommand OpenFileCommand { get; set; }
         public ICommand SaveCommand { get; set; }
@@ -26,15 +31,16 @@ namespace PicPick.ViewModel
 
         public MainWindowViewModel()
         {
+
             OpenFileCommand = new RelayCommand(OpenFile);
             SaveCommand = new SaveCommand();
             AddActivityCommand = new RelayCommand(AddNewActivity);
 
-            ProjectHelper.SupportIsDirty = true;
-            ProjectHelper.OnSaveEventHandler += (s, e) => UpdateFileName();
+            ProjectLoader.SupportIsDirty = true;
+            ProjectLoader.OnSaveEventHandler += (s, e) => UpdateFileName();
 
             if (string.IsNullOrEmpty(Properties.Settings.Default.LastFile))
-                ProjectHelper.LoadCreateDefault();
+                ProjectLoader.LoadCreateDefault();
             else
                 OpenFile(Properties.Settings.Default.LastFile);
 
@@ -50,7 +56,7 @@ namespace PicPick.ViewModel
             CurrentProject.ActivityList.Add(act);
             CurrentActivity = act;
         }
-        
+
 
 
         private void CurrentProject_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -66,36 +72,37 @@ namespace PicPick.ViewModel
             {
                 OpenFile(file);
             }
-            
+
         }
 
         private void UpdateFileName()
         {
             OnPropertyChanged("CurrentProject");
-            Properties.Settings.Default.LastFile = ProjectHelper.FileName;
+            Properties.Settings.Default.LastFile = ProjectLoader.FileName;
             Properties.Settings.Default.Save();
             OnPropertyChanged("WindowTitle");
         }
 
         private void OpenFile(string file)
         {
-            if (!ProjectHelper.Load(file)) return;
+            if (!ProjectLoader.Load(file)) return;
             UpdateFileName();
         }
-        
-        
-        
+
+
+
 
         public string WindowTitle
         {
-            get {
-                return string.Format("PicPick - {0}{1}", Path.GetFileName(ProjectHelper.FileName), CurrentProject.IsDirty ? "*" : "");
+            get
+            {
+                return string.Format("PicPick - {0}{1}", Path.GetFileName(ProjectLoader.FileName), CurrentProject.IsDirty ? "*" : "");
             }
         }
 
 
-        public PicPickProject CurrentProject { get => ProjectHelper.Project; }
-        
+        public PicPickProject CurrentProject { get => ProjectLoader.Project; }
+
 
         public ActivityViewModel ActivityViewModel
         {
@@ -116,13 +123,27 @@ namespace PicPick.ViewModel
             {
                 if (_currentActivity != value)
                 {
+                    FILE_EXISTS_RESPONSE fer = _currentActivity == null ? DEFAULT_FILE_EXISTS_RESPONSE : _currentActivity.FileExistsResponse;
                     _currentActivity = value;
+                    _currentActivity.FileExistsResponse = fer;
                     ActivityViewModel = new ActivityViewModel(_currentActivity);
                 }
                 OnPropertyChanged("CurrentActivity");
             }
         }
 
-        
+        public Dictionary<FILE_EXISTS_RESPONSE, string> FileExistsResponseList => Model.FileExistsResponse.GetDictionary;
+
+        public FILE_EXISTS_RESPONSE SelectedFileExistsResponse
+        {
+            get { return CurrentActivity.FileExistsResponse; }
+            set
+            {
+                CurrentActivity.FileExistsResponse = value;
+                OnPropertyChanged(nameof(SelectedFileExistsResponse));
+            }
+        }
+
+
     }
 }

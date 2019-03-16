@@ -45,9 +45,14 @@ namespace PicPick.UserControls.ViewModel
             StartCommand = new RelayCommand(Start, CanStart);
             StopCommand = new RelayCommand(Stop, CanStop);
 
-            /// Activity.DefaultFileExistsResponse = FER.COMPARE\.RENAME.
-            /// Activity.OnFileExists += MyFunc
-            ///
+            ApplicationService.Instance.EventAggregator.GetEvent<AskEvent>().Subscribe(OnFileExistsAsk);
+            
+        }
+
+        private void OnFileExistsAsk(AskEventArgs args)
+        {
+            args.Response = FILE_EXISTS_RESPONSE.RENAME;
+            args.DontAskAgain = true;
         }
 
         #endregion

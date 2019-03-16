@@ -35,6 +35,15 @@
 
             <DockPanel Grid.Column="0">
                 <TextBlock Text="Activities" DockPanel.Dock="Top" Margin="0,5"/>
+                <Grid DockPanel.Dock="Bottom" Height="180">
+                    <GroupBox Header="Options">
+                        <DockPanel LastChildFill="False" Margin="6">
+                            <TextBlock DockPanel.Dock="Top" TextWrapping="Wrap" Margin="0,5">What to do when a file already exists:</TextBlock>
+                            <ComboBox DockPanel.Dock="Top" ItemsSource="{Binding FileExistsResponseList, Mode=OneTime}" DisplayMemberPath="Value" 
+                                      SelectedValuePath="Key" SelectedValue="{Binding SelectedFileExistsResponse}" Height="23"/>
+                        </DockPanel>
+                    </GroupBox>
+                </Grid>
                 <ListBox x:Name="lstActivities" ItemsSource="{Binding CurrentProject.ActivityList}" SelectedItem="{Binding CurrentActivity}">
                     <ListBox.ItemTemplate>
                         <DataTemplate>

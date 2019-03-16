@@ -21,7 +21,8 @@ namespace PicPick.Commands
         
         public void Execute(object parameter)
         {
-            Save( Convert.ToBoolean(parameter));
+            Properties.Settings.Default.Save();
+            Save(forceSaveAs: Convert.ToBoolean(parameter));
         }
 
         #region Saving methods
@@ -34,15 +35,15 @@ namespace PicPick.Commands
         /// <returns></returns>
         public bool Save(bool forceSaveAs=false)
         {
-            if (forceSaveAs || ProjectHelper.FileName == null)
+            if (forceSaveAs || ProjectLoader.FileName == null)
                 return SaveAs();
             else
-                return ProjectHelper.Save();
+                return ProjectLoader.Save();
         }
 
         private bool Save(string file)
         {
-            return ProjectHelper.Save(file);
+            return ProjectLoader.Save(file);
         }
 
         private bool SaveAs()

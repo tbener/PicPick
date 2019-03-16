@@ -1,4 +1,5 @@
 ﻿using PicPick.Helpers;
+using Prism.Events;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -31,6 +32,8 @@ namespace PicPick.Project
             _propertyChangedSupportInitlized = true;
 
         }
+
+        public static IEventAggregator EventAggregator { get; set; }
 
 
         [XmlIgnore]

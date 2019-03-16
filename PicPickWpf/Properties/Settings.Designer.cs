@@ -34,5 +34,16 @@ namespace PicPick.Properties {
                 this["LastFile"] = value;
             }
         }
+
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("ASK")]
+        public string FileExistsResponse
+        {
+            get
+            {
+                return ((string)(this["FileExistsResponse"]));
+            }
+        }
     }
 }

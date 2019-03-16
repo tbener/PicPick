@@ -3,6 +3,7 @@ using PicPick.Models;
 using Prism.Events;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,17 +11,22 @@ using TalUtils;
 
 namespace PicPick.Helpers
 {
-    public delegate void FileProcessEventHandler(object sender, string file, string msg, bool success=true);
+    public delegate void FileProcessEventHandler(object sender, string file, string msg, bool success = true);
     public delegate void FileStatusChangedEventHandler(object sender, string fileFullName, FILE_STATUS status);
     public delegate FILE_EXISTS_RESPONSE FileExistsEventHandler(object sender, FileExistsEventArgs eventArgs);
 
     public enum FILE_EXISTS_RESPONSE
     {
-        //ASK,
+        [Description("Ask me")]
+        ASK,        // Needs to be implemented by the host application
+        [Description("Overwrite")]
         OVERWRITE,
+        [Description("Skip")]
         SKIP,
-        RENAME,     // save both
-        COMPARE     // check if same files or just same names. then, if same, skip, if not, keep them both (rename)
+        [Description("Keep both")]
+        RENAME,     // Save both
+        [Description("Auto decide")]
+        COMPARE     // Check if same files or just same names. then, if same, skip, if not, keep them both (rename)
     }
 
     public enum FILE_STATUS
@@ -40,12 +46,13 @@ namespace PicPick.Helpers
         ERROR = 9
     }
 
-    
+
 
     public class CopyFilesHandler
     {
+        const FILE_EXISTS_RESPONSE DEFAULT_FILE_EXISTS_RESPONSE = FILE_EXISTS_RESPONSE.SKIP;
+
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        private IEventAggregator _eventAggregator;
         private string pathAbsolute;
 
         public event FileProcessEventHandler OnFileProcess;
@@ -63,20 +70,14 @@ namespace PicPick.Helpers
 
         #region CTOR
 
-        public CopyFilesHandler(IEventAggregator eventAggregator, string dest, List<string> fileList)
+        public CopyFilesHandler(string dest, List<string> fileList)
         {
-            _eventAggregator = eventAggregator;
             Destination = dest;
             FileList = fileList;
             Status = COPY_STATUS.NOT_STARTED;
         }
-        public CopyFilesHandler(IEventAggregator eventAggregator, string dest) : this(eventAggregator, dest, new List<string>())
+        public CopyFilesHandler(string dest) : this(dest, new List<string>())
         { }
-
-        public CopyFilesHandler(string pathAbsolute)
-        {
-            this.pathAbsolute = pathAbsolute;
-        }
 
         #endregion
 
@@ -123,7 +124,6 @@ namespace PicPick.Helpers
         {
             FILE_EXISTS_RESPONSE action = FileExistsResponse;
             FILE_STATUS fileStatus;
-            bool dontAskAgain = false;
             string fileName = "";
             string fullFileName = "";
             progressInfo.DestinationFolder = Destination;
@@ -144,18 +144,38 @@ namespace PicPick.Helpers
                     // if the file exists in destination
                     if (File.Exists(dest))
                     {
-                        if (OnFileExists != null)
+                        // If the file exists:
+                        // 1. action is initialized as FileExistsResponse
+                        // 2. publish FileExistsEvent in case the host wants to change the action.
+                        // 3. it the action is ASK - publish the AskEvent for the host to implement it and return the chosen action.
+                        // 4. if the ASK is implemented:
+                        // 4.1. the action is set to chosen response.
+                        // 4.2. if "Dont Ask Again" is true, then FileExistsResponse will be set to be the chosen action, and make it the active action on the next iterations.
+                        // 5. if the ASK is not implemented:
+                        // 5.1. the returned action would be ASK, again, and it will be set to the default as a fallback.
+                        action = EventServices.Publish(new FileExistsEventArgs()
                         {
-                            FileExistsEventArgs e = new FileExistsEventArgs()
+                            FileName = fileName,
+                            Destination = Destination,
+                            Response = FileExistsResponse,
+                        });
+
+                        if (action == FILE_EXISTS_RESPONSE.ASK)
+                        {
+                            AskEventArgs e = new AskEventArgs()
                             {
                                 FileName = fileName,
-                                Destination = Destination
+                                Destination = Destination,
+                                Response = FileExistsResponse,
+                                DontAskAgain = false
                             };
-                            _eventAggregator.GetEvent<FileExistsEvent>().Publish(e);
-                            action = OnFileExists(this, e);
+                            action = EventServices.Publish(e);
+                            // as a percaution, in case the ASK was not implemented or implemented wrongly
+                            if (action == FILE_EXISTS_RESPONSE.ASK)
+                                action = DEFAULT_FILE_EXISTS_RESPONSE;
+                            if (e.DontAskAgain)
+                                FileExistsResponse = action;
                         }
-                        else
-                            action = FileExistsResponse;
 
                         if (action == FILE_EXISTS_RESPONSE.COMPARE)
                         {
@@ -191,7 +211,7 @@ namespace PicPick.Helpers
                             default:
                                 break;
                         }
-                        
+
                         ReportFileProcess(fileName, action, dest);
                     }
                     else
@@ -267,7 +287,7 @@ namespace PicPick.Helpers
             try
             {
                 OnFileProcess?.Invoke(this, file, msg, level == log4net.Core.Level.Info);
-                
+
                 LogHandler.Log(file, msg, level);
             }
             catch (Exception ex)
@@ -312,7 +332,7 @@ namespace PicPick.Helpers
             return _statusStrings[Status];
         }
 
-        
+
     }
-    
+
 }
