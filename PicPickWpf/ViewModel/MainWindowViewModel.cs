@@ -28,6 +28,7 @@ namespace PicPick.ViewModel
         public ICommand OpenFileCommand { get; set; }
         public ICommand SaveCommand { get; set; }
         public ICommand AddActivityCommand { get; set; }
+        public ICommand DeleteActivityCommand { get; set; }
 
         public MainWindowViewModel()
         {
@@ -35,6 +36,7 @@ namespace PicPick.ViewModel
             OpenFileCommand = new RelayCommand(OpenFile);
             SaveCommand = new SaveCommand();
             AddActivityCommand = new RelayCommand(AddNewActivity);
+            DeleteActivityCommand = new RelayCommand(DeleteActivity, () => CurrentProject.ActivityList.Count > 1);
 
             ProjectLoader.SupportIsDirty = true;
             ProjectLoader.OnSaveEventHandler += (s, e) => UpdateFileName();
@@ -55,6 +57,26 @@ namespace PicPick.ViewModel
             PicPickProjectActivity act = new PicPickProjectActivity("New Activity");
             CurrentProject.ActivityList.Add(act);
             CurrentActivity = act;
+        }
+
+        private void DeleteActivity()
+        {
+            if (CurrentProject.ActivityList.Count == 1)
+            {
+                Msg.Show("You cannot delete the last Activity");
+                return;
+            }
+
+            if (Msg.ShowQ($"Are you sure you want to delete {CurrentActivity.Name}?"))
+            {
+                int selIndex = CurrentProject.ActivityList.IndexOf(CurrentActivity);
+                CurrentProject.ActivityList.Remove(CurrentActivity);
+
+                // set selected activity
+                if (CurrentProject.ActivityList.Count <= selIndex)
+                    selIndex--;
+                CurrentActivity = CurrentProject.ActivityList[selIndex];
+            }
         }
 
 
