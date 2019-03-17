@@ -117,6 +117,10 @@ namespace PicPick.Helpers
             SetStatus(COPY_STATUS.ERROR, ex);
         }
 
+        #endregion
+
+        #region Copying
+
         // this is static because an activity (task) can use a few instances of this class
         public static FILE_EXISTS_RESPONSE FileExistsResponse { get; set; }
 
@@ -244,19 +248,7 @@ namespace PicPick.Helpers
             //}
         }
 
-        //AskWhatToDoForm askWhatToDoForm;
-        public static IFileExistsDialog FileExistsDialog { get; set; }
-
-        private FILE_EXISTS_RESPONSE AskWhatToDo(string fileName, string sourcePath, string destPath, out bool dontAskAgain)
-        {
-            //if (askWhatToDoForm == null)
-            //    askWhatToDoForm = new AskWhatToDoForm();
-
-            FileExistsDialog.ShowDialog(fileName, sourcePath, destPath);
-
-            dontAskAgain = FileExistsDialog.DontAskAgain;
-            return FileExistsDialog.SelectedAction;
-        }
+ 
 
         private bool AreSameFiles(string f1, string f2)
         {

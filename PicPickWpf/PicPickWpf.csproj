@@ -90,6 +90,7 @@
     <Compile Include="UserControls\ViewModel\DestinationViewModel.cs" />
     <Compile Include="UserControls\ViewModel\ExecutionViewModel.cs" />
     <Compile Include="UserControls\ViewModel\PathBrowserViewModel.cs" />
+    <Compile Include="UserControls\ViewModel\ProgressViewModel.cs" />
     <Compile Include="UserControls\View\DestinationView.xaml.cs">
       <DependentUpon>DestinationView.xaml</DependentUpon>
     </Compile>
@@ -99,6 +100,9 @@
     <Compile Include="UserControls\View\PathBrowserView.xaml.cs">
       <DependentUpon>PathBrowserView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\View\ProgressView.xaml.cs">
+      <DependentUpon>ProgressView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ViewModel\ActivityViewModel.cs" />
     <Compile Include="ViewModel\BaseViewModel.cs" />
     <Compile Include="ViewModel\MainWindowViewModel.cs" />
@@ -107,6 +111,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControls\View\ExecutionView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\View\ProgressView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
