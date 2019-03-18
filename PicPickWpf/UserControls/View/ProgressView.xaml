@@ -13,7 +13,7 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
 
-        <TextBlock Text="{Binding ProgressInfo.MainOperation, FallbackValue=Main operation}" FontWeight="Bold" FontSize="16"/>
+        <TextBlock Text="{Binding ProgressInfo.Activity, FallbackValue=Main operation}" FontWeight="Bold" FontSize="16"/>
         <TextBlock Text="{Binding ProgressInfo.CurrentOperation, FallbackValue=Current operation}" VerticalAlignment="Bottom"/>
 
         <ProgressBar Grid.Row="1" Height="26" Value="{Binding ProgressInfo.Value, FallbackValue=0}" Maximum="{Binding ProgressInfo.Maximum, FallbackValue=100}"/>
