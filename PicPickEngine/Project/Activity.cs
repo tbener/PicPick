@@ -228,6 +228,7 @@ namespace PicPick.Project
                     countTotal += map.FileList.Count();
                 }
                 progressInfo.Maximum = countTotal;
+                progressInfo.Value = 0;
 
                 CopyFilesHandler.FileExistsResponse = FileExistsResponse;
                 // loop on destinations

@@ -2,6 +2,7 @@
 using PicPick.Helpers;
 using PicPick.Models;
 using PicPick.Project;
+using PicPick.View;
 using PicPick.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -61,7 +62,16 @@ namespace PicPick.UserControls.ViewModel
         {
             try
             {
+                ProgressWindowViewModel progressWindowViewModel = new ProgressWindowViewModel(progressInfo);
+                ProgressWindowView progressWindow = new ProgressWindowView()
+                {
+                    DataContext = progressWindowViewModel
+                };
+                progressWindow.Show();
+
                 await Activity.Start(progressInfo, cts.Token);
+
+                progressWindow.Close();
 
                 OnPropertyChanged("ProgressInfo");
             }
