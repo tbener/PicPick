@@ -16,6 +16,7 @@ namespace PicPick.Models
         private string _mainOperation;
         private int _value;
         private int _maximum;
+        private string _activity;
 
         #endregion
 
@@ -73,7 +74,14 @@ namespace PicPick.Models
                 RaisePropertyChanged("MainOperation");
             }
         }
-        public string Activity { get; set; }
+        public string Activity
+        {
+            get => _activity; set
+            {
+                _activity = value;
+                RaisePropertyChanged(nameof(Activity));
+            }
+        }
         public int CurrentOperationTotal { get; internal set; }
         public int Maximum
         {
@@ -89,7 +97,7 @@ namespace PicPick.Models
 
         #region Methods
 
-        public void Advance(int step=1)
+        public void Advance(int step = 1)
         {
             Value += step;
             Report();

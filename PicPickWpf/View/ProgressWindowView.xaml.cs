@@ -22,6 +22,17 @@ namespace PicPick.View
         public ProgressWindowView()
         {
             InitializeComponent();
+
+            MouseDown += delegate
+            {
+                try
+                {
+                    DragMove();
+                }
+                catch
+                { }
+            };
+
         }
     }
 }

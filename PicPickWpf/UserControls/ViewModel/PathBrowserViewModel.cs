@@ -16,7 +16,7 @@ namespace PicPick.UserControls.ViewModel
         // This is the class that holds the Path property.
         // We can't use interface because this is coming from another assembly.
         // We also can't use the class type explicitely because there is more than one class. We just know they have the property "Path".
-        private object _pathClass;
+        private object PathClass { get; set; }
 
         public static EventHandler OnPathChanged;
 
@@ -28,7 +28,7 @@ namespace PicPick.UserControls.ViewModel
         public PathBrowserViewModel(object pathClass)
         {
             BrowseCommand = new RelayCommand(BrowseFolder);
-            _pathClass = pathClass;
+            PathClass = pathClass;
             BasePath = "";
         }
 
@@ -48,11 +48,11 @@ namespace PicPick.UserControls.ViewModel
         {
             get
             {
-                return _pathClass.GetType().GetProperty("Path").GetValue(_pathClass, null).ToString();
+                return PathClass.GetType().GetProperty("Path").GetValue(PathClass, null).ToString();
             }
             set
             {
-                _pathClass.GetType().GetProperty("Path").SetValue(_pathClass, value);
+                PathClass.GetType().GetProperty("Path").SetValue(PathClass, value);
                 OnPropertyChanged("Path");
             }
         }

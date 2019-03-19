@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 using System.Windows;
 using Prism.Events;
 
+[assembly: log4net.Config.XmlConfigurator(Watch = true)]
+
 namespace PicPick
 {
     /// <summary>

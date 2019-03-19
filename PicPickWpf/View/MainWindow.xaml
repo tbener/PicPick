@@ -105,7 +105,7 @@
                     <ListBox ItemsSource="{Binding DestinationViewModelList}" HorizontalContentAlignment="Stretch">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
-                                <uc:DestinationView/>
+                                <uc:DestinationView Margin="0,6"/>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
