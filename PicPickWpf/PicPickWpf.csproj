@@ -110,6 +110,9 @@
     <Compile Include="ViewModel\BaseViewModel.cs" />
     <Compile Include="ViewModel\MainWindowViewModel.cs" />
     <Compile Include="ViewModel\ProgressWindowViewModel.cs" />
+    <Compile Include="View\ActivityView.xaml.cs">
+      <DependentUpon>ActivityView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\ProgressWindowView.xaml.cs">
       <DependentUpon>ProgressWindowView.xaml</DependentUpon>
     </Compile>
@@ -122,6 +125,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControls\View\ProgressView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\ActivityView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

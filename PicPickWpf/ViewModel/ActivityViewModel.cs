@@ -8,26 +8,45 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using PicPick.Commands;
+using PicPick.Helpers;
+using PicPick.Models;
 using PicPick.Project;
 using PicPick.UserControls.ViewModel;
+using PicPick.View;
 using TalUtils;
 
 namespace PicPick.ViewModel
 {
     public class ActivityViewModel : BaseViewModel
     {
-        private PicPickProjectActivity _activity;
-        private string _sourceFilesStatus;
+        #region Private Members
+
+        CancellationTokenSource cts;
+        bool _canExecute;
+
+        PicPickProjectActivity _activity;
+        string _sourceFilesStatus;
         CancellationTokenSource ctsSourceCheck;
 
+        #region Commands
+
+        public ICommand StartCommand { get; set; }
         public ICommand AddDestinationCommand { get; set; }
+
+        #endregion
+
+        #endregion
 
         public ActivityViewModel(PicPickProjectActivity activity)
         {
             
             AddDestinationCommand = new RelayCommand(AddDestination);
+            StartCommand = new RelayCommand(Start, CanStart);
 
             Activity = activity;
+
+            ProgressInfo = new ProgressInformation();
+            cts = new CancellationTokenSource();
         }
 
         /// <summary>
@@ -48,7 +67,7 @@ namespace PicPick.ViewModel
             foreach (PicPickProjectActivityDestination dest in Activity.DestinationList)
                 AddDestinationViewModel(dest);
 
-            ExecutionViewModel = new ExecutionViewModel(Activity);
+            ApplicationService.Instance.EventAggregator.GetEvent<AskEvent>().Subscribe(OnFileExistsAsk);
         }
 
         private async Task CheckSourceStatus()
@@ -81,6 +100,49 @@ namespace PicPick.ViewModel
                 SourceFilesStatus = "---";
             }
         }
+
+        #region Execution
+
+        public async void Start()
+        {
+            try
+            {
+                ProgressWindowViewModel progressWindowViewModel = new ProgressWindowViewModel(ProgressInfo);
+                ProgressWindowView progressWindow = new ProgressWindowView()
+                {
+                    DataContext = progressWindowViewModel
+                };
+                progressWindow.Show();
+
+                await Activity.Start(ProgressInfo, cts.Token);
+
+                progressWindow.Close();
+
+                OnPropertyChanged("ProgressInfo");
+            }
+            catch (OperationCanceledException)
+            {
+                // user cancelled...
+            }
+        }
+
+        private bool CanStart()
+        {
+            return !string.IsNullOrEmpty(Activity.Source.Path) && !Activity.IsRunning;
+        }
+
+        private void OnFileExistsAsk(AskEventArgs args)
+        {
+            if (Msg.ShowQ("File Exists, overwrite? \nif you anwer Cancel, the file will be skipped. Same anwer will apply to all existing files."))
+                args.Response = FILE_EXISTS_RESPONSE.OVERWRITE;
+            else
+                args.Response = FILE_EXISTS_RESPONSE.SKIP;
+            args.DontAskAgain = true;
+        }
+
+        public ProgressInformation ProgressInfo { get; set; }
+
+        #endregion
 
         private async void Source_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {

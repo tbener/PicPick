@@ -200,6 +200,8 @@ namespace PicPick.Project
             return true;
         }
 
+        [XmlIgnore]
+        public bool IsRunning { get; set; }
 
         /// <summary>
         /// Executes the whole task. Copying the files to ALL destinations
@@ -209,6 +211,7 @@ namespace PicPick.Project
         /// <returns></returns>
         public async Task Start(ProgressInformation progressInfo, CancellationToken cancellationToken)
         {
+            IsRunning = true;
             progressInfo.Activity = Name;
 
             // Initialize.Fills the Mapping dictionary
@@ -281,6 +284,7 @@ namespace PicPick.Project
                 Initialized = false;
                 progressInfo.Done = true;
                 await Task.Run(() => progressInfo.Report());
+                IsRunning = false;
             }
         }
 
