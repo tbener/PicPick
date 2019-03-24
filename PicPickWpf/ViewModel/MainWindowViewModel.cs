@@ -145,7 +145,9 @@ namespace PicPick.ViewModel
             {
                 if (_currentActivity != value)
                 {
-                    FILE_EXISTS_RESPONSE fer = _currentActivity == null ? DEFAULT_FILE_EXISTS_RESPONSE : _currentActivity.FileExistsResponse;
+                    FILE_EXISTS_RESPONSE fer = _currentActivity == null ?
+                        (FILE_EXISTS_RESPONSE)Enum.Parse(typeof(FILE_EXISTS_RESPONSE), Properties.Settings.Default.FileExistsResponse, true)
+                        : _currentActivity.FileExistsResponse;
                     _currentActivity = value;
                     _currentActivity.FileExistsResponse = fer;
                     ActivityViewModel = new ActivityViewModel(_currentActivity);
