@@ -1,4 +1,4 @@
-﻿using PicPick.Helpers;
+﻿using PicPick.Core;
 using System;
 
 namespace PicPick.Models

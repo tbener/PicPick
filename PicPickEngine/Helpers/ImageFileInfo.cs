@@ -9,7 +9,7 @@ using System.Windows.Media.Imaging;
 
 namespace PicPick.Helpers
 {
-    internal class ImageFileInfo
+    public class ImageFileInfo
     {
         BitmapImageCheck _bitmapImageCheck;
         FileStream _fileStream = null;
@@ -28,7 +28,7 @@ namespace PicPick.Helpers
         public ImageFileInfo() : this(false)
         {}
 
-        internal bool GetFileDate(string file, out DateTime dateTime)
+        public bool GetFileDate(string file, out DateTime dateTime)
         {
             try
             {
@@ -47,7 +47,7 @@ namespace PicPick.Helpers
             }
         }
 
-        internal bool TryGetDateTaken(string fileName, out DateTime dateTime)
+        public bool TryGetDateTaken(string fileName, out DateTime dateTime)
         {
 
             try
@@ -75,7 +75,7 @@ namespace PicPick.Helpers
             return false;
         }
 
-        internal string FileSize(string fileName)
+        public string FileSize(string fileName)
         {
             double len = GetFileLength(fileName);
             string[] sizes = { "B", "KB", "MB", "GB", "TB" };
@@ -99,14 +99,14 @@ namespace PicPick.Helpers
         /// keeps the stream alive
         /// </summary>
         /// <param name="fileName"></param>
-        internal void SetFileStream(string fileName)
+        public void SetFileStream(string fileName)
         {
             CloseFileStream();
             _fileName = fileName;
             _fileStream = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
         }
 
-        internal FileStream GetFileStream(string fileName)
+        public FileStream GetFileStream(string fileName)
         {
             if (!_fileName.Equals(fileName, StringComparison.CurrentCultureIgnoreCase))
                 SetFileStream(fileName);
@@ -114,13 +114,13 @@ namespace PicPick.Helpers
             return _fileStream;
         }
 
-        internal void CloseFileStream()
+        public void CloseFileStream()
         {
             _fileName = "";
             _fileStream?.Close();
         }
 
-        internal long GetFileLength(string fileName)
+        public long GetFileLength(string fileName)
         {
             // if there is a FileStream open, we use it
             if (_fileName.Equals(fileName, StringComparison.CurrentCultureIgnoreCase))

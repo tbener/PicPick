@@ -1,4 +1,5 @@
-﻿using Prism.Events;
+﻿using PicPick.Core;
+using Prism.Events;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace PicPick.Helpers
 {
-    public class EventServices
+    public static class EventAggregatorHelper
     {
-        public static FILE_EXISTS_RESPONSE Publish(FileExistsEventArgs payload)
+        public static FileExistsResponseEnum Publish(FileExistsEventArgs payload)
         {
             EventAggregator?.GetEvent<FileExistsEvent>().Publish(payload);
             return payload.Response;
@@ -17,7 +18,7 @@ namespace PicPick.Helpers
 
         public static IEventAggregator EventAggregator { get; set; }
 
-        internal static FILE_EXISTS_RESPONSE Publish(AskEventArgs payload)
+        internal static FileExistsResponseEnum Publish(AskEventArgs payload)
         {
             EventAggregator?.GetEvent<AskEvent>().Publish(payload);
             return payload.Response;

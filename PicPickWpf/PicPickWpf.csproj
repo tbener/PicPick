@@ -88,7 +88,6 @@
     <Compile Include="Helpers\ApplicationService.cs" />
     <Compile Include="Helpers\NotifyPropertyChangedHelper.cs" />
     <Compile Include="Interfaces\IPath.cs" />
-    <Compile Include="Model\FileExistsResponse.cs" />
     <Compile Include="Model\PathClass.cs" />
     <Compile Include="UserControls\ViewModel\DestinationViewModel.cs" />
     <Compile Include="UserControls\ViewModel\ExecutionViewModel.cs" />
@@ -106,15 +105,24 @@
     <Compile Include="UserControls\View\ProgressView.xaml.cs">
       <DependentUpon>ProgressView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ViewModel\ActionButtonViewModel.cs" />
     <Compile Include="ViewModel\ActivityViewModel.cs" />
     <Compile Include="ViewModel\BaseViewModel.cs" />
+    <Compile Include="ViewModel\FileExistsDialogViewModel.cs" />
     <Compile Include="ViewModel\MainWindowViewModel.cs" />
     <Compile Include="ViewModel\ProgressWindowViewModel.cs" />
+    <Compile Include="ViewModel\UserControls\ImageInfoViewModel.cs" />
     <Compile Include="View\ActivityView.xaml.cs">
       <DependentUpon>ActivityView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\FileExistsDialogView.xaml.cs">
+      <DependentUpon>FileExistsDialogView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\ProgressWindowView.xaml.cs">
       <DependentUpon>ProgressWindowView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\UserControls\ImageInfoView.xaml.cs">
+      <DependentUpon>ImageInfoView.xaml</DependentUpon>
     </Compile>
     <Page Include="UserControls\View\DestinationView.xaml">
       <SubType>Designer</SubType>
@@ -129,6 +137,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\ActivityView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\FileExistsDialogView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -181,6 +193,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="View\ProgressWindowView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\UserControls\ImageInfoView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

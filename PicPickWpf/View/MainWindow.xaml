@@ -50,8 +50,9 @@
                     <GroupBox Header="Options">
                         <DockPanel LastChildFill="False" Margin="6">
                             <TextBlock DockPanel.Dock="Top" TextWrapping="Wrap" Margin="0,5">What to do when a file already exists:</TextBlock>
-                            <ComboBox DockPanel.Dock="Top" ItemsSource="{Binding FileExistsResponseList, Mode=OneTime}" DisplayMemberPath="Value" 
+                            <ComboBox x:Name="ActionsList" DockPanel.Dock="Top" ItemsSource="{Binding FileExistsResponseList, Mode=OneTime}" DisplayMemberPath="Value.Description" 
                                       SelectedValuePath="Key" SelectedValue="{Binding SelectedFileExistsResponse}" Height="23"/>
+                            <TextBlock DockPanel.Dock="Top" Text="{Binding ElementName=ActionsList, Path=SelectedItem.Value.Details}" TextWrapping="WrapWithOverflow"/>
                         </DockPanel>
                     </GroupBox>
                 </Grid>

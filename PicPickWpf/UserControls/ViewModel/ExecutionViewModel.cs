@@ -1,4 +1,5 @@
 ﻿using PicPick.Commands;
+using PicPick.Core;
 using PicPick.Helpers;
 using PicPick.Models;
 using PicPick.Project;
@@ -52,7 +53,7 @@ namespace PicPick.UserControls.ViewModel
 
         private void OnFileExistsAsk(AskEventArgs args)
         {
-            args.Response = FILE_EXISTS_RESPONSE.RENAME;
+            args.Response = FileExistsResponseEnum.RENAME;
             args.DontAskAgain = true;
         }
 

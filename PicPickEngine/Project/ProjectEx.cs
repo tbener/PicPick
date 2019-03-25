@@ -1,4 +1,5 @@
-﻿using PicPick.Helpers;
+﻿using PicPick.Core;
+using PicPick.Helpers;
 using Prism.Events;
 using System;
 using System.Collections.Generic;
@@ -11,6 +12,8 @@ using TalUtils;
 
 namespace PicPick.Project
 {
+    public delegate void CopyEventHandler(object sender, CopyEventArgs e);
+
     public partial class PicPickProject
     {
         private ObservableCollection<PicPickProjectActivity> _activityList = null;

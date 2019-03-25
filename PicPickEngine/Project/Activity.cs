@@ -11,6 +11,7 @@ using TalUtils;
 using PicPick.Models;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using PicPick.Core;
 
 namespace PicPick.Project
 {
@@ -94,7 +95,7 @@ namespace PicPick.Project
         public bool Initialized { get; private set; }
 
         [XmlIgnore]
-        public FILE_EXISTS_RESPONSE FileExistsResponse { get; set; }
+        public FileExistsResponseEnum FileExistsResponse { get; set; }
 
 
         #region Execution

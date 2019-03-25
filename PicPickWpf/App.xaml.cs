@@ -23,7 +23,7 @@ namespace PicPick
         {
             base.OnStartup(e);
 
-            PicPick.Helpers.EventServices.EventAggregator = Helpers.ApplicationService.Instance.EventAggregator;
+            PicPick.Helpers.EventAggregatorHelper.EventAggregator = Helpers.ApplicationService.Instance.EventAggregator;
 
             MainWindowViewModel vm = new MainWindowViewModel();
             MainWindow view = new MainWindow();

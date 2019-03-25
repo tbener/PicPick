@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PicPick.Helpers
+namespace PicPick.Core
 {
     public class FileExistsEvent : PubSubEvent<FileExistsEventArgs> { }
 

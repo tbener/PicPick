@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using PicPick.Commands;
+using PicPick.Core;
 using PicPick.Helpers;
 using PicPick.Models;
 using PicPick.Project;
@@ -22,7 +23,6 @@ namespace PicPick.ViewModel
         #region Private Members
 
         CancellationTokenSource cts;
-        bool _canExecute;
 
         PicPickProjectActivity _activity;
         string _sourceFilesStatus;
@@ -39,7 +39,7 @@ namespace PicPick.ViewModel
 
         public ActivityViewModel(PicPickProjectActivity activity)
         {
-            
+
             AddDestinationCommand = new RelayCommand(AddDestination);
             StartCommand = new RelayCommand(Start, CanStart);
 
@@ -72,7 +72,7 @@ namespace PicPick.ViewModel
 
         private async Task CheckSourceStatus()
         {
-            
+
 
             try
             {
@@ -133,11 +133,20 @@ namespace PicPick.ViewModel
 
         private void OnFileExistsAsk(AskEventArgs args)
         {
-            if (Msg.ShowQ("File Exists, overwrite? \nif you anwer Cancel, the file will be skipped. Same anwer will apply to all existing files."))
-                args.Response = FILE_EXISTS_RESPONSE.OVERWRITE;
-            else
-                args.Response = FILE_EXISTS_RESPONSE.SKIP;
-            args.DontAskAgain = true;
+            // Init dialog
+            FileExistsDialogViewModel vm = new FileExistsDialogViewModel(args.SourceFile, args.DestinationFolder);
+            FileExistsDialogView view = new FileExistsDialogView() { DataContext = vm };
+            vm.CloseDialog = () => { view.Close(); };
+
+            // #### SHOW DIALOG
+            view.ShowDialog();
+            view = null;
+            // #### 
+
+            // Save the response to return
+            args.Response = vm.Response;
+            args.DontAskAgain = vm.DontAskAgain;
+            
         }
 
         public ProgressInformation ProgressInfo { get; set; }
@@ -224,7 +233,7 @@ namespace PicPick.ViewModel
             }
         }
 
-        
+
 
     }
 }

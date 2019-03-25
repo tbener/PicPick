@@ -62,19 +62,18 @@
   <ItemGroup>
     <Compile Include="Core\CustomEvents.cs" />
     <Compile Include="Core\CustomEventArgs.cs" />
+    <Compile Include="Core\FileExistsResponse.cs" />
     <Compile Include="Helpers\BitmapImageCheck.cs" />
     <Compile Include="Core\CopyFilesHandler.cs" />
-    <Compile Include="Helpers\EventServices.cs" />
+    <Compile Include="Helpers\EventAggregatorHelper.cs" />
     <Compile Include="Helpers\ImageFileInfo.cs" />
     <Compile Include="Helpers\LogHandler.cs" />
     <Compile Include="Helpers\ShellFileOperations.cs" />
-    <Compile Include="Interfaces\IFileExistsDialog.cs" />
     <Compile Include="Models\FileInfoItem.cs" />
     <Compile Include="Models\ProgressInformation.cs" />
     <Compile Include="Project\Activity.cs" />
     <Compile Include="Project\Source.cs" />
     <Compile Include="Project\ProjectEx.cs" />
-    <Compile Include="Project\CopyEventArgs.cs" />
     <Compile Include="Project\ProjectLoader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Project\Project.cs" />

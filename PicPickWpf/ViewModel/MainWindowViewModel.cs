@@ -15,15 +15,14 @@ using System.Windows;
 using System.IO;
 using PicPick.Helpers;
 using System.ComponentModel;
+using PicPick.Core;
 
 namespace PicPick.ViewModel
 {
     class MainWindowViewModel : BaseViewModel
     {
-        const FILE_EXISTS_RESPONSE DEFAULT_FILE_EXISTS_RESPONSE = FILE_EXISTS_RESPONSE.ASK;
 
         private PicPickProjectActivity _currentActivity;
-        private Dictionary<FILE_EXISTS_RESPONSE, KeyValuePair<string, string>> _fileExistsResponses;
 
         public ICommand OpenFileCommand { get; set; }
         public ICommand SaveCommand { get; set; }
@@ -145,8 +144,8 @@ namespace PicPick.ViewModel
             {
                 if (_currentActivity != value)
                 {
-                    FILE_EXISTS_RESPONSE fer = _currentActivity == null ?
-                        (FILE_EXISTS_RESPONSE)Enum.Parse(typeof(FILE_EXISTS_RESPONSE), Properties.Settings.Default.FileExistsResponse, true)
+                    FileExistsResponseEnum fer = _currentActivity == null ?
+                        (FileExistsResponseEnum)Enum.Parse(typeof(FileExistsResponseEnum), Properties.Settings.Default.FileExistsResponse, true)
                         : _currentActivity.FileExistsResponse;
                     _currentActivity = value;
                     _currentActivity.FileExistsResponse = fer;
@@ -156,9 +155,9 @@ namespace PicPick.ViewModel
             }
         }
 
-        public Dictionary<FILE_EXISTS_RESPONSE, string> FileExistsResponseList => Model.FileExistsResponse.GetDictionary;
+        public Dictionary<FileExistsResponseEnum, FileExistsResponseAttribute> FileExistsResponseList => FileExistsResponse.Dictionary;
 
-        public FILE_EXISTS_RESPONSE SelectedFileExistsResponse
+        public FileExistsResponseEnum SelectedFileExistsResponse
         {
             get { return CurrentActivity.FileExistsResponse; }
             set

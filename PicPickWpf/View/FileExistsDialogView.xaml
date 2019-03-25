@@ -1,0 +1,50 @@
+﻿<Window x:Class="PicPick.View.FileExistsDialogView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PicPick.View"
+        xmlns:uc="clr-namespace:PicPick.View.UserControls"
+        mc:Ignorable="d"
+        Title="PicPick - File Exists" Height="521" Width="499">
+    <DockPanel Margin="5">
+        <!-- Top -->
+        <DockPanel DockPanel.Dock="Top" LastChildFill="False">
+            <TextBlock DockPanel.Dock="Top">The file <TextBlock Text="{Binding FileName, FallbackValue=[file]}"/> already exists in this location:</TextBlock>
+            <TextBlock DockPanel.Dock="Top" Text="{Binding DestinationFile, FallbackValue=C:\\Destination\\...}"/>
+
+            <TextBlock DockPanel.Dock="Bottom" Margin="0,20,0,5">Select your choice:</TextBlock>
+        </DockPanel>
+
+        <!-- Bottom -->
+        <Grid DockPanel.Dock="Bottom" Margin="0,30,0,10">
+            <CheckBox HorizontalAlignment="Left" VerticalAlignment="Bottom" IsChecked="{Binding DontAskAgain, Mode=OneWayToSource}">Don't ask again</CheckBox>
+            <Button Height="24" Width="72" HorizontalAlignment="Right" VerticalAlignment="Bottom">Cancel</Button>
+        </Grid>
+
+        <!-- Middle (fill): Buttons -->
+        <StackPanel Orientation="Vertical">
+            <!--<Button Command="{Binding SetResponseCommand}" MaxHeight="120" CommandParameter="{Binding Action}" Focusable="False" HorizontalContentAlignment="Stretch">
+                <DockPanel HorizontalAlignment="Left" Margin="4,2">
+                    <TextBlock DockPanel.Dock="Top" Text="Copy and Replace" FontSize="16"/>
+                    <TextBlock DockPanel.Dock="Top" Text=" blkajsdhf kjlasd fhlkajsd hflakjsdfa"/>
+                    <uc:ImageInfoView Visibility="{Binding ImageInfoVisibility}" DataContext="{Binding ImageInfoViewModel}"/>
+                </DockPanel>
+            </Button>-->
+            <ItemsControl ItemsSource="{Binding ActionButtonsViewModels}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Button Command="{Binding SetResponseCommand}" CommandParameter="{Binding Action}" MaxHeight="120" Focusable="False" HorizontalContentAlignment="Stretch">
+                            <DockPanel>
+                                <TextBlock DockPanel.Dock="Top" Text="{Binding ActionText}" HorizontalAlignment="Left" FontSize="16"/>
+                                <TextBlock DockPanel.Dock="Top" Text="{Binding ActionDetails}" HorizontalAlignment="Left"/>
+                                <uc:ImageInfoView Visibility="{Binding ImageInfoVisibility}" DataContext="{Binding ImageInfoViewModel}"/>
+                            </DockPanel>
+                        </Button>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </StackPanel>
+
+    </DockPanel>
+</Window>
