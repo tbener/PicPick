@@ -16,6 +16,7 @@ using System.IO;
 using PicPick.Helpers;
 using System.ComponentModel;
 using PicPick.Core;
+using PicPick.View;
 
 namespace PicPick.ViewModel
 {
@@ -49,6 +50,9 @@ namespace PicPick.ViewModel
 
             // set the current activity
             CurrentActivity = CurrentProject.ActivityList.FirstOrDefault();
+
+            ApplicationService.Instance.EventAggregator.GetEvent<ActivityStartedEvent>().Subscribe(OnActivityStart);
+            ApplicationService.Instance.EventAggregator.GetEvent<ActivityEndedEvent>().Subscribe(OnActivityEnd);
         }
 
         private void AddNewActivity()
@@ -110,8 +114,44 @@ namespace PicPick.ViewModel
             UpdateFileName();
         }
 
+        #region File Exists handling - need refactor
 
+        private void OnActivityStart()
+        {
+            if (!ApplicationService.Instance.EventAggregator.GetEvent<FileExistsEvent>().Contains(OnFileExistsEvent))
+                ApplicationService.Instance.EventAggregator.GetEvent<FileExistsEvent>().Subscribe(OnFileExistsEvent);
+        }
+        private void OnActivityEnd()
+        {
+            ApplicationService.Instance.EventAggregator.GetEvent<FileExistsEvent>().Unsubscribe(OnFileExistsEvent);
+        }
 
+        private void OnFileExistsEvent(FileExistsEventArgs args)
+        {
+            if (args.CurrentResponse != FileExistsResponseEnum.ASK)
+                return;
+
+            // Init dialog
+            FileExistsDialogViewModel vm = new FileExistsDialogViewModel(args.SourceFile, args.DestinationFolder);
+            FileExistsDialogView view = new FileExistsDialogView() { DataContext = vm };
+            vm.CloseDialog = () => { view.Close(); };
+
+            // #### SHOW DIALOG
+            view.ShowDialog();
+            // #### 
+
+            // Save the response to return
+            args.CurrentResponse = vm.Response;
+            args.Cancel = vm.Cancel;
+
+            if (vm.DontAskAgain)
+            {
+                args.NextResponse = vm.Response;
+                ApplicationService.Instance.EventAggregator.GetEvent<FileExistsEvent>().Unsubscribe(OnFileExistsEvent);
+            }
+        }
+        
+        #endregion
 
         public string WindowTitle
         {

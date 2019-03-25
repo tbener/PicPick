@@ -10,6 +10,8 @@ namespace PicPick.ViewModel
     {
         //public ICommand SetResponseCommand { get; set; }
 
+        public ICommand CancelCommand { get; set; }
+
         public FileExistsDialogViewModel(string sourceFile, string destinationFolder)
         {
             FileName = Path.GetFileName(sourceFile);
@@ -26,6 +28,12 @@ namespace PicPick.ViewModel
 
         }
 
+        public void CancelOperation()
+        {
+            Cancel = true;
+            CloseDialog();
+        }
+
         public void SetResponse(FileExistsResponseEnum action)
         {
             Response = action;
@@ -40,6 +48,7 @@ namespace PicPick.ViewModel
         public FileExistsResponseEnum Response { get; internal set; }
         public ActionButtonViewModel[] ActionButtonsViewModels { get; set; }
         public Action CloseDialog { get; set; }
+        public bool Cancel { get; set; }
 
         #endregion
     }

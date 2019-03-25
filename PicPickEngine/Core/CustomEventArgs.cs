@@ -8,17 +8,17 @@ namespace PicPick.Core
 {
     public class FileExistsEventArgs : EventArgs
     {
-        public string SourceFile { get; set; }
-        public string DestinationFolder { get; set; }
-        public FileExistsResponseEnum Response { get; set; }
-    }
+        public FileExistsEventArgs(FileExistsResponseEnum defaultResponse)
+        {
+            CurrentResponse = defaultResponse;
+            NextResponse = defaultResponse;
+        }
 
-    public class AskEventArgs : EventArgs
-    {
         public string SourceFile { get; set; }
         public string DestinationFolder { get; set; }
-        public FileExistsResponseEnum Response { get; set; }
-        public bool DontAskAgain { get; set; }
+        public FileExistsResponseEnum CurrentResponse { get; set; }
+        public FileExistsResponseEnum NextResponse { get; set; }
+        public bool Cancel { get; set; }
     }
 
     public class CopyEventArgs : EventArgs

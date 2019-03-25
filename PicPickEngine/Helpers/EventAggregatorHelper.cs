@@ -10,18 +10,29 @@ namespace PicPick.Helpers
 {
     public static class EventAggregatorHelper
     {
-        public static FileExistsResponseEnum Publish(FileExistsEventArgs payload)
-        {
-            EventAggregator?.GetEvent<FileExistsEvent>().Publish(payload);
-            return payload.Response;
-        }
-
         public static IEventAggregator EventAggregator { get; set; }
 
-        internal static FileExistsResponseEnum Publish(AskEventArgs payload)
+        public static FileExistsResponseEnum PublishFileExists(FileExistsEventArgs payload)
         {
-            EventAggregator?.GetEvent<AskEvent>().Publish(payload);
-            return payload.Response;
+            EventAggregator?.GetEvent<FileExistsEvent>().Publish(payload);
+            return payload.CurrentResponse;
         }
+
+        public static void PublishActivityStarted()
+        {
+            EventAggregator?.GetEvent<ActivityStartedEvent>().Publish();
+        }
+
+        public static void PublishActivityEnded()
+        {
+            EventAggregator?.GetEvent<ActivityEndedEvent>().Publish();
+        }
+
+
+        //internal static FileExistsResponseEnum Publish(AskEventArgs payload)
+        //{
+        //    EventAggregator?.GetEvent<AskEvent>().Publish(payload);
+        //    return payload.Response;
+        //}
     }
 }

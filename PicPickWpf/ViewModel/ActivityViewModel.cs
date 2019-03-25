@@ -67,7 +67,7 @@ namespace PicPick.ViewModel
             foreach (PicPickProjectActivityDestination dest in Activity.DestinationList)
                 AddDestinationViewModel(dest);
 
-            ApplicationService.Instance.EventAggregator.GetEvent<AskEvent>().Subscribe(OnFileExistsAsk);
+            
         }
 
         private async Task CheckSourceStatus()
@@ -131,24 +131,7 @@ namespace PicPick.ViewModel
             return !string.IsNullOrEmpty(Activity.Source.Path) && !Activity.IsRunning;
         }
 
-        private void OnFileExistsAsk(AskEventArgs args)
-        {
-            // Init dialog
-            FileExistsDialogViewModel vm = new FileExistsDialogViewModel(args.SourceFile, args.DestinationFolder);
-            FileExistsDialogView view = new FileExistsDialogView() { DataContext = vm };
-            vm.CloseDialog = () => { view.Close(); };
-
-            // #### SHOW DIALOG
-            view.ShowDialog();
-            view = null;
-            // #### 
-
-            // Save the response to return
-            args.Response = vm.Response;
-            args.DontAskAgain = vm.DontAskAgain;
-            
-        }
-
+        
         public ProgressInformation ProgressInfo { get; set; }
 
         #endregion
@@ -207,21 +190,6 @@ namespace PicPick.ViewModel
 
         public static readonly DependencyProperty SourceViewModelProperty =
             DependencyProperty.Register("SourceViewModel", typeof(PathBrowserViewModel), typeof(ActivityViewModel), new PropertyMetadata(null));
-
-
-
-
-        public ExecutionViewModel ExecutionViewModel
-        {
-            get { return (ExecutionViewModel)GetValue(ExecutionViewModelProperty); }
-            set { SetValue(ExecutionViewModelProperty, value); }
-        }
-
-        // Using a DependencyProperty as the backing store for ExecutionViewModel.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty ExecutionViewModelProperty =
-            DependencyProperty.Register("ExecutionViewModel", typeof(ExecutionViewModel), typeof(ActivityViewModel), new PropertyMetadata(null));
-
-
 
         public string SourceFilesStatus
         {

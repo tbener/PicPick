@@ -47,11 +47,11 @@ namespace PicPick.UserControls.ViewModel
             StartCommand = new RelayCommand(Start, CanStart);
             StopCommand = new RelayCommand(Stop, CanStop);
 
-            ApplicationService.Instance.EventAggregator.GetEvent<AskEvent>().Subscribe(OnFileExistsAsk);
+            ApplicationService.Instance.EventAggregator.GetEvent<FileExistsEvent>().Subscribe(OnFileExistsAsk);
             
         }
 
-        private void OnFileExistsAsk(AskEventArgs args)
+        private void OnFileExistsAsk(FileExistsEventArgs args)
         {
             args.Response = FileExistsResponseEnum.RENAME;
             args.DontAskAgain = true;

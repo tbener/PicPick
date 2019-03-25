@@ -213,6 +213,8 @@ namespace PicPick.Project
         public async Task Start(ProgressInformation progressInfo, CancellationToken cancellationToken)
         {
             IsRunning = true;
+            EventAggregatorHelper.PublishActivityStarted();
+
             progressInfo.Activity = Name;
 
             // Initialize.Fills the Mapping dictionary
@@ -286,6 +288,7 @@ namespace PicPick.Project
                 progressInfo.Done = true;
                 await Task.Run(() => progressInfo.Report());
                 IsRunning = false;
+                EventAggregatorHelper.PublishActivityEnded();
             }
         }
 

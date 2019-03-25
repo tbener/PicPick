@@ -19,7 +19,7 @@
         <!-- Bottom -->
         <Grid DockPanel.Dock="Bottom" Margin="0,30,0,10">
             <CheckBox HorizontalAlignment="Left" VerticalAlignment="Bottom" IsChecked="{Binding DontAskAgain, Mode=OneWayToSource}">Don't ask again</CheckBox>
-            <Button Height="24" Width="72" HorizontalAlignment="Right" VerticalAlignment="Bottom">Cancel</Button>
+            <Button Command="{Binding CancelCommand}" Height="24" Width="72" HorizontalAlignment="Right" VerticalAlignment="Bottom">Cancel</Button>
         </Grid>
 
         <!-- Middle (fill): Buttons -->

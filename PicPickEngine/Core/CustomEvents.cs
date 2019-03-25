@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 namespace PicPick.Core
 {
     public class FileExistsEvent : PubSubEvent<FileExistsEventArgs> { }
+    
+    public class ActivityStartedEvent : PubSubEvent { }
 
-    public class AskEvent : PubSubEvent<AskEventArgs> { }
+    public class ActivityEndedEvent : PubSubEvent { }
 }

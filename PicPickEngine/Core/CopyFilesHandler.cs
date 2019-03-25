@@ -4,6 +4,7 @@ using Prism.Events;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -119,6 +120,8 @@ namespace PicPick.Core
 
             try
             {
+                FileExistsEventArgs fileExistsEventArgs = new FileExistsEventArgs(FileExistsResponse);
+
                 // iterate FileList and copy to dest
                 foreach (string file in FileList)
                 {
@@ -134,6 +137,37 @@ namespace PicPick.Core
                     if (File.Exists(dest))
                     {
                         // If the file exists:
+                        // 1. Canceled: if not DontAskAgain returned from previous loop
+                        // 2. set eventArgs
+                        // 3. publish event
+                        // 4. if CurrentResponse==ASK:
+                        // 4.1. the subscriber should implement
+                        // 4.2. return the response in CurrentResponse
+                        // 4.3. the NextResponse value will appear in the CurrentResponse in the next time
+                        // 5. if CurrentResponse!=ASK:
+                        // 5.1. the subscriber can, but don't have to implement
+                        // 6. the subscriber just needs to make sure not to return ASK as CurrentResponse
+                        // 7. Canceled: if the subscriber sets DontAskAgain=true, the event will not fire again in this operation.
+                        // 8. if the subscriber sets Cancel=true, the operation will stop.
+
+                        // ###### PUBLISH FILE EXISTS EVENT
+                        fileExistsEventArgs.SourceFile = fullFileName;
+                        fileExistsEventArgs.DestinationFolder = DestinationFolder;
+                        // Publish the event
+                        action = EventAggregatorHelper.PublishFileExists(fileExistsEventArgs);
+                        Debug.Assert(action != FileExistsResponseEnum.ASK, "The returned CurrentResponse must be an operative one!");
+
+                        if (fileExistsEventArgs.Cancel)
+                            return;
+
+                        fileExistsEventArgs.CurrentResponse = fileExistsEventArgs.NextResponse;
+                        // ###### END PUBLISH FILE EXISTS EVENT
+
+
+
+                        #region old ASK
+
+                        // If the file exists:
                         // 1. action is initialized as FileExistsResponse
                         // 2. publish FileExistsEvent in case the host wants to change the action.
                         // 3. it the action is ASK - publish the AskEvent for the host to implement it and return the chosen action.
@@ -142,11 +176,13 @@ namespace PicPick.Core
                         // 4.2. if "Dont Ask Again" is true, then FileExistsResponse will be set to be the chosen action, and make it the active action on the next iterations.
                         // 5. if the ASK is not implemented:
                         // 5.1. the returned action would be ASK, again, and it will be set to the default as a fallback.
+
+                        /*
                         action = EventAggregatorHelper.Publish(new FileExistsEventArgs()
                         {
                             SourceFile = fullFileName,
                             DestinationFolder = DestinationFolder,
-                            Response = FileExistsResponse,
+                            CurrentResponse = FileExistsResponse,
                         });
 
                         if (action == FileExistsResponseEnum.ASK)
@@ -165,6 +201,8 @@ namespace PicPick.Core
                             if (e.DontAskAgain)
                                 FileExistsResponse = action;
                         }
+                        */
+                        #endregion
 
                         if (action == FileExistsResponseEnum.COMPARE)
                         {

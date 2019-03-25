@@ -90,7 +90,6 @@
     <Compile Include="Interfaces\IPath.cs" />
     <Compile Include="Model\PathClass.cs" />
     <Compile Include="UserControls\ViewModel\DestinationViewModel.cs" />
-    <Compile Include="UserControls\ViewModel\ExecutionViewModel.cs" />
     <Compile Include="UserControls\ViewModel\PathBrowserViewModel.cs" />
     <Compile Include="UserControls\ViewModel\ProgressViewModel.cs" />
     <Compile Include="UserControls\View\DestinationView.xaml.cs">
