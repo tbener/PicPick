@@ -14,8 +14,8 @@
 
         <Image Grid.Column="0" Source="{Binding ImagePath}"/>
 
-        <DockPanel Grid.Column="1" LastChildFill="False" Margin="2, 5">
-            <TextBlock DockPanel.Dock="Top" Text="{Binding ImagePath, FallbackValue=C:\\...}"/>
+        <DockPanel Grid.Column="1" LastChildFill="False" Margin="2">
+            <TextBlock DockPanel.Dock="Top" Text="{Binding ImagePath, FallbackValue=C:\\...}" TextWrapping="Wrap"/>
 
             <TextBlock DockPanel.Dock="Bottom">Date: <TextBlock Text="{Binding ImageDate}"/></TextBlock>
             <TextBlock DockPanel.Dock="Bottom" Margin="0, 5">Size: <TextBlock Text="{Binding ImageSize}"/></TextBlock>

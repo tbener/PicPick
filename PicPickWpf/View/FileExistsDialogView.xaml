@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:PicPick.View"
         xmlns:uc="clr-namespace:PicPick.View.UserControls"
         mc:Ignorable="d"
-        Title="PicPick - File Exists" Height="521" Width="499">
+        Title="PicPick - File Exists" Width="500" SizeToContent="Height">
     <DockPanel Margin="5">
         <!-- Top -->
         <DockPanel DockPanel.Dock="Top" LastChildFill="False">
@@ -24,21 +24,26 @@
 
         <!-- Middle (fill): Buttons -->
         <StackPanel Orientation="Vertical">
-            <!--<Button Command="{Binding SetResponseCommand}" MaxHeight="120" CommandParameter="{Binding Action}" Focusable="False" HorizontalContentAlignment="Stretch">
-                <DockPanel HorizontalAlignment="Left" Margin="4,2">
+            <!--<Button Command="{Binding SetResponseCommand}" MaxHeight="120" CommandParameter="{Binding Action}" Focusable="False" HorizontalContentAlignment="Stretch" Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" BorderBrush="{DynamicResource {x:Static SystemColors.WindowBrushKey}}">
+                <DockPanel Margin="4,2,4,6">
                     <TextBlock DockPanel.Dock="Top" Text="Copy and Replace" FontSize="16"/>
                     <TextBlock DockPanel.Dock="Top" Text=" blkajsdhf kjlasd fhlkajsd hflakjsdfa"/>
-                    <uc:ImageInfoView Visibility="{Binding ImageInfoVisibility}" DataContext="{Binding ImageInfoViewModel}"/>
+                    <Grid Visibility="Visible">
+                        <uc:ImageInfoView DataContext="{Binding ImageInfoViewModel}"/>
+                    </Grid>
                 </DockPanel>
             </Button>-->
             <ItemsControl ItemsSource="{Binding ActionButtonsViewModels}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Button Command="{Binding SetResponseCommand}" CommandParameter="{Binding Action}" MaxHeight="120" Focusable="False" HorizontalContentAlignment="Stretch">
-                            <DockPanel>
+                        <Button Command="{Binding SetResponseCommand}" CommandParameter="{Binding Action}" Margin="0,4" MaxHeight="120" Focusable="False" HorizontalContentAlignment="Stretch"
+                                Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" BorderBrush="{DynamicResource {x:Static SystemColors.WindowBrushKey}}">
+                            <DockPanel Margin="4,2,4,6">
                                 <TextBlock DockPanel.Dock="Top" Text="{Binding ActionText}" HorizontalAlignment="Left" FontSize="16"/>
-                                <TextBlock DockPanel.Dock="Top" Text="{Binding ActionDetails}" HorizontalAlignment="Left"/>
-                                <uc:ImageInfoView Visibility="{Binding ImageInfoVisibility}" DataContext="{Binding ImageInfoViewModel}"/>
+                                <TextBlock DockPanel.Dock="Top" Text="{Binding ActionDetails}" HorizontalAlignment="Left" TextWrapping="Wrap"/>
+                                <Grid Visibility="{Binding ImageInfoVisibility}">
+                                    <uc:ImageInfoView DataContext="{Binding ImageInfoViewModel}"/>
+                                </Grid>
                             </DockPanel>
                         </Button>
                     </DataTemplate>

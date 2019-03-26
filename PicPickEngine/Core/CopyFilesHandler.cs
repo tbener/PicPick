@@ -155,7 +155,6 @@ namespace PicPick.Core
                         fileExistsEventArgs.DestinationFolder = DestinationFolder;
                         // Publish the event
                         action = EventAggregatorHelper.PublishFileExists(fileExistsEventArgs);
-                        Debug.Assert(action != FileExistsResponseEnum.ASK, "The returned CurrentResponse must be an operative one!");
 
                         if (fileExistsEventArgs.Cancel)
                             return;

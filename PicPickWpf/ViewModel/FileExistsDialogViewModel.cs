@@ -17,6 +17,7 @@ namespace PicPick.ViewModel
             FileName = Path.GetFileName(sourceFile);
             DestinationFile = Path.Combine(destinationFolder, FileName);
 
+            CancelCommand = new RelayCommand(CancelOperation);
             ICommand SetResponseCommand = new RelayCommand<FileExistsResponseEnum>(SetResponse);
 
             ActionButtonsViewModels = new[]

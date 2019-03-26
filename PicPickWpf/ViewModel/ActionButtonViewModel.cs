@@ -15,9 +15,8 @@ namespace PicPick.ViewModel
     {
         #region Private members
 
-        private string _actionText;
-        private string _actionDetails;
         private FileExistsResponseEnum _action;
+
         public ICommand SetResponseCommand { get; set; }
 
         #endregion
