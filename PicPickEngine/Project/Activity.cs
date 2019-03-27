@@ -35,13 +35,15 @@ namespace PicPick.Project
             Source = new PicPickProjectActivitySource();
         }
 
+        #region Property Changed 
+
         public void StartSupportFullPropertyChanged()
         {
             if (_propertyChangedSupportInitlized) return;
 
             if (Source == null)
                 Source = new PicPickProjectActivitySource();
-            Source.PropertyChanged += (s, e) => RaisePropertyChanged("Source");
+            Source.PropertyChanged += (s, e) => RaisePropertyChanged($"Source.{e.PropertyName}");
 
             //this.PropertyChanged += (s, e) => delegate { Initialized = false; }
 
@@ -57,12 +59,14 @@ namespace PicPick.Project
                 foreach (PicPickProjectActivityDestination item in e.NewItems)
                 {
                     //Added items
-                    item.PropertyChanged += (s, e1) => this.RaisePropertyChanged("Destination"); ;
+                    item.PropertyChanged += (s, e1) => this.RaisePropertyChanged($"Destination.{e1.PropertyName}"); 
                 }
             }
 
             RaisePropertyChanged("DestinationList");
         }
+
+        #endregion
 
         /// <summary>
         /// Use this list rather than the Destination Array for easyer manipulations and editing.
@@ -78,7 +82,8 @@ namespace PicPick.Project
                     if (this.Destination == null)
                         this.Destination = new PicPickProjectActivityDestination[0];
                     _destList = new ObservableCollection<PicPickProjectActivityDestination>();
-                    DestinationList.CollectionChanged += DestinationList_CollectionChanged;
+                    // must be before the adding loop to trigger the event and init the dest object
+                    _destList.CollectionChanged += DestinationList_CollectionChanged;
                     foreach (PicPickProjectActivityDestination dest in this.Destination)
                     {
                         // this will trigger the CollectionChanged event

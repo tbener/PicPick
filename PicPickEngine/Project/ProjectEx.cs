@@ -1,6 +1,5 @@
 ﻿using PicPick.Core;
 using PicPick.Helpers;
-using Prism.Events;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -14,45 +13,38 @@ namespace PicPick.Project
 {
     public delegate void CopyEventHandler(object sender, CopyEventArgs e);
 
+
     public partial class PicPickProject
     {
         private ObservableCollection<PicPickProjectActivity> _activityList = null;
         private string _name;
         private bool _isDirty;
-        private bool _propertyChangedSupportInitlized;
+        private bool _propertyChangedSupportInitialized;
 
+        public event EventHandler GotDirty;
+
+        #region PropertyChanged \ IsDirty
 
         public void StartSupportFullPropertyChanged()
         {
-            if (_propertyChangedSupportInitlized) return;
+            if (_propertyChangedSupportInitialized) return;
 
             // any property change (except for IsDirty and some others) will set IsDirty to true
             this.PropertyChanged += PicPickProject_PropertyChanged;
 
-            _propertyChangedSupportInitlized = true;
+            _propertyChangedSupportInitialized = true;
 
         }
 
         private void PicPickProject_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName.Equals("IsDirty")) return;
-            if (e.PropertyName.Equals("CurrentActivity")) return;
-
+            Debug.Print($"PropertyChanged: {e.PropertyName}");
             IsDirty = true;
         }
 
-        public static IEventAggregator EventAggregator { get; set; }
-
-
-        [XmlIgnore]
-        public string Name
+        private void Activity_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            get { return _name; }
-            set
-            {
-                _name = value;
-                this.RaisePropertyChanged("Name");
-            }
+            this.RaisePropertyChanged($"Activity.{e.PropertyName}");
         }
 
         /// <summary>
@@ -68,9 +60,13 @@ namespace PicPick.Project
             set
             {
                 _isDirty = value;
-                this.RaisePropertyChanged("IsDirty");
+                if (value)
+                    GotDirty?.Invoke(this, new EventArgs());
             }
         }
+
+        #endregion
+
 
         // Use this list rather than the Activity Array for easyer manipulations and editing.
         // This will be converted back to the Activity Array in ConfigurationHelper.Save()
@@ -106,14 +102,25 @@ namespace PicPick.Project
                     activity.PropertyChanged += Activity_PropertyChanged;
                 }
             }
-            
+
             this.RaisePropertyChanged("ActivityList");
         }
 
-        private void Activity_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+
+
+        [XmlIgnore]
+        public string Name
         {
-            this.RaisePropertyChanged($"Activity.{e.PropertyName}");
+            get { return _name; }
+            set
+            {
+                _name = value;
+                this.RaisePropertyChanged("Name");
+            }
         }
+
+        
+
     }
 
     public partial class PicPickProjectActivityDestination
