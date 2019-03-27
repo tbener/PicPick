@@ -2,11 +2,11 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="PicPick.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
+    <Setting Name="FileExistsResponse" Type="System.String" Scope="User">
+      <Value Profile="(Default)">ASK</Value>
+    </Setting>
     <Setting Name="LastFile" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="FileExistsResponse" Type="System.String" Scope="User">
-      <Value Profile="(Default)">COMPARE</Value>
     </Setting>
   </Settings>
 </SettingsFile>

@@ -26,14 +26,19 @@ namespace PicPick.Project
         {
             if (_propertyChangedSupportInitlized) return;
 
-            // any property change (except for IsDirty...) will set IsDirty to true
-            this.PropertyChanged += (s, e) =>
-            {
-                if (!e.PropertyName.Equals("IsDirty")) IsDirty = true;
-            };
+            // any property change (except for IsDirty and some others) will set IsDirty to true
+            this.PropertyChanged += PicPickProject_PropertyChanged;
 
             _propertyChangedSupportInitlized = true;
 
+        }
+
+        private void PicPickProject_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName.Equals("IsDirty")) return;
+            if (e.PropertyName.Equals("CurrentActivity")) return;
+
+            IsDirty = true;
         }
 
         public static IEventAggregator EventAggregator { get; set; }
@@ -81,6 +86,8 @@ namespace PicPick.Project
                         foreach (PicPickProjectActivity activity in this.Activities)
                         {
                             _activityList.Add(activity);
+                            activity.StartSupportFullPropertyChanged();
+                            activity.PropertyChanged += Activity_PropertyChanged;
                         }
                     _activityList.CollectionChanged += ActivityList_CollectionChanged;
                 }
@@ -99,13 +106,13 @@ namespace PicPick.Project
                     activity.PropertyChanged += Activity_PropertyChanged;
                 }
             }
-
+            
             this.RaisePropertyChanged("ActivityList");
         }
 
         private void Activity_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            this.RaisePropertyChanged("Activity");
+            this.RaisePropertyChanged($"Activity.{e.PropertyName}");
         }
     }
 

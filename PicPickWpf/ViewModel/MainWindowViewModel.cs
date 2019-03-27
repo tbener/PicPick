@@ -41,8 +41,9 @@ namespace PicPick.ViewModel
             ProjectLoader.SupportIsDirty = true;
             ProjectLoader.OnSaveEventHandler += (s, e) => UpdateFileName();
 
+            bool isDirty = false;
             if (string.IsNullOrEmpty(Properties.Settings.Default.LastFile))
-                ProjectLoader.LoadCreateDefault();
+                isDirty = !ProjectLoader.LoadCreateDefault();
             else
                 OpenFile(Properties.Settings.Default.LastFile);
 
@@ -50,6 +51,7 @@ namespace PicPick.ViewModel
 
             // set the current activity
             CurrentActivity = CurrentProject.ActivityList.FirstOrDefault();
+            CurrentProject.IsDirty = isDirty;
 
             ApplicationService.Instance.EventAggregator.GetEvent<ActivityStartedEvent>().Subscribe(OnActivityStart);
             ApplicationService.Instance.EventAggregator.GetEvent<ActivityEndedEvent>().Subscribe(OnActivityEnd);

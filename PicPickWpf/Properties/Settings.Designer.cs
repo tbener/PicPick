@@ -25,6 +25,18 @@ namespace PicPick.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("ASK")]
+        public string FileExistsResponse {
+            get {
+                return ((string)(this["FileExistsResponse"]));
+            }
+            set {
+                this["FileExistsResponse"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string LastFile {
             get {
@@ -32,18 +44,6 @@ namespace PicPick.Properties {
             }
             set {
                 this["LastFile"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("COMPARE")]
-        public string FileExistsResponse {
-            get {
-                return ((string)(this["FileExistsResponse"]));
-            }
-            set {
-                this["FileExistsResponse"] = value;
             }
         }
     }
