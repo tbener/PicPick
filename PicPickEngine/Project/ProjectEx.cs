@@ -13,57 +13,70 @@ namespace PicPick.Project
 {
     public delegate void CopyEventHandler(object sender, CopyEventArgs e);
 
-
-    public partial class PicPickProject
+    public partial class PicPickProject : IIsDirtySupport
     {
         private ObservableCollection<PicPickProjectActivity> _activityList = null;
         private string _name;
-        private bool _isDirty;
-        private bool _propertyChangedSupportInitialized;
+        private IsDirtySupport<IIsDirtySupport> _isDirtySupport;
 
-        public event EventHandler GotDirty;
+        public event EventHandler OnGotDirty;
 
         #region PropertyChanged \ IsDirty
 
-        public void StartSupportFullPropertyChanged()
+        public void InitIsDirtySupport()
         {
-            if (_propertyChangedSupportInitialized) return;
+            //base.InitIsDirtySupport();
 
-            // any property change (except for IsDirty and some others) will set IsDirty to true
-            this.PropertyChanged += PicPickProject_PropertyChanged;
-
-            _propertyChangedSupportInitialized = true;
+            GetIsDirtyInstance();
 
         }
 
-        private void PicPickProject_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        public IsDirtySupport<IIsDirtySupport> GetIsDirtyInstance()
         {
-            Debug.Print($"PropertyChanged: {e.PropertyName}");
-            IsDirty = true;
+            if (_isDirtySupport == null)
+                _isDirtySupport = new IsDirtySupport<IIsDirtySupport>(this);
+
+            return _isDirtySupport;
         }
+
+        //public void StartSupportFullPropertyChanged()
+        //{
+        //    if (_propertyChangedSupportInitialized) return;
+
+        //    // any property change (except for IsDirty and some others) will set IsDirty to true
+        //    this.PropertyChanged += PicPickProject_PropertyChanged;
+
+        //    _propertyChangedSupportInitialized = true;
+
+        //}
+
+        //private void PicPickProject_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        //{
+        //    Debug.Print($"PropertyChanged: {e.PropertyName}");
+        //    IsDirty = true;
+        //}
 
         private void Activity_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             this.RaisePropertyChanged($"Activity.{e.PropertyName}");
         }
 
+        //public void InvokeGotDirty()
+        //{
+        //    OnGotDirty?.Invoke(this, null);
+        //}
+
         /// <summary>
-        /// Call StartSupportFullPropertyChanged() to support this!
-        /// 
-        /// Any property change (except for IsDirty...) will set IsDirty to true.
-        /// The Save operation will set it to false.
+        /// Provided by IsDirtySupport class
         /// </summary>
         [XmlIgnore]
         public bool IsDirty
         {
-            get { return _isDirty; }
-            set
-            {
-                _isDirty = value;
-                if (value)
-                    GotDirty?.Invoke(this, new EventArgs());
-            }
+            get { return _isDirtySupport?.IsDirty ?? false;  }
+            set { if (_isDirtySupport != null) _isDirtySupport.IsDirty = value; }
         }
+
+        
 
         #endregion
 
@@ -82,29 +95,29 @@ namespace PicPick.Project
                         foreach (PicPickProjectActivity activity in this.Activities)
                         {
                             _activityList.Add(activity);
-                            activity.StartSupportFullPropertyChanged();
-                            activity.PropertyChanged += Activity_PropertyChanged;
+                            //activity.StartSupportFullPropertyChanged();
+                            //activity.PropertyChanged += Activity_PropertyChanged;
                         }
-                    _activityList.CollectionChanged += ActivityList_CollectionChanged;
+                    //_activityList.CollectionChanged += ActivityList_CollectionChanged;
                 }
                 return _activityList;
             }
         }
 
-        private void ActivityList_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            if (e.Action == NotifyCollectionChangedAction.Add)
-            {
-                foreach (PicPickProjectActivity activity in e.NewItems)
-                {
-                    //Added items
-                    activity.StartSupportFullPropertyChanged();
-                    activity.PropertyChanged += Activity_PropertyChanged;
-                }
-            }
+        //private void ActivityList_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        //{
+        //    if (e.Action == NotifyCollectionChangedAction.Add)
+        //    {
+        //        foreach (PicPickProjectActivity activity in e.NewItems)
+        //        {
+        //            //Added items
+        //            activity.StartSupportFullPropertyChanged();
+        //            activity.PropertyChanged += Activity_PropertyChanged;
+        //        }
+        //    }
 
-            this.RaisePropertyChanged("ActivityList");
-        }
+        //    this.RaisePropertyChanged("ActivityList");
+        //}
 
 
 

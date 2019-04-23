@@ -28,6 +28,12 @@ namespace PicPick.Helpers
             EventAggregator?.GetEvent<ActivityEndedEvent>().Publish();
         }
 
+        public static void PublishGotDirty()
+        {
+            EventAggregator?.GetEvent<GotDirtyEvent>().Publish();
+        }
+        
+
 
         //internal static FileExistsResponseEnum Publish(AskEventArgs payload)
         //{

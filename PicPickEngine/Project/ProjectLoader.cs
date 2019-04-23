@@ -44,7 +44,7 @@ namespace PicPick.Project
             };
             proj.ActivityList.Add(new PicPickProjectActivity("Default Activity"));
 
-            if (SupportIsDirty) proj.StartSupportFullPropertyChanged();
+            if (SupportIsDirty) proj.InitIsDirtySupport();
 
             return proj;
         }
@@ -61,7 +61,7 @@ namespace PicPick.Project
             {
                 Project = SerializeHelper.Load(typeof(PicPickProject), file) as PicPickProject;
                 FileName = file;
-                if (SupportIsDirty) Project.StartSupportFullPropertyChanged();
+                if (SupportIsDirty) Project.InitIsDirtySupport();
                 return true;
             }
             catch (Exception ex)
