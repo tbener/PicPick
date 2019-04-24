@@ -48,16 +48,24 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IsDirty_LoadedProject.cs" />
     <Compile Include="IsDirty_EmptyProject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="test.picpick">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PicPickEngine\PicPickEngine.csproj">
       <Project>{BAD96848-E666-43B0-B1B0-0DEF317025FB}</Project>
       <Name>PicPickEngine</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TalUtils\TalUtils.csproj">
+      <Project>{c172ed60-5307-47b2-a243-c2e864870608}</Project>
+      <Name>TalUtils</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />

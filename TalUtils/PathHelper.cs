@@ -28,6 +28,15 @@ namespace TalUtils
             return Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), join);
         }
 
+        public static string ExecutionPath()
+        {
+            return ExecutionPath("");
+        }
+        public static string ExecutionPath(string join)
+        {
+            return Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), join);
+        }
+
         public static bool Exists(string path)
         {
             return Directory.Exists(path);

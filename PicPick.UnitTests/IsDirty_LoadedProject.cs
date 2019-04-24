@@ -1,19 +1,21 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PicPick.Project;
+using TalUtils;
 
 namespace PicPick.UnitTests
 {
     [TestClass]
-    public class IsDirty_EmptyProject
+    public class IsDirty_LoadedProject
     {
         int _isDirtyEventsCount;
         PicPickProject _project;
 
         [TestInitialize]
-        public void SetEmptyProject()
+        public void LoadProject()
         {
-            _project = new PicPickProject();
+            ProjectLoader.Load(PathHelper.GetFullPath(PathHelper.ExecutionPath(), "test.picpick"));
+            _project = ProjectLoader.Project;
             _isDirtyEventsCount = 0;
             _project.GetIsDirtyInstance().OnGotDirty += _project_OnGotDirty;
         }
@@ -56,62 +58,38 @@ namespace PicPick.UnitTests
             Assert.AreEqual(expectedEventCount, _isDirtyEventsCount);
         }
 
+        
+
         [TestMethod]
-        public void IsDirty_OneChangeFirstLevelProperty_IsDirtyTrue()
+        public void IsDirty_ChangeExistingActivity_GotDirty()
         {
             // Arrenge
             bool expectedIsDirty = true;
 
             // Act
-            _project.Name = "Changed";
+            var act = _project.ActivityList[0];
+            act.Name = "Change";
 
             // Assert
-            Assert.AreEqual(expectedIsDirty, _project.IsDirty);
+            Assert.AreEqual(expectedIsDirty, _project.IsDirty, "The activity name within the project was changed but the project didn't get dirty");
         }
 
         [TestMethod]
-        public void IsDirty_OneChangeFirstLevelProperty_OneEvent()
-        {
-            // Arrenge
-            int expectedEventCount = 1;
-
-            // Act
-            _project.Name = "Changed";
-
-            // Assert
-            Assert.AreEqual(expectedEventCount, _isDirtyEventsCount);
-        }
-
-        /// <summary>
-        /// We expect that the event will raise only once, when IsDirty is changed.
-        /// </summary>
-        [TestMethod]
-        public void IsDirty_TwoChangesFirstLevelProperty_OneEvent()
-        {
-            // Arrenge
-            int expectedEventCount = 1;
-
-            // Act
-            _project.Name = "Change 1";
-            _project.Name = "Change 2";
-
-            // Assert
-            Assert.AreEqual(expectedEventCount, _isDirtyEventsCount);
-        }
-
-        [TestMethod]
-        public void IsDirty_AddActivity_GotDirty()
+        public void IsDirty_ChangeNewActivity_GotDirty()
         {
             // Arrenge
             bool expectedIsDirty = true;
 
             // Act
-            _project.ActivityList.Add(new PicPickProjectActivity());
+            var newAct = new PicPickProjectActivity();
+            _project.ActivityList.Add(newAct);
+            _project.IsDirty = false;
+            newAct.Name = "Change";
 
             // Assert
-            Assert.AreEqual(expectedIsDirty, _project.IsDirty);
+            Assert.AreEqual(expectedIsDirty, _project.IsDirty, "A new activity was added and then its name was changed but the project didn't get dirty");
         }
 
-       
+
     }
 }

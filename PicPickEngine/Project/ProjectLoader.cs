@@ -10,7 +10,7 @@ namespace PicPick.Project
     {
         public static EventHandler OnSaveEventHandler;
 
-        private static readonly string DEFAULT_FILE = PathHelper.GetFullPath(PathHelper.AppPath(), "Default.picpick");
+        private static readonly string DEFAULT_FILE = PathHelper.GetFullPath(PathHelper.ExecutionPath(), "Default.picpick");
 
         private static readonly ILog _log =
             LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);

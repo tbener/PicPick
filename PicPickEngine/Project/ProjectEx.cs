@@ -19,8 +19,6 @@ namespace PicPick.Project
         private string _name;
         private IsDirtySupport<IIsDirtySupport> _isDirtySupport;
 
-        public event EventHandler OnGotDirty;
-
         #region PropertyChanged \ IsDirty
 
         public void InitIsDirtySupport()

@@ -35,8 +35,6 @@ namespace PicPick.Project
                 SubscribePropertyChangedObject(rootClass as INotifyPropertyChanged);
             }
 
-            return;
-
             var props = rootClass.GetType().GetProperties();
 
             foreach (var prp in props)
@@ -50,22 +48,30 @@ namespace PicPick.Project
                 //    continue;
                 //}
 
-                //if (prp.PropertyType.GetInterface("INotifyCollectionChanged") != null)
-                //{
-                //    ((INotifyCollectionChanged)prp).CollectionChanged += (s, e) =>
-                //    {
-                //        SetIsDirty();
+                if (prp.PropertyType.GetInterface("INotifyCollectionChanged") != null)
+                {
+                    // subscribe existing items
+                    var collection = prp.GetValue(rootClass) as IEnumerable<INotifyPropertyChanged>;
 
-                //        if (e.Action == NotifyCollectionChangedAction.Add && e.NewItems[0].GetType().GetInterface("INotifyPropertyChanged") != null)
-                //        {
-                //            foreach (var newItem in e.NewItems)
-                //            {
-                //                SubscribePropertyChangedObject(newItem as INotifyPropertyChanged);
-                //            }
-                //        }
-                //    };
-                //}
-                //prp.GetType().inter
+                    foreach (var item in collection)
+                    {
+                        SubscribePropertyChangedObject(item as INotifyPropertyChanged);
+                    }
+
+                    // subscribe future items
+                    ((INotifyCollectionChanged)prp.GetValue(rootClass)).CollectionChanged += (s, e) =>
+                    {
+                        IsDirty = true;
+
+                        if (e.Action == NotifyCollectionChangedAction.Add && e.NewItems[0].GetType().GetInterface("INotifyPropertyChanged") != null)
+                        {
+                            foreach (var newItem in e.NewItems)
+                            {
+                                SubscribePropertyChangedObject(newItem as INotifyPropertyChanged);
+                            }
+                        }
+                    };
+                }
             }
 
             _initialized = true;
