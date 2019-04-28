@@ -90,6 +90,35 @@ namespace PicPick.UnitTests
             Assert.AreEqual(expectedIsDirty, _project.IsDirty, "A new activity was added and then its name was changed but the project didn't get dirty");
         }
 
+        [TestMethod]
+        public void IsDirty_ChangeActivitySourceProperty_GotDirty()
+        {
+            // Arrenge
+            bool expectedIsDirty = true;
+
+            // Act
+            _project.ActivityList[0].Source.Path = "Changed";
+
+            // Assert
+            Assert.AreEqual(expectedIsDirty, _project.IsDirty, 
+                "The Source path was changed but the project didn't get dirty");
+        }
+
+        [TestMethod]
+        public void IsDirty_IsDirtyIgnoreAttributePropertyChange_NotDirty()
+        {
+            // Arrenge
+            bool expectedIsDirty = false;
+
+            // Act
+            _project.ActivityList[0].DestinationList[0].Mapping = 
+                new System.Collections.Generic.Dictionary<string, Core.CopyFilesHandler>();
+
+            // Assert
+            Assert.AreEqual(expectedIsDirty, _project.IsDirty,
+                "Changed property with [IsDirtyIgnore] attribute and the object got dirty.");
+        }
+
 
     }
 }

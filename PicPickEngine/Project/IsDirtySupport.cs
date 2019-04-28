@@ -10,11 +10,18 @@ using System.Threading.Tasks;
 
 namespace PicPick.Project
 {
+    [AttributeUsage(AttributeTargets.Property)]
+    public class IsDirtyIgnoreAttribute : Attribute
+    {
+
+    }
+
     public class IsDirtySupport<T> : IDisposable where T : class, IIsDirtySupport
     {
         private T _mainClass;
         private bool _initialized;
         private bool _isDirty;
+        private Dictionary<Type, List<string>> _ignoreList = new Dictionary<Type, List<string>>();
 
         public event EventHandler OnGotDirty;
 
@@ -30,12 +37,19 @@ namespace PicPick.Project
 
             _mainClass = rootClass;
 
-            if (rootClass.GetType().GetInterface("INotifyPropertyChanged") != null)
+            AddObject(rootClass);
+
+        }
+
+        private void AddObject(object cls)
+        {
+
+            if (cls.GetType().GetInterface("INotifyPropertyChanged") != null)
             {
-                SubscribePropertyChangedObject(rootClass as INotifyPropertyChanged);
+                SubscribePropertyChangedObject(cls as INotifyPropertyChanged);
             }
 
-            var props = rootClass.GetType().GetProperties();
+            var props = cls.GetType().GetProperties();
 
             foreach (var prp in props)
             {
@@ -48,36 +62,94 @@ namespace PicPick.Project
                 //    continue;
                 //}
 
+                if (HasIgnoreAttribute(cls, prp))
+                    continue;
+
+
                 if (prp.PropertyType.GetInterface("INotifyCollectionChanged") != null)
                 {
                     // subscribe existing items
-                    var collection = prp.GetValue(rootClass) as IEnumerable<INotifyPropertyChanged>;
+                    var collection = prp.GetValue(cls) as IEnumerable;
 
                     foreach (var item in collection)
                     {
-                        SubscribePropertyChangedObject(item as INotifyPropertyChanged);
+                        AddObject(item);
                     }
 
                     // subscribe future items
-                    ((INotifyCollectionChanged)prp.GetValue(rootClass)).CollectionChanged += (s, e) =>
+                    ((INotifyCollectionChanged)prp.GetValue(cls)).CollectionChanged += (s, e) =>
                     {
                         IsDirty = true;
 
-                        if (e.Action == NotifyCollectionChangedAction.Add && e.NewItems[0].GetType().GetInterface("INotifyPropertyChanged") != null)
+                        if (e.Action == NotifyCollectionChangedAction.Add)
                         {
                             foreach (var newItem in e.NewItems)
                             {
-                                SubscribePropertyChangedObject(newItem as INotifyPropertyChanged);
+                                AddObject(newItem);
                             }
                         }
                     };
+
+                    continue;
                 }
+
+                if (prp.PropertyType.Module.ScopeName == "CommonLanguageRuntimeLibrary")
+                {
+                    Console.WriteLine($"  Skipped: {cls.GetType().ToString()}.{prp.Name} ({prp.PropertyType})");
+                    continue;
+                }
+
+                if (prp.PropertyType.IsArray || prp.PropertyType.IsEnum)
+                    continue;
+
+                if (prp.PropertyType.IsClass)
+                {
+                    if (prp.PropertyType.GetInterface("IIsDirtySupport") != null)
+                        // if this propoerty implements IsDirty then we don't want to re-subscribe to all PropertyChanged events again.
+                        ((IIsDirtySupport)prp).GetIsDirtyInstance().OnGotDirty += (s, e) => IsDirty = true;
+                    else
+                    {
+                        Console.WriteLine($"** Calling for {cls.GetType().ToString()}.{prp.Name} ({prp.PropertyType})");
+                        AddObject(prp.GetValue(cls));
+                    }
+                }
+
             }
 
             _initialized = true;
         }
 
-        
+        private bool HasIgnoreAttribute(object cls, PropertyInfo prp)
+        {
+            if (Attribute.IsDefined(prp, typeof(IsDirtyIgnoreAttribute)))
+            {
+                // add to ignore list
+                if (!_ignoreList.ContainsKey(cls.GetType()))
+                    _ignoreList.Add(cls.GetType(), new List<string>());
+                if (!_ignoreList[cls.GetType()].Contains(prp.Name))
+                    _ignoreList[cls.GetType()].Add(prp.Name);
+
+                return true;
+            }
+            return false;
+        }
+
+        private void SubscribePropertyChangedObject(INotifyPropertyChanged cls)
+        {
+            cls.PropertyChanged += (s, e) =>
+            {
+                // check if in the ignore list
+                if (_ignoreList.ContainsKey(s.GetType()) && _ignoreList[s.GetType()].Contains(e.PropertyName))
+                    return;
+
+                // not sure we need this
+                if (e.PropertyName == "IsDirty")
+                    return;
+
+                IsDirty = true;
+            };
+        }
+
 
         private void AddProperty(object parent, PropertyInfo prp)
         {
@@ -118,43 +190,34 @@ namespace PicPick.Project
             }
         }
 
-        private void AddObject(object item)
-        {
-            if (AddObject(item as IIsDirtySupport)) return;
-            if (AddObject(item as INotifyPropertyChanged)) return;
 
-            var props = item.GetType().GetProperties();
-            foreach (var prp in props)
-            {
-                AddProperty(item, prp);
-            }
-        }
 
-        private bool AddObject(INotifyPropertyChanged item)
-        {
-            if (item == null) return false;
-            item.PropertyChanged += (s, e) => IsDirty = true;
-            return true;
-        }
+        //private void AddObject1(object item)
+        //{
+        //    if (AddObject(item as IIsDirtySupport)) return;
+        //    if (AddObject(item as INotifyPropertyChanged)) return;
 
-        private bool AddObject(IIsDirtySupport item)
-        {
-            if (item == null) return false;
-            item.GetIsDirtyInstance().OnGotDirty += (s, e) => IsDirty = true; 
-            return true;
-        }
+        //    var props = item.GetType().GetProperties();
+        //    foreach (var prp in props)
+        //    {
+        //        AddProperty(item, prp);
+        //    }
+        //}
 
-        private void SubscribePropertyChangedObject(INotifyPropertyChanged cls)
-        {
-            cls.PropertyChanged += (s, e) =>
-            {
-                // not sure we need this
-                if (e.PropertyName == "IsDirty")
-                    return;
+        //private bool AddObject(INotifyPropertyChanged item)
+        //{
+        //    if (item == null) return false;
+        //    item.PropertyChanged += (s, e) => IsDirty = true;
+        //    return true;
+        //}
 
-                IsDirty = true;
-            };
-        }
+        //private bool AddObject(IIsDirtySupport item)
+        //{
+        //    if (item == null) return false;
+        //    item.GetIsDirtyInstance().OnGotDirty += (s, e) => IsDirty = true; 
+        //    return true;
+        //}
+
 
         public bool IsDirty
         {

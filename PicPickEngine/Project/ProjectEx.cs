@@ -140,6 +140,7 @@ namespace PicPick.Project
 
 
         [XmlIgnore]
+        [IsDirtyIgnore]
         public Dictionary<string, CopyFilesHandler> Mapping { get; set; }
 
         [XmlIgnore]
