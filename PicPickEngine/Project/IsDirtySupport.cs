@@ -110,8 +110,11 @@ namespace PicPick.Project
 
                     if (prp.PropertyType.IsClass)
                     {
-                        // TODO: add to Monitored Properties
-                        //
+                        // add to Monitored Properties
+                        if (!_monitoredProperties.ContainsKey(cls.GetType()))
+                            _monitoredProperties.Add(cls.GetType(), new List<string>());
+                        if (!_monitoredProperties[cls.GetType()].Contains(prp.Name))
+                            _monitoredProperties[cls.GetType()].Add(prp.Name);
 
                         if (prp.PropertyType.GetInterface("IIsDirtySupport") != null)
                             // if this propoerty implements IsDirty then we don't want to re-subscribe to all PropertyChanged events again.
@@ -165,6 +168,10 @@ namespace PicPick.Project
                     return;
 
                 SetDirty(s, e);
+
+                // check if in the monitor list
+                if (_monitoredProperties.ContainsKey(s.GetType()) && _monitoredProperties[s.GetType()].Contains(e.PropertyName))
+                    AddObject(s.GetType().GetProperty(e.PropertyName).GetValue(s));
             };
         }
 
