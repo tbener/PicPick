@@ -21,7 +21,8 @@ namespace PicPick.Project
         private T _mainClass;
         private bool _initialized;
         private bool _isDirty;
-        private Dictionary<Type, List<string>> _ignoreList = new Dictionary<Type, List<string>>();
+        private Dictionary<Type, List<string>> _ignoredProperties = new Dictionary<Type, List<string>>();
+        private Dictionary<Type, List<string>> _monitoredProperties = new Dictionary<Type, List<string>>();
 
         public event EventHandler OnGotDirty;
 
@@ -43,6 +44,7 @@ namespace PicPick.Project
 
         private void AddObject(object cls)
         {
+            if (cls == null) return;
 
             if (cls.GetType().GetInterface("INotifyPropertyChanged") != null)
             {
@@ -62,58 +64,74 @@ namespace PicPick.Project
                 //    continue;
                 //}
 
-                if (HasIgnoreAttribute(cls, prp))
-                    continue;
-
-
-                if (prp.PropertyType.GetInterface("INotifyCollectionChanged") != null)
+                try
                 {
-                    // subscribe existing items
-                    var collection = prp.GetValue(cls) as IEnumerable;
 
-                    foreach (var item in collection)
+
+                    if (HasIgnoreAttribute(cls, prp))
+                        continue;
+
+
+                    if (prp.PropertyType.GetInterface("INotifyCollectionChanged") != null)
                     {
-                        AddObject(item);
-                    }
+                        // subscribe existing items
+                        var collection = prp.GetValue(cls) as IEnumerable;
 
-                    // subscribe future items
-                    ((INotifyCollectionChanged)prp.GetValue(cls)).CollectionChanged += (s, e) =>
-                    {
-                        IsDirty = true;
-
-                        if (e.Action == NotifyCollectionChangedAction.Add)
+                        foreach (var item in collection)
                         {
-                            foreach (var newItem in e.NewItems)
-                            {
-                                AddObject(newItem);
-                            }
+                            AddObject(item);
                         }
-                    };
 
-                    continue;
-                }
+                        // subscribe future items
+                        ((INotifyCollectionChanged)prp.GetValue(cls)).CollectionChanged += (s, e) =>
+                        {
+                            SetDirty(s, e);
 
-                if (prp.PropertyType.Module.ScopeName == "CommonLanguageRuntimeLibrary")
-                {
-                    Console.WriteLine($"  Skipped: {cls.GetType().ToString()}.{prp.Name} ({prp.PropertyType})");
-                    continue;
-                }
+                            if (e.Action == NotifyCollectionChangedAction.Add)
+                            {
+                                foreach (var newItem in e.NewItems)
+                                {
+                                    AddObject(newItem);
+                                }
+                            }
+                        };
 
-                if (prp.PropertyType.IsArray || prp.PropertyType.IsEnum)
-                    continue;
-
-                if (prp.PropertyType.IsClass)
-                {
-                    if (prp.PropertyType.GetInterface("IIsDirtySupport") != null)
-                        // if this propoerty implements IsDirty then we don't want to re-subscribe to all PropertyChanged events again.
-                        ((IIsDirtySupport)prp).GetIsDirtyInstance().OnGotDirty += (s, e) => IsDirty = true;
-                    else
-                    {
-                        Console.WriteLine($"** Calling for {cls.GetType().ToString()}.{prp.Name} ({prp.PropertyType})");
-                        AddObject(prp.GetValue(cls));
+                        continue;
                     }
-                }
 
+                    if (prp.PropertyType.Module.ScopeName == "CommonLanguageRuntimeLibrary")
+                    {
+                        Console.WriteLine($"  Skipped: {cls.GetType().ToString()}.{prp.Name} ({prp.PropertyType})");
+                        continue;
+                    }
+
+                    if (prp.PropertyType.IsArray || prp.PropertyType.IsEnum)
+                        continue;
+
+                    if (prp.PropertyType.IsClass)
+                    {
+                        // TODO: add to Monitored Properties
+                        //
+
+                        if (prp.PropertyType.GetInterface("IIsDirtySupport") != null)
+                            // if this propoerty implements IsDirty then we don't want to re-subscribe to all PropertyChanged events again.
+                            ((IIsDirtySupport)prp).GetIsDirtyInstance().OnGotDirty += (s, e) => SetDirty(s, new PropertyChangedEventArgs("GotDirty")); 
+                        else
+                        {
+                            Console.WriteLine($"** Calling for {cls.GetType().ToString()}.{prp.Name} ({prp.PropertyType})");
+                            AddObject(prp.GetValue(cls));
+                        }
+                    }
+
+                }
+                catch (IsDirtyException ex)
+                {
+                    throw new IsDirtyException($"{cls.GetType().Name}.{prp.Name}.{ex.Message}", ex);
+                }
+                catch (Exception ex)
+                {
+                    throw new IsDirtyException($"{cls.GetType().Name}.{prp.Name}", ex);
+                }
             }
 
             _initialized = true;
@@ -124,10 +142,10 @@ namespace PicPick.Project
             if (Attribute.IsDefined(prp, typeof(IsDirtyIgnoreAttribute)))
             {
                 // add to ignore list
-                if (!_ignoreList.ContainsKey(cls.GetType()))
-                    _ignoreList.Add(cls.GetType(), new List<string>());
-                if (!_ignoreList[cls.GetType()].Contains(prp.Name))
-                    _ignoreList[cls.GetType()].Add(prp.Name);
+                if (!_ignoredProperties.ContainsKey(cls.GetType()))
+                    _ignoredProperties.Add(cls.GetType(), new List<string>());
+                if (!_ignoredProperties[cls.GetType()].Contains(prp.Name))
+                    _ignoredProperties[cls.GetType()].Add(prp.Name);
 
                 return true;
             }
@@ -139,85 +157,29 @@ namespace PicPick.Project
             cls.PropertyChanged += (s, e) =>
             {
                 // check if in the ignore list
-                if (_ignoreList.ContainsKey(s.GetType()) && _ignoreList[s.GetType()].Contains(e.PropertyName))
+                if (_ignoredProperties.ContainsKey(s.GetType()) && _ignoredProperties[s.GetType()].Contains(e.PropertyName))
                     return;
 
                 // not sure we need this
                 if (e.PropertyName == "IsDirty")
                     return;
 
-                IsDirty = true;
+                SetDirty(s, e);
             };
         }
 
-
-        private void AddProperty(object parent, PropertyInfo prp)
+        
+        private void SetDirty(object sender, PropertyChangedEventArgs e)
         {
-            if (prp.PropertyType.GetInterface("IIsDirtySupport") != null)
-            {
-                // if this propoerty implements IsDirty then we don't need to subscribe to any other PropertyChanged events.
-                ((IIsDirtySupport)prp).GetIsDirtyInstance().OnGotDirty += (s, e) => IsDirty = true;
-                return;
-            }
-
-            if (prp.PropertyType.GetInterface("INotifyCollectionChanged") != null)
-            {
-                // get existing items in collection
-                var col = prp.GetValue(parent) as IEnumerable;
-
-                // loop through existing objects and subscrive them
-                foreach (var item in col)
-                {
-                    AddObject(item);
-                }
-
-                // monitor collection changed
-                // for any new item added:
-                // 1. SetDirty
-                // 2. Subscribe it
-                ((INotifyCollectionChanged)prp).CollectionChanged += (s, e) =>
-                {
-                    IsDirty = true;
-
-                    if (e.Action == NotifyCollectionChangedAction.Add && e.NewItems[0].GetType().GetInterface("INotifyPropertyChanged") != null)
-                    {
-                        foreach (var newItem in e.NewItems)
-                        {
-                            SubscribePropertyChangedObject(newItem as INotifyPropertyChanged);
-                        }
-                    }
-                };
-            }
+            Console.WriteLine($"+ Item Changed: {sender.GetType().Name}.{e.PropertyName}");
+            IsDirty = true;
         }
 
-
-
-        //private void AddObject1(object item)
-        //{
-        //    if (AddObject(item as IIsDirtySupport)) return;
-        //    if (AddObject(item as INotifyPropertyChanged)) return;
-
-        //    var props = item.GetType().GetProperties();
-        //    foreach (var prp in props)
-        //    {
-        //        AddProperty(item, prp);
-        //    }
-        //}
-
-        //private bool AddObject(INotifyPropertyChanged item)
-        //{
-        //    if (item == null) return false;
-        //    item.PropertyChanged += (s, e) => IsDirty = true;
-        //    return true;
-        //}
-
-        //private bool AddObject(IIsDirtySupport item)
-        //{
-        //    if (item == null) return false;
-        //    item.GetIsDirtyInstance().OnGotDirty += (s, e) => IsDirty = true; 
-        //    return true;
-        //}
-
+        private void SetDirty(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            Console.WriteLine($"+ Collection Changed: {sender.GetType().Name} -> {e.Action.ToString()}");
+            IsDirty = true;
+        }
 
         public bool IsDirty
         {
@@ -236,6 +198,13 @@ namespace PicPick.Project
         public void Dispose()
         {
             throw new NotImplementedException(this.GetType().ToString());
+        }
+    }
+
+    public class IsDirtyException : Exception {
+        public IsDirtyException(string message, Exception innerException) : base(message, innerException)
+        {
+
         }
     }
 }

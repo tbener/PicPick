@@ -51,20 +51,20 @@ namespace PicPick.Project
         }
 
 
+        // we don't need this with IsDirtySupport class
+        //private void DestinationList_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        //{
+        //    if (e.Action == NotifyCollectionChangedAction.Add)
+        //    {
+        //        foreach (PicPickProjectActivityDestination item in e.NewItems)
+        //        {
+        //            //Added items
+        //            item.PropertyChanged += (s, e1) => this.RaisePropertyChanged($"Destination.{e1.PropertyName}"); 
+        //        }
+        //    }
 
-        private void DestinationList_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            if (e.Action == NotifyCollectionChangedAction.Add)
-            {
-                foreach (PicPickProjectActivityDestination item in e.NewItems)
-                {
-                    //Added items
-                    item.PropertyChanged += (s, e1) => this.RaisePropertyChanged($"Destination.{e1.PropertyName}"); 
-                }
-            }
-
-            RaisePropertyChanged("DestinationList");
-        }
+        //    RaisePropertyChanged("DestinationList");
+        //}
 
         #endregion
 
@@ -83,7 +83,8 @@ namespace PicPick.Project
                         this.Destination = new PicPickProjectActivityDestination[0];
                     _destList = new ObservableCollection<PicPickProjectActivityDestination>();
                     // must be before the adding loop to trigger the event and init the dest object
-                    _destList.CollectionChanged += DestinationList_CollectionChanged;
+                    // we don't need this with IsDirtySupport class
+                    //_destList.CollectionChanged += DestinationList_CollectionChanged;
                     foreach (PicPickProjectActivityDestination dest in this.Destination)
                     {
                         // this will trigger the CollectionChanged event

@@ -112,6 +112,44 @@ namespace PicPick.UnitTests
             Assert.AreEqual(expectedIsDirty, _project.IsDirty);
         }
 
-       
+        [TestMethod]
+        public void IsDirty_AddActivityChangeSource_GotDirty()
+        {
+            // Arrenge
+            bool expectedIsDirty = true;
+
+            // Act
+            var act = new PicPickProjectActivity();
+            _project.ActivityList.Add(act);
+            _project.IsDirty = false;
+            act.Source = new PicPickProjectActivitySource();
+
+            // Assert
+            Assert.AreEqual(expectedIsDirty, _project.IsDirty);
+        }
+
+        /// <summary>
+        /// This should test the monitored objects.
+        /// The Source object is changed, and if it is not monitored properly
+        /// it will not raise event when changed. This is not like changing the Source itself.
+        /// </summary>
+        [TestMethod]
+        public void IsDirty_AddActivityChangeNewSourceProperty_GotDirty()
+        {
+            // Arrenge
+            bool expectedIsDirty = true;
+
+            // Act
+            var act = new PicPickProjectActivity();
+            _project.ActivityList.Add(act);
+            act.Source = new PicPickProjectActivitySource();
+            _project.IsDirty = false;
+            act.Source.Path = "Changed";
+
+            // Assert
+            Assert.AreEqual(expectedIsDirty, _project.IsDirty);
+        }
+
+
     }
 }
