@@ -10,34 +10,15 @@ using System.Threading.Tasks;
 
 namespace PicPick.Project.IsDirtySupport
 {
-    [AttributeUsage(AttributeTargets.Property)]
-    public class IsDirtyIgnoreAttribute : Attribute
-    {
-
-    }
-
-    public class ObjectPropertiesDictionary<T, L> : Dictionary<T, L> where T : Type where L : List<string>, new()
-    {
-        public void Add(T obj, string prp)
-        {
-            if (!ContainsKey(obj))
-                Add(obj, new L());
-            if (!this[obj].Contains(prp))
-                this[obj].Add(prp);
-        }
-
-        public bool Contains(T t, string prp)
-        {
-            return (ContainsKey(t) && this[t].Contains(prp));
-        }
-
-
-    }
-
+    /// <summary>
+    /// This class provides a IsDirty property and event for a given class.
+    /// This IsDirty becomes True if one of the properties, or one of the child classes properties are changed.
+    /// IMPORTANT: The change detection is based on INotifyPropertyChanged.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public class IsDirtySupport<T> : IDisposable where T : class, IIsDirtySupport
     {
         private T _mainClass;
-        private bool _initialized;
         private bool _isDirty;
 
         private ObjectPropertiesDictionary<Type, List<string>> _ignoredProperties = new ObjectPropertiesDictionary<Type, List<string>>();
@@ -47,21 +28,14 @@ namespace PicPick.Project.IsDirtySupport
 
         public IsDirtySupport(T rootClass)
         {
-            Init(rootClass);
-        }
-
-        private void Init(T rootClass)
-        {
-            if (_initialized && _mainClass == rootClass)
-                return;
-
             _mainClass = rootClass;
 
-            AddInstance(rootClass);
-
+            RegisterInstance(rootClass);
         }
 
-        private void AddInstance(object cls)
+        #region Core Methods
+
+        private void RegisterInstance(object cls)
         {
             if (cls == null) return;
 
@@ -74,11 +48,8 @@ namespace PicPick.Project.IsDirtySupport
 
             foreach (var prp in props)
             {
-
                 try
                 {
-
-
                     if (HasIgnoreAttribute(cls, prp))
                         continue;
 
@@ -102,7 +73,7 @@ namespace PicPick.Project.IsDirtySupport
                         else
                         {
                             Console.WriteLine($"** Calling for {cls.GetType().ToString()}.{prp.Name} ({prp.PropertyType})");
-                            AddInstance(prp.GetValue(cls));
+                            RegisterInstance(prp.GetValue(cls));
                         }
                     }
 
@@ -117,7 +88,6 @@ namespace PicPick.Project.IsDirtySupport
                 }
             }
 
-            _initialized = true;
         }
 
         private void AddNotifyCollectionProperty(object cls, PropertyInfo prp)
@@ -127,7 +97,7 @@ namespace PicPick.Project.IsDirtySupport
 
             foreach (var item in collection)
             {
-                AddInstance(item);
+                RegisterInstance(item);
             }
 
             // subscribe future items
@@ -139,11 +109,35 @@ namespace PicPick.Project.IsDirtySupport
                 {
                     foreach (var newItem in e.NewItems)
                     {
-                        AddInstance(newItem);
+                        RegisterInstance(newItem);
                     }
                 }
             };
         }
+
+        private void SubscribePropertyChangedObject(INotifyPropertyChanged cls)
+        {
+            cls.PropertyChanged += (s, e) =>
+            {
+                // check if in the ignore list
+                if (_ignoredProperties.Contains(s.GetType(), e.PropertyName))
+                    return;
+
+                // not sure we need this
+                if (e.PropertyName == "IsDirty")
+                    return;
+
+                SetDirty(s, e);
+
+                // check if in the monitor list
+                if (_monitoredProperties.Contains(s.GetType(), e.PropertyName))
+                    RegisterInstance(s.GetType().GetProperty(e.PropertyName).GetValue(s));
+            };
+        }
+
+        #endregion
+
+        #region Helper Methods
 
         private bool PropertyTypeExclude(Type propertyType)
         {
@@ -168,26 +162,9 @@ namespace PicPick.Project.IsDirtySupport
             return false;
         }
 
-        private void SubscribePropertyChangedObject(INotifyPropertyChanged cls)
-        {
-            cls.PropertyChanged += (s, e) =>
-            {
-                // check if in the ignore list
-                if (_ignoredProperties.Contains(s.GetType(), e.PropertyName))
-                    return;
+        #endregion
 
-                // not sure we need this
-                if (e.PropertyName == "IsDirty")
-                    return;
-
-                SetDirty(s, e);
-
-                // check if in the monitor list
-                if (_monitoredProperties.Contains(s.GetType(), e.PropertyName))
-                    AddInstance(s.GetType().GetProperty(e.PropertyName).GetValue(s));
-            };
-        }
-
+        #region IsDirty Property
 
         private void SetDirty(object sender, PropertyChangedEventArgs e)
         {
@@ -215,17 +192,15 @@ namespace PicPick.Project.IsDirtySupport
             }
         }
 
+        #endregion
+
+        #region Dispose
+
         public void Dispose()
         {
             throw new NotImplementedException(this.GetType().ToString());
-        }
-    }
+        } 
 
-    public class IsDirtyException : Exception
-    {
-        public IsDirtyException(string message, Exception innerException) : base(message, innerException)
-        {
-
-        }
+        #endregion
     }
 }

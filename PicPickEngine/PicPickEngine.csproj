@@ -69,6 +69,9 @@
     <Compile Include="Helpers\ImageFileInfo.cs" />
     <Compile Include="Helpers\LogHandler.cs" />
     <Compile Include="Helpers\ShellFileOperations.cs" />
+    <Compile Include="IsDirtySupport\IsDirtyException.cs" />
+    <Compile Include="IsDirtySupport\IsDirtyIgnoreAttribute.cs" />
+    <Compile Include="IsDirtySupport\ObjectPropertiesDictionary.cs" />
     <Compile Include="Models\FileInfoItem.cs" />
     <Compile Include="Models\ProgressInformation.cs" />
     <Compile Include="Project\Partials\Activity.cs" />
