@@ -8,7 +8,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PicPick.Project
+namespace PicPick.Project.IsDirtySupport
 {
     [AttributeUsage(AttributeTargets.Property)]
     public class IsDirtyIgnoreAttribute : Attribute

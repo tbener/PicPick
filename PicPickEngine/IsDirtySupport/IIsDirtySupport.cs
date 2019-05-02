@@ -4,16 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PicPick.Project
+namespace PicPick.Project.IsDirtySupport
 {
     public interface IIsDirtySupport
     {
-        //event EventHandler OnGotDirty;
-
-        //bool IsDirty { get; set; }
-
-        //void InvokeGotDirty();
-
         IsDirtySupport<IIsDirtySupport> GetIsDirtyInstance();
     }
 }

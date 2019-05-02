@@ -33,21 +33,19 @@ namespace PicPick.ViewModel
         public MainWindowViewModel()
         {
 
-            OpenFileCommand = new RelayCommand(OpenFile);
+            OpenFileCommand = new RelayCommand(OpenFileWithDialog);
             SaveCommand = new SaveCommand();
             AddActivityCommand = new RelayCommand(AddNewActivity);
             DeleteActivityCommand = new RelayCommand(DeleteActivity, () => CurrentProject.ActivityList.Count > 1);
 
-            ProjectLoader.SupportIsDirty = true;
             ProjectLoader.OnSaveEventHandler += (s, e) => UpdateFileName();
 
-            bool isDirty = false;
             if (string.IsNullOrEmpty(Properties.Settings.Default.LastFile) || !File.Exists(Properties.Settings.Default.LastFile))
-                isDirty = !ProjectLoader.LoadCreateDefault();
+                ProjectLoader.LoadCreateDefault();
             else
                 OpenFile(Properties.Settings.Default.LastFile);
 
-            CurrentProject.PropertyChanged += CurrentProject_PropertyChanged;
+            CurrentProject.GetIsDirtyInstance().OnGotDirty += (s, e) => OnGotDirty();
 
             // set the current activity
             CurrentActivity = CurrentProject.ActivityList.FirstOrDefault();
@@ -90,15 +88,9 @@ namespace PicPick.ViewModel
             }
         }
 
+        
 
-
-        private void CurrentProject_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName.Equals("IsDirty") || e.PropertyName.Equals("Name"))
-                OnPropertyChanged("WindowTitle");
-        }
-
-        void OpenFile()
+        void OpenFileWithDialog()
         {
             string file = "";
             if (DialogHelper.BrowseOpenFileByExtensions(new[] { "picpick" }, true, ref file))
@@ -106,6 +98,12 @@ namespace PicPick.ViewModel
                 OpenFile(file);
             }
 
+        }
+
+        private void OpenFile(string file)
+        {
+            if (!ProjectLoader.Load(file)) return;
+            UpdateFileName();
         }
 
         private void UpdateFileName()
@@ -116,11 +114,6 @@ namespace PicPick.ViewModel
             OnPropertyChanged("WindowTitle");
         }
 
-        private void OpenFile(string file)
-        {
-            if (!ProjectLoader.Load(file)) return;
-            UpdateFileName();
-        }
 
         #region File Exists handling - need refactor
 

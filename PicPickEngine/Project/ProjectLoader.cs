@@ -18,7 +18,7 @@ namespace PicPick.Project
         private static readonly ErrorHandler _errorHandler = new ErrorHandler(_log);
 
 
-        public static bool IsDefault
+        public static bool IsDefaultFileName
         {
             get { return FileName.Equals(DEFAULT_FILE, StringComparison.CurrentCultureIgnoreCase); }
         }
@@ -44,13 +44,9 @@ namespace PicPick.Project
             };
             proj.ActivityList.Add(new PicPickProjectActivity("Default Activity"));
 
-            if (SupportIsDirty) proj.InitIsDirtySupport();
-
             return proj;
         }
-
-        public static bool SupportIsDirty { get; set; }
-
+        
         public static PicPickProject Project { get; set; }
 
         public static string FileName { get; private set; }
@@ -61,7 +57,6 @@ namespace PicPick.Project
             {
                 Project = SerializeHelper.Load(typeof(PicPickProject), file) as PicPickProject;
                 FileName = file;
-                if (SupportIsDirty) Project.InitIsDirtySupport();
                 return true;
             }
             catch (Exception ex)

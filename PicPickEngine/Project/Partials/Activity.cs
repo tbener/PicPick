@@ -26,8 +26,11 @@ namespace PicPick.Project
 
         public event CopyEventHandler OnCopyStatusChanged;
 
-        private ObservableCollection<PicPickProjectActivityDestination> _destList = null;
-        private bool _propertyChangedSupportInitlized;
+        private ObservableCollection<PicPickProjectActivityDestination> _destinationList = null;
+
+        private Dictionary<string, CopyFilesHandler> _mapping = new Dictionary<string, CopyFilesHandler>();
+        private Dictionary<string, PicPickFileInfo> _dicFiles = new Dictionary<string, PicPickFileInfo>();
+        private List<string> _errorFiles = new List<string>();
 
         public PicPickProjectActivity(string name)
         {
@@ -35,38 +38,7 @@ namespace PicPick.Project
             Source = new PicPickProjectActivitySource();
         }
 
-        #region Property Changed 
-
-        public void StartSupportFullPropertyChanged()
-        {
-            if (_propertyChangedSupportInitlized) return;
-
-            if (Source == null)
-                Source = new PicPickProjectActivitySource();
-            Source.PropertyChanged += (s, e) => RaisePropertyChanged($"Source.{e.PropertyName}");
-
-            //this.PropertyChanged += (s, e) => delegate { Initialized = false; }
-
-            _propertyChangedSupportInitlized = true;
-        }
-
-
-        // we don't need this with IsDirtySupport class
-        //private void DestinationList_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        //{
-        //    if (e.Action == NotifyCollectionChangedAction.Add)
-        //    {
-        //        foreach (PicPickProjectActivityDestination item in e.NewItems)
-        //        {
-        //            //Added items
-        //            item.PropertyChanged += (s, e1) => this.RaisePropertyChanged($"Destination.{e1.PropertyName}"); 
-        //        }
-        //    }
-
-        //    RaisePropertyChanged("DestinationList");
-        //}
-
-        #endregion
+        
 
         /// <summary>
         /// Use this list rather than the Destination Array for easyer manipulations and editing.
@@ -77,21 +49,18 @@ namespace PicPick.Project
         {
             get
             {
-                if (_destList == null)
+                if (_destinationList == null)
                 {
                     if (this.Destination == null)
                         this.Destination = new PicPickProjectActivityDestination[0];
-                    _destList = new ObservableCollection<PicPickProjectActivityDestination>();
-                    // must be before the adding loop to trigger the event and init the dest object
-                    // we don't need this with IsDirtySupport class
-                    //_destList.CollectionChanged += DestinationList_CollectionChanged;
+                    _destinationList = new ObservableCollection<PicPickProjectActivityDestination>();
+                    
                     foreach (PicPickProjectActivityDestination dest in this.Destination)
                     {
-                        // this will trigger the CollectionChanged event
-                        _destList.Add(dest);
+                        _destinationList.Add(dest);
                     }
                 }
-                return _destList;
+                return _destinationList;
             }
         }
 
@@ -106,8 +75,6 @@ namespace PicPick.Project
 
         #region Execution
 
-        Dictionary<string, PicPickFileInfo> _dicFiles = new Dictionary<string, PicPickFileInfo>();
-        List<string> _errorFiles = new List<string>();
 
 
         /*
@@ -147,8 +114,6 @@ namespace PicPick.Project
             }
 
         }
-
-        Dictionary<string, CopyFilesHandler> _mapping = new Dictionary<string, CopyFilesHandler>();
 
         /// <summary>
         /// Create the Mapping structure.
