@@ -20,7 +20,6 @@ namespace PicPick.Project
         {
             if (_isDirtySupport == null)
                 _isDirtySupport = new IsDirtySupport<IIsDirtySupport>(this);
-
             return _isDirtySupport;
         }
         

@@ -78,6 +78,7 @@
     <Compile Include="IsDirtySupport\IIsDirtySupport.cs" />
     <Compile Include="IsDirtySupport\IsDirtySupport.cs" />
     <Compile Include="Project\Partials\Destination.cs" />
+    <Compile Include="Project\Partials\Options.cs" />
     <Compile Include="Project\Partials\Source.cs" />
     <Compile Include="Project\Partials\Project.cs" />
     <Compile Include="Project\ProjectLoader.cs" />

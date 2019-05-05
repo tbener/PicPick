@@ -185,11 +185,11 @@ namespace PicPick.ViewModel
             {
                 if (_currentActivity != value)
                 {
-                    FileExistsResponseEnum fer = _currentActivity == null ?
-                        (FileExistsResponseEnum)Enum.Parse(typeof(FileExistsResponseEnum), Properties.Settings.Default.FileExistsResponse, true)
-                        : _currentActivity.FileExistsResponse;
+                    //FileExistsResponseEnum fer = _currentActivity == null ?
+                    //    (FileExistsResponseEnum)Enum.Parse(typeof(FileExistsResponseEnum), Properties.Settings.Default.FileExistsResponse, true)
+                    //    : _currentActivity.FileExistsResponse;
                     _currentActivity = value;
-                    _currentActivity.FileExistsResponse = fer;
+                    //_currentActivity.FileExistsResponse = fer;
                     ActivityViewModel = new ActivityViewModel(_currentActivity);
                 }
                 OnPropertyChanged("CurrentActivity");
@@ -200,10 +200,10 @@ namespace PicPick.ViewModel
 
         public FileExistsResponseEnum SelectedFileExistsResponse
         {
-            get { return CurrentActivity.FileExistsResponse; }
+            get { return CurrentProject.Options.FileExistsResponse; }
             set
             {
-                CurrentActivity.FileExistsResponse = value;
+                CurrentProject.Options.FileExistsResponse = value;
                 OnPropertyChanged(nameof(SelectedFileExistsResponse));
             }
         }

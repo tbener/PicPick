@@ -26,6 +26,8 @@ namespace PicPick.Project {
         
         private PicPickProjectActivity[] activitiesField;
         
+        private PicPickProjectOptions optionsField;
+        
         private string verField;
         
         public PicPickProject() {
@@ -41,6 +43,17 @@ namespace PicPick.Project {
             set {
                 this.activitiesField = value;
                 this.RaisePropertyChanged("Activities");
+            }
+        }
+        
+        /// <remarks/>
+        public PicPickProjectOptions Options {
+            get {
+                return this.optionsField;
+            }
+            set {
+                this.optionsField = value;
+                this.RaisePropertyChanged("Options");
             }
         }
         
@@ -288,6 +301,43 @@ namespace PicPick.Project {
             set {
                 this.activeField = value;
                 this.RaisePropertyChanged("Active");
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.1055.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
+    public partial class PicPickProjectOptions : object, System.ComponentModel.INotifyPropertyChanged {
+        
+        private string fileExistsResponseStringField;
+        
+        public PicPickProjectOptions() {
+            this.fileExistsResponseStringField = "ASK";
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        [System.ComponentModel.DefaultValueAttribute("ASK")]
+        public string FileExistsResponseString {
+            get {
+                return this.fileExistsResponseStringField;
+            }
+            set {
+                this.fileExistsResponseStringField = value;
+                this.RaisePropertyChanged("FileExistsResponseString");
             }
         }
         

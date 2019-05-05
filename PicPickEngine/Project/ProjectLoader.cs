@@ -42,6 +42,8 @@ namespace PicPick.Project
             {
                 Name = projectName
             };
+
+            proj.Options = new PicPickProjectOptions();
             proj.ActivityList.Add(new PicPickProjectActivity("Default Activity"));
 
             return proj;
@@ -56,6 +58,7 @@ namespace PicPick.Project
             try
             {
                 Project = SerializeHelper.Load(typeof(PicPickProject), file) as PicPickProject;
+                if (Project.Options == null) Project.Options = new PicPickProjectOptions();
                 FileName = file;
                 return true;
             }
