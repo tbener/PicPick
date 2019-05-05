@@ -25,7 +25,14 @@ namespace TalUtils
         }
         public static string AppPath(string join)
         {
-            return Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), join);
+            try
+            {
+                return Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), join);
+            }
+            catch
+            {
+                return ExecutionPath(join);
+            }
         }
 
         public static string ExecutionPath()

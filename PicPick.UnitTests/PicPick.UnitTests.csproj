@@ -48,6 +48,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Copy_Basics.cs" />
     <Compile Include="IsDirty_LoadedProject.cs" />
     <Compile Include="IsDirty_EmptyProject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

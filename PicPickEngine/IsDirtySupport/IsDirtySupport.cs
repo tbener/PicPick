@@ -14,6 +14,7 @@ namespace PicPick.Project.IsDirtySupport
     /// This class provides a IsDirty property and event for a given class.
     /// This IsDirty becomes True if one of the properties, or one of the child classes properties are changed.
     /// IMPORTANT: The change detection is based on INotifyPropertyChanged.
+    /// The OnGotDirty event is fired only on first occurrence.
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public class IsDirtySupport<T> : IDisposable where T : class, IIsDirtySupport

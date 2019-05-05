@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 
 namespace PicPick.Helpers
 {
-    class ShellFileOperation
+    public class ShellFileOperation
     {
 
         /// <summary>
