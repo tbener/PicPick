@@ -125,5 +125,29 @@ namespace PicPick.UnitTests
             checkPath = Path.Combine(WorkingPath, "2019\\05");
             Assert.IsTrue(Directory.Exists(checkPath), $"Folder {checkPath} doesn't exist.");
         }
+
+        /// <summary>
+        /// Destination has 2 properties that compose the full path - Path + Template.
+        /// If the path is relative, it is relative to the Source, which means if both properties are empty,
+        /// the destination is the source itself.
+        /// The UI should have some sort of handling for that but there must be another protection from this situation.
+        /// </summary>
+        /// <returns></returns>
+        [TestMethod]
+        public async Task Copy_EmptyDestination_ThrowException()
+        {
+            PicPickProjectActivity act = _proj.ActivityList.First();
+            PicPickProjectActivityDestination dest = new PicPickProjectActivityDestination();
+            dest.Path = "yyy";
+            dest.Template = "";
+            act.DestinationList.Add(dest);
+
+
+            await Assert.ThrowsExceptionAsync<ArgumentException>(async () =>
+                await act.Start(new ProgressInformation(), new CancellationTokenSource().Token)
+                );
+
+            // Should raise error
+        }
     }
 }
