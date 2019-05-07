@@ -6,6 +6,10 @@ using System.Linq;
 using System.Text;
 using PicPick.Helpers;
 using TalUtils;
+using PicPick.Project;
+using System.Threading;
+using PicPick.Models;
+using System.Threading.Tasks;
 
 namespace PicPick.UnitTests
 {
@@ -27,8 +31,10 @@ namespace PicPick.UnitTests
         private string SourcePath;
         private string WorkingPath;
 
+        private PicPickProject _proj;
+
         [TestInitialize]
-        public void InitFiles()
+        public void Initialize()
         {
             WorkingPath = PathHelper.GetFullPath(BASE_PATH, WorkingFolder);
             if (PathHelper.Exists(WorkingPath))
@@ -37,6 +43,11 @@ namespace PicPick.UnitTests
 
             var sourceFiles = new List<string>(Directory.GetFiles(Path.Combine(BASE_PATH, BaseFolder)));
             ShellFileOperation.CopyItems(sourceFiles, TalUtils.PathHelper.GetFullPath(SourcePath, true));
+
+            _proj = new PicPickProject();
+            PicPickProjectActivity act = new PicPickProjectActivity("test");
+            act.Source.Path = SourcePath;
+            _proj.ActivityList.Add(act);
         }
 
         [TestCleanup]
@@ -47,9 +58,72 @@ namespace PicPick.UnitTests
         }
 
         [TestMethod]
-        public void Copy_()
+        public async Task Copy_NoTepmlate_FolderCreated()
         {
+            PicPickProjectActivity act = _proj.ActivityList.First();
+            PicPickProjectActivityDestination dest = new PicPickProjectActivityDestination();
+            string checkPath;
+            dest.Path = Path.Combine(WorkingPath, "yyyy");
+            dest.Template = "";
+            act.DestinationList.Add(dest);
 
+            Assert.IsFalse(dest.HasTemplate, "There was no Template supplied and the HasTemplate property returned true.");
+
+            await act.Start(new ProgressInformation(), new CancellationTokenSource().Token);
+
+            // folder "yyyy"
+            checkPath = Path.Combine(WorkingPath, "yyyy");
+            Assert.IsTrue(Directory.Exists(checkPath), $"Folder {checkPath} doesn't exist.");
+        }
+
+        [TestMethod]
+        public async Task Copy_BasicTemlpate_FoldersCreated()
+        {
+            PicPickProjectActivity act = _proj.ActivityList.First();
+            PicPickProjectActivityDestination dest;
+            string checkPath;
+
+            dest = new PicPickProjectActivityDestination();
+            dest.Path = WorkingPath;
+            dest.Template = "yyyy";
+            act.DestinationList.Add(dest);
+
+            dest = new PicPickProjectActivityDestination();
+            dest.Path = WorkingPath;
+            dest.Template = "yyyy-MM";
+            act.DestinationList.Add(dest);
+
+            Assert.IsTrue(dest.HasTemplate, "There is a Template supplied and the HasTemplate property returned false.");
+
+            await act.Start(new ProgressInformation(), new CancellationTokenSource().Token);
+
+            
+            // folder "2019"
+            checkPath = Path.Combine(WorkingPath, "2019");
+            Assert.IsTrue(Directory.Exists(checkPath), $"Folder {checkPath} doesn't exist.");
+            // folder "2019-05"
+            checkPath = Path.Combine(WorkingPath, "2019-05");
+            Assert.IsTrue(Directory.Exists(checkPath), $"Folder {checkPath} doesn't exist.");
+        }
+
+        [TestMethod]
+        public async Task Copy_SubFolderTemlpate_FoldersCreated()
+        {
+            PicPickProjectActivity act = _proj.ActivityList.First();
+            PicPickProjectActivityDestination dest;
+            string checkPath;
+
+            dest = new PicPickProjectActivityDestination();
+            dest.Path = WorkingPath;
+            dest.Template = @"yyyy\\MM";
+            act.DestinationList.Add(dest);
+
+            await act.Start(new ProgressInformation(), new CancellationTokenSource().Token);
+
+
+            // folder "2019\05"
+            checkPath = Path.Combine(WorkingPath, "2019\\05");
+            Assert.IsTrue(Directory.Exists(checkPath), $"Folder {checkPath} doesn't exist.");
         }
     }
 }
