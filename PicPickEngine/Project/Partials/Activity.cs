@@ -175,6 +175,18 @@ namespace PicPick.Project
         [XmlIgnore]
         public bool IsRunning { get; set; }
 
+        public bool ValidateFields()
+        {
+            foreach (var dest in DestinationList)
+            {
+                if (String.IsNullOrWhiteSpace(dest.Path) && String.IsNullOrWhiteSpace(dest.Template))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
         /// <summary>
         /// Executes the whole task. Copying the files to ALL destinations
         /// </summary>
@@ -183,9 +195,12 @@ namespace PicPick.Project
         /// <returns></returns>
         public async Task Start(ProgressInformation progressInfo, CancellationToken cancellationToken)
         {
+            if (!ValidateFields())
+                throw new Exception("Fields did not validate");
+
             IsRunning = true;
             EventAggregatorHelper.PublishActivityStarted();
-
+ 
             progressInfo.Activity = Name;
 
             // Initialize.Fills the Mapping dictionary
