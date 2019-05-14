@@ -107,7 +107,7 @@ namespace PicPick.UnitTests
         }
 
         [TestMethod]
-        public async Task Copy_SubFolderTemlpate_FoldersCreated()
+        public async Task Copy_TemlpateWithSubFolder_FoldersCreated()
         {
             PicPickProjectActivity act = _proj.ActivityList.First();
             PicPickProjectActivityDestination dest;
@@ -149,5 +149,70 @@ namespace PicPick.UnitTests
 
             // Should raise error
         }
+
+        [TestMethod]
+        public async Task Copy_DestinationEqualsSource_ThrowException()
+        {
+            PicPickProjectActivity act = _proj.ActivityList.First();
+            PicPickProjectActivityDestination dest = new PicPickProjectActivityDestination();
+            dest.Path = SourcePath;
+            dest.Template = "";
+            act.DestinationList.Add(dest);
+
+
+            await Assert.ThrowsExceptionAsync<Exception>(async () =>
+                await act.Start(new ProgressInformation(), new CancellationTokenSource().Token)
+                );
+
+            // Should raise error
+        }
+
+        [TestMethod]
+        public async Task Copy_DeleteSourceFilesFalse_SourceUnchanged()
+        {
+            PicPickProjectActivity act = _proj.ActivityList.First();
+            PicPickProjectActivityDestination dest;
+            act.DeleteSourceFiles = false;
+
+            // get source start hash
+            int hash1 = new DirectoryInfo(SourcePath).GetHashCode();
+
+            dest = new PicPickProjectActivityDestination();
+            dest.Path = WorkingPath;
+            dest.Template = "yyyy";
+            act.DestinationList.Add(dest);
+
+            await act.Start(new ProgressInformation(), new CancellationTokenSource().Token);
+
+
+            // compare hashes
+            Assert.IsTrue(new DirectoryInfo(SourcePath).GetHashCode().Equals(hash1));
+        }
+
+        [TestMethod]
+        public async Task Copy_DeleteSourceFilesTrue_SourceFilesDeleted()
+        {
+            PicPickProjectActivity act = _proj.ActivityList.First();
+            PicPickProjectActivityDestination dest;
+            act.DeleteSourceFiles = true;
+
+            // get source content ?
+            int hash1 = new DirectoryInfo(SourcePath).GetHashCode();
+
+            dest = new PicPickProjectActivityDestination();
+            dest.Path = WorkingPath;
+            dest.Template = "yyyy";
+            act.DestinationList.Add(dest);
+
+            await act.Start(new ProgressInformation(), new CancellationTokenSource().Token);
+
+
+            // verify source files deleted
+
+            Assert.IsTrue(new DirectoryInfo(SourcePath).GetHashCode().Equals(hash1));
+        }
+
+        
     }
+    
 }

@@ -177,12 +177,19 @@ namespace PicPick.Project
 
         public bool ValidateFields()
         {
+            string realPath;
+            bool isRealTemplate;
             foreach (var dest in DestinationList)
             {
-                if (String.IsNullOrWhiteSpace(dest.Path) && String.IsNullOrWhiteSpace(dest.Template))
-                {
+                realPath = dest.GetTemplatePath(DateTime.Now);
+                isRealTemplate = !realPath.Equals(dest.Template);
+                if (isRealTemplate)
+                    return true;
+
+                realPath = Path.Combine(PathHelper.GetFullPath(Source.Path, dest.Path), dest.Template);
+
+                if (realPath.Equals(Source.Path, StringComparison.OrdinalIgnoreCase))
                     return false;
-                }
             }
             return true;
         }
