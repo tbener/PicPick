@@ -4,7 +4,7 @@ using System;
 namespace PicPick.Models
 {
     
-    internal class PicPickFileInfo
+    public class PicPickFileInfo
     {
         public PicPickFileInfo()
         {

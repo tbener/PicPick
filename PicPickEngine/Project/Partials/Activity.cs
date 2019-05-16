@@ -229,7 +229,7 @@ namespace PicPick.Project
                 progressInfo.Maximum = countTotal;
                 progressInfo.Value = 0;
 
-                CopyFilesHandler.FileExistsResponse = FileExistsResponse;
+                CopyFilesHandler.FileExistsResponse = ProjectLoader.Project.Options.FileExistsResponse;
                 // loop on destinations
                 foreach (var kv in _mapping)
                 {
@@ -284,6 +284,10 @@ namespace PicPick.Project
                 EventAggregatorHelper.PublishActivityEnded();
             }
         }
+
+        [XmlIgnore]
+        [IsDirtySupport.IsDirtyIgnore]
+        public Dictionary<string, PicPickFileInfo> FilesStatus => _dicFiles;
 
         private void CopyFilesHandler_OnFileStatusChanged(object sender, string fileFullName, FILE_STATUS status)
         {

@@ -175,7 +175,8 @@ namespace PicPick.UnitTests
             act.DeleteSourceFiles = false;
 
             // get source start hash
-            int hash1 = new DirectoryInfo(SourcePath).GetHashCode();
+            DirectoryInfo di = new DirectoryInfo(SourcePath);
+            string hash1 = GetDirectoryHash(di);
 
             dest = new PicPickProjectActivityDestination();
             dest.Path = WorkingPath;
@@ -186,18 +187,20 @@ namespace PicPick.UnitTests
 
 
             // compare hashes
-            Assert.IsTrue(new DirectoryInfo(SourcePath).GetHashCode().Equals(hash1));
+            Assert.IsTrue(GetDirectoryHash(di).Equals(hash1));
         }
 
+        /// <summary>
+        /// On this test we assume all files included (no specific filter) and no skipping.
+        /// So we expect an empty folder in the end.
+        /// </summary>
+        /// <returns></returns>
         [TestMethod]
         public async Task Copy_DeleteSourceFilesTrue_SourceFilesDeleted()
         {
             PicPickProjectActivity act = _proj.ActivityList.First();
             PicPickProjectActivityDestination dest;
             act.DeleteSourceFiles = true;
-
-            // get source content ?
-            int hash1 = new DirectoryInfo(SourcePath).GetHashCode();
 
             dest = new PicPickProjectActivityDestination();
             dest.Path = WorkingPath;
@@ -208,11 +211,21 @@ namespace PicPick.UnitTests
 
 
             // verify source files deleted
-
-            Assert.IsTrue(new DirectoryInfo(SourcePath).GetHashCode().Equals(hash1));
+            Assert.IsTrue((new DirectoryInfo(SourcePath)).GetFiles().Count() == 0);
         }
 
-        
+        // Currently we just compare the first level file list
+        public string GetDirectoryHash(DirectoryInfo di)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            foreach (var file in di.GetFiles())
+            {
+                sb.Append(file.Name);
+            }
+
+            return sb.ToString();
+        }
     }
     
 }

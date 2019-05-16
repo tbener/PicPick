@@ -33,6 +33,7 @@ namespace PicPick.UnitTests
 
         private PicPickProject _proj;
         private PicPickProjectActivity _activity;
+        private List<string> _sourceFiles;
 
         [TestInitialize]
         public async Task Initialize()
@@ -46,6 +47,7 @@ namespace PicPick.UnitTests
             // initialize source files
             var sourceFiles = new List<string>(Directory.GetFiles(Path.Combine(BASE_PATH, BaseFolder)));
             ShellFileOperation.CopyItems(sourceFiles, TalUtils.PathHelper.GetFullPath(SourcePath, true));
+            _sourceFiles = new List<string>(Directory.GetFiles(SourcePath));
 
             // initialize project
             _proj = new PicPickProject();
@@ -83,11 +85,21 @@ namespace PicPick.UnitTests
         [TestMethod]
         public async Task Copy_FilesExistsSkip_FileSkipped()
         {
+            // Arrange
             _proj.Options.FileExistsResponse = Core.FileExistsResponseEnum.SKIP;
+            _activity.DeleteSourceFiles = true;
+            string checkFile = _sourceFiles.First();
+            Core.FILE_STATUS expectedStatus = Core.FILE_STATUS.SKIPPED;
 
+            // Act
             await _activity.Start(new ProgressInformation(), new CancellationTokenSource().Token);
 
-            Assert.IsTrue(false);
+            // Assert
+            // Verify the was not deleted
+            Assert.IsTrue(File.Exists(checkFile), "File deleted from source, even though it should have been skipped and left there.");
+            // Check file status
+            Core.FILE_STATUS actualStatus = _activity.FilesStatus[checkFile].Status;
+            Assert.AreEqual(expectedStatus, actualStatus, "File status was not set as expected.");
         }
 
         [TestMethod]

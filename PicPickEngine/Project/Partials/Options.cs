@@ -7,7 +7,7 @@ using PicPick.Core;
 
 namespace PicPick.Project
 {
-    public partial class PicPickProjectOptions
+    public partial class PicPickProject_options
     {
         public FileExistsResponseEnum FileExistsResponse
         {

@@ -26,7 +26,7 @@ namespace PicPick.Project {
         
         private PicPickProjectActivity[] activitiesField;
         
-        private PicPickProjectOptions optionsField;
+        private PicPickProject_options _optionsField;
         
         private string verField;
         
@@ -47,13 +47,13 @@ namespace PicPick.Project {
         }
         
         /// <remarks/>
-        public PicPickProjectOptions Options {
+        public PicPickProject_options _options {
             get {
-                return this.optionsField;
+                return this._optionsField;
             }
             set {
-                this.optionsField = value;
-                this.RaisePropertyChanged("Options");
+                this._optionsField = value;
+                this.RaisePropertyChanged("_options");
             }
         }
         
@@ -320,11 +320,11 @@ namespace PicPick.Project {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
-    public partial class PicPickProjectOptions : object, System.ComponentModel.INotifyPropertyChanged {
+    public partial class PicPickProject_options : object, System.ComponentModel.INotifyPropertyChanged {
         
         private string fileExistsResponseStringField;
         
-        public PicPickProjectOptions() {
+        public PicPickProject_options() {
             this.fileExistsResponseStringField = "ASK";
         }
         
