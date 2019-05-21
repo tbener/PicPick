@@ -32,7 +32,7 @@
             </xsd:sequence>
           </xsd:complexType>
         </xsd:element>
-        <xsd:element name="Options">
+        <xsd:element name="_options">
           <xsd:complexType>
             <xsd:attribute name="FileExistsResponseString" type="xsd:string" default="ASK" />
           </xsd:complexType>

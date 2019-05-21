@@ -68,7 +68,20 @@ namespace PicPick.Models
             }
         }
 
-        
+        [XmlIgnore]
+        public PicPickProject_options Options
+        {
+            get
+            {
+                if (_options == null) _options = new PicPickProject_options();
+                return _options;
+            }
+            set
+            {
+                this._options = value;
+            }
+        }
+
 
     }
 

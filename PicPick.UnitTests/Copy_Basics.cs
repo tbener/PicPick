@@ -106,7 +106,7 @@ namespace PicPick.UnitTests
         }
 
         [TestMethod]
-        public async Task Copy_SubFolderTemlpate_FoldersCreated()
+        public async Task Copy_TemlpateWithSubFolder_FoldersCreated()
         {
             PicPickProjectActivity act = _proj.ActivityList.First();
             PicPickProjectActivityDestination dest;
@@ -129,7 +129,7 @@ namespace PicPick.UnitTests
         /// Destination has 2 properties that compose the full path - Path + Template.
         /// If the path is relative, it is relative to the Source, which means if both properties are empty,
         /// the destination is the source itself.
-        /// The UI should have some sort of handling for that but there must be another protection from this situation.
+        /// The UI should have some sort of handling for that case, but there must be another protection from this situation in the engine level.
         /// </summary>
         /// <returns></returns>
         [TestMethod]
@@ -137,16 +137,94 @@ namespace PicPick.UnitTests
         {
             PicPickProjectActivity act = _proj.ActivityList.First();
             PicPickProjectActivityDestination dest = new PicPickProjectActivityDestination();
-            dest.Path = "yyy";
+            dest.Path = "";
             dest.Template = "";
             act.DestinationList.Add(dest);
 
 
-            await Assert.ThrowsExceptionAsync<ArgumentException>(async () =>
+            await Assert.ThrowsExceptionAsync<Exception>(async () =>
                 await act.Start(new ProgressInformation(), new CancellationTokenSource().Token)
                 );
 
             // Should raise error
         }
+
+        [TestMethod]
+        public async Task Copy_DestinationEqualsSource_ThrowException()
+        {
+            PicPickProjectActivity act = _proj.ActivityList.First();
+            PicPickProjectActivityDestination dest = new PicPickProjectActivityDestination();
+            dest.Path = SourcePath;
+            dest.Template = "";
+            act.DestinationList.Add(dest);
+
+
+            await Assert.ThrowsExceptionAsync<Exception>(async () =>
+                await act.Start(new ProgressInformation(), new CancellationTokenSource().Token)
+                );
+
+            // Should raise error
+        }
+
+        [TestMethod]
+        public async Task Copy_DeleteSourceFilesFalse_SourceUnchanged()
+        {
+            PicPickProjectActivity act = _proj.ActivityList.First();
+            PicPickProjectActivityDestination dest;
+            act.DeleteSourceFiles = false;
+
+            // get source start hash
+            DirectoryInfo di = new DirectoryInfo(SourcePath);
+            string hash1 = GetDirectoryHash(di);
+
+            dest = new PicPickProjectActivityDestination();
+            dest.Path = WorkingPath;
+            dest.Template = "yyyy";
+            act.DestinationList.Add(dest);
+
+            await act.Start(new ProgressInformation(), new CancellationTokenSource().Token);
+
+
+            // compare hashes
+            Assert.IsTrue(GetDirectoryHash(di).Equals(hash1));
+        }
+
+        /// <summary>
+        /// On this test we assume all files included (no specific filter) and no skipping.
+        /// So we expect an empty folder in the end.
+        /// </summary>
+        /// <returns></returns>
+        [TestMethod]
+        public async Task Copy_DeleteSourceFilesTrue_SourceFilesDeleted()
+        {
+            PicPickProjectActivity act = _proj.ActivityList.First();
+            PicPickProjectActivityDestination dest;
+            act.DeleteSourceFiles = true;
+
+            dest = new PicPickProjectActivityDestination();
+            dest.Path = WorkingPath;
+            dest.Template = "yyyy";
+            act.DestinationList.Add(dest);
+
+            await act.Start(new ProgressInformation(), new CancellationTokenSource().Token);
+
+
+            // verify source files deleted
+            Assert.IsTrue((new DirectoryInfo(SourcePath)).GetFiles().Count() == 0);
+        }
+
+        // Currently we just compare the first level file list
+        public string GetDirectoryHash(DirectoryInfo di)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            foreach (var file in di.GetFiles())
+            {
+                sb.Append(file.Name);
+            }
+
+            return sb.ToString();
+        }
     }
+    
 }

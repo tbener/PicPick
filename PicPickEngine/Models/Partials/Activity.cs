@@ -182,6 +182,25 @@ namespace PicPick.Models
         [XmlIgnore]
         public bool IsRunning { get; set; }
 
+        public bool ValidateFields()
+        {
+            string realPath;
+            bool isRealTemplate;
+            foreach (var dest in DestinationList)
+            {
+                realPath = dest.GetTemplatePath(DateTime.Now);
+                isRealTemplate = !realPath.Equals(dest.Template);
+                if (isRealTemplate)
+                    return true;
+
+                realPath = Path.Combine(PathHelper.GetFullPath(Source.Path, dest.Path), dest.Template);
+
+                if (realPath.Equals(Source.Path, StringComparison.OrdinalIgnoreCase))
+                    return false;
+            }
+            return true;
+        }
+
         /// <summary>
         /// Executes the whole task. Copying the files to ALL destinations
         /// </summary>
@@ -190,9 +209,12 @@ namespace PicPick.Models
         /// <returns></returns>
         public async Task Start(ProgressInformation progressInfo, CancellationToken cancellationToken)
         {
+            if (!ValidateFields())
+                throw new Exception("Fields did not validate");
+
             IsRunning = true;
             EventAggregatorHelper.PublishActivityStarted();
-
+ 
             progressInfo.Activity = Name;
 
             // Initialize.Fills the Mapping dictionary
@@ -214,7 +236,7 @@ namespace PicPick.Models
                 progressInfo.Maximum = countTotal;
                 progressInfo.Value = 0;
 
-                CopyFilesHandler.FileExistsResponse = FileExistsResponse;
+                CopyFilesHandler.FileExistsResponse = ProjectLoader.Project.Options.FileExistsResponse;
                 // loop on destinations
                 foreach (var kv in _mapping)
                 {
@@ -269,6 +291,10 @@ namespace PicPick.Models
                 EventAggregatorHelper.PublishActivityEnded();
             }
         }
+
+        [XmlIgnore]
+        [IsDirtySupport.IsDirtyIgnore]
+        public Dictionary<string, PicPickFileInfo> FilesStatus => _dicFiles;
 
         private void CopyFilesHandler_OnFileStatusChanged(object sender, string fileFullName, FILE_STATUS status)
         {
