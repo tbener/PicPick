@@ -13,7 +13,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using PicPick.Core;
 
-namespace PicPick.Project
+namespace PicPick.Models
 {
 
     /// <summary>
@@ -21,7 +21,7 @@ namespace PicPick.Project
     /// 1. Extension properties
     /// 2. Execution methods
     /// </summary>
-    public partial class PicPickProjectActivity : ICloneable
+    public partial class PicPickProjectActivity : ICloneable, IActivity
     {
 
         public event CopyEventHandler OnCopyStatusChanged;
@@ -71,6 +71,13 @@ namespace PicPick.Project
 
         [XmlIgnore]
         public FileExistsResponseEnum FileExistsResponse { get; set; }
+
+        [XmlIgnore]
+        public Dictionary<string, CopyFilesHandler> Mapping { get; set; }
+
+        [XmlIgnore]
+        public Dictionary<string, PicPickFileInfo> FilesInfo { get; set; }
+
 
 
         #region Execution

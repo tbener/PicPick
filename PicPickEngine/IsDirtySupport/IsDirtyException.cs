@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PicPick.Project.IsDirtySupport
+namespace PicPick.Models.IsDirtySupport
 {
     public class IsDirtyException : Exception
     {

@@ -1,14 +1,14 @@
 ﻿using PicPick.Core;
-using PicPick.Project.IsDirtySupport;
+using PicPick.Models.IsDirtySupport;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Xml.Serialization;
 
-namespace PicPick.Project
+namespace PicPick.Models
 {
     public delegate void CopyEventHandler(object sender, CopyEventArgs e);
 
-    public partial class PicPickProject : IIsDirtySupport
+    public partial class PicPickProject : IIsDirtySupport, IProject
     {
         private ObservableCollection<PicPickProjectActivity> _activityList = null;
         private string _name;

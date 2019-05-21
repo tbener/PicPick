@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace PicPick.Project.IsDirtySupport
+namespace PicPick.Models.IsDirtySupport
 {
     public class ObjectPropertiesDictionary<T, L> : Dictionary<T, L> where T : Type where L : List<string>, new()
     {

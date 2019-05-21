@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PicPick.Models
+namespace PicPick.Helpers
 {
     public class ProgressInformation : INotifyPropertyChanged
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PicPick.Project.IsDirtySupport
+namespace PicPick.Models.IsDirtySupport
 {
     [AttributeUsage(AttributeTargets.Property)]
     public class IsDirtyIgnoreAttribute : Attribute
