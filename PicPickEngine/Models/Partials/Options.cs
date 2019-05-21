@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using PicPick.Core;
 
-namespace PicPick.Project
+namespace PicPick.Models
 {
-    public partial class PicPickProjectOptions
+    public partial class PicPickProjectOptions : IOptions
     {
         public FileExistsResponseEnum FileExistsResponse
         {

@@ -6,9 +6,8 @@ using System.Linq;
 using System.Text;
 using PicPick.Helpers;
 using TalUtils;
-using PicPick.Project;
-using System.Threading;
 using PicPick.Models;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace PicPick.UnitTests

@@ -63,6 +63,8 @@
     <Compile Include="Core\CustomEvents.cs" />
     <Compile Include="Core\CustomEventArgs.cs" />
     <Compile Include="Core\FileExistsResponse.cs" />
+    <Compile Include="Core\Analyzer.cs" />
+    <Compile Include="Core\Runner.cs" />
     <Compile Include="Helpers\BitmapImageCheck.cs" />
     <Compile Include="Core\CopyFilesHandler.cs" />
     <Compile Include="Helpers\EventAggregatorHelper.cs" />
@@ -73,22 +75,25 @@
     <Compile Include="IsDirtySupport\IsDirtyIgnoreAttribute.cs" />
     <Compile Include="IsDirtySupport\ObjectPropertiesDictionary.cs" />
     <Compile Include="Models\FileInfoItem.cs" />
-    <Compile Include="Models\ProgressInformation.cs" />
-    <Compile Include="Project\Partials\Activity.cs" />
+    <Compile Include="Helpers\ProgressInformation.cs" />
+    <Compile Include="Models\Partials\Activity.cs" />
     <Compile Include="IsDirtySupport\IIsDirtySupport.cs" />
     <Compile Include="IsDirtySupport\IsDirtySupport.cs" />
-    <Compile Include="Project\Partials\Destination.cs" />
-    <Compile Include="Project\Partials\Options.cs" />
-    <Compile Include="Project\Partials\Source.cs" />
-    <Compile Include="Project\Partials\Project.cs" />
-    <Compile Include="Project\ProjectLoader.cs" />
+    <Compile Include="Models\Partials\Destination.cs" />
+    <Compile Include="Models\Interfaces\IActivity.cs" />
+    <Compile Include="Models\Interfaces\IOptions.cs" />
+    <Compile Include="Models\Interfaces\IProject.cs" />
+    <Compile Include="Models\Partials\Options.cs" />
+    <Compile Include="Models\Partials\Source.cs" />
+    <Compile Include="Models\Partials\Project.cs" />
+    <Compile Include="Models\ProjectLoader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Project\Project.cs" />
+    <Compile Include="Models\Project.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="Project\Schema\build.bat" />
-    <None Include="Project\Schema\Project.xsd">
+    <None Include="Models\Schema\build.bat" />
+    <None Include="Models\Schema\Project.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="packages.config" />

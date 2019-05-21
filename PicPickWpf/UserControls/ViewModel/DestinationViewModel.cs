@@ -1,5 +1,5 @@
 ﻿using PicPick.Commands;
-using PicPick.Project;
+using PicPick.Models;
 using PicPick.ViewModel;
 using System;
 using System.Windows.Input;

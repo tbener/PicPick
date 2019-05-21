@@ -1,6 +1,6 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PicPick.Project;
+using PicPick.Models;
 
 namespace PicPick.UnitTests
 {

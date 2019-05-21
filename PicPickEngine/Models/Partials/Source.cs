@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 
-namespace PicPick.Project
+namespace PicPick.Models
 {
     public partial class PicPickProjectActivitySource
     {

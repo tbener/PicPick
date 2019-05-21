@@ -1,6 +1,6 @@
 ﻿using PicPick.Core;
 using PicPick.Helpers;
-using PicPick.Project.IsDirtySupport;
+using PicPick.Models.IsDirtySupport;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -8,7 +8,7 @@ using System.Linq;
 using System.Xml.Serialization;
 using TalUtils;
 
-namespace PicPick.Project
+namespace PicPick.Models
 {
     public partial class PicPickProjectActivityDestination
     {

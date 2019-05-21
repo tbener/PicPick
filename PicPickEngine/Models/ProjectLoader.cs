@@ -4,7 +4,7 @@ using System.Linq;
 using log4net;
 using TalUtils;
 
-namespace PicPick.Project
+namespace PicPick.Models
 {
     public static class ProjectLoader
     {

@@ -8,7 +8,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PicPick.Project.IsDirtySupport
+namespace PicPick.Models.IsDirtySupport
 {
     /// <summary>
     /// This class provides a IsDirty property and event for a given class.

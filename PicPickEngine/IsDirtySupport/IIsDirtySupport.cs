@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PicPick.Project.IsDirtySupport
+namespace PicPick.Models.IsDirtySupport
 {
     public interface IIsDirtySupport
     {
