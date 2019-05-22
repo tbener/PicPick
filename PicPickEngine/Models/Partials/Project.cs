@@ -69,6 +69,7 @@ namespace PicPick.Models
         }
 
         [XmlIgnore]
+        [IsDirtyIgnore]
         public PicPickProject_options Options
         {
             get

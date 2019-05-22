@@ -113,7 +113,9 @@ namespace PicPick.ViewModel
                 };
                 progressWindow.Show();
 
-                await Activity.Start(ProgressInfo, cts.Token);
+                Runner runner = new Runner(Activity, ProjectLoader.Project.Options);
+                await runner.Run(ProgressInfo, cts.Token);
+                //await Activity.Start(ProgressInfo, cts.Token);
 
                 progressWindow.Close();
 

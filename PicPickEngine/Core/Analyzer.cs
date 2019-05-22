@@ -1,8 +1,10 @@
-﻿using PicPick.Helpers;
+﻿using PicPick.Exceptions;
+using PicPick.Helpers;
 using PicPick.Models;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -23,6 +25,8 @@ namespace PicPick.Core
             if (FilesInfo == null) FilesInfo = new Dictionary<string, PicPickFileInfo>();
         }
 
+        public bool MappingCompletedSuccessfully { get; private set; }
+
         public Dictionary<string, CopyFilesHandler> Mapping { get => _activity.Mapping; private set => _activity.Mapping = value; }
         public Dictionary<string, PicPickFileInfo> FilesInfo { get => _activity.FilesInfo; private set => _activity.FilesInfo = value; }
 
@@ -37,7 +41,11 @@ namespace PicPick.Core
         public async Task CreateMapping(ProgressInformation progressInfo, CancellationToken cancellationToken)
         {
             progressInfo.MainOperation = "Analyzing...";
+            MappingCompletedSuccessfully = false;
             Mapping.Clear();
+
+            ValidateFields();
+
             await ReadFilesDatesAsync(progressInfo, cancellationToken);
 
             progressInfo.CurrentOperation = "Mapping files to destinations";
@@ -76,6 +84,7 @@ namespace PicPick.Core
                 cancellationToken.ThrowIfCancellationRequested();
             }
 
+            MappingCompletedSuccessfully = true;
             progressInfo.MainOperation = "Finished Analyzing";
 
         }
@@ -116,6 +125,27 @@ namespace PicPick.Core
                 }
             }
 
+        }
+
+        public void ValidateFields()
+        {
+            string realPath;
+            bool isRealTemplate;
+            if (_activity.DestinationList.Count == 0)
+                throw new NoDestinationsException();
+
+            foreach (var dest in _activity.DestinationList)
+            {
+                realPath = dest.GetTemplatePath(DateTime.Now);
+                isRealTemplate = !realPath.Equals(dest.Template);
+                if (isRealTemplate)
+                    return;
+
+                realPath = Path.Combine(PathHelper.GetFullPath(_activity.Source.Path, dest.Path), dest.Template);
+
+                if (realPath.Equals(_activity.Source.Path, StringComparison.OrdinalIgnoreCase))
+                    throw new DestinationEqualsSourceException();
+            }
         }
     }
 }

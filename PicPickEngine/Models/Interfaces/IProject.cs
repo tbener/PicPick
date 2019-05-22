@@ -6,7 +6,7 @@ namespace PicPick.Models
     {
         ObservableCollection<PicPickProjectActivity> ActivityList { get; }
         string Name { get; set; }
-        PicPickProjectOptions Options { get; set; }
+        PicPickProject_options Options { get; set; }
         string ver { get; set; }
     }
 }

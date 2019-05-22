@@ -7,7 +7,7 @@ using PicPick.Core;
 
 namespace PicPick.Models
 {
-    public partial class PicPickProjectOptions : IOptions
+    public partial class PicPickProject_options : IOptions
     {
         public FileExistsResponseEnum FileExistsResponse
         {

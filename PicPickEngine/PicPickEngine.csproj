@@ -69,6 +69,7 @@
     <Compile Include="Core\FileExistsResponse.cs" />
     <Compile Include="Core\Analyzer.cs" />
     <Compile Include="Core\Runner.cs" />
+    <Compile Include="Exceptions\Exceptions.cs" />
     <Compile Include="Helpers\BitmapImageCheck.cs" />
     <Compile Include="Core\CopyFilesHandler.cs" />
     <Compile Include="Helpers\EventAggregatorHelper.cs" />

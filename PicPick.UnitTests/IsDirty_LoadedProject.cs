@@ -112,7 +112,7 @@ namespace PicPick.UnitTests
 
             // Act
             _project.ActivityList[0].DestinationList[0].Mapping = 
-                new System.Collections.Generic.Dictionary<string, Core.CopyFilesHandler>();
+                new System.Collections.Generic.Dictionary<string, PicPick.Core.CopyFilesHandler>();
 
             // Assert
             Assert.AreEqual(expectedIsDirty, _project.IsDirty,

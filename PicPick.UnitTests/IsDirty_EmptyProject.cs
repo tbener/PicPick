@@ -11,7 +11,7 @@ namespace PicPick.UnitTests
         PicPickProject _project;
 
         [TestInitialize]
-        public void SetEmptyProject()
+        public void InitEmptyProject()
         {
             _project = new PicPickProject();
             _isDirtyEventsCount = 0;
@@ -38,6 +38,23 @@ namespace PicPick.UnitTests
 
             // Act
             // Do nothing
+
+            // Assert
+            Assert.AreEqual(expectedIsDirty, _project.IsDirty);
+        }
+
+        /// <summary>
+        /// Since the Options object is excluded, need to make sure changing something within this object
+        /// makes it dirty.
+        /// </summary>
+        [TestMethod]
+        public void IsDirty_ChangeOption_GotDirty()
+        {
+            // Arrenge
+            bool expectedIsDirty = true;
+
+            // Act
+            _project.Options.FileExistsResponse = PicPick.Core.FileExistsResponseEnum.COMPARE;
 
             // Assert
             Assert.AreEqual(expectedIsDirty, _project.IsDirty);

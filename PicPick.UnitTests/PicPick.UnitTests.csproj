@@ -52,7 +52,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Copy_Conflicts.cs" />
-    <Compile Include="Copy_Basics.cs" />
+    <Compile Include="Core\AnalyzerTests.cs" />
+    <Compile Include="Core\Copy_Basics.cs" />
     <Compile Include="IsDirty_LoadedProject.cs" />
     <Compile Include="IsDirty_EmptyProject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -73,6 +74,7 @@
       <Name>TalUtils</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
