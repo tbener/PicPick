@@ -11,7 +11,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using PicPick.Core;
 
-namespace PicPick.UnitTests.Core
+namespace PicPick.UnitTests.Core.RunnerTests
 {
     /// <summary>
     /// BASE_PATH 
@@ -22,12 +22,12 @@ namespace PicPick.UnitTests.Core
     /// </summary>
     /// 
     [TestClass]
-    public class Copy_Basics
+    public class Runner_Run
     {
 
         private readonly string BASE_PATH = Path.GetFullPath(PathHelper.ExecutionPath(@"..\..\Test Files"));
         private readonly string BaseFolder = @"Base\Zoo";
-        private readonly string WorkingFolder =  nameof(Copy_Basics);
+        private readonly string WorkingFolder =  nameof(Runner_Run);
 
         private string SourcePath;
         private string WorkingPath;

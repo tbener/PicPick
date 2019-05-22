@@ -11,34 +11,20 @@ using System.Text;
 using System.Threading.Tasks;
 using TalUtils;
 
-namespace PicPick.UnitTests.Core
+namespace PicPick.UnitTests.Core.AnalyzerTests
 {
     [TestClass]
-    public class AnalyzerTests
+    public class Analyzer_ValidateFields
     {
-        private readonly string BASE_PATH = Path.GetFullPath(PathHelper.ExecutionPath(@"..\..\Test Files"));
-        private readonly string BaseFolder = @"Base\Zoo";
-        private readonly string WorkingFolder = nameof(Copy_Basics);
-
-        private string SourcePath;
-        private string WorkingPath;
-
+        
         private IActivity _activity;
         private Analyzer _analyzer;
 
         [TestInitialize]
         public void Initialize()
         {
-            WorkingPath = PathHelper.GetFullPath(BASE_PATH, WorkingFolder);
-            if (PathHelper.Exists(WorkingPath))
-                Cleanup();
-            SourcePath = Path.Combine(WorkingPath, "Source");
-
-            var sourceFiles = new List<string>(Directory.GetFiles(Path.Combine(BASE_PATH, BaseFolder)));
-            ShellFileOperation.CopyItems(sourceFiles, TalUtils.PathHelper.GetFullPath(SourcePath, true));
-
             _activity = new PicPickProjectActivity("test");
-            _activity.Source.Path = SourcePath;
+            _activity.Source.Path = @"c:\";
 
             _analyzer = new Analyzer(_activity);
         }
@@ -46,8 +32,8 @@ namespace PicPick.UnitTests.Core
         [TestCleanup]
         public void Cleanup()
         {
-            // delete all created folders
-            Directory.Delete(WorkingPath, true);
+            _analyzer = null;
+            _activity = null;
         }
 
         [TestMethod]
@@ -55,12 +41,18 @@ namespace PicPick.UnitTests.Core
         {
             // arrange
             string expected = "";
+            _activity.DestinationList.Add(
+                new PicPickProjectActivityDestination()
+                {
+                    Path = @"C:\test1"
+                });
 
             // act
             string actual = "error";
             try
             {
                 _analyzer.ValidateFields();
+                actual = "";
             }
             catch (Exception ex)
             {
@@ -102,7 +94,8 @@ namespace PicPick.UnitTests.Core
             _activity.DestinationList.Add(
                 new PicPickProjectActivityDestination()
                 {
-                    Path = _activity.Source.Path
+                    Path = _activity.Source.Path,
+                    Template = ""
                 }
                 );
 

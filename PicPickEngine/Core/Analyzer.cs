@@ -131,15 +131,22 @@ namespace PicPick.Core
         {
             string realPath;
             bool isRealTemplate;
+
+            if (_activity.Source == null || _activity.Source.Path == "")
+                throw new NoSourceException();
+
+            if (!Directory.Exists(_activity.Source.Path))
+                throw new SourceDirectoryNotFoundException();
+
             if (_activity.DestinationList.Count == 0)
                 throw new NoDestinationsException();
 
-            foreach (var dest in _activity.DestinationList)
+            foreach (var dest in _activity.DestinationList.Where(d => d.Active))
             {
                 realPath = dest.GetTemplatePath(DateTime.Now);
                 isRealTemplate = !realPath.Equals(dest.Template);
                 if (isRealTemplate)
-                    return;
+                    continue;
 
                 realPath = Path.Combine(PathHelper.GetFullPath(_activity.Source.Path, dest.Path), dest.Template);
 

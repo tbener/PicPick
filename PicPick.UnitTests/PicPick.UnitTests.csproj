@@ -52,10 +52,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Copy_Conflicts.cs" />
-    <Compile Include="Core\AnalyzerTests.cs" />
-    <Compile Include="Core\Copy_Basics.cs" />
+    <Compile Include="Core\AnalyzerTests\Analyzer_CreateMapping.cs" />
+    <Compile Include="Core\AnalyzerTests\Analyzer_ValidateFields.cs" />
+    <Compile Include="Core\RunnerTests\Runner_Run.cs" />
     <Compile Include="IsDirty_LoadedProject.cs" />
     <Compile Include="IsDirty_EmptyProject.cs" />
+    <Compile Include="Models\Activity_Source.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

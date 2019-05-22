@@ -56,8 +56,11 @@ namespace PicPick.Models
             DisposeFileList();
 
             List<string> lstFiles = new List<string>();
-            string[] filters = this.Filter.Split(new char[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries);
+            string[] filters = this.Filter.Replace(" ", "").Split(new char[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries);
             SearchOption searchOption = IncludeSubFolders ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
+
+            if (filters.Count() == 0 || filters.Contains("*.*"))
+                filters = new []{"*.*"};
 
             // loop on filters
             foreach (string fltr in filters)
