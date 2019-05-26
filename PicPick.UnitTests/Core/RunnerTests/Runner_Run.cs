@@ -24,51 +24,44 @@ namespace PicPick.UnitTests.Core.RunnerTests
     [TestClass]
     public class Runner_Run
     {
+        const string SUB_DIR = @"_SourceFiles\RunnerTest";
 
-        private readonly string BASE_PATH = Path.GetFullPath(PathHelper.ExecutionPath(@"..\..\Test Files"));
-        private readonly string BaseFolder = @"Base\Zoo";
-        private readonly string WorkingFolder =  nameof(Runner_Run);
+        private static readonly string BASE_PATH = Path.GetFullPath(PathHelper.ExecutionPath(@"..\..\Test Files"));
+        private static readonly string BaseFolder = @"Base\Zoo";
 
-        private string SourcePath;
-        private string WorkingPath;
+        private static string SourcePath;
+        private static string DestinationPath;
 
         private PicPickProject _proj;
         private IActivity _activity;
         private Runner _runner;
 
-        [TestInitialize]
-        public void Initialize()
+        [ClassInitialize]
+        public static void InitFiles(TestContext testContext)
         {
-            WorkingPath = PathHelper.GetFullPath(BASE_PATH, WorkingFolder);
-            if (PathHelper.Exists(WorkingPath))
-                Cleanup();
-            SourcePath = Path.Combine(WorkingPath, "Source");
+            SourcePath = PathHelper.GetFullPath(testContext.TestDir, SUB_DIR + "\\source", true);
+            DestinationPath = PathHelper.GetFullPath(testContext.TestDir, SUB_DIR + "\\destination", true);
 
             var sourceFiles = new List<string>(Directory.GetFiles(Path.Combine(BASE_PATH, BaseFolder)));
-            ShellFileOperation.CopyItems(sourceFiles, TalUtils.PathHelper.GetFullPath(SourcePath, true));
+            ShellFileOperation.CopyItems(sourceFiles, PathHelper.GetFullPath(SourcePath, true));
+        }
 
-            _proj = new PicPickProject();
+        [TestInitialize]
+        public void InitActivity()
+        {
             _activity = new PicPickProjectActivity("test");
             _activity.Source.Path = SourcePath;
-            _proj.ActivityList.Add(_activity as PicPickProjectActivity);
 
+            _proj = new PicPickProject();
             _runner = new Runner(_activity, _proj.Options);
         }
 
-        [TestCleanup]
-        public void Cleanup()
-        {
-            // delete all created folders
-            Directory.Delete(WorkingPath, true);
-        }
 
         [TestMethod]
-        public async Task Runner_NoTepmlate_FolderCreated()
+        public async Task Runner_NoTemplate_FolderCreated()
         {
-            //PicPickProjectActivity act = _proj.ActivityList.First();
             PicPickProjectActivityDestination dest = new PicPickProjectActivityDestination();
-            string checkPath;
-            dest.Path = Path.Combine(WorkingPath, "yyyy");
+            dest.Path = Path.Combine(DestinationPath, "yyyy");
             dest.Template = "";
             _activity.DestinationList.Add(dest);
 
@@ -77,9 +70,10 @@ namespace PicPick.UnitTests.Core.RunnerTests
             await _runner.Run(new ProgressInformation(), new CancellationTokenSource().Token);
 
             // folder "yyyy"
-            checkPath = Path.Combine(WorkingPath, "yyyy");
+            string checkPath = Path.Combine(DestinationPath, "yyyy");
             Assert.IsTrue(Directory.Exists(checkPath), $"Folder {checkPath} doesn't exist.");
         }
+        
 
         //[TestMethod]
         //public async Task Copy_BasicTemlpate_FoldersCreated()
@@ -102,7 +96,7 @@ namespace PicPick.UnitTests.Core.RunnerTests
 
         //    await act.Start(new ProgressInformation(), new CancellationTokenSource().Token);
 
-            
+
         //    // folder "2019"
         //    checkPath = Path.Combine(WorkingPath, "2019");
         //    Assert.IsTrue(Directory.Exists(checkPath), $"Folder {checkPath} doesn't exist.");

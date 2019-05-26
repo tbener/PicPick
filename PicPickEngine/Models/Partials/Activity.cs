@@ -67,7 +67,7 @@ namespace PicPick.Models
 
 
         [XmlIgnore]
-        public bool Initialized { get; private set; }
+        public bool Initialized { get; set; }
 
         [XmlIgnore]
         public FileExistsResponseEnum FileExistsResponse { get; set; }

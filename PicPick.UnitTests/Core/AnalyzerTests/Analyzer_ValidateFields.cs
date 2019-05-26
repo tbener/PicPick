@@ -90,7 +90,7 @@ namespace PicPick.UnitTests.Core.AnalyzerTests
         public void ValidateFields_DestinationEqualsSource_ThrowException()
         {
             // arrange
-            _activity.Source.Path = @"c:\temp";
+            _activity.Source.Path = PathHelper.ExecutionPath();     // we must have an existing path
             _activity.DestinationList.Add(
                 new PicPickProjectActivityDestination()
                 {

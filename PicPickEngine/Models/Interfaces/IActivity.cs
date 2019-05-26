@@ -12,7 +12,7 @@ namespace PicPick.Models
         bool Active { get; set; }
         bool DeleteSourceFiles { get; set; }
         ObservableCollection<PicPickProjectActivityDestination> DestinationList { get; }
-        bool Initialized { get; }
+        bool Initialized { get; set; }
         bool IsRunning { get; set; }
         string Name { get; set; }
         PicPickProjectActivitySource Source { get; set; }

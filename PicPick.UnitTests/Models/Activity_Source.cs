@@ -16,9 +16,9 @@ namespace PicPick.UnitTests.Models
     [TestClass]
     public class Activity_Source
     {
+        const string SUB_DIR = @"_SourceFiles\FilterTest";
         private static string SourcePath;
 
-        
         private static void CreateFiles(int count, string extension, string subfolder = "")
         {
             string dir = PathHelper.GetFullPath(SourcePath, subfolder, true) + "\\";
@@ -28,11 +28,10 @@ namespace PicPick.UnitTests.Models
             }
         }
 
-        [AssemblyInitialize]
+        [ClassInitialize]
         public static void Initialize(TestContext testContext)
         {
-            
-            SourcePath = PathHelper.GetFullPath(testContext.TestDir, "_SourceFiles", false);
+            SourcePath = PathHelper.GetFullPath(testContext.TestDir, SUB_DIR, true);
 
             CreateFiles(10, ".jpg");
             CreateFiles(10, ".tmp");
@@ -40,12 +39,7 @@ namespace PicPick.UnitTests.Models
             CreateFiles(5, ".tmp", "sub1");
             CreateFiles(10, ".tal");
         }
-
-        [AssemblyCleanup]
-        public static void Cleanup()
-        {
-            //the files should be deleted by MSTest
-        }
+        
 
         [DataTestMethod]
         [DataRow("*.jpg", false, 10)]

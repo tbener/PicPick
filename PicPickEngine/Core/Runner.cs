@@ -34,7 +34,7 @@ namespace PicPick.Core
             Analyzer analyzer = new Analyzer(_activity);
 
             // Initialize.Fills the Mapping dictionary
-            if (_activity.Mapping == null)
+            if (!_activity.Initialized)
             {
                 // When using UI, the Analyze is usually called beforehand, as it gives the initial progress and status information.
                 await analyzer.CreateMapping(progressInfo, cancellationToken);
@@ -103,6 +103,7 @@ namespace PicPick.Core
                 progressInfo.Done = true;
                 await Task.Run(() => progressInfo.Report());
                 _activity.IsRunning = false;
+                _activity.Initialized = false;
                 EventAggregatorHelper.PublishActivityEnded();
             }
 

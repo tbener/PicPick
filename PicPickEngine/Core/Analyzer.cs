@@ -85,6 +85,7 @@ namespace PicPick.Core
             }
 
             MappingCompletedSuccessfully = true;
+            _activity.Initialized = true;
             progressInfo.MainOperation = "Finished Analyzing";
 
         }
