@@ -10,6 +10,7 @@ using PicPick.Models;
 using System.Threading;
 using System.Threading.Tasks;
 using PicPick.Core;
+using PicPick.Exceptions;
 
 namespace PicPick.UnitTests.Core.RunnerTests
 {
@@ -35,6 +36,8 @@ namespace PicPick.UnitTests.Core.RunnerTests
         private PicPickProject _proj;
         private IActivity _activity;
         private Runner _runner;
+
+        public TestContext TestContext { get; set; }
 
         [ClassInitialize]
         public static void InitFiles(TestContext testContext)
@@ -65,6 +68,7 @@ namespace PicPick.UnitTests.Core.RunnerTests
             dest.Template = "";
             _activity.DestinationList.Add(dest);
 
+            Assert.AreEqual(1, _activity.DestinationList.Count());
             Assert.IsFalse(dest.HasTemplate, "There was no Template supplied and the HasTemplate property returned true.");
 
             await _runner.Run(new ProgressInformation(), new CancellationTokenSource().Token);
@@ -73,158 +77,199 @@ namespace PicPick.UnitTests.Core.RunnerTests
             string checkPath = Path.Combine(DestinationPath, "yyyy");
             Assert.IsTrue(Directory.Exists(checkPath), $"Folder {checkPath} doesn't exist.");
         }
-        
 
-        //[TestMethod]
-        //public async Task Copy_BasicTemlpate_FoldersCreated()
-        //{
-        //    PicPickProjectActivity act = _proj.ActivityList.First();
-        //    PicPickProjectActivityDestination dest;
-        //    string checkPath;
+        [DataTestMethod]
+        [DataRow("yyyy", "2019")]
+        public async Task Copy_BasicTemlpate_FolderCreated(string template, string expectedFolder)
+        {
+            PicPickProjectActivityDestination dest = new PicPickProjectActivityDestination();
+            dest.Path = DestinationPath;
+            dest.Template = template;
+            _activity.DestinationList.Add(dest);
 
-        //    dest = new PicPickProjectActivityDestination();
-        //    dest.Path = WorkingPath;
-        //    dest.Template = "yyyy";
-        //    act.DestinationList.Add(dest);
+            Assert.AreEqual(1, _activity.DestinationList.Count());
+            Assert.IsTrue(dest.HasTemplate, "There is a Template supplied and the HasTemplate property returned false.");
 
-        //    dest = new PicPickProjectActivityDestination();
-        //    dest.Path = WorkingPath;
-        //    dest.Template = "yyyy-MM";
-        //    act.DestinationList.Add(dest);
+            await _runner.Run(new ProgressInformation(), new CancellationTokenSource().Token);
 
-        //    Assert.IsTrue(dest.HasTemplate, "There is a Template supplied and the HasTemplate property returned false.");
-
-        //    await act.Start(new ProgressInformation(), new CancellationTokenSource().Token);
+           
+            // check that expected sub-folder exists
+            string expectedPath = Path.Combine(DestinationPath, expectedFolder);
+            Assert.IsTrue(Directory.Exists(expectedPath), $"Sub-folder {expectedFolder} doesn't exist.");
+        }
 
 
-        //    // folder "2019"
-        //    checkPath = Path.Combine(WorkingPath, "2019");
-        //    Assert.IsTrue(Directory.Exists(checkPath), $"Folder {checkPath} doesn't exist.");
-        //    // folder "2019-05"
-        //    checkPath = Path.Combine(WorkingPath, "2019-05");
-        //    Assert.IsTrue(Directory.Exists(checkPath), $"Folder {checkPath} doesn't exist.");
-        //}
+        [DataTestMethod]
+        [DynamicData(nameof(GetTestData), DynamicDataSourceType.Method)]
+        public async Task Copy_MultipleDestinations_FoldersCreated(string destFolder, string[] templates, string[] expectedFolders)
+        {
+            // Arrenge
+            PicPickProjectActivityDestination dest;
+            string destination = Path.Combine(DestinationPath, destFolder);
 
-        //[TestMethod]
-        //public async Task Copy_TemlpateWithSubFolder_FoldersCreated()
-        //{
-        //    PicPickProjectActivity act = _proj.ActivityList.First();
-        //    PicPickProjectActivityDestination dest;
-        //    string checkPath;
-
-        //    dest = new PicPickProjectActivityDestination();
-        //    dest.Path = WorkingPath;
-        //    dest.Template = @"yyyy\\MM";
-        //    act.DestinationList.Add(dest);
-
-        //    await act.Start(new ProgressInformation(), new CancellationTokenSource().Token);
+            foreach (string template in templates)
+            {
+                dest = new PicPickProjectActivityDestination();
+                dest.Path = destination;
+                dest.Template = template;
+                _activity.DestinationList.Add(dest);
+            }
 
 
-        //    // folder "2019\05"
-        //    checkPath = Path.Combine(WorkingPath, "2019\\05");
-        //    Assert.IsTrue(Directory.Exists(checkPath), $"Folder {checkPath} doesn't exist.");
-        //}
+            Assert.AreEqual(templates.Length, _activity.DestinationList.Count());
 
-        ///// <summary>
-        ///// Destination has 2 properties that compose the full path - Path + Template.
-        ///// If the path is relative, it is relative to the Source, which means if both properties are empty,
-        ///// the destination is the source itself.
-        ///// The UI should have some sort of handling for that case, but there must be another protection from this situation in the engine level.
-        ///// </summary>
-        ///// <returns></returns>
-        //[TestMethod]
-        //public async Task Copy_EmptyDestination_ThrowException()
-        //{
-        //    PicPickProjectActivity act = _proj.ActivityList.First();
-        //    PicPickProjectActivityDestination dest = new PicPickProjectActivityDestination();
-        //    dest.Path = "";
-        //    dest.Template = "";
-        //    act.DestinationList.Add(dest);
+            // Act
+            await _runner.Run(new ProgressInformation(), new CancellationTokenSource().Token);
 
+            // Assert
+            DirectoryInfo dirInfo = new DirectoryInfo(destination);
+            var subDirs = new List<string>(dirInfo.GetDirectories().Select(d => d.Name));
 
-        //    await Assert.ThrowsExceptionAsync<Exception>(async () =>
-        //        await act.Start(new ProgressInformation(), new CancellationTokenSource().Token)
-        //        );
+            string checkPath;
+            foreach (string dir in expectedFolders)
+            {
+                TestContext.WriteLine($"Checking {dir}...");
+                checkPath = Path.Combine(destination, dir);
+                Assert.IsTrue(Directory.Exists(checkPath), $"Folder {dir} doesn't exist.");
 
-        //    // Should raise error
-        //}
+                Assert.IsTrue(subDirs.Contains(dir));
+                subDirs.Remove(dir);
+            }
 
-        //[TestMethod]
-        //public async Task Copy_DestinationEqualsSource_ThrowException()
-        //{
-        //    PicPickProjectActivity act = _proj.ActivityList.First();
-        //    PicPickProjectActivityDestination dest = new PicPickProjectActivityDestination();
-        //    dest.Path = SourcePath;
-        //    dest.Template = "";
-        //    act.DestinationList.Add(dest);
+            if (subDirs.Count() > 0)
+            {
+                string additionalDirs = "";
+                TestContext.WriteLine("More folders created:");
+                foreach (string dir in subDirs)
+                {
+                    additionalDirs += $"[{dir}] ";
+                    TestContext.WriteLine($"\t{dir}");
+                }
+                Assert.Fail($"The folders {additionalDirs} were unexpectedly created.");
+            }
 
+            
+        }
 
-        //    await Assert.ThrowsExceptionAsync<Exception>(async () =>
-        //        await act.Start(new ProgressInformation(), new CancellationTokenSource().Token)
-        //        );
+        public static IEnumerable<object[]> GetTestData()
+        {
+            yield return new object[] {"1", new string[] { "yyyy", "yyyy-MM" }, new string[] { "2019", "2019-05" } };
+            yield return new object[] {"2", new string[] { "yyyy", "yyyy-mm" }, new string[] { "2019", "2019-46", "2019-58" } };
+        }
 
-        //    // Should raise error
-        //}
+        [DataTestMethod]
+        [DataRow(@"yyyy\\MM", "2019\\05")]
+        public async Task Copy_TemlpateWithSubFolder_FoldersCreated(string template, string expected)
+        {
+            var dest = new PicPickProjectActivityDestination();
+            dest.Path = DestinationPath;
+            dest.Template = template;
+            _activity.DestinationList.Add(dest);
 
-        //[TestMethod]
-        //public async Task Copy_DeleteSourceFilesFalse_SourceUnchanged()
-        //{
-        //    PicPickProjectActivity act = _proj.ActivityList.First();
-        //    PicPickProjectActivityDestination dest;
-        //    act.DeleteSourceFiles = false;
+            // Act
+            await _runner.Run(new ProgressInformation(), new CancellationTokenSource().Token);
 
-        //    // get source start hash
-        //    DirectoryInfo di = new DirectoryInfo(SourcePath);
-        //    string hash1 = GetDirectoryHash(di);
+            // Assert
+            string checkPath = Path.Combine(DestinationPath, expected);
+            Assert.IsTrue(Directory.Exists(checkPath), $"Folder {checkPath} doesn't exist.");
+        }
 
-        //    dest = new PicPickProjectActivityDestination();
-        //    dest.Path = WorkingPath;
-        //    dest.Template = "yyyy";
-        //    act.DestinationList.Add(dest);
-
-        //    await act.Start(new ProgressInformation(), new CancellationTokenSource().Token);
-
-
-        //    // compare hashes
-        //    Assert.IsTrue(GetDirectoryHash(di).Equals(hash1));
-        //}
-
-        ///// <summary>
-        ///// On this test we assume all files included (no specific filter) and no skipping.
-        ///// So we expect an empty folder in the end.
-        ///// </summary>
-        ///// <returns></returns>
-        //[TestMethod]
-        //public async Task Copy_DeleteSourceFilesTrue_SourceFilesDeleted()
-        //{
-        //    PicPickProjectActivity act = _proj.ActivityList.First();
-        //    PicPickProjectActivityDestination dest;
-        //    act.DeleteSourceFiles = true;
-
-        //    dest = new PicPickProjectActivityDestination();
-        //    dest.Path = WorkingPath;
-        //    dest.Template = "yyyy";
-        //    act.DestinationList.Add(dest);
-
-        //    await act.Start(new ProgressInformation(), new CancellationTokenSource().Token);
+        /// <summary>
+        /// Destination has 2 properties that compose the full path - Path + Template.
+        /// If the path is relative, it is relative to the Source, which means if both properties are empty,
+        /// the destination is the source itself.
+        /// The UI should have some sort of handling for that case, but there must be another protection from this situation in the engine level.
+        /// </summary>
+        /// <returns></returns>
+        [TestMethod]
+        public async Task Copy_EmptyDestination_ThrowException()
+        {
+            PicPickProjectActivityDestination dest = new PicPickProjectActivityDestination();
+            dest.Path = "";
+            dest.Template = "";
+            _activity.DestinationList.Add(dest);
 
 
-        //    // verify source files deleted
-        //    Assert.IsTrue((new DirectoryInfo(SourcePath)).GetFiles().Count() == 0);
-        //}
+            await Assert.ThrowsExceptionAsync<DestinationEqualsSourceException>(async () =>
+                await _runner.Run(new ProgressInformation(), new CancellationTokenSource().Token)
+                );
 
-        //// Currently we just compare the first level file list
-        //public string GetDirectoryHash(DirectoryInfo di)
-        //{
-        //    StringBuilder sb = new StringBuilder();
+            // Should raise error
+        }
 
-        //    foreach (var file in di.GetFiles())
-        //    {
-        //        sb.Append(file.Name);
-        //    }
+        [TestMethod]
+        public async Task Copy_DestinationEqualsSource_ThrowException()
+        {
+            PicPickProjectActivityDestination dest = new PicPickProjectActivityDestination();
+            dest.Path = SourcePath;
+            dest.Template = "";
+            _activity.DestinationList.Add(dest);
 
-        //    return sb.ToString();
-        //}
+
+            await Assert.ThrowsExceptionAsync<DestinationEqualsSourceException>(async () =>
+                await _runner.Run(new ProgressInformation(), new CancellationTokenSource().Token)
+                );
+
+            // Should raise error
+        }
+
+        [TestMethod]
+        public async Task Copy_DeleteSourceFilesFalse_SourceUnchanged()
+        {
+            PicPickProjectActivityDestination dest;
+            _activity.DeleteSourceFiles = false;
+
+            // get source start hash
+            DirectoryInfo di = new DirectoryInfo(SourcePath);
+            string hash1 = GetDirectoryHash(di);
+
+            dest = new PicPickProjectActivityDestination();
+            dest.Path = DestinationPath;
+            dest.Template = "yyyy";
+            _activity.DestinationList.Add(dest);
+
+            await _runner.Run(new ProgressInformation(), new CancellationTokenSource().Token);
+
+
+            // compare hashes
+            Assert.IsTrue(GetDirectoryHash(di).Equals(hash1));
+        }
+
+        /// <summary>
+        /// On this test we assume all files included (no specific filter) and no skipping.
+        /// So we expect an empty folder in the end.
+        /// </summary>
+        /// <returns></returns>
+        [TestMethod]
+        public async Task Copy_DeleteSourceFilesTrue_SourceFilesDeleted()
+        {
+            PicPickProjectActivityDestination dest;
+            _activity.DeleteSourceFiles = true;
+            _activity.Source.Filter = "";
+
+            dest = new PicPickProjectActivityDestination();
+            dest.Path = DestinationPath;
+            dest.Template = "yyyy";
+            _activity.DestinationList.Add(dest);
+
+            await _runner.Run(new ProgressInformation(), new CancellationTokenSource().Token);
+
+            // verify source files deleted
+            Assert.AreEqual(0, (new DirectoryInfo(SourcePath)).GetFiles().Count());
+        }
+
+        // Currently we just compare the first level file list
+        public string GetDirectoryHash(DirectoryInfo di)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            foreach (var file in di.GetFiles())
+            {
+                sb.Append(file.Name);
+            }
+
+            return sb.ToString();
+        }
     }
     
 }
