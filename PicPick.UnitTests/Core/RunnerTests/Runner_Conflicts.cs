@@ -10,7 +10,7 @@
 //using PicPick.Models;
 //using System.Threading.Tasks;
 
-//namespace PicPick.UnitTests
+//namespace PicPick.UnitTests.Core.RunnerTests
 //{
 //    /// <summary>
 //    /// BASE_PATH 
@@ -20,12 +20,11 @@
 //    /// 
 //    /// </summary>
 //    [TestClass]
-//    public class Copy_Conflicts
+//    public class Runner_Conflicts
 //    {
 
 //        private readonly string BASE_PATH = Path.GetFullPath(PathHelper.ExecutionPath(@"..\..\Test Files"));
 //        private readonly string BaseFolder = @"Base\Zoo";
-//        private readonly string WorkingFolder =  nameof(Copy_Basics);
 
 //        private string SourcePath;
 //        private string WorkingPath;
@@ -34,7 +33,7 @@
 //        private PicPickProjectActivity _activity;
 //        private List<string> _sourceFiles;
 
-//        [TestInitialize]
+//        [ClassInitialize]
 //        public async Task Initialize()
 //        {
 //            // set pathes
@@ -64,12 +63,6 @@
 //            await _activity.Start(new ProgressInformation(), new CancellationTokenSource().Token);
 //        }
 
-//        [TestCleanup]
-//        public void Cleanup()
-//        {
-//            // delete all created folders
-//            Directory.Delete(WorkingPath, true);
-//        }
 
 //        [TestMethod]
 //        public async Task Copy_FilesExistsOvewrite_FileOverwriten()

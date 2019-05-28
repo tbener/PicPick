@@ -2,7 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PicPick.Models;
 
-namespace PicPick.UnitTests
+namespace PicPick.UnitTests.IsDirty
 {
     [TestClass]
     public class IsDirty_EmptyProject

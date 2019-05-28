@@ -25,7 +25,7 @@ namespace PicPick.UnitTests.Core.RunnerTests
     [TestClass]
     public class Runner_Run
     {
-        const string SUB_DIR = @"_SourceFiles\RunnerTest";
+        const string SUB_DIR = @"_SourceFiles\RunnerBasicTest";
 
         private static readonly string BASE_PATH = Path.GetFullPath(PathHelper.ExecutionPath(@"..\..\Test Files"));
         private static readonly string BaseFolder = @"Base\Zoo";
@@ -80,7 +80,7 @@ namespace PicPick.UnitTests.Core.RunnerTests
 
         [DataTestMethod]
         [DataRow("yyyy", "2019")]
-        public async Task Copy_BasicTemlpate_FolderCreated(string template, string expectedFolder)
+        public async Task Runner_BasicTemlpate_FolderCreated(string template, string expectedFolder)
         {
             PicPickProjectActivityDestination dest = new PicPickProjectActivityDestination();
             dest.Path = DestinationPath;
@@ -101,7 +101,7 @@ namespace PicPick.UnitTests.Core.RunnerTests
 
         [DataTestMethod]
         [DynamicData(nameof(GetTestData), DynamicDataSourceType.Method)]
-        public async Task Copy_MultipleDestinations_FoldersCreated(string destFolder, string[] templates, string[] expectedFolders)
+        public async Task Runner_MultipleDestinations_FoldersCreated(string destFolder, string[] templates, string[] expectedFolders)
         {
             // Arrenge
             PicPickProjectActivityDestination dest;
@@ -159,7 +159,7 @@ namespace PicPick.UnitTests.Core.RunnerTests
 
         [DataTestMethod]
         [DataRow(@"yyyy\\MM", "2019\\05")]
-        public async Task Copy_TemlpateWithSubFolder_FoldersCreated(string template, string expected)
+        public async Task Runner_TemlpateWithSubFolder_FoldersCreated(string template, string expected)
         {
             var dest = new PicPickProjectActivityDestination();
             dest.Path = DestinationPath;
@@ -182,7 +182,7 @@ namespace PicPick.UnitTests.Core.RunnerTests
         /// </summary>
         /// <returns></returns>
         [TestMethod]
-        public async Task Copy_EmptyDestination_ThrowException()
+        public async Task Runner_EmptyDestination_ThrowException()
         {
             PicPickProjectActivityDestination dest = new PicPickProjectActivityDestination();
             dest.Path = "";
@@ -198,7 +198,7 @@ namespace PicPick.UnitTests.Core.RunnerTests
         }
 
         [TestMethod]
-        public async Task Copy_DestinationEqualsSource_ThrowException()
+        public async Task Runner_DestinationEqualsSource_ThrowException()
         {
             PicPickProjectActivityDestination dest = new PicPickProjectActivityDestination();
             dest.Path = SourcePath;
@@ -214,7 +214,7 @@ namespace PicPick.UnitTests.Core.RunnerTests
         }
 
         [TestMethod]
-        public async Task Copy_DeleteSourceFilesFalse_SourceUnchanged()
+        public async Task Runner_DeleteSourceFilesFalse_SourceUnchanged()
         {
             PicPickProjectActivityDestination dest;
             _activity.DeleteSourceFiles = false;
@@ -241,21 +241,31 @@ namespace PicPick.UnitTests.Core.RunnerTests
         /// </summary>
         /// <returns></returns>
         [TestMethod]
-        public async Task Copy_DeleteSourceFilesTrue_SourceFilesDeleted()
+        public async Task Runner_DeleteSourceFilesTrue_SourceFilesDeleted()
         {
-            PicPickProjectActivityDestination dest;
+            // Arrange
             _activity.DeleteSourceFiles = true;
-            _activity.Source.Filter = "";
 
-            dest = new PicPickProjectActivityDestination();
-            dest.Path = DestinationPath;
-            dest.Template = "yyyy";
+            // Copy files to a new source folder - those files are expected to be deleted
+            var sourceFiles = new List<string>(Directory.GetFiles(Path.Combine(BASE_PATH, BaseFolder)));
+            var newSourcePath = PathHelper.GetFullPath(SourcePath, "DeleteSourceFilesTest", true);
+            ShellFileOperation.CopyItems(sourceFiles, newSourcePath);
+
+            // set the new source
+            _activity.Source.Path = newSourcePath;
+            _activity.Source.Filter = "*.*";
+
+            // set the destination
+            PicPickProjectActivityDestination dest = new PicPickProjectActivityDestination();
+            dest.Path = Path.Combine(DestinationPath, "DeleteSourceFilesTest");
+            dest.Template = "";
             _activity.DestinationList.Add(dest);
 
+            // Act
             await _runner.Run(new ProgressInformation(), new CancellationTokenSource().Token);
 
             // verify source files deleted
-            Assert.AreEqual(0, (new DirectoryInfo(SourcePath)).GetFiles().Count());
+            Assert.AreEqual(0, (new DirectoryInfo(newSourcePath)).GetFiles().Count());
         }
 
         // Currently we just compare the first level file list

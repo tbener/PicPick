@@ -3,7 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PicPick.Models;
 using TalUtils;
 
-namespace PicPick.UnitTests
+namespace PicPick.UnitTests.IsDirty
 {
     [TestClass]
     public class IsDirty_LoadedProject
