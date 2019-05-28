@@ -23,40 +23,20 @@ namespace PicPick.UnitTests.Core.RunnerTests
     /// </summary>
     /// 
     [TestClass]
-    public class Runner_Run
+    public class Runner_Run : RunnerTestBaseClass
     {
-        const string SUB_DIR = @"_SourceFiles\RunnerBasicTest";
-
-        private static readonly string BASE_PATH = Path.GetFullPath(PathHelper.ExecutionPath(@"..\..\Test Files"));
-        private static readonly string BaseFolder = @"Base\Zoo";
-
-        private static string SourcePath;
-        private static string DestinationPath;
-
-        private PicPickProject _proj;
-        private IActivity _activity;
-        private Runner _runner;
-
-        public TestContext TestContext { get; set; }
+        private static string subDir = @"_SourceFiles\RunnerBasicTest";
 
         [ClassInitialize]
-        public static void InitFiles(TestContext testContext)
+        public static void ClassInit(TestContext testContext)
         {
-            SourcePath = PathHelper.GetFullPath(testContext.TestDir, SUB_DIR + "\\source", true);
-            DestinationPath = PathHelper.GetFullPath(testContext.TestDir, SUB_DIR + "\\destination", true);
-
-            var sourceFiles = new List<string>(Directory.GetFiles(Path.Combine(BASE_PATH, BaseFolder)));
-            ShellFileOperation.CopyItems(sourceFiles, PathHelper.GetFullPath(SourcePath, true));
+            InitFolders(testContext, subDir);
         }
 
         [TestInitialize]
-        public void InitActivity()
+        public void TestInit()
         {
-            _activity = new PicPickProjectActivity("test");
-            _activity.Source.Path = SourcePath;
-
-            _proj = new PicPickProject();
-            _runner = new Runner(_activity, _proj.Options);
+            InitActivity();
         }
 
 
@@ -247,9 +227,8 @@ namespace PicPick.UnitTests.Core.RunnerTests
             _activity.DeleteSourceFiles = true;
 
             // Copy files to a new source folder - those files are expected to be deleted
-            var sourceFiles = new List<string>(Directory.GetFiles(Path.Combine(BASE_PATH, BaseFolder)));
-            var newSourcePath = PathHelper.GetFullPath(SourcePath, "DeleteSourceFilesTest", true);
-            ShellFileOperation.CopyItems(sourceFiles, newSourcePath);
+            var newSourcePath = Path.Combine(SourcePath, "DeleteSourceFilesTest");
+            CopyFilesTo(newSourcePath);
 
             // set the new source
             _activity.Source.Path = newSourcePath;
