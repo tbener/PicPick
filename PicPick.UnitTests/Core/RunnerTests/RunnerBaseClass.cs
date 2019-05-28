@@ -2,11 +2,9 @@
 using PicPick.Core;
 using PicPick.Helpers;
 using PicPick.Models;
-using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using TalUtils;
 
@@ -29,29 +27,36 @@ namespace PicPick.UnitTests.Core.RunnerTests
         protected static string SourcePath;
         protected static string DestinationPath;
 
+        protected IProject _project;
         protected IActivity _activity;
         protected Runner _runner;
 
         public TestContext TestContext { get; set; }
 
-        //public RunnerBaseClass(string subDir)
-        //{
-        //    SUB_DIR = subDir;
-        //}
+        public async Task Run()
+        {
+            await _runner.Run(new ProgressInformation(), new CancellationTokenSource().Token);
+        }
 
         public void InitActivity()
         {
             _activity = new PicPickProjectActivity("test");
             _activity.Source.Path = SourcePath;
 
-            var _proj = new PicPickProject();
-            _runner = new Runner(_activity, _proj.Options);
+            _project = new PicPickProject();
+            _runner = new Runner(_activity, _project.Options);
+        }
+
+        public string GetWorkingFolder(string subDir)
+        {
+            return Path.Combine(TestContext.TestDir, subDir);
         }
 
         public static void InitFolders(TestContext testContext, string subDirectory)
         {
-            SourcePath = PathHelper.GetFullPath(testContext.TestDir, subDirectory, true);
-            DestinationPath = PathHelper.GetFullPath(testContext.TestDir, subDirectory, true);
+            string testFilesDir = Path.Combine(testContext.TestDir, subDirectory);
+            SourcePath = PathHelper.GetFullPath(testFilesDir, "Source", true);
+            DestinationPath = PathHelper.GetFullPath(testFilesDir, "Destination", true);
 
             CopyFilesTo(SourcePath);
         }
@@ -60,6 +65,15 @@ namespace PicPick.UnitTests.Core.RunnerTests
         {
             var sourceFiles = new List<string>(Directory.GetFiles(Path.Combine(BASE_PATH, BaseFolder)));
             ShellFileOperation.CopyItems(sourceFiles, PathHelper.GetFullPath(dir, true));
+        }
+
+        protected PicPickProjectActivityDestination AddDestination(string path, string template = "")
+        {
+            PicPickProjectActivityDestination dest = new PicPickProjectActivityDestination();
+            dest.Path = path;
+            dest.Template = template;
+            _activity.DestinationList.Add(dest);
+            return dest;
         }
     }
 }

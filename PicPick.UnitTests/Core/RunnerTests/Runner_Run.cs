@@ -25,7 +25,7 @@ namespace PicPick.UnitTests.Core.RunnerTests
     [TestClass]
     public class Runner_Run : RunnerTestBaseClass
     {
-        private static string subDir = @"_SourceFiles\RunnerBasicTest";
+        private const string subDir = @"_SourceFiles\RunnerBasicTest";
 
         [ClassInitialize]
         public static void ClassInit(TestContext testContext)
@@ -43,10 +43,7 @@ namespace PicPick.UnitTests.Core.RunnerTests
         [TestMethod]
         public async Task Runner_NoTemplate_FolderCreated()
         {
-            PicPickProjectActivityDestination dest = new PicPickProjectActivityDestination();
-            dest.Path = Path.Combine(DestinationPath, "yyyy");
-            dest.Template = "";
-            _activity.DestinationList.Add(dest);
+            PicPickProjectActivityDestination dest = AddDestination(Path.Combine(DestinationPath, "yyyy"));
 
             Assert.AreEqual(1, _activity.DestinationList.Count());
             Assert.IsFalse(dest.HasTemplate, "There was no Template supplied and the HasTemplate property returned true.");
@@ -62,10 +59,7 @@ namespace PicPick.UnitTests.Core.RunnerTests
         [DataRow("yyyy", "2019")]
         public async Task Runner_BasicTemlpate_FolderCreated(string template, string expectedFolder)
         {
-            PicPickProjectActivityDestination dest = new PicPickProjectActivityDestination();
-            dest.Path = DestinationPath;
-            dest.Template = template;
-            _activity.DestinationList.Add(dest);
+            PicPickProjectActivityDestination dest = AddDestination(DestinationPath, template);
 
             Assert.AreEqual(1, _activity.DestinationList.Count());
             Assert.IsTrue(dest.HasTemplate, "There is a Template supplied and the HasTemplate property returned false.");
@@ -84,17 +78,12 @@ namespace PicPick.UnitTests.Core.RunnerTests
         public async Task Runner_MultipleDestinations_FoldersCreated(string destFolder, string[] templates, string[] expectedFolders)
         {
             // Arrenge
-            PicPickProjectActivityDestination dest;
             string destination = Path.Combine(DestinationPath, destFolder);
 
             foreach (string template in templates)
             {
-                dest = new PicPickProjectActivityDestination();
-                dest.Path = destination;
-                dest.Template = template;
-                _activity.DestinationList.Add(dest);
+                AddDestination(destination, template);
             }
-
 
             Assert.AreEqual(templates.Length, _activity.DestinationList.Count());
 
@@ -134,17 +123,15 @@ namespace PicPick.UnitTests.Core.RunnerTests
         public static IEnumerable<object[]> GetTestData()
         {
             yield return new object[] {"1", new string[] { "yyyy", "yyyy-MM" }, new string[] { "2019", "2019-05" } };
-            yield return new object[] {"2", new string[] { "yyyy", "yyyy-mm" }, new string[] { "2019", "2019-46", "2019-58" } };
+            yield return new object[] {"2", new string[] { "yyyy", "yyyy-dd" }, new string[] { "2019", "2019-01", "2019-02", "2019-03" } };
         }
 
         [DataTestMethod]
         [DataRow(@"yyyy\\MM", "2019\\05")]
         public async Task Runner_TemlpateWithSubFolder_FoldersCreated(string template, string expected)
         {
-            var dest = new PicPickProjectActivityDestination();
-            dest.Path = DestinationPath;
-            dest.Template = template;
-            _activity.DestinationList.Add(dest);
+            // Arrange
+            AddDestination(DestinationPath, template);
 
             // Act
             await _runner.Run(new ProgressInformation(), new CancellationTokenSource().Token);
@@ -164,11 +151,7 @@ namespace PicPick.UnitTests.Core.RunnerTests
         [TestMethod]
         public async Task Runner_EmptyDestination_ThrowException()
         {
-            PicPickProjectActivityDestination dest = new PicPickProjectActivityDestination();
-            dest.Path = "";
-            dest.Template = "";
-            _activity.DestinationList.Add(dest);
-
+            AddDestination("");
 
             await Assert.ThrowsExceptionAsync<DestinationEqualsSourceException>(async () =>
                 await _runner.Run(new ProgressInformation(), new CancellationTokenSource().Token)
@@ -180,11 +163,7 @@ namespace PicPick.UnitTests.Core.RunnerTests
         [TestMethod]
         public async Task Runner_DestinationEqualsSource_ThrowException()
         {
-            PicPickProjectActivityDestination dest = new PicPickProjectActivityDestination();
-            dest.Path = SourcePath;
-            dest.Template = "";
-            _activity.DestinationList.Add(dest);
-
+            AddDestination(SourcePath);
 
             await Assert.ThrowsExceptionAsync<DestinationEqualsSourceException>(async () =>
                 await _runner.Run(new ProgressInformation(), new CancellationTokenSource().Token)
@@ -196,20 +175,15 @@ namespace PicPick.UnitTests.Core.RunnerTests
         [TestMethod]
         public async Task Runner_DeleteSourceFilesFalse_SourceUnchanged()
         {
-            PicPickProjectActivityDestination dest;
             _activity.DeleteSourceFiles = false;
 
             // get source start hash
             DirectoryInfo di = new DirectoryInfo(SourcePath);
             string hash1 = GetDirectoryHash(di);
 
-            dest = new PicPickProjectActivityDestination();
-            dest.Path = DestinationPath;
-            dest.Template = "yyyy";
-            _activity.DestinationList.Add(dest);
+            AddDestination(DestinationPath, "yyyy");
 
             await _runner.Run(new ProgressInformation(), new CancellationTokenSource().Token);
-
 
             // compare hashes
             Assert.IsTrue(GetDirectoryHash(di).Equals(hash1));
@@ -235,10 +209,7 @@ namespace PicPick.UnitTests.Core.RunnerTests
             _activity.Source.Filter = "*.*";
 
             // set the destination
-            PicPickProjectActivityDestination dest = new PicPickProjectActivityDestination();
-            dest.Path = Path.Combine(DestinationPath, "DeleteSourceFilesTest");
-            dest.Template = "";
-            _activity.DestinationList.Add(dest);
+            AddDestination(Path.Combine(DestinationPath, "DeleteSourceFilesTest"));
 
             // Act
             await _runner.Run(new ProgressInformation(), new CancellationTokenSource().Token);
