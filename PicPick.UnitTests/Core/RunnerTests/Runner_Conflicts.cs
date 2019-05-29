@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PicPick.Core;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -40,7 +41,7 @@ namespace PicPick.UnitTests.Core.RunnerTests
         public void TestInit()
         {
             InitActivity();
-            
+
         }
 
 
@@ -61,17 +62,17 @@ namespace PicPick.UnitTests.Core.RunnerTests
         }
 
         [TestMethod]
-        public async Task Conflict_SingleFileDifferentSkip_Skipped()
+        public async Task Conflict_SingleFileDifferent_Skip()
         {
             // Arrenge
 
             // 1. general settings
-            FILE_STATUS expectedStatus = FILE_STATUS.SKIPPED;
             _project.Options.FileExistsResponse = FileExistsResponseEnum.SKIP;
+            string uniqueBasePath = GetWorkingFolder(Path.Combine(subDir, nameof(Conflict_SingleFileDifferent_Skip)));
+            FILE_STATUS expectedStatus = FILE_STATUS.SKIPPED;
             _activity.DeleteSourceFiles = true;
 
             // 2. files
-            string uniqueBasePath = GetWorkingFolder(Path.Combine(subDir, nameof(Conflict_SingleFileDifferentSkip_Skipped)));
             string sourcePath = PathHelper.GetFullPath(uniqueBasePath, "source", true);
             string destPath = PathHelper.GetFullPath(uniqueBasePath, "destination", true);
             string fileName = "01.jpg";
@@ -79,7 +80,7 @@ namespace PicPick.UnitTests.Core.RunnerTests
             File.Copy(_sourceFiles[1], Path.Combine(destPath, fileName));
 
             FileInfo fileInfoExpected = new FileInfo(_sourceFiles[1]);
-            
+
             AddDestination(destPath);
 
             _activity.Source.Path = sourcePath;
@@ -96,34 +97,187 @@ namespace PicPick.UnitTests.Core.RunnerTests
             Assert.IsTrue(File.Exists(checkedSourceFile), $"Source file disappeared: {checkedSourceFile}");
 
             // 2. file size in destination remained the same
-            Assert.AreEqual(fileInfoExpected.Length, fileInfoDest.Length, "File size in destination is not as expected.");
+            AssertFiles(fileInfoExpected, fileInfoDest);
 
-            // 3. file status is Skipped
+            // 3. file status
+            FILE_STATUS actualStatus = _activity.FilesInfo[checkedSourceFile].Status;
+            Assert.AreEqual(expectedStatus, actualStatus, "File status was not set as expected.");
+
+        }
+
+        [DataTestMethod]
+        [DataRow(true)]
+        [DataRow(false)]
+        public async Task Conflict_SingleFileDifferent_Overwrite(bool deleteSourceFiles)
+        {
+            // Arrenge
+
+            // 1. general settings
+            _project.Options.FileExistsResponse = FileExistsResponseEnum.OVERWRITE;
+            string uniqueBasePath = GetWorkingFolder(
+                Path.Combine(
+                    subDir,
+                    nameof(Conflict_SingleFileDifferent_Overwrite),
+                    deleteSourceFiles ? "del_source" : "no_del_source"));
+            FILE_STATUS expectedStatus = FILE_STATUS.COPIED;
+            _activity.DeleteSourceFiles = deleteSourceFiles;
+
+            // 2. files
+            string sourcePath = PathHelper.GetFullPath(uniqueBasePath, "source", true);
+            string destPath = PathHelper.GetFullPath(uniqueBasePath, "destination", true);
+            string fileName = "01.jpg";
+            File.Copy(_sourceFiles[0], Path.Combine(sourcePath, fileName));
+            File.Copy(_sourceFiles[1], Path.Combine(destPath, fileName));
+
+            FileInfo fileInfoExpected = new FileInfo(_sourceFiles[0]);
+
+            AddDestination(destPath);
+
+            _activity.Source.Path = sourcePath;
+
+            string checkedSourceFile = _activity.Source.FileList.First();
+
+            // Act
+            await Run();
+
+            // Assert
+            FileInfo fileInfoDest = new FileInfo(Path.Combine(destPath, fileName));
+
+            // 1. File deletion from source
+            string not = deleteSourceFiles ? string.Empty : "not ";
+            Assert.AreEqual(!deleteSourceFiles, File.Exists(checkedSourceFile), $"Source file does {not}exist: {checkedSourceFile}");
+
+            // 2. file size in destination remained the same
+            AssertFiles(fileInfoExpected, fileInfoDest);
+
+            // 3. file status
             FILE_STATUS actualStatus = _activity.FilesInfo[checkedSourceFile].Status;
             Assert.AreEqual(expectedStatus, actualStatus, "File status was not set as expected.");
 
         }
 
         [TestMethod]
-        [Ignore]
-        public async Task Copy_FilesExistsSkip_FileSkipped()
+        public async Task Conflict_SingleFileDifferent_Rename()
         {
-            // Arrange
-            _project.Options.FileExistsResponse = FileExistsResponseEnum.SKIP;
+            // Arrenge
+
+            // 1. general settings
+            _project.Options.FileExistsResponse = FileExistsResponseEnum.RENAME;
+            string uniqueBasePath = GetWorkingFolder(Path.Combine(subDir, nameof(Conflict_SingleFileDifferent_Rename)));
+            FILE_STATUS expectedStatus = FILE_STATUS.COPIED;
             _activity.DeleteSourceFiles = true;
-            string checkFile = _sourceFiles.First();
-            FILE_STATUS expectedStatus = FILE_STATUS.SKIPPED;
-            AddDestination(DestinationPath);
+
+            // 2. files
+            string sourcePath = PathHelper.GetFullPath(uniqueBasePath, "source", true);
+            string destPath = PathHelper.GetFullPath(uniqueBasePath, "destination", true);
+            string fileName = "01.jpg";
+            File.Copy(_sourceFiles[0], Path.Combine(sourcePath, fileName));
+            File.Copy(_sourceFiles[1], Path.Combine(destPath, fileName));
+
+            FileInfo fileInfoExpected1 = new FileInfo(_sourceFiles[0]);
+            FileInfo fileInfoExpected2 = new FileInfo(_sourceFiles[1]);
+
+            AddDestination(destPath);
+
+            _activity.Source.Path = sourcePath;
+
+            string checkedSourceFile = _activity.Source.FileList.First();
 
             // Act
             await Run();
 
             // Assert
-            // Verify the was not deleted
-            Assert.IsTrue(File.Exists(checkFile), "File deleted from source, even though it should have been skipped and left there.");
-            // Check file status
-            FILE_STATUS actualStatus = _activity.FilesInfo[checkFile].Status;
+
+            // 1. verify both files exist
+            var destFiles = Directory.GetFiles(destPath);
+
+            Assert.AreEqual(2, destFiles.Count());
+            foreach (var file in destFiles)
+            {
+                TestContext.WriteLine("File found: " + file);
+                if (file.EndsWith(fileName))
+                    AssertFiles(fileInfoExpected2, new FileInfo(file));
+                else
+                    AssertFiles(fileInfoExpected1, new FileInfo(file));
+            }
+
+            // 2. File is deleted from source
+            Assert.IsFalse(File.Exists(checkedSourceFile), $"Source file supposed to be deleted: {checkedSourceFile}");
+
+            // 3. file status 
+            FILE_STATUS actualStatus = _activity.FilesInfo[checkedSourceFile].Status;
             Assert.AreEqual(expectedStatus, actualStatus, "File status was not set as expected.");
+
+        }
+
+        [DataTestMethod]
+        [DataRow("Same", "01.jpg", true)]
+        [DataRow("NotSame", "02.jpg", false)]
+        public async Task Conflict_SingleFileDifferent_Compare(string uid, string secondFileName, bool areEqual)
+        {
+            // Arrenge
+
+            // 1. general settings
+            _project.Options.FileExistsResponse = FileExistsResponseEnum.COMPARE;
+            string uniqueBasePath = GetWorkingFolder(Path.Combine(subDir, nameof(Conflict_SingleFileDifferent_Compare), uid));
+            FILE_STATUS expectedStatus = areEqual ? FILE_STATUS.SKIPPED : FILE_STATUS.COPIED;
+            _activity.DeleteSourceFiles = true;
+            int expectedCount = areEqual ? 1 : 2;
+            bool expectedDeletedFromSource = !areEqual; // if files are same - skip (no deletion). if not same - copy and rename (delete from source dir)
+
+            // 2. files
+            string uniqueSourcePath = PathHelper.GetFullPath(uniqueBasePath, "source", true);
+            string uniqueDestPath = PathHelper.GetFullPath(uniqueBasePath, "destination", true);
+            string fileName = "01.jpg";
+            string file1 = Path.Combine(SourcePath, fileName);
+            string file2 = Path.Combine(SourcePath, secondFileName);
+            File.Copy(file1, Path.Combine(uniqueSourcePath, fileName));
+            File.Copy(file2, Path.Combine(uniqueDestPath, fileName));
+
+            FileInfo fileInfoExpected1 = new FileInfo(file1);
+            FileInfo fileInfoExpected2 = new FileInfo(file2);
+
+            AddDestination(uniqueDestPath);
+
+            _activity.Source.Path = uniqueSourcePath;
+
+            string checkedSourceFile = _activity.Source.FileList.First();
+
+            // Act
+            await Run();
+
+            // 1. file status 
+            FILE_STATUS actualStatus = _activity.FilesInfo[checkedSourceFile].Status;
+            Assert.AreEqual(expectedStatus, actualStatus, "File status was not set as expected.");
+
+            // 2. verify file count in destination
+            var destFiles = Directory.GetFiles(uniqueDestPath);
+
+            Assert.AreEqual(expectedCount, destFiles.Count());
+            foreach (var file in destFiles)
+            {
+                TestContext.WriteLine("File found: " + file);
+                if (file.EndsWith(fileName))
+                    AssertFiles(fileInfoExpected2, new FileInfo(file));
+                else
+                    AssertFiles(fileInfoExpected1, new FileInfo(file));
+            }
+
+            // 3. File is deleted from source
+            Assert.AreEqual(!expectedDeletedFromSource, File.Exists(checkedSourceFile), $"DeleteSourceFiles: expected {expectedDeletedFromSource}");
+
+            
+
+        }
+
+        /// <summary>
+        /// As a file comparison we compare the size of the files.
+        /// </summary>
+        /// <param name="fileInfoExpected"></param>
+        /// <param name="fileInfoActual"></param>
+        private void AssertFiles(FileInfo fileInfoExpected, FileInfo fileInfoActual)
+        {
+            Assert.AreEqual(fileInfoExpected.Length, fileInfoActual.Length, $"File size of {fileInfoActual.Name} in destination is not as expected.");
         }
 
         //[TestMethod]
