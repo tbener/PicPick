@@ -75,5 +75,21 @@ namespace PicPick.UnitTests.Core.RunnerTests
             _activity.DestinationList.Add(dest);
             return dest;
         }
+
+        protected void AssertStatus(FILE_STATUS expectedStatus, string file)
+        {
+            FILE_STATUS actualStatus = _activity.FilesInfo[file].Status;
+            Assert.AreEqual(expectedStatus, actualStatus, "File status was not set as expected.");
+        }
+
+        /// <summary>
+        /// As a file comparison we compare the size of the files.
+        /// </summary>
+        /// <param name="fileInfoExpected"></param>
+        /// <param name="fileInfoActual"></param>
+        protected void AssertFiles(FileInfo fileInfoExpected, FileInfo fileInfoActual)
+        {
+            Assert.AreEqual(fileInfoExpected.Length, fileInfoActual.Length, $"File size of {fileInfoActual.Name} in destination is not as expected.");
+        }
     }
 }

@@ -47,14 +47,16 @@
     <Reference Include="Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\MSTest.TestFramework.1.2.0\lib\net45\Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions.dll</HintPath>
     </Reference>
+    <Reference Include="Prism, Version=7.1.0.431, Culture=neutral, PublicKeyToken=40ee6c3a2184dc59" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Core\RunnerTests\RunnerBaseClass.cs" />
+    <Compile Include="Core\RunnerTests\RunnerTestBaseClass.cs" />
     <Compile Include="Core\RunnerTests\Runner_Conflicts.cs" />
     <Compile Include="Core\AnalyzerTests\Analyzer_CreateMapping.cs" />
     <Compile Include="Core\AnalyzerTests\Analyzer_ValidateFields.cs" />
+    <Compile Include="Core\RunnerTests\Runner_Conflicts_Ask.cs" />
     <Compile Include="Core\RunnerTests\Runner_Run.cs" />
     <Compile Include="IsDirty\IsDirty_LoadedProject.cs" />
     <Compile Include="IsDirty\IsDirty_EmptyProject.cs" />

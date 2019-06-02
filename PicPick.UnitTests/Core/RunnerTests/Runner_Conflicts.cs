@@ -1,6 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PicPick.Core;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -23,9 +22,6 @@ namespace PicPick.UnitTests.Core.RunnerTests
 
         private static List<string> _sourceFiles;
 
-        private string _fileSource;
-        private string _fileDestination;
-
         [ClassInitialize]
         public static void Initialize(TestContext testContext)
         {
@@ -43,23 +39,7 @@ namespace PicPick.UnitTests.Core.RunnerTests
             InitActivity();
 
         }
-
-
-        //[TestMethod]
-        //public async Task Copy_FilesExistsOvewrite_FileOverwriten()
-        //{
-        //    _project.Options.FileExistsResponse = FileExistsResponseEnum.OVERWRITE;
-
-        //    await Run();
-
-        //    Assert.IsTrue(false);
-        //}
-
-        private void PrepareDifferentFilesWithSameName(string path)
-        {
-            File.Copy(_sourceFiles[0], Path.Combine(path, "source\\01.jpg"));
-            File.Copy(_sourceFiles[1], Path.Combine(path, "destination\\01.jpg"));
-        }
+        
 
         [TestMethod]
         public async Task Conflict_SingleFileDifferent_Skip()
@@ -211,11 +191,13 @@ namespace PicPick.UnitTests.Core.RunnerTests
         }
 
         [DataTestMethod]
-        [DataRow("Same", "01.jpg", true)]
-        [DataRow("NotSame", "02.jpg", false)]
-        public async Task Conflict_SingleFileDifferent_Compare(string uid, string secondFileName, bool areEqual)
+        [DataRow("Same", "01.jpg", "01.jpg")]
+        [DataRow("NotSame", "01.jpg", "02.jpg")]
+        public async Task Conflict_SingleFileDifferent_Compare(string uid, string sourceFile1, string sourceFile2)
         {
             // Arrenge
+
+            bool areEqual = sourceFile1.Equals(sourceFile2);
 
             // 1. general settings
             _project.Options.FileExistsResponse = FileExistsResponseEnum.COMPARE;
@@ -228,11 +210,10 @@ namespace PicPick.UnitTests.Core.RunnerTests
             // 2. files
             string uniqueSourcePath = PathHelper.GetFullPath(uniqueBasePath, "source", true);
             string uniqueDestPath = PathHelper.GetFullPath(uniqueBasePath, "destination", true);
-            string fileName = "01.jpg";
-            string file1 = Path.Combine(SourcePath, fileName);
-            string file2 = Path.Combine(SourcePath, secondFileName);
-            File.Copy(file1, Path.Combine(uniqueSourcePath, fileName));
-            File.Copy(file2, Path.Combine(uniqueDestPath, fileName));
+            string file1 = Path.Combine(SourcePath, sourceFile1);
+            string file2 = Path.Combine(SourcePath, sourceFile2);
+            File.Copy(file1, Path.Combine(uniqueSourcePath, sourceFile1));
+            File.Copy(file2, Path.Combine(uniqueDestPath, sourceFile1));
 
             FileInfo fileInfoExpected1 = new FileInfo(file1);
             FileInfo fileInfoExpected2 = new FileInfo(file2);
@@ -257,7 +238,7 @@ namespace PicPick.UnitTests.Core.RunnerTests
             foreach (var file in destFiles)
             {
                 TestContext.WriteLine("File found: " + file);
-                if (file.EndsWith(fileName))
+                if (file.EndsWith(sourceFile1))
                     AssertFiles(fileInfoExpected2, new FileInfo(file));
                 else
                     AssertFiles(fileInfoExpected1, new FileInfo(file));
@@ -270,44 +251,46 @@ namespace PicPick.UnitTests.Core.RunnerTests
 
         }
 
+
         /// <summary>
-        /// As a file comparison we compare the size of the files.
+        /// After an auto comapre is performed, some other action is performed.
+        /// Need to test that on the next conflict we compare again and not performing the last action.
+        /// We do that by having 2 conflicts that will result in different actions.
         /// </summary>
-        /// <param name="fileInfoExpected"></param>
-        /// <param name="fileInfoActual"></param>
-        private void AssertFiles(FileInfo fileInfoExpected, FileInfo fileInfoActual)
+        [TestMethod]
+        public async Task Conflict_FewFilesConflictCompare_PerformCompare()
         {
-            Assert.AreEqual(fileInfoExpected.Length, fileInfoActual.Length, $"File size of {fileInfoActual.Name} in destination is not as expected.");
+            // Arrenge
+
+            List<string> fileNames = new List<string>() { "01.jpg", "02.jpg" };
+
+            // 1. general settings
+            _project.Options.FileExistsResponse = FileExistsResponseEnum.COMPARE;
+            string uniqueBasePath = GetWorkingFolder(Path.Combine(subDir, nameof(Conflict_SingleFileDifferent_Compare)));
+
+            // 2. files
+            string uniqueSourcePath = PathHelper.GetFullPath(uniqueBasePath, "source", true);
+            string uniqueDestPath = PathHelper.GetFullPath(uniqueBasePath, "destination", true);
+            // copy to unique source
+            fileNames.ForEach(f => File.Copy(Path.Combine(SourcePath, f), Path.Combine(uniqueSourcePath, f)));
+            // copy one file as both files in dest
+            string f1 = fileNames[0];
+            fileNames.ForEach(f => File.Copy(Path.Combine(SourcePath, f1), Path.Combine(uniqueDestPath, f)));
+            
+            AddDestination(uniqueDestPath);
+
+            _activity.Source.Path = uniqueSourcePath;
+
+            // Act
+            await Run();
+
+            // 1. file status - expected first skip and second copy
+            AssertStatus(FILE_STATUS.SKIPPED, Path.Combine(uniqueSourcePath, fileNames[0]));
+            AssertStatus(FILE_STATUS.COPIED, Path.Combine(uniqueSourcePath, fileNames[1]));
+            
         }
 
-        //[TestMethod]
-        //public async Task Copy_FilesExistsRename_FileRenamed()
-        //{
-        //    _proj.Options.FileExistsResponse = Core.FileExistsResponseEnum.RENAME;
-
-        //    await _activity.Start(new ProgressInformation(), new CancellationTokenSource().Token);
-
-        //    Assert.IsTrue(false);
-        //}
-
-        //[TestMethod]
-        //public async Task Copy_FilesExistsCompareSameFile_FileSkipped()
-        //{
-        //    _proj.Options.FileExistsResponse = Core.FileExistsResponseEnum.COMPARE;
-
-        //    await _activity.Start(new ProgressInformation(), new CancellationTokenSource().Token);
-
-        //    Assert.IsTrue(false);
-        //}
-
-        //[TestMethod]
-        //public async Task Copy_FilesExistsCompareDifferentFile_FileCopied()
-        //{
-        //    _proj.Options.FileExistsResponse = Core.FileExistsResponseEnum.COMPARE;
-
-        //    await _activity.Start(new ProgressInformation(), new CancellationTokenSource().Token);
-
-        //    Assert.IsTrue(false);
-        //}
+        
+        
     }
 }
