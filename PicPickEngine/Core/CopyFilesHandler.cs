@@ -14,7 +14,7 @@ namespace PicPick.Core
 {
     public delegate void FileProcessEventHandler(object sender, string file, string msg, bool success = true);
     public delegate void FileStatusChangedEventHandler(object sender, string fileFullName, FILE_STATUS status);
-    public delegate FileExistsResponseEnum FileExistsEventHandler(object sender, FileExistsEventArgs eventArgs);
+    public delegate FileExistsResponseEnum FileExistsEventHandler(object sender, FileExistsAskEventArgs eventArgs);
 
     
     public enum FILE_STATUS
@@ -112,7 +112,8 @@ namespace PicPick.Core
 
         internal async Task DoCopyAsync(ProgressInformation progressInfo, CancellationToken cancellationToken)
         {
-            FileExistsResponseEnum action = FileExistsResponse;
+            //FileExistsResponseEnum currentAction = FileExistsResponse;
+            FileExistsResponseEnum nextConflictResponse = FileExistsResponse;
             FILE_STATUS fileStatus;
             string fileName = "";
             string fullFileName = "";
@@ -120,7 +121,8 @@ namespace PicPick.Core
 
             try
             {
-                FileExistsEventArgs fileExistsEventArgs = new FileExistsEventArgs(FileExistsResponse);
+                FileExistsAskEventArgs fileExistsAskEventArgs = new FileExistsAskEventArgs();
+                FileExistsResponseEnum currentConflictResponse = nextConflictResponse;
 
                 // iterate FileList and copy to dest
                 foreach (string file in FileList)
@@ -136,82 +138,31 @@ namespace PicPick.Core
                     // if the file exists in destination
                     if (File.Exists(dest))
                     {
-                        // If the file exists:
-                        // 1. Canceled: if not DontAskAgain returned from previous loop
-                        // 2. set eventArgs
-                        // 3. publish event
-                        // 4. if CurrentResponse==ASK:
-                        // 4.1. the subscriber should implement
-                        // 4.2. return the response in CurrentResponse
-                        // 4.3. the NextResponse value will appear in the CurrentResponse in the next time
-                        // 5. if CurrentResponse!=ASK:
-                        // 5.1. the subscriber can, but don't have to implement
-                        // 6. the subscriber just needs to make sure not to return ASK as CurrentResponse
-                        // 7. Canceled: if the subscriber sets DontAskAgain=true, the event will not fire again in this operation.
-                        // 8. if the subscriber sets Cancel=true, the operation will stop.
+                        currentConflictResponse = nextConflictResponse;
 
-                        // ###### PUBLISH FILE EXISTS EVENT
-                        fileExistsEventArgs.SourceFile = fullFileName;
-                        fileExistsEventArgs.DestinationFolder = DestinationFolder;
-                        // Publish the event
-                        action = EventAggregatorHelper.PublishFileExists(fileExistsEventArgs);
-
-                        if (fileExistsEventArgs.Cancel)
-                            return;
-
-                        fileExistsEventArgs.CurrentResponse = fileExistsEventArgs.NextResponse;
-                        // ###### END PUBLISH FILE EXISTS EVENT
-
-
-
-                        #region old ASK
-
-                        // If the file exists:
-                        // 1. action is initialized as FileExistsResponse
-                        // 2. publish FileExistsEvent in case the host wants to change the action.
-                        // 3. it the action is ASK - publish the AskEvent for the host to implement it and return the chosen action.
-                        // 4. if the ASK is implemented:
-                        // 4.1. the action is set to chosen response.
-                        // 4.2. if "Dont Ask Again" is true, then FileExistsResponse will be set to be the chosen action, and make it the active action on the next iterations.
-                        // 5. if the ASK is not implemented:
-                        // 5.1. the returned action would be ASK, again, and it will be set to the default as a fallback.
-
-                        /*
-                        action = EventAggregatorHelper.Publish(new FileExistsEventArgs()
+                        if (currentConflictResponse == FileExistsResponseEnum.ASK)
                         {
-                            SourceFile = fullFileName,
-                            DestinationFolder = DestinationFolder,
-                            CurrentResponse = FileExistsResponse,
-                        });
+                            fileExistsAskEventArgs.SourceFile = fullFileName;
+                            fileExistsAskEventArgs.DestinationFolder = DestinationFolder;
+                            // Publish the event
+                            currentConflictResponse = EventAggregatorHelper.PublishFileExists(fileExistsAskEventArgs);
 
-                        if (action == FileExistsResponseEnum.ASK)
-                        {
-                            AskEventArgs e = new AskEventArgs()
-                            {
-                                SourceFile = fullFileName,
-                                DestinationFolder = DestinationFolder,
-                                Response = FileExistsResponse,
-                                DontAskAgain = false
-                            };
-                            action = EventAggregatorHelper.Publish(e);
-                            // as a percaution, in case the ASK was not implemented or implemented wrongly
-                            if (action == FileExistsResponseEnum.ASK)
-                                action = DEFAULT_FILE_EXISTS_RESPONSE;
-                            if (e.DontAskAgain)
-                                FileExistsResponse = action;
+                            if (fileExistsAskEventArgs.Cancel)
+                                return;
+
+                            if (fileExistsAskEventArgs.DontAskAgain)
+                                nextConflictResponse = currentConflictResponse;
                         }
-                        */
-                        #endregion
-
-                        if (action == FileExistsResponseEnum.COMPARE)
+                        
+                        if (currentConflictResponse == FileExistsResponseEnum.COMPARE)
                         {
                             if (AreSameFiles(file, dest))
-                                action = FileExistsResponseEnum.SKIP;  
+                                currentConflictResponse = FileExistsResponseEnum.SKIP;  
                             else
-                                action = FileExistsResponseEnum.RENAME;
+                                currentConflictResponse = FileExistsResponseEnum.RENAME;
                         }
 
-                        switch (action)
+                        switch (currentConflictResponse)
                         {
                             case FileExistsResponseEnum.OVERWRITE:
                                 await Task.Run(() => File.Copy(file, dest, true));
@@ -231,7 +182,7 @@ namespace PicPick.Core
                                 break;
                         }
 
-                        ReportFileProcess(fileName, action, dest);
+                        ReportFileProcess(fileName, currentConflictResponse, dest);
                     }
                     else
                     {

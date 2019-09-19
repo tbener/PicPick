@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace PicPick.Core
 {
-    public class FileExistsEvent : PubSubEvent<FileExistsEventArgs> { }
+    public class FileExistsAskEvent : PubSubEvent<FileExistsAskEventArgs> { }
     
     public class ActivityStartedEvent : PubSubEvent { }
 

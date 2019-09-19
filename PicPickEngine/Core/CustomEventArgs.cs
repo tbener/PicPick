@@ -6,19 +6,14 @@ using System.Threading.Tasks;
 
 namespace PicPick.Core
 {
-    public class FileExistsEventArgs : EventArgs
+    public class FileExistsAskEventArgs : EventArgs
     {
-        public FileExistsEventArgs(FileExistsResponseEnum defaultResponse)
-        {
-            CurrentResponse = defaultResponse;
-            NextResponse = defaultResponse;
-        }
-
+        
         public string SourceFile { get; set; }
         public string DestinationFolder { get; set; }
-        public FileExistsResponseEnum CurrentResponse { get; set; }
-        public FileExistsResponseEnum NextResponse { get; set; }
+        public FileExistsResponseEnum Response { get; set; }
         public bool Cancel { get; set; }
+        public bool DontAskAgain { get; set; }
     }
 
     public class CopyEventArgs : EventArgs

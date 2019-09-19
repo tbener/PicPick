@@ -119,19 +119,16 @@ namespace PicPick.ViewModel
 
         private void OnActivityStart()
         {
-            if (!ApplicationService.Instance.EventAggregator.GetEvent<FileExistsEvent>().Contains(OnFileExistsEvent))
-                ApplicationService.Instance.EventAggregator.GetEvent<FileExistsEvent>().Subscribe(OnFileExistsEvent);
+            if (!ApplicationService.Instance.EventAggregator.GetEvent<FileExistsAskEvent>().Contains(OnFileExistsAskEvent))
+                ApplicationService.Instance.EventAggregator.GetEvent<FileExistsAskEvent>().Subscribe(OnFileExistsAskEvent);
         }
         private void OnActivityEnd()
         {
-            ApplicationService.Instance.EventAggregator.GetEvent<FileExistsEvent>().Unsubscribe(OnFileExistsEvent);
+            ApplicationService.Instance.EventAggregator.GetEvent<FileExistsAskEvent>().Unsubscribe(OnFileExistsAskEvent);
         }
 
-        private void OnFileExistsEvent(FileExistsEventArgs args)
+        private void OnFileExistsAskEvent(FileExistsAskEventArgs args)
         {
-            if (args.CurrentResponse != FileExistsResponseEnum.ASK)
-                return;
-
             // Init dialog
             FileExistsDialogViewModel vm = new FileExistsDialogViewModel(args.SourceFile, args.DestinationFolder);
             FileExistsDialogView view = new FileExistsDialogView() { DataContext = vm };
@@ -142,14 +139,10 @@ namespace PicPick.ViewModel
             // #### 
 
             // Save the response to return
-            args.CurrentResponse = vm.Response;
+            args.Response = vm.Response;
             args.Cancel = vm.Cancel;
-
-            if (vm.DontAskAgain)
-            {
-                args.NextResponse = vm.Response;
-                ApplicationService.Instance.EventAggregator.GetEvent<FileExistsEvent>().Unsubscribe(OnFileExistsEvent);
-            }
+            args.DontAskAgain = vm.DontAskAgain;
+            
         }
         
         #endregion

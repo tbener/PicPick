@@ -11,6 +11,14 @@ using PicPick.Helpers;
 
 namespace PicPick.UnitTests.Core.RunnerTests
 {
+    /// <summary>
+    /// What we test here:
+    /// In the raised event we return the desired action.
+    /// 
+    /// 1. Verify that the action was applied
+    /// 2. Verify that next file on same batch is still asked (??)
+    /// 3. 
+    /// </summary>
     [TestClass]
     public class Runner_Conflicts_Ask : RunnerTestBaseClass
     {
@@ -35,15 +43,19 @@ namespace PicPick.UnitTests.Core.RunnerTests
             InitActivity();
             _project.Options.FileExistsResponse = FileExistsResponseEnum.ASK;
 
-            EventAggregatorHelper.EventAggregator.GetEvent<FileExistsEvent>().Subscribe(OnFileExistsEvent);
+            EventAggregatorHelper.EventAggregator.GetEvent<FileExistsAskEvent>().Subscribe(OnFileExistsEvent);
 
         }
 
-        private void OnFileExistsEvent(FileExistsEventArgs fileExistsEventArgs)
+        private void OnFileExistsEvent(FileExistsAskEventArgs fileExistsEventArgs)
         {
             //fileExistsEventArgs.
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         [TestMethod]
         public async Task Conflict_SingleFileDifferent_Skip()
         {
