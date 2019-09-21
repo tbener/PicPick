@@ -147,6 +147,10 @@ namespace PicPick.Core
                             // Publish the event
                             currentConflictResponse = EventAggregatorHelper.PublishFileExists(fileExistsAskEventArgs);
 
+                            if (currentConflictResponse == FileExistsResponseEnum.ASK)
+                                // This will happen if the event wasn't handled, or wasn't handled correctly
+                                currentConflictResponse = FileExistsResponseEnum.SKIP;
+
                             if (fileExistsAskEventArgs.Cancel)
                                 return;
 

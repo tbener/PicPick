@@ -44,7 +44,7 @@ namespace PicPick.UnitTests.Core.RunnerTests
         [TestMethod]
         public async Task Conflict_SingleFileDifferent_Skip()
         {
-            // Arrenge
+            // Arrange
 
             // 1. general settings
             _project.Options.FileExistsResponse = FileExistsResponseEnum.SKIP;

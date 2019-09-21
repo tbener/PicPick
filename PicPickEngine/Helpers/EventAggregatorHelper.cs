@@ -10,7 +10,18 @@ namespace PicPick.Helpers
 {
     public static class EventAggregatorHelper
     {
-        public static IEventAggregator EventAggregator { get; set; }
+        private static IEventAggregator _eventAggregator;
+
+        public static IEventAggregator EventAggregator
+        {
+            get
+            {
+                if (_eventAggregator == null)
+                    _eventAggregator = new EventAggregator();
+                return _eventAggregator;
+            }
+            set => _eventAggregator = value;
+        }
 
         public static FileExistsResponseEnum PublishFileExists(FileExistsAskEventArgs payload)
         {
@@ -32,7 +43,7 @@ namespace PicPick.Helpers
         {
             EventAggregator?.GetEvent<GotDirtyEvent>().Publish();
         }
-        
+
 
 
         //internal static FileExistsResponseEnum Publish(AskEventArgs payload)
