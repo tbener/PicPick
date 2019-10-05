@@ -26,11 +26,11 @@
         <local:PathBrowserView Grid.Column="1" Grid.Row="1" DataContext="{Binding PathViewModel}" Margin="0,0,8,0" ToolTip="Use absolute path or relative to source"/>
 
         <!--<TextBlock Grid.Column="2" Grid.Row="0" Text="Template"/>-->
-        <TextBox Grid.Column="2" Grid.Row="1" Text="{Binding Destination.Template, UpdateSourceTrigger=PropertyChanged}" ToolTip="Use standard date symbols (e.g. dd-MM-yy) to create the folder according to the image date" />
+        <TextBox Grid.Column="2" Grid.Row="1" Text="{Binding Destination.Template, UpdateSourceTrigger=PropertyChanged}" ToolTip="{Binding TemplateToolTip}" />
 
         <Button Grid.Column="3" Grid.Row="1" Content="Delete" Width="46" Height="22" VerticalAlignment="Center" Command="{Binding DeleteCommand}"/>
         
         <!-- Row 3 -->
-        <TextBlock Grid.Column="2" Grid.Row="2" Text="{Binding TemplatePreview, FallbackValue=[preview]}" Foreground="Gray"/>
+        <TextBlock Grid.Column="2" Grid.Row="2" Text="{Binding TemplatePreview, FallbackValue=[preview]}" Foreground="Gray" ToolTip="Sample result for today's date"/>
     </Grid>
 </UserControl>

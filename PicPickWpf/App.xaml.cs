@@ -19,16 +19,30 @@ namespace PicPick
     /// </summary>
     public partial class App : Application
     {
+        MainWindowViewModel vm;
+
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
 
             PicPick.Helpers.EventAggregatorHelper.EventAggregator = Helpers.ApplicationService.Instance.EventAggregator;
 
-            MainWindowViewModel vm = new MainWindowViewModel();
+            vm = new MainWindowViewModel();
             MainWindow view = new MainWindow();
+            view.Closing += delegate { vm.Dispose(); };
+            
             view.DataContext = vm;
             view.Show();
+        }
+
+        protected override void OnExit(ExitEventArgs e)
+        {
+            base.OnExit(e);
+            if (vm != null)
+            {
+                vm.Dispose();
+                vm = null;
+            }
         }
     }
 }

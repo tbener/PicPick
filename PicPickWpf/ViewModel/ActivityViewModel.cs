@@ -104,26 +104,29 @@ namespace PicPick.ViewModel
 
         public async void Start()
         {
+            ProgressWindowViewModel progressWindowViewModel = new ProgressWindowViewModel(ProgressInfo);
+            ProgressWindowView progressWindow = new ProgressWindowView()
+            {
+                DataContext = progressWindowViewModel
+            };
+
             try
             {
-                ProgressWindowViewModel progressWindowViewModel = new ProgressWindowViewModel(ProgressInfo);
-                ProgressWindowView progressWindow = new ProgressWindowView()
-                {
-                    DataContext = progressWindowViewModel
-                };
                 progressWindow.Show();
 
                 Runner runner = new Runner(Activity, ProjectLoader.Project.Options);
                 await runner.Run(ProgressInfo, cts.Token);
-                //await Activity.Start(ProgressInfo, cts.Token);
-
-                progressWindow.Close();
-
-                OnPropertyChanged("ProgressInfo");
+                
             }
             catch (OperationCanceledException)
             {
                 // user cancelled...
+            }
+            finally
+            {
+                progressWindow.Close();
+
+                OnPropertyChanged("ProgressInfo");
             }
         }
 
@@ -156,7 +159,7 @@ namespace PicPick.ViewModel
             PicPickProjectActivityDestination dest = new PicPickProjectActivityDestination()
             {
                 Path = "",
-                Template = "dd-YY"
+                Template = "dd-yy"
             };
             Activity.DestinationList.Add(dest);
             AddDestinationViewModel(dest);

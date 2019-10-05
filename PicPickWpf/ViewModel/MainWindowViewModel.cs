@@ -20,10 +20,11 @@ using PicPick.View;
 
 namespace PicPick.ViewModel
 {
-    class MainWindowViewModel : BaseViewModel
+    class MainWindowViewModel : BaseViewModel, IDisposable
     {
 
         private PicPickProjectActivity _currentActivity;
+        private FileExistsDialogView _fileExistsDialogView;
 
         public ICommand OpenFileCommand { get; set; }
         public ICommand SaveCommand { get; set; }
@@ -46,6 +47,7 @@ namespace PicPick.ViewModel
                 OpenFile(Properties.Settings.Default.LastFile);
 
             CurrentProject.GetIsDirtyInstance().OnGotDirty += (s, e) => OnGotDirty();
+            CurrentProject.IsDirty = false;
 
             // set the current activity
             CurrentActivity = CurrentProject.ActivityList.FirstOrDefault();
@@ -54,6 +56,7 @@ namespace PicPick.ViewModel
             ApplicationService.Instance.EventAggregator.GetEvent<ActivityStartedEvent>().Subscribe(OnActivityStart);
             ApplicationService.Instance.EventAggregator.GetEvent<ActivityEndedEvent>().Subscribe(OnActivityEnd);
             ApplicationService.Instance.EventAggregator.GetEvent<GotDirtyEvent>().Subscribe(OnGotDirty);
+            ApplicationService.Instance.EventAggregator.GetEvent<FileExistsAskEvent>().Subscribe(OnFileExistsAskEvent);
         }
 
         private void OnGotDirty()
@@ -119,23 +122,30 @@ namespace PicPick.ViewModel
 
         private void OnActivityStart()
         {
-            if (!ApplicationService.Instance.EventAggregator.GetEvent<FileExistsAskEvent>().Contains(OnFileExistsAskEvent))
-                ApplicationService.Instance.EventAggregator.GetEvent<FileExistsAskEvent>().Subscribe(OnFileExistsAskEvent);
+            //if (!ApplicationService.Instance.EventAggregator.GetEvent<FileExistsAskEvent>().Contains(OnFileExistsAskEvent))
+            //    ApplicationService.Instance.EventAggregator.GetEvent<FileExistsAskEvent>().Subscribe(OnFileExistsAskEvent);
         }
         private void OnActivityEnd()
         {
-            ApplicationService.Instance.EventAggregator.GetEvent<FileExistsAskEvent>().Unsubscribe(OnFileExistsAskEvent);
+            _fileExistsDialogView = null;
         }
+
 
         private void OnFileExistsAskEvent(FileExistsAskEventArgs args)
         {
             // Init dialog
             FileExistsDialogViewModel vm = new FileExistsDialogViewModel(args.SourceFile, args.DestinationFolder);
-            FileExistsDialogView view = new FileExistsDialogView() { DataContext = vm };
-            vm.CloseDialog = () => { view.Close(); };
+            if (_fileExistsDialogView == null)
+            {
+                _fileExistsDialogView = new FileExistsDialogView();
+                _fileExistsDialogView.Closing += (s, e) => { _fileExistsDialogView.Hide(); e.Cancel = true; };
+            }
+            _fileExistsDialogView.DataContext = vm ;
+            vm.CloseDialog = () => { _fileExistsDialogView.Hide(); };
+            
 
             // #### SHOW DIALOG
-            view.ShowDialog();
+            _fileExistsDialogView.ShowDialog();
             // #### 
 
             // Save the response to return
@@ -144,7 +154,9 @@ namespace PicPick.ViewModel
             args.DontAskAgain = vm.DontAskAgain;
             
         }
-        
+
+
+
         #endregion
 
         public string WindowTitle
@@ -202,5 +214,16 @@ namespace PicPick.ViewModel
         }
 
 
+        public void Dispose()
+        {
+            ApplicationService.Instance.EventAggregator.GetEvent<ActivityStartedEvent>().Unsubscribe(OnActivityStart);
+            ApplicationService.Instance.EventAggregator.GetEvent<ActivityEndedEvent>().Unsubscribe(OnActivityEnd);
+            ApplicationService.Instance.EventAggregator.GetEvent<GotDirtyEvent>().Unsubscribe(OnGotDirty);
+            ApplicationService.Instance.EventAggregator.GetEvent<FileExistsAskEvent>().Unsubscribe(OnFileExistsAskEvent);
+
+            _currentActivity = null;
+            _fileExistsDialogView = null;
+            
+        }
     }
 }

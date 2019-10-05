@@ -152,7 +152,7 @@ namespace PicPick.Core
                                 currentConflictResponse = FileExistsResponseEnum.SKIP;
 
                             if (fileExistsAskEventArgs.Cancel)
-                                return;
+                                throw new OperationCanceledException(cancellationToken);
 
                             if (fileExistsAskEventArgs.DontAskAgain)
                                 nextConflictResponse = currentConflictResponse;
