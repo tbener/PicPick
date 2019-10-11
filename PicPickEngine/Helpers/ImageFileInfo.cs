@@ -28,6 +28,16 @@ namespace PicPick.Helpers
         public ImageFileInfo() : this(false)
         {}
 
+        public BitmapImage BitmapImage(string file)
+        {
+            BitmapImage image = new BitmapImage();
+            image.BeginInit();
+            image.CacheOption = BitmapCacheOption.OnLoad;
+            image.UriSource = new Uri(file);
+            image.EndInit();
+            return image;
+        }
+
         public bool GetFileDate(string file, out DateTime dateTime)
         {
             try
@@ -49,12 +59,13 @@ namespace PicPick.Helpers
 
         public bool TryGetDateTaken(string fileName, out DateTime dateTime)
         {
-
+            BitmapSource bitSource;
+            BitmapMetadata metaData;
             try
             {
                 SetFileStream(fileName);
-                BitmapSource bitSource = BitmapFrame.Create(_fileStream);
-                BitmapMetadata metaData = (BitmapMetadata)bitSource.Metadata;
+                bitSource = BitmapFrame.Create(_fileStream);
+                metaData = (BitmapMetadata)bitSource.Metadata;
                 return DateTime.TryParse(metaData.DateTaken, out dateTime);
 
                 //JpegBitmapDecoder decoder = new JpegBitmapDecoder(picStream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.None);
@@ -69,6 +80,8 @@ namespace PicPick.Helpers
             }
             finally
             {
+                bitSource = null;
+                metaData = null;
                 if (!KeepFileOpen)
                     CloseFileStream();
             }
@@ -117,10 +130,10 @@ namespace PicPick.Helpers
         public void CloseFileStream()
         {
             _fileName = "";
-            _fileStream?.Close();
+            _fileStream?.Dispose();
         }
 
-        public long GetFileLength(string fileName)
+        private long GetFileLength(string fileName)
         {
             // if there is a FileStream open, we use it
             if (_fileName.Equals(fileName, StringComparison.CurrentCultureIgnoreCase))

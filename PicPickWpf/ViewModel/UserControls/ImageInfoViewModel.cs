@@ -1,9 +1,6 @@
 ﻿using PicPick.Helpers;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Windows.Media.Imaging;
 
 namespace PicPick.ViewModel.UserControls
 {
@@ -11,17 +8,17 @@ namespace PicPick.ViewModel.UserControls
     {
         public ImageInfoViewModel(string imagePath)
         {
-            ImagePath = imagePath;
-
             ImageFileInfo imageInfo = new ImageFileInfo(true);
+
+            Source = imageInfo.BitmapImage(imagePath);
 
             try
             {
-                imageInfo.SetFileStream(ImagePath);
-                ImageSize = imageInfo.FileSize(ImagePath);
+                imageInfo.SetFileStream(imagePath);
+                ImageSize = imageInfo.FileSize(imagePath);
 
                 DateTime dateTaken;
-                if (imageInfo.TryGetDateTaken(ImagePath, out dateTaken))
+                if (imageInfo.GetFileDate(imagePath, out dateTaken))
                     ImageDate = dateTaken.ToShortDateString();
             }
             catch
@@ -37,13 +34,14 @@ namespace PicPick.ViewModel.UserControls
 
         #region Properties
 
-        public string ImagePath { get; set; }
+        public BitmapImage Source { get; set; }
+
         public string ImageDate { get; set; }
         public string ImageSize { get; set; }
 
         public void Dispose()
         {
-            //ImagePath
+            Source = null;
         }
 
         #endregion

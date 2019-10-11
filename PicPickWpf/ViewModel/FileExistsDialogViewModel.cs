@@ -38,6 +38,10 @@ namespace PicPick.ViewModel
         public void SetResponse(FileExistsResponseEnum action)
         {
             Response = action;
+            foreach (var item in ActionButtonsViewModels)
+            {
+                item.Dispose();
+            }
             CloseDialog();
         }
 

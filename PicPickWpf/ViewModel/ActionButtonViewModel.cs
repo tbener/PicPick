@@ -66,7 +66,7 @@ namespace PicPick.ViewModel
 
         public void Dispose()
         {
-            //ImageInfoViewModel.Dispose();
+            ImageInfoViewModel?.Dispose();
             ImageInfoViewModel = null;
             //throw new NotImplementedException();
         }
