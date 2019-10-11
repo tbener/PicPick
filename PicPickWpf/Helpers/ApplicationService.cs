@@ -11,9 +11,7 @@ namespace PicPick.Helpers
     {
         private ApplicationService() { }
 
-        private static readonly ApplicationService _instance = new ApplicationService();
-
-        internal static ApplicationService Instance { get { return _instance; } }
+        internal static ApplicationService Instance { get; } = new ApplicationService();
 
         private IEventAggregator _eventAggregator;
         internal IEventAggregator EventAggregator
