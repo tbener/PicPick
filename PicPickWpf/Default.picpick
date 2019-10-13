@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<PicPickProject xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Activities>
+    <Activity Name="Default Activity" DeleteSourceFiles="false" Active="false">
+      <Source>
+        <EnableAutoFileListReset>false</EnableAutoFileListReset>
+      </Source>
+    </Activity>
+  </Activities>
+  <_options>
+    <FileExistsResponse>ASK</FileExistsResponse>
+  </_options>
+</PicPickProject>

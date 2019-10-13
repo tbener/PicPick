@@ -17,11 +17,14 @@ using PicPick.Helpers;
 using System.ComponentModel;
 using PicPick.Core;
 using PicPick.View;
+using log4net;
 
 namespace PicPick.ViewModel
 {
     class MainWindowViewModel : BaseViewModel, IDisposable
     {
+        private static readonly ILog _log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        private static readonly ErrorHandler _errorHandler = new ErrorHandler(_log);
 
         private PicPickProjectActivity _currentActivity;
         private FileExistsDialogView _fileExistsDialogView;
@@ -41,6 +44,7 @@ namespace PicPick.ViewModel
 
             ProjectLoader.OnSaveEventHandler += (s, e) => UpdateFileName();
 
+            _log.Info("Loading file...");
             if (string.IsNullOrEmpty(Properties.Settings.Default.LastFile) || !File.Exists(Properties.Settings.Default.LastFile))
                 ProjectLoader.LoadCreateDefault();
             else

@@ -48,7 +48,7 @@ namespace PicPick.Commands
 
         private bool SaveAs()
         {
-            string file = "";
+            string file = ProjectLoader.FileName;
             if (DialogHelper.BrowseSaveFileByExtensions(new[] { "picpick" }, true, ref file))
             {
                 Save(file);

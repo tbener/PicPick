@@ -10,11 +10,12 @@ namespace PicPick.Models
     {
         public static EventHandler OnSaveEventHandler;
 
-        private static readonly string DEFAULT_FILE = PathHelper.GetFullPath(PathHelper.ExecutionPath(), "Default.picpick");
+        //  PathHelper.ExecutionPath() raises permissions issue after instalation.
+        // private static readonly string DEFAULT_FILE = PathHelper.GetFullPath(PathHelper.ExecutionPath(), "Default.picpick");
+        // Use My Documents instead:
+        private static readonly string DEFAULT_FILE = PathHelper.GetFullPath(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "Default.picpick");
 
-        private static readonly ILog _log =
-            LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-
+        private static readonly ILog _log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         private static readonly ErrorHandler _errorHandler = new ErrorHandler(_log);
 
 
@@ -56,6 +57,7 @@ namespace PicPick.Models
         {
             try
             {
+                _log.Info($"Loading picpick file: {file}");
                 Project = SerializeHelper.Load(typeof(PicPickProject), file) as PicPickProject;
                 FileName = file;
                 return true;
