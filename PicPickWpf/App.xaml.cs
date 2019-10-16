@@ -9,6 +9,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using Prism.Events;
+using System.IO;
 
 [assembly: log4net.Config.XmlConfigurator(Watch = true)]
 
@@ -23,6 +24,7 @@ namespace PicPick
 
         protected override void OnStartup(StartupEventArgs e)
         {
+            log4net.GlobalContext.Properties["LogFileFolder"] = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "PicPick");
             base.OnStartup(e);
 
             PicPick.Helpers.EventAggregatorHelper.EventAggregator = Helpers.ApplicationService.Instance.EventAggregator;
