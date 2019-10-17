@@ -43,5 +43,10 @@ namespace TalUtils
             p.StartInfo.WindowStyle = ProcessWindowStyle.Normal;
             p.Start();
         }
+
+        public static void BrowseUrl(string url)
+        {
+            Process.Start(new ProcessStartInfo(url));
+        }
     }
 }

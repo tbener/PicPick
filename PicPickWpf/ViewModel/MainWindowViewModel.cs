@@ -35,16 +35,18 @@ namespace PicPick.ViewModel
         public ICommand DeleteActivityCommand { get; set; }
         public ICommand BrowseLogFileCommand { get; set; }
         public ICommand SendMailDialogCommand { get; set; }
+        public ICommand OpenPageCommand { get; set; }
 
         public MainWindowViewModel()
         {
-
+            
             OpenFileCommand = new RelayCommand(OpenFileWithDialog);
             SaveCommand = new SaveCommand();
             AddActivityCommand = new RelayCommand(AddNewActivity);
             DeleteActivityCommand = new RelayCommand(DeleteActivity, () => CurrentProject.ActivityList.Count > 1);
             BrowseLogFileCommand = new RelayCommand(BrowseLogFile);
             SendMailDialogCommand = new RelayCommand(SendMailDialog);
+            OpenPageCommand = new RelayCommand(OpenPicPickPage);
 
             LogFile = LogManager.GetRepository().GetAppenders().OfType<log4net.Appender.RollingFileAppender>().FirstOrDefault()?.File;
 
@@ -67,6 +69,11 @@ namespace PicPick.ViewModel
             ApplicationService.Instance.EventAggregator.GetEvent<ActivityEndedEvent>().Subscribe(OnActivityEnd);
             ApplicationService.Instance.EventAggregator.GetEvent<GotDirtyEvent>().Subscribe(OnGotDirty);
             ApplicationService.Instance.EventAggregator.GetEvent<FileExistsAskEvent>().Subscribe(OnFileExistsAskEvent);
+        }
+
+        private void OpenPicPickPage()
+        {
+            ExplorerHelper.BrowseUrl("https://paper.dropbox.com/doc/PicPick--Am102Con1rJAho344HwatyKxAQ-zN60ducngrWz7nPn3MeZO");
         }
 
         private void SendMailDialog()
@@ -184,7 +191,7 @@ namespace PicPick.ViewModel
         {
             get
             {
-                return string.Format("PicPick - {0}{1}", Path.GetFileName(ProjectLoader.FileName), CurrentProject.IsDirty ? "*" : "");
+                return string.Format("PicPick - {0}{1} (v{2})", Path.GetFileName(ProjectLoader.FileName), CurrentProject.IsDirty ? "*" : "", AppInfo.AppVersionString);
             }
         }
 
