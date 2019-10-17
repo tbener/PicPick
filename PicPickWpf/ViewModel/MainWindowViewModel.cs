@@ -17,11 +17,14 @@ using PicPick.Helpers;
 using System.ComponentModel;
 using PicPick.Core;
 using PicPick.View;
+using log4net;
 
 namespace PicPick.ViewModel
 {
     class MainWindowViewModel : BaseViewModel, IDisposable
     {
+        private static readonly ILog _log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        private static readonly ErrorHandler _errorHandler = new ErrorHandler(_log);
 
         private PicPickProjectActivity _currentActivity;
         private FileExistsDialogView _fileExistsDialogView;
@@ -30,6 +33,8 @@ namespace PicPick.ViewModel
         public ICommand SaveCommand { get; set; }
         public ICommand AddActivityCommand { get; set; }
         public ICommand DeleteActivityCommand { get; set; }
+        public ICommand BrowseLogFileCommand { get; set; }
+        public ICommand SendMailDialogCommand { get; set; }
 
         public MainWindowViewModel()
         {
@@ -38,9 +43,14 @@ namespace PicPick.ViewModel
             SaveCommand = new SaveCommand();
             AddActivityCommand = new RelayCommand(AddNewActivity);
             DeleteActivityCommand = new RelayCommand(DeleteActivity, () => CurrentProject.ActivityList.Count > 1);
+            BrowseLogFileCommand = new RelayCommand(BrowseLogFile);
+            SendMailDialogCommand = new RelayCommand(SendMailDialog);
+
+            LogFile = LogManager.GetRepository().GetAppenders().OfType<log4net.Appender.RollingFileAppender>().FirstOrDefault()?.File;
 
             ProjectLoader.OnSaveEventHandler += (s, e) => UpdateFileName();
 
+            _log.Info("Loading file...");
             if (string.IsNullOrEmpty(Properties.Settings.Default.LastFile) || !File.Exists(Properties.Settings.Default.LastFile))
                 ProjectLoader.LoadCreateDefault();
             else
@@ -57,6 +67,17 @@ namespace PicPick.ViewModel
             ApplicationService.Instance.EventAggregator.GetEvent<ActivityEndedEvent>().Subscribe(OnActivityEnd);
             ApplicationService.Instance.EventAggregator.GetEvent<GotDirtyEvent>().Subscribe(OnGotDirty);
             ApplicationService.Instance.EventAggregator.GetEvent<FileExistsAskEvent>().Subscribe(OnFileExistsAskEvent);
+        }
+
+        private void SendMailDialog()
+        {
+            Clipboard.SetText("tbener+hauuclggg7taowshsqsu@boards.trello.com");
+            Msg.Show("To add a card to the PicPick board, just send an email with a fully descriptive subject and body to:\n\ntbener+hauuclggg7taowshsqsu@boards.trello.com\n\nThe email address was copied to your Clipboard.\nThanks for you feedback.");
+        }
+
+        private void BrowseLogFile()
+        {
+            ExplorerHelper.OpenContainingFolder(LogFile);
         }
 
         private void OnGotDirty()
@@ -213,6 +234,7 @@ namespace PicPick.ViewModel
             }
         }
 
+        public string LogFile { get; set; }
 
         public void Dispose()
         {

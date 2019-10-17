@@ -9,8 +9,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using Prism.Events;
+using System.IO;
+using log4net;
 
-[assembly: log4net.Config.XmlConfigurator(Watch = true)]
+//[assembly: log4net.Config.XmlConfigurator(Watch = true)]
 
 namespace PicPick
 {
@@ -19,10 +21,19 @@ namespace PicPick
     /// </summary>
     public partial class App : Application
     {
+        private static readonly ILog _log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         MainWindowViewModel vm;
 
         protected override void OnStartup(StartupEventArgs e)
         {
+            
+            log4net.GlobalContext.Properties["LogFileFolder"] = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "PicPick");
+            log4net.Config.XmlConfigurator.Configure();
+
+            _log.Info("----------------------------------------");
+            _log.Info("Starting...");
+
             base.OnStartup(e);
 
             PicPick.Helpers.EventAggregatorHelper.EventAggregator = Helpers.ApplicationService.Instance.EventAggregator;
@@ -50,12 +61,16 @@ namespace PicPick
 
         protected override void OnExit(ExitEventArgs e)
         {
+            _log.Info("Finishing...");
+
             base.OnExit(e);
             if (vm != null)
             {
                 vm.Dispose();
                 vm = null;
             }
+
+            _log.Info("----------------------------------------");
         }
     }
 }

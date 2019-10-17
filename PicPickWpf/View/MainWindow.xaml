@@ -29,6 +29,10 @@
                 <MenuItem Header="_Add" Command="{Binding AddActivityCommand}" InputGestureText="Ctrl+N"/>
                 <MenuItem Header="_Delete..." Command="{Binding DeleteActivityCommand}"/>
             </MenuItem>
+            <MenuItem Header="Tools">
+                <MenuItem Header="Browse to log file in _Explorer..." Command="{Binding BrowseLogFileCommand}" ToolTip="{Binding LogFile}"/>
+                <MenuItem Header="Report a bug or request a feature..." Command="{Binding SendMailDialogCommand}"/>
+            </MenuItem>
         </Menu>
         <StatusBar DockPanel.Dock="Bottom" Height="24">
             <StatusBarItem>

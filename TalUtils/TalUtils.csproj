@@ -48,6 +48,7 @@
     <Compile Include="AppInfo.cs" />
     <Compile Include="DialogHelper.cs" />
     <Compile Include="ErrorHandler.cs" />
+    <Compile Include="ExplorerHelper.cs" />
     <Compile Include="FolderBrowser.cs" />
     <Compile Include="MsgHelper.cs" />
     <Compile Include="PathHelper.cs" />
