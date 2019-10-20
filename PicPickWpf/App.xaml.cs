@@ -23,7 +23,7 @@ namespace PicPick
     {
         private static readonly ILog _log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        MainWindowViewModel vm;
+        //MainWindowViewModel vm;
 
         protected override void OnStartup(StartupEventArgs e)
         {
@@ -38,7 +38,7 @@ namespace PicPick
 
             PicPick.Helpers.EventAggregatorHelper.EventAggregator = Helpers.ApplicationService.Instance.EventAggregator;
 
-            vm = new MainWindowViewModel();
+            MainWindowViewModel vm = new MainWindowViewModel();
             MainWindow view = new MainWindow();
             view.Closing += (s, e1) => {
                 if (vm.CurrentProject.IsDirty)
@@ -53,6 +53,7 @@ namespace PicPick
                         ProjectLoader.Save();
                 }
                 vm.Dispose();
+                vm = null;
             };
             
             view.DataContext = vm;
@@ -64,11 +65,6 @@ namespace PicPick
             _log.Info("Finishing...");
 
             base.OnExit(e);
-            if (vm != null)
-            {
-                vm.Dispose();
-                vm = null;
-            }
 
             _log.Info("----------------------------------------");
         }

@@ -23,5 +23,6 @@ namespace PicPick.View
         {
             InitializeComponent();
         }
+        
     }
 }

@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PicPick.View"
         xmlns:uc="clr-namespace:PicPick.View.UserControls"
+        WindowStartupLocation="CenterScreen"
         mc:Ignorable="d"
         Title="PicPick - File Exists" Width="500" SizeToContent="Height">
     <DockPanel Margin="5">

@@ -155,7 +155,11 @@ namespace PicPick.ViewModel
         }
         private void OnActivityEnd()
         {
-            _fileExistsDialogView = null;
+            if (_fileExistsDialogView != null)
+            {
+                _fileExistsDialogView.Close();
+                _fileExistsDialogView = null;
+            }
         }
 
 
@@ -166,10 +170,13 @@ namespace PicPick.ViewModel
             if (_fileExistsDialogView == null)
             {
                 _fileExistsDialogView = new FileExistsDialogView();
-                _fileExistsDialogView.Closing += (s, e) => { _fileExistsDialogView.Hide(); e.Cancel = true; };
             }
             _fileExistsDialogView.DataContext = vm ;
-            vm.CloseDialog = () => { _fileExistsDialogView.Hide(); };
+            vm.Refresh();
+            vm.CloseDialog = () => {
+                _fileExistsDialogView.Hide();
+                _fileExistsDialogView.DataContext = null;
+            };
             
 
             // #### SHOW DIALOG
@@ -180,7 +187,9 @@ namespace PicPick.ViewModel
             args.Response = vm.Response;
             args.Cancel = vm.Cancel;
             args.DontAskAgain = vm.DontAskAgain;
-            
+
+            vm.Dispose();
+            vm = null;
         }
 
 

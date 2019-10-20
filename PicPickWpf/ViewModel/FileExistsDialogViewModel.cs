@@ -6,7 +6,7 @@ using PicPick.Core;
 
 namespace PicPick.ViewModel
 {
-    public class FileExistsDialogViewModel : BaseViewModel
+    public class FileExistsDialogViewModel : BaseViewModel, IDisposable
     {
         //public ICommand SetResponseCommand { get; set; }
 
@@ -38,11 +38,25 @@ namespace PicPick.ViewModel
         public void SetResponse(FileExistsResponseEnum action)
         {
             Response = action;
+            CloseDialog();
+        }
+        internal void Refresh()
+        {
+            OnPropertyChanged("FileName");
+            OnPropertyChanged("DestinationFile");
+            OnPropertyChanged("DontAskAgain");
+            OnPropertyChanged("ActionButtonsViewModels");
+        }
+
+        public void Dispose()
+        {
             foreach (var item in ActionButtonsViewModels)
             {
                 item.Dispose();
             }
-            CloseDialog();
+            ActionButtonsViewModels = null;
+            CancelCommand = null;
+            CloseDialog = null;
         }
 
         #region Properties
@@ -55,6 +69,7 @@ namespace PicPick.ViewModel
         public Action CloseDialog { get; set; }
         public bool Cancel { get; set; }
 
+        
         #endregion
     }
 }
