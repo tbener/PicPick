@@ -14,6 +14,7 @@ namespace PicPick.ViewModel.UserControls
 
             try
             {
+                ImagePath = imagePath;
                 imageInfo.SetFileStream(imagePath);
                 ImageSize = imageInfo.FileSize(imagePath);
 
@@ -38,6 +39,7 @@ namespace PicPick.ViewModel.UserControls
 
         public string ImageDate { get; set; }
         public string ImageSize { get; set; }
+        public string ImagePath { get; set; }
 
         public void Dispose()
         {
