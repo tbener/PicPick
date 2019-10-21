@@ -69,7 +69,7 @@ namespace PicPick.ViewModel
         public Action CloseDialog { get; set; }
         public bool Cancel { get; set; }
 
-        
+
         #endregion
     }
 }

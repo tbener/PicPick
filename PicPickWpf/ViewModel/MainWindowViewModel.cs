@@ -27,7 +27,6 @@ namespace PicPick.ViewModel
         private static readonly ErrorHandler _errorHandler = new ErrorHandler(_log);
 
         private PicPickProjectActivity _currentActivity;
-        private FileExistsDialogView _fileExistsDialogView;
 
         public ICommand OpenFileCommand { get; set; }
         public ICommand SaveCommand { get; set; }
@@ -155,41 +154,33 @@ namespace PicPick.ViewModel
         }
         private void OnActivityEnd()
         {
-            if (_fileExistsDialogView != null)
-            {
-                _fileExistsDialogView.Close();
-                _fileExistsDialogView = null;
-            }
+            
         }
 
 
         private void OnFileExistsAskEvent(FileExistsAskEventArgs args)
         {
             // Init dialog
-            FileExistsDialogViewModel vm = new FileExistsDialogViewModel(args.SourceFile, args.DestinationFolder);
-            if (_fileExistsDialogView == null)
-            {
-                _fileExistsDialogView = new FileExistsDialogView();
-            }
-            _fileExistsDialogView.DataContext = vm ;
-            vm.Refresh();
-            vm.CloseDialog = () => {
-                _fileExistsDialogView.Hide();
-                _fileExistsDialogView.DataContext = null;
-            };
+            FileExistsDialogViewModel fileExistsDialogViewModel = new FileExistsDialogViewModel(args.SourceFile, args.DestinationFolder);
+            FileExistsDialogView fileExistsDialogView = new FileExistsDialogView();
             
+            fileExistsDialogView.DataContext = fileExistsDialogViewModel ;
+            
+            fileExistsDialogViewModel.CloseDialog = () => {
+                fileExistsDialogView.Close();
+                fileExistsDialogView = null;
+            };
 
             // #### SHOW DIALOG
-            _fileExistsDialogView.ShowDialog();
+            fileExistsDialogView.ShowDialog();
             // #### 
 
             // Save the response to return
-            args.Response = vm.Response;
-            args.Cancel = vm.Cancel;
-            args.DontAskAgain = vm.DontAskAgain;
+            args.Response = fileExistsDialogViewModel.Response;
+            args.Cancel = fileExistsDialogViewModel.Cancel;
+            args.DontAskAgain = fileExistsDialogViewModel.DontAskAgain;
 
-            vm.Dispose();
-            vm = null;
+            fileExistsDialogViewModel.Dispose();
         }
 
 
@@ -260,8 +251,6 @@ namespace PicPick.ViewModel
             ApplicationService.Instance.EventAggregator.GetEvent<FileExistsAskEvent>().Unsubscribe(OnFileExistsAskEvent);
 
             _currentActivity = null;
-            _fileExistsDialogView = null;
-            
         }
     }
 }
