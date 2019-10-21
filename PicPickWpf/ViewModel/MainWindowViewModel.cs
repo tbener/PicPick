@@ -165,10 +165,19 @@ namespace PicPick.ViewModel
             FileExistsDialogView fileExistsDialogView = new FileExistsDialogView();
             
             fileExistsDialogView.DataContext = fileExistsDialogViewModel ;
+            bool closing = false;
             
             fileExistsDialogViewModel.CloseDialog = () => {
+                closing = true;
                 fileExistsDialogView.Close();
-                fileExistsDialogView = null;
+            };
+
+            fileExistsDialogView.Closing += (s, e) =>
+            {
+                if (!closing)
+                {   // Closed with X (all other closing options should go through CloseDialog).
+                    fileExistsDialogViewModel.Cancel = true;
+                }
             };
 
             // #### SHOW DIALOG
