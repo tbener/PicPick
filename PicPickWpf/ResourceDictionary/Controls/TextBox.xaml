@@ -10,8 +10,8 @@
         <Setter Property="Height" Value="26"/>
     </Style>
 
-    <Style TargetType="{x:Type TextBox}">
-        <Setter Property="Height" Value="26"/>
+    <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource {x:Type TextBox}}">
+        <!--<Setter Property="Height" Value="26"/>-->
     </Style>
 
 </ResourceDictionary>

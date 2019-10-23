@@ -5,8 +5,8 @@
                     mc:Ignorable="d">
 
     <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="Controls/Button.xaml"/>
-        <ResourceDictionary Source="Controls/MenuItem.xaml"/>
+        <!--<ResourceDictionary Source="Controls/Button.xaml"/>-->
+        <!--<ResourceDictionary Source="Controls/MenuItem.xaml"/>-->
         <ResourceDictionary Source="Controls/TextBox.xaml"/>
     </ResourceDictionary.MergedDictionaries>
 

@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:uc="clr-namespace:PicPick.UserControls.View"
-             xmlns:local="clr-namespace:PicPick.View"
+             xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="466.525">
     <Grid>
@@ -16,7 +16,11 @@
             <RowDefinition x:Name="buttons" Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <TextBox Grid.Row="0" Text="{Binding Activity.Name, UpdateSourceTrigger=PropertyChanged, FallbackValue=Activity Name}" FontSize="16" FontWeight="Bold" Margin="0, 0, 0, 10"/>
+        
+
+        <TextBox metro:TextBoxHelper.Watermark="Type Activity Name" x:Name="ActivityName" 
+                 BorderThickness="0" Grid.Row="0" Text="{Binding Activity.Name, UpdateSourceTrigger=PropertyChanged}" 
+                 FontSize="16" FontWeight="Bold" Margin="0, 0, 0, 10"/>
 
         <Grid Grid.Row="1">
             <Grid.RowDefinitions>
