@@ -200,7 +200,7 @@ namespace PicPick.ViewModel
         {
             get
             {
-                return string.Format("PicPick - {0}{1} (v{2})", Path.GetFileName(ProjectLoader.FileName), CurrentProject.IsDirty ? "*" : "", AppInfo.AppVersionString);
+                return string.Format("PicPick - {0}{1}", Path.GetFileName(ProjectLoader.FileName), CurrentProject.IsDirty ? "*" : "");
             }
         }
 
@@ -249,6 +249,8 @@ namespace PicPick.ViewModel
                 OnPropertyChanged(nameof(SelectedFileExistsResponse));
             }
         }
+
+        public string VersionString => $"v{AppInfo.AppVersionString}";
 
         public string LogFile { get; set; }
 

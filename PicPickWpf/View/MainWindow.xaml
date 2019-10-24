@@ -9,6 +9,7 @@
                       xmlns:controlzex="urn:controlzex" x:Class="PicPick.MainWindow"
                       mc:Ignorable="d"
         Title="{Binding WindowTitle, FallbackValue=PicPick}" 
+    ShowIconOnTitleBar="True"
     TitleCaps="False"
     ResizeMode="CanResizeWithGrip"
     Height="600" Width="800">
@@ -38,8 +39,24 @@
             </MenuItem>
         </Menu>
         <StatusBar DockPanel.Dock="Bottom" Height="24">
+            <StatusBar.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="24"/>
+                        </Grid.ColumnDefinitions>
+                    </Grid>
+                </ItemsPanelTemplate>
+            </StatusBar.ItemsPanel>
             <StatusBarItem>
                 <TextBlock Text="{Binding Status, FallbackValue=Ready}" HorizontalAlignment="Stretch"/>
+            </StatusBarItem>
+            <Separator Grid.Column="1"/>
+            <StatusBarItem Grid.Column="2">
+                <TextBlock Text="{Binding VersionString, FallbackValue=v1.0}" HorizontalAlignment="Right"/>
             </StatusBarItem>
         </StatusBar>
         <Grid>
