@@ -1,9 +1,9 @@
-﻿<UserControl x:Class="PicPick.UserControls.View.ExecutionView"
+﻿<UserControl x:Class="PicPick.View.UserControls.ExecutionView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:PicPick.UserControls.View"
+             xmlns:local="clr-namespace:PicPick.View.UserControls"
              mc:Ignorable="d" 
              d:DesignHeight="216.008" d:DesignWidth="698.949">
     <Grid>

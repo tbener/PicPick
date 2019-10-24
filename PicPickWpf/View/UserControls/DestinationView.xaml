@@ -3,8 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:PicPick.UserControls.View"
-             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls" x:Class="PicPick.UserControls.View.DestinationView"
+             xmlns:local="clr-namespace:PicPick.View.UserControls"
+             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls" x:Class="PicPick.View.UserControls.DestinationView"
              mc:Ignorable="d" 
              d:DesignHeight="59" d:DesignWidth="538">
     <Grid>

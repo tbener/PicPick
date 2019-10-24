@@ -8,6 +8,8 @@
         <!--<ResourceDictionary Source="Controls/Button.xaml"/>-->
         <!--<ResourceDictionary Source="Controls/MenuItem.xaml"/>-->
         <ResourceDictionary Source="Controls/TextBox.xaml"/>
+        <ResourceDictionary Source="Controls/TextBlock.xaml"/>
+        <ResourceDictionary Source="Controls/General.xaml"/>
     </ResourceDictionary.MergedDictionaries>
 
     <!-- dummy style to fix bug in wpf4 -->

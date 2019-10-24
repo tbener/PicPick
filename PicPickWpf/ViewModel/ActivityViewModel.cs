@@ -11,8 +11,9 @@ using PicPick.Commands;
 using PicPick.Core;
 using PicPick.Helpers;
 using PicPick.Models;
-using PicPick.UserControls.ViewModel;
+using PicPick.ViewModel.UserControls;
 using PicPick.View;
+using PicPick.ViewModel.UserControls;
 using TalUtils;
 
 namespace PicPick.ViewModel

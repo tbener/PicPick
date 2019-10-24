@@ -1,5 +1,5 @@
 ﻿using PicPick.Helpers;
-using PicPick.UserControls.ViewModel;
+using PicPick.ViewModel.UserControls;
 using System;
 using System.Collections.Generic;
 using System.Linq;

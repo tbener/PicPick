@@ -128,19 +128,19 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="UserControls\ViewModel\DestinationViewModel.cs" />
-    <Compile Include="UserControls\ViewModel\PathBrowserViewModel.cs" />
-    <Compile Include="UserControls\ViewModel\ProgressViewModel.cs" />
-    <Compile Include="UserControls\View\DestinationView.xaml.cs">
+    <Compile Include="ViewModel\UserControls\DestinationViewModel.cs" />
+    <Compile Include="ViewModel\UserControls\PathBrowserViewModel.cs" />
+    <Compile Include="ViewModel\UserControls\ProgressViewModel.cs" />
+    <Compile Include="View\UserControls\DestinationView.xaml.cs">
       <DependentUpon>DestinationView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UserControls\View\ExecutionView.xaml.cs">
+    <Compile Include="View\UserControls\ExecutionView.xaml.cs">
       <DependentUpon>ExecutionView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UserControls\View\PathBrowserView.xaml.cs">
+    <Compile Include="View\UserControls\PathBrowserView.xaml.cs">
       <DependentUpon>PathBrowserView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UserControls\View\ProgressView.xaml.cs">
+    <Compile Include="View\UserControls\ProgressView.xaml.cs">
       <DependentUpon>ProgressView.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModel\ActionButtonViewModel.cs" />
@@ -162,15 +162,31 @@
     <Compile Include="View\UserControls\ImageInfoView.xaml.cs">
       <DependentUpon>ImageInfoView.xaml</DependentUpon>
     </Compile>
-    <Page Include="UserControls\View\DestinationView.xaml">
+    <Page Include="ResourceDictionary\Controls\General.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ResourceDictionary\Controls\TextBlock.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UserControls\View\ExecutionView.xaml">
+    <Page Include="Resources\Icons.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\IconsNonShared.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\UserControls\DestinationView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UserControls\View\ProgressView.xaml">
+    <Page Include="View\UserControls\ExecutionView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\UserControls\ProgressView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -226,7 +242,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UserControls\View\PathBrowserView.xaml">
+    <Page Include="View\UserControls\PathBrowserView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -258,6 +274,7 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <Resource Include="Resources\Entypo.ttf" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -284,11 +301,16 @@
       <Name>TalUtils</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Resources\WindowsIcons-license.txt" />
+  </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\picpick.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Entypo-license.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

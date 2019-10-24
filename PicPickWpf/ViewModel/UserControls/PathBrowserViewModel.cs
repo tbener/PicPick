@@ -5,7 +5,7 @@ using System.Windows.Forms;
 using System.Windows.Input;
 using TalUtils;
 
-namespace PicPick.UserControls.ViewModel
+namespace PicPick.ViewModel.UserControls
 {
     public class GenericPathClass<T>
     {

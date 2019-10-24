@@ -1,10 +1,11 @@
 ﻿using PicPick.Commands;
 using PicPick.Models;
+using PicPick.ViewModel.UserControls;
 using PicPick.ViewModel;
 using System;
 using System.Windows.Input;
 
-namespace PicPick.UserControls.ViewModel
+namespace PicPick.ViewModel.UserControls
 {
 
     public class DestinationViewModel : BaseViewModel

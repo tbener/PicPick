@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
-namespace PicPick.UserControls.ViewModel
+namespace PicPick.ViewModel.UserControls
 {
     public class ProgressViewModel : BaseViewModel
     {

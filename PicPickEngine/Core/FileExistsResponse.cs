@@ -28,7 +28,7 @@ namespace PicPick.Core
         SKIP,
         [FileExistsResponse(Description = "Copy, but keep both files", Details = "The file will be renamed")]
         RENAME,     // Save both
-        [FileExistsResponse(Description = "Decide automaically", Details = "Automatically detect whether the images are the same and Skip or Rename accordingly")]
+        [FileExistsResponse(Description = "Decide automatically", Details = "Automatically detect whether the images are the same and Skip or Rename accordingly")]
         COMPARE     // Check if same files or just same names. then, if same, skip, if not, keep them both (rename)
     }
 

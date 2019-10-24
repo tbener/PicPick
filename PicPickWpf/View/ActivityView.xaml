@@ -3,10 +3,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:uc="clr-namespace:PicPick.UserControls.View"
+             xmlns:uc="clr-namespace:PicPick.View.UserControls"
              xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="466.525">
+             d:DesignHeight="352" d:DesignWidth="466.525">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition x:Name="title" Height="Auto"/>
@@ -16,7 +16,7 @@
             <RowDefinition x:Name="buttons" Height="Auto"/>
         </Grid.RowDefinitions>
 
-        
+
 
         <TextBox metro:TextBoxHelper.Watermark="Type Activity Name" x:Name="ActivityName" 
                  BorderThickness="0" Grid.Row="0" Text="{Binding Activity.Name, UpdateSourceTrigger=PropertyChanged}" 
@@ -35,26 +35,30 @@
             <GridSplitter Grid.Column="0" HorizontalAlignment="Right" Width="3" Grid.RowSpan="2"/>
 
             <DockPanel Grid.Row="0" Margin="0,0,5,0" LastChildFill="False">
-                <TextBlock Text="Source" DockPanel.Dock="Top" Height="23"/>
-                <uc:PathBrowserView DockPanel.Dock="Top" DataContext="{Binding SourceViewModel}"/>
+                <TextBlock Text="Copy from" DockPanel.Dock="Top" Height="23" Style="{StaticResource CaptionTextBlock}"/>
+                <uc:PathBrowserView DockPanel.Dock="Top" DataContext="{Binding SourceViewModel}" Height="28"/>
                 <DockPanel DockPanel.Dock="Top" LastChildFill="False">
                     <CheckBox DockPanel.Dock="Left" IsChecked="{Binding Activity.Source.IncludeSubFolders}" Margin="0,4">Include sub folders</CheckBox>
-                    <TextBlock DockPanel.Dock="Right" Text="{Binding SourceFilesStatus, FallbackValue=No files found}" Grid.Row="1"/>
+                    <TextBlock DockPanel.Dock="Right" Text="{Binding SourceFilesStatus, FallbackValue=No files found}" Grid.Row="1" Margin="0 1 27 0"/>
                 </DockPanel>
             </DockPanel>
             <DockPanel Grid.Row="0" Grid.Column="1" LastChildFill="False">
-                <TextBlock Text="Filter" DockPanel.Dock="Top" Height="23"/>
-                <TextBox DockPanel.Dock="Top" Text="{Binding Activity.Source.Filter, UpdateSourceTrigger=PropertyChanged}" Height="23"/>
+                <TextBlock Text="File types" DockPanel.Dock="Top" Height="23"/>
+                <TextBox DockPanel.Dock="Top" Text="{Binding Activity.Source.Filter, UpdateSourceTrigger=PropertyChanged}" />
             </DockPanel>
 
 
         </Grid>
 
-        <DockPanel Grid.Row="2" LastChildFill="True" Margin="0,8">
+        <DockPanel Grid.Row="2" LastChildFill="True" Margin="0 16 0 8">
             <DockPanel DockPanel.Dock="Top" LastChildFill="False">
-                <TextBlock Text="Destinations" DockPanel.Dock="Left"/>
-                <Button Content="Add" Width="72" DockPanel.Dock="Right" Command="{Binding AddDestinationCommand}"/>
+                <TextBlock Text="Copy to" DockPanel.Dock="Left" Style="{StaticResource CaptionTextBlock}"/>
             </DockPanel>
+            <TextBlock DockPanel.Dock="Bottom" HorizontalAlignment="Left">
+                <Hyperlink Command="{Binding AddDestinationCommand}">
+                    <TextBlock Text="Add more destinations" />
+                </Hyperlink>
+            </TextBlock>
             <ListBox ItemsSource="{Binding DestinationViewModelList}" HorizontalContentAlignment="Stretch">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
