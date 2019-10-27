@@ -33,6 +33,7 @@ namespace PicPick.ViewModel.UserControls
         {
             Destination = destination;
             PathViewModel = new PathBrowserViewModel(Destination);
+            PathViewModel.TextboxTooltip = "Use absolute path or relative to source";
 
             DeleteCommand = new RelayCommand(delegate { OnDeleteClicked?.Invoke(this, null); });
 

@@ -12,7 +12,8 @@
         
     </UserControl.Resources>
     <DockPanel LastChildFill="True">
-        <Button Margin="3 0 0 0" Width="24" DockPanel.Dock="Right" Command="{Binding BrowseCommand}" 
+        <Button Margin="3 0 0 0" Width="24" DockPanel.Dock="Right" Command="{Binding OpenExplorerCommand}" 
+                ToolTip="Open in Explorer"
                 Style="{DynamicResource MahApps.Metro.Styles.MetroCircleButtonStyle}">
             <Rectangle Width="14" Height="14">
                 <Rectangle.Fill>
@@ -22,9 +23,10 @@
         </Button>
         <TextBox Text="{Binding Path, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" 
                  Style="{DynamicResource ButtonCommandMetroTextBox}"
+                 ToolTip="{Binding TextboxTooltip}"
                  metro:TextBoxHelper.ButtonCommand="{Binding BrowseCommand}">
             <metro:TextBoxHelper.ButtonContent>
-                <Rectangle Width="14" Height="14" >
+                <Rectangle Width="14" Height="14" ToolTip="Browse...">
                     <!--<Rectangle.Resources>
                         <SolidColorBrush x:Key="BlackBrush" Color="White" />
                     </Rectangle.Resources>-->

@@ -18,20 +18,22 @@ namespace PicPick.ViewModel.UserControls
         // We also can't use the class type explicitely because there is more than one class. We just know they have the property "Path".
         private object PathClass { get; set; }
 
-        public static EventHandler OnPathChanged;
-
-        public bool AllowPathNotExists = true;  // not yet in use
-
         public ICommand BrowseCommand { get; set; }
+        public ICommand OpenExplorerCommand { get; set; }
+
+        public static EventHandler OnPathChanged;
+        public bool AllowPathNotExists = true;  // not yet in use
+        private string textboxTooltip;
+
         public string BasePath { get; set; }
 
         public PathBrowserViewModel(object pathClass)
         {
             BrowseCommand = new RelayCommand(BrowseFolder);
+            OpenExplorerCommand = new RelayCommand(OpenInExplorer, PathExists);
             PathClass = pathClass;
             BasePath = "";
         }
-
 
         private void BrowseFolder()
         {
@@ -41,6 +43,16 @@ namespace PicPick.ViewModel.UserControls
             {
                 Path = string.IsNullOrEmpty(BasePath) ? dlg.DirectoryPath : PathHelper.GetInnerPath(BasePath, dlg.DirectoryPath);
             }
+        }
+
+        private void OpenInExplorer()
+        {
+            ExplorerHelper.OpenPath(this.Path);
+        }
+
+        private bool PathExists()
+        {
+            return PathHelper.Exists(this.Path);
         }
 
 
@@ -68,6 +80,15 @@ namespace PicPick.ViewModel.UserControls
             //if (PathHelper.Exists(newPath))
             //    return true;
             //return false;
+        }
+
+        public string TextboxTooltip
+        {
+            get => textboxTooltip; set
+            {
+                textboxTooltip = value;
+                OnPropertyChanged(nameof(TextboxTooltip));
+            }
         }
     }
 }

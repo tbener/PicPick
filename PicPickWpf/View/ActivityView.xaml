@@ -82,7 +82,7 @@
                                                         <ColumnDefinition Width="70"/>
                                                     </Grid.ColumnDefinitions>
 
-                                                    <uc:PathBrowserView Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="1" DataContext="{Binding PathViewModel}" Margin="0,0,8,0" ToolTip="Use absolute path or relative to source"/>
+                                                    <uc:PathBrowserView Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="1" DataContext="{Binding PathViewModel}" Margin="0,0,8,0"/>
 
                                                     <TextBox Grid.Column="2" Grid.Row="1" Grid.ColumnSpan="2" Text="{Binding Destination.Template, UpdateSourceTrigger=PropertyChanged}" ToolTip="{Binding TemplateToolTip}" />
 
@@ -113,7 +113,7 @@
                                             <CheckBox Grid.Column="0" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" IsChecked="{Binding Destination.Active}"/>
 
                                             <!--<TextBlock Grid.Column="1" Grid.Row="0" Text="Path"/>-->
-                                            <uc:PathBrowserView Grid.Column="1" Grid.Row="1" DataContext="{Binding PathViewModel}" Margin="0,0,8,0" ToolTip="Use absolute path or relative to source"/>
+                                            <uc:PathBrowserView Grid.Column="1" Grid.Row="1" DataContext="{Binding PathViewModel}" Margin="0,0,8,0"/>
 
                                             <!--<TextBlock Grid.Column="2" Grid.Row="0" Text="Template"/>-->
                                             <TextBox Grid.Column="2" Grid.Row="1" Text="{Binding Destination.Template, UpdateSourceTrigger=PropertyChanged}" ToolTip="{Binding TemplateToolTip}" />
