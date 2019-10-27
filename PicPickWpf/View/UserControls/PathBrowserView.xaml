@@ -6,9 +6,8 @@
              xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              mc:Ignorable="d" 
-             Height="24"
-             d:DesignHeight="300" d:DesignWidth="300"
-             DataContext="PathBrowserViewModel">
+             MinHeight="26"
+             d:DesignHeight="26" d:DesignWidth="300">
     <UserControl.Resources>
         
     </UserControl.Resources>
@@ -25,7 +24,7 @@
                  Style="{DynamicResource ButtonCommandMetroTextBox}"
                  metro:TextBoxHelper.ButtonCommand="{Binding BrowseCommand}">
             <metro:TextBoxHelper.ButtonContent>
-                <Rectangle Width="14" Height="14">
+                <Rectangle Width="14" Height="14" >
                     <!--<Rectangle.Resources>
                         <SolidColorBrush x:Key="BlackBrush" Color="White" />
                     </Rectangle.Resources>-->
