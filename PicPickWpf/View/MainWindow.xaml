@@ -62,25 +62,26 @@
                 <TextBlock Text="{Binding VersionString, FallbackValue=v1.0}" HorizontalAlignment="Right"/>
             </StatusBarItem>
         </StatusBar>
-        <Grid>
+        <Grid Margin="5">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="28*"/>
-                <ColumnDefinition Width="71*"/>
-                <ColumnDefinition Width="297*"/>
+                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="1*"/>
             </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
 
-            <GridSplitter Grid.Column="1" HorizontalAlignment="Right" Width="5" />
+            <GridSplitter Grid.Column="0" HorizontalAlignment="Right" Width="5"/>
 
-            <DockPanel Grid.Column="0" Margin="5 0 5 5" Grid.ColumnSpan="2">
-                <GroupBox Header="Options" DockPanel.Dock="Bottom">
-                    <DockPanel LastChildFill="False" Margin="6">
-                        <TextBlock DockPanel.Dock="Top" TextWrapping="Wrap" Margin="0,5">What to do when a file already exists:</TextBlock>
-                        <ComboBox x:Name="ActionsList" DockPanel.Dock="Top" ItemsSource="{Binding FileExistsResponseList, Mode=OneTime}" DisplayMemberPath="Value.Description" 
-                                      SelectedValuePath="Key" SelectedValue="{Binding SelectedFileExistsResponse}" Height="23"/>
-                        <TextBlock DockPanel.Dock="Top" Text="{Binding ElementName=ActionsList, Path=SelectedItem.Value.Details}" TextWrapping="WrapWithOverflow"/>
-                    </DockPanel>
+            <Grid x:Name="TopLeft" Margin="0 0 5 5">
+                <GroupBox Header=" ">
+                    <local:ActivityView DataContext="{Binding ActivityViewModel}"/>
                 </GroupBox>
-                <GroupBox Header="Activities" Margin="0,5">
+            </Grid>
+
+            <Grid x:Name="TopRight" Grid.Column="1" Margin="0 0 0 5">
+                <GroupBox Header="Activities">
                     <ListBox x:Name="lstActivities" ItemsSource="{Binding CurrentProject.ActivityList}" SelectedItem="{Binding CurrentActivity}">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
@@ -89,18 +90,42 @@
                         </ListBox.ItemTemplate>
                     </ListBox>
                 </GroupBox>
+            </Grid>
 
-
-
-            </DockPanel>
-
-            <Grid x:Name="Content" Grid.Column="2" Margin="0 5 5 5">
-                <GroupBox Header="">
-                    <local:ActivityView DataContext="{Binding ActivityViewModel}"/>
+            <Grid x:Name="BottomLeft" Grid.Row="1" Margin="0 0 5 0">
+                <GroupBox Header="Run">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="24"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Button Command="{Binding StartCommand}" Height="32" Width="80" Content="Run" HorizontalAlignment="Left" Margin="10"/>
+                        <ProgressBar Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" 
+                             Height="16" Margin="5 0"
+                             Value="{Binding ProgressInfo.Value, FallbackValue=0}" Maximum="{Binding ProgressInfo.Maximum, FallbackValue=100}"/>
+                    </Grid>
                 </GroupBox>
             </Grid>
 
+            <Grid x:Name="BottomRight" Grid.Row="1" Grid.Column="1" Margin="0">
+                <GroupBox Header="Options">
+                    <DockPanel LastChildFill="False" Margin="6">
+                        <TextBlock DockPanel.Dock="Top" TextWrapping="Wrap" Margin="0,5">What to do when a file already exists:</TextBlock>
+                        <ComboBox x:Name="ActionsList" DockPanel.Dock="Top" ItemsSource="{Binding FileExistsResponseList, Mode=OneTime}" DisplayMemberPath="Value.Description" 
+                                      SelectedValuePath="Key" SelectedValue="{Binding SelectedFileExistsResponse}" Height="23"/>
+                        <TextBlock DockPanel.Dock="Top" Text="{Binding ElementName=ActionsList, Path=SelectedItem.Value.Details}" TextWrapping="WrapWithOverflow"/>
+                    </DockPanel>
+                </GroupBox>
+            </Grid>
 
+           
+
+            
+           
         </Grid>
     </DockPanel>
 </metro:MetroWindow>

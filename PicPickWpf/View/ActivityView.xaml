@@ -142,21 +142,5 @@
             <CheckBox IsChecked="{Binding Activity.DeleteSourceFiles}" Margin="0,4">Delete source files</CheckBox>
         </Border>
 
-        <GroupBox Header="Run" Grid.Row="4" BorderBrush="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}" BorderThickness="1"  >
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="24"/>
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <Button Command="{Binding StartCommand}" Height="32" Width="80" Content="Run" HorizontalAlignment="Left" Margin="10"/>
-                <ProgressBar Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" 
-                             Height="16" Margin="5 0"
-                             Value="{Binding ProgressInfo.Value, FallbackValue=0}" Maximum="{Binding ProgressInfo.Maximum, FallbackValue=100}"/>
-            </Grid>
-        </GroupBox>
     </Grid>
 </UserControl>
