@@ -18,9 +18,9 @@
 
 
 
-        <TextBox metro:TextBoxHelper.Watermark="Type Activity Name" x:Name="ActivityName" 
+        <!--<TextBox metro:TextBoxHelper.Watermark="Type Activity Name" x:Name="ActivityName" 
                  BorderThickness="0" Grid.Row="0" Text="{Binding Activity.Name, UpdateSourceTrigger=PropertyChanged}" 
-                 FontSize="16" FontWeight="Bold" Margin="0, 0, 0, 10"/>
+                 FontSize="16" FontWeight="Bold" Margin="0, 0, 0, 10"/>-->
 
         <Grid Grid.Row="1">
             <Grid.RowDefinitions>

@@ -24,18 +24,13 @@ namespace PicPick.Models
             get { return FileName.Equals(DEFAULT_FILE, StringComparison.CurrentCultureIgnoreCase); }
         }
 
-        public static bool LoadCreateDefault()
+        public static bool LoadDefault()
         {
             if (File.Exists(DEFAULT_FILE))
-            {
-                if (Load(DEFAULT_FILE))
-                    return true;
-                if (!Msg.ShowQ("Project file could not be loaded. Do you want to create a new empty project?"))
-                    return false;
-            }
-            Project = CreateNew("Default");
-            return Save(DEFAULT_FILE);
+                return Load(DEFAULT_FILE);
+            return false;
         }
+
 
         public static PicPickProject CreateNew(string projectName)
         {
@@ -53,7 +48,18 @@ namespace PicPick.Models
 
             return proj;
         }
-        
+
+        public static void Create(PicPickProject project, string file)
+        {
+            Project = project;
+            Save(file);
+        }
+
+        public static void Create(PicPickProject project)
+        {
+            Create(project, DEFAULT_FILE);
+        }
+
         public static PicPickProject Project { get; set; }
 
         public static string FileName { get; private set; }

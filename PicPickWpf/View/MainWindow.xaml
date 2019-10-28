@@ -11,7 +11,7 @@
     WindowStartupLocation="CenterScreen"
     GlowBrush="{DynamicResource AccentColorBrush}"
     ShowIconOnTitleBar="True"
-    TitleCaps="False"
+    TitleCharacterCasing="Normal"
     ResizeMode="CanResizeWithGrip"
     SaveWindowPosition="True"
     Height="600" Width="800" 
@@ -30,7 +30,7 @@
                 <MenuItem Header="_Save" Command="{Binding SaveCommand}" InputGestureText="Ctrl+S"/>
                 <MenuItem Header="Save _As..." Command="{Binding SaveCommand}" CommandParameter="true" />
             </MenuItem>
-            <MenuItem Header="Activity">
+            <MenuItem Header="{StaticResource ppk_activity}">
                 <MenuItem Header="_Add" Command="{Binding AddActivityCommand}" InputGestureText="Ctrl+N"/>
                 <MenuItem Header="_Delete..." Command="{Binding DeleteActivityCommand}"/>
             </MenuItem>
@@ -75,13 +75,23 @@
             <GridSplitter Grid.Column="0" HorizontalAlignment="Right" Width="5"/>
 
             <Grid x:Name="TopLeft" Margin="0 0 5 5">
-                <GroupBox Header=" ">
+                <GroupBox Header="{Binding CurrentActivity.Name, FallbackValue=Main}" 
+                          metro:ControlsHelper.ContentCharacterCasing="Normal" 
+                          metro:ControlsHelper.HeaderFontWeight="Heavy">
+                    <!--<GroupBox.Header>
+                        <TextBlock Text="{Binding CurrentActivity.Name, FallbackValue=Main}" MinHeight="10"
+                                 FontSize="12"
+                                   FontWeight="Bold"
+                                 Height="18"
+                                 Background="Transparent"
+                                 Foreground="White"/>
+                    </GroupBox.Header>-->
                     <local:ActivityView DataContext="{Binding ActivityViewModel}"/>
                 </GroupBox>
             </Grid>
 
             <Grid x:Name="TopRight" Grid.Column="1" Margin="0 0 0 5">
-                <GroupBox Header="Activities">
+                <GroupBox Header="{StaticResource ppk_activities}">
                     <ListBox x:Name="lstActivities" ItemsSource="{Binding CurrentProject.ActivityList}" SelectedItem="{Binding CurrentActivity}">
                         <ListBox.ItemTemplate>
                             <DataTemplate>

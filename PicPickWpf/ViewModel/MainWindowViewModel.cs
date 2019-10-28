@@ -41,7 +41,7 @@ namespace PicPick.ViewModel
             
             OpenFileCommand = new RelayCommand(OpenFileWithDialog);
             SaveCommand = new SaveCommand();
-            AddActivityCommand = new RelayCommand(AddNewActivity);
+            AddActivityCommand = new RelayCommand(CreateNewActivity);
             DeleteActivityCommand = new RelayCommand(DeleteActivity, () => CurrentProject.ActivityList.Count > 1);
             BrowseLogFileCommand = new RelayCommand(BrowseLogFile);
             SendMailDialogCommand = new RelayCommand(SendMailDialog);
@@ -53,7 +53,7 @@ namespace PicPick.ViewModel
 
             _log.Info("Loading file...");
             if (string.IsNullOrEmpty(Properties.Settings.Default.LastFile) || !File.Exists(Properties.Settings.Default.LastFile))
-                ProjectLoader.LoadCreateDefault();
+                LoadOrCreateNew();
             else
                 OpenFile(Properties.Settings.Default.LastFile);
 
@@ -68,6 +68,47 @@ namespace PicPick.ViewModel
             ApplicationService.Instance.EventAggregator.GetEvent<ActivityEndedEvent>().Subscribe(OnActivityEnd);
             ApplicationService.Instance.EventAggregator.GetEvent<GotDirtyEvent>().Subscribe(OnGotDirty);
             ApplicationService.Instance.EventAggregator.GetEvent<FileExistsAskEvent>().Subscribe(OnFileExistsAskEvent);
+        }
+
+        private PicPickProjectActivity GetNewActivity(string name)
+        {
+            PicPickProjectActivity activity = new PicPickProjectActivity(name);
+            activity.Source.Path = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
+            PicPickProjectActivityDestination destination = new PicPickProjectActivityDestination();
+            destination.Path = "SampleDestination";
+            activity.DestinationList.Add(destination);
+            return activity;
+        }
+
+        private PicPickProject CreateNewProject()
+        {
+            PicPickProject proj = new PicPickProject()
+            {
+                Name = "Default"
+            };
+
+            string activityName = (string)Application.Current.FindResource("ppk_first_activity");
+            PicPickProjectActivity activity = GetNewActivity(activityName);
+            proj.ActivityList.Add(activity);
+
+            return proj;
+        }
+
+        private void CreateNewActivity()
+        {
+            string activityName = (string)Application.Current.FindResource("ppk_new_activity");
+            PicPickProjectActivity activity = GetNewActivity(activityName);
+            CurrentProject.ActivityList.Add(activity);
+            CurrentActivity = activity;
+        }
+
+        private void LoadOrCreateNew()
+        {
+            if (!ProjectLoader.LoadDefault())
+            {
+                PicPickProject project = CreateNewProject();
+                ProjectLoader.Create(project);
+            }
         }
 
         private void OpenPicPickPage()
@@ -91,12 +132,7 @@ namespace PicPick.ViewModel
             OnPropertyChanged("WindowTitle");
         }
 
-        private void AddNewActivity()
-        {
-            PicPickProjectActivity act = new PicPickProjectActivity("New Activity");
-            CurrentProject.ActivityList.Add(act);
-            CurrentActivity = act;
-        }
+        
 
         private void DeleteActivity()
         {
