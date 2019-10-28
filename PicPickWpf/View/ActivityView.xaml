@@ -110,7 +110,7 @@
                                                 <ColumnDefinition Width="3*"/>
                                                 <ColumnDefinition Width="70"/>
                                             </Grid.ColumnDefinitions>
-                                            <CheckBox Grid.Column="0" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" IsChecked="{Binding Destination.Active}"/>
+                                            <CheckBox Grid.Column="0" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" IsChecked="{Binding Destination.Active}" ToolTip="If not checked, files will not be copied to this destination"/>
 
                                             <!--<TextBlock Grid.Column="1" Grid.Row="0" Text="Path"/>-->
                                             <uc:PathBrowserView Grid.Column="1" Grid.Row="1" DataContext="{Binding PathViewModel}" Margin="0,0,8,0"/>
@@ -142,8 +142,21 @@
             <CheckBox IsChecked="{Binding Activity.DeleteSourceFiles}" Margin="0,4">Delete source files</CheckBox>
         </Border>
 
-        <Border Grid.Row="4" Height="100" BorderBrush="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}" BorderThickness="1" CornerRadius="4" >
-            <Button Command="{Binding StartCommand}" Height="32" Width="80" Content="Run" HorizontalAlignment="Left" Margin="10"/>
-        </Border>
+        <GroupBox Header="Run" Grid.Row="4" BorderBrush="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}" BorderThickness="1"  >
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="24"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Button Command="{Binding StartCommand}" Height="32" Width="80" Content="Run" HorizontalAlignment="Left" Margin="10"/>
+                <ProgressBar Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" 
+                             Height="16" Margin="5 0"
+                             Value="{Binding ProgressInfo.Value, FallbackValue=0}" Maximum="{Binding ProgressInfo.Maximum, FallbackValue=100}"/>
+            </Grid>
+        </GroupBox>
     </Grid>
 </UserControl>

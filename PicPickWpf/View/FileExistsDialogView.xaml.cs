@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MahApps.Metro.Controls;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,7 +18,7 @@ namespace PicPick.View
     /// <summary>
     /// Interaction logic for FileExistsDialogView.xaml
     /// </summary>
-    public partial class FileExistsDialogView : Window
+    public partial class FileExistsDialogView : MetroWindow
     {
         public FileExistsDialogView()
         {
