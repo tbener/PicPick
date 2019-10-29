@@ -28,6 +28,7 @@ namespace PicPick.Core
         public async Task Run(ProgressInformation progressInfo, CancellationToken cancellationToken)
         {
             if (_activity.IsRunning) throw new Exception("Activity is already running.");
+            _activity.IsRunning = true;
             EventAggregatorHelper.PublishActivityStarted();
 
             progressInfo.Activity = _activity.Name;
