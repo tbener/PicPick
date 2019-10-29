@@ -28,26 +28,31 @@ namespace PicPick.ViewModel
         string _sourceFilesStatus;
         CancellationTokenSource ctsSourceCheck;
 
+        #endregion
+
         #region Commands
 
         public ICommand StartCommand { get; set; }
+        public ICommand StopCommand { get; set; }
         public ICommand AddDestinationCommand { get; set; }
 
         #endregion
 
-        #endregion
 
         public ActivityViewModel(PicPickProjectActivity activity)
         {
 
             AddDestinationCommand = new RelayCommand(AddDestination);
             StartCommand = new RelayCommand(Start, CanStart);
+            StopCommand = new RelayCommand(Stop, CanStop);
 
             Activity = activity;
 
             ProgressInfo = new ProgressInformation();
             cts = new CancellationTokenSource();
         }
+
+        
 
         /// <summary>
         /// Associate the ViewModels to the inner objects
@@ -105,15 +110,15 @@ namespace PicPick.ViewModel
 
         public async void Start()
         {
-            ProgressWindowViewModel progressWindowViewModel = new ProgressWindowViewModel(ProgressInfo);
-            ProgressWindowView progressWindow = new ProgressWindowView()
-            {
-                DataContext = progressWindowViewModel
-            };
+            //ProgressWindowViewModel progressWindowViewModel = new ProgressWindowViewModel(ProgressInfo);
+            //ProgressWindowView progressWindow = new ProgressWindowView()
+            //{
+            //    DataContext = progressWindowViewModel
+            //};
 
             try
             {
-                progressWindow.Show();
+                //progressWindow.Show();
 
                 Runner runner = new Runner(Activity, ProjectLoader.Project.Options);
                 await runner.Run(ProgressInfo, cts.Token);
@@ -125,7 +130,7 @@ namespace PicPick.ViewModel
             }
             finally
             {
-                progressWindow.Close();
+                //progressWindow.Close();
 
                 OnPropertyChanged("ProgressInfo");
             }
@@ -136,7 +141,19 @@ namespace PicPick.ViewModel
             return !string.IsNullOrEmpty(Activity.Source.Path) && !Activity.IsRunning;
         }
 
-        
+
+        private void Stop()
+        {
+            cts.Cancel();
+        }
+
+        private bool CanStop(object obj)
+        {
+            return Activity.IsRunning;
+        }
+
+
+
         public ProgressInformation ProgressInfo { get; set; }
 
         #endregion

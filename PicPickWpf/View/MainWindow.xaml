@@ -113,10 +113,22 @@
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        <Button Command="{Binding StartCommand}" Height="32" Width="80" Content="Run" HorizontalAlignment="Left" Margin="10"/>
+                        <StackPanel>
+                            <Button Command="{Binding StartCommand}" Content="Start" Height="32" Width="80" HorizontalAlignment="Left" Margin="10"/>
+                            <Button Command="{Binding StopCommand}" Content="Stop" Height="32" Width="80" HorizontalAlignment="Left" Margin="10 0 10 10"/>
+                        </StackPanel>
+
                         <ProgressBar Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" 
                              Height="16" Margin="5 0"
                              Value="{Binding ProgressInfo.Value, FallbackValue=0}" Maximum="{Binding ProgressInfo.Maximum, FallbackValue=100}"/>
+                        <TextBlock Text="{Binding ProgressInfo.CurrentOperation, FallbackValue=Current operation}" 
+                                   Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" 
+                                   Margin="10 0"
+                                   VerticalAlignment="Center"/>
+                        <TextBlock HorizontalAlignment="Right" Text="{Binding ProgressPercentsText, FallbackValue=0%, Mode=OneWay}" 
+                                   Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" 
+                                   Margin="10 0"
+                                   VerticalAlignment="Center"/>
                     </Grid>
                 </GroupBox>
             </Grid>
@@ -132,10 +144,10 @@
                 </GroupBox>
             </Grid>
 
-           
 
-            
-           
+
+
+
         </Grid>
     </DockPanel>
 </metro:MetroWindow>
