@@ -48,7 +48,14 @@ namespace PicPick.Helpers
 
         public IProgress<ProgressInformation> Progress { get; set; }
 
-        public bool Done { get; set; }
+        public void ResetValues()
+        {
+            Value = 0;
+            MainOperation = "";
+            CurrentOperation = "";
+            FileCopied = "";
+            DestinationFolder = "";
+        }
 
         public string CurrentOperation
         {
@@ -110,7 +117,6 @@ namespace PicPick.Helpers
 
         public void Start()
         {
-            Done = false;
             Value = 0;
             Exception = null;
         }

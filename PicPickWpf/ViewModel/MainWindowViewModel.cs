@@ -38,7 +38,7 @@ namespace PicPick.ViewModel
 
         public MainWindowViewModel()
         {
-            
+
             OpenFileCommand = new RelayCommand(OpenFileWithDialog);
             SaveCommand = new SaveCommand();
             AddActivityCommand = new RelayCommand(CreateNewActivity);
@@ -132,7 +132,7 @@ namespace PicPick.ViewModel
             OnPropertyChanged("WindowTitle");
         }
 
-        
+
 
         private void DeleteActivity()
         {
@@ -154,7 +154,7 @@ namespace PicPick.ViewModel
             }
         }
 
-        
+
 
         void OpenFileWithDialog()
         {
@@ -190,7 +190,7 @@ namespace PicPick.ViewModel
         }
         private void OnActivityEnd()
         {
-            
+
         }
 
 
@@ -199,11 +199,12 @@ namespace PicPick.ViewModel
             // Init dialog
             FileExistsDialogViewModel fileExistsDialogViewModel = new FileExistsDialogViewModel(args.SourceFile, args.DestinationFolder);
             FileExistsDialogView fileExistsDialogView = new FileExistsDialogView();
-            
-            fileExistsDialogView.DataContext = fileExistsDialogViewModel ;
+
+            fileExistsDialogView.DataContext = fileExistsDialogViewModel;
             bool closing = false;
-            
-            fileExistsDialogViewModel.CloseDialog = () => {
+
+            fileExistsDialogViewModel.CloseDialog = () =>
+            {
                 closing = true;
                 fileExistsDialogView.Close();
             };
@@ -290,6 +291,13 @@ namespace PicPick.ViewModel
 
         public string LogFile { get; set; }
 
+        System.Windows.Media.Brush _isRunningColor = (System.Windows.Media.Brush)new System.Windows.Media.BrushConverter().ConvertFrom("#FF9DDA3E");
+
+        public System.Windows.Media.Brush RunningColor
+        {
+            get => CurrentActivity.IsRunning ? _isRunningColor : null;
+        }
+
         public void Dispose()
         {
             ApplicationService.Instance.EventAggregator.GetEvent<ActivityStartedEvent>().Unsubscribe(OnActivityStart);
@@ -299,5 +307,7 @@ namespace PicPick.ViewModel
 
             _currentActivity = null;
         }
+
+
     }
 }

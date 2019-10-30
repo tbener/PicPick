@@ -28,22 +28,23 @@ namespace PicPick.Core
         public async Task Run(ProgressInformation progressInfo, CancellationToken cancellationToken)
         {
             if (_activity.IsRunning) throw new Exception("Activity is already running.");
-            _activity.IsRunning = true;
             EventAggregatorHelper.PublishActivityStarted();
 
             progressInfo.Activity = _activity.Name;
             Analyzer analyzer = new Analyzer(_activity);
 
-            // Initialize.Fills the Mapping dictionary
-            if (!_activity.Initialized)
-            {
-                // When using UI, the Analyze is usually called beforehand, as it gives the initial progress and status information.
-                await analyzer.CreateMapping(progressInfo, cancellationToken);
-                cancellationToken.ThrowIfCancellationRequested();
-            }
-
             try
             {
+                _activity.IsRunning = true;
+
+                // Initialize.Fills the Mapping dictionary
+                if (!_activity.Initialized)
+                {
+                    // When using UI, the Analyze is usually called beforehand, as it gives the initial progress and status information.
+                    await analyzer.CreateMapping(progressInfo, cancellationToken);
+                    cancellationToken.ThrowIfCancellationRequested();
+                }
+
                 // init progress
                 int countTotal = 0;
                 foreach (var map in _activity.Mapping.Values)
@@ -91,7 +92,7 @@ namespace PicPick.Core
             }
             catch (OperationCanceledException)
             {
-                throw;
+                progressInfo.CurrentOperation = "Stopping...";
             }
             catch (Exception ex)
             {
@@ -101,7 +102,7 @@ namespace PicPick.Core
             }
             finally
             {
-                progressInfo.Done = true;
+                progressInfo.ResetValues();
                 await Task.Run(() => progressInfo.Report());
                 _activity.IsRunning = false;
                 _activity.Initialized = false;

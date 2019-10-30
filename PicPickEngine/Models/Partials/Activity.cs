@@ -31,6 +31,7 @@ namespace PicPick.Models
         private Dictionary<string, CopyFilesHandler> _mapping = new Dictionary<string, CopyFilesHandler>();
         private Dictionary<string, PicPickFileInfo> _dicFiles = new Dictionary<string, PicPickFileInfo>();
         private List<string> _errorFiles = new List<string>();
+        private bool _isRunning;
 
         public PicPickProjectActivity(string name)
         {
@@ -38,7 +39,7 @@ namespace PicPick.Models
             Source = new PicPickProjectActivitySource();
         }
 
-        
+
 
         /// <summary>
         /// Use this list rather than the Destination Array for easyer manipulations and editing.
@@ -54,7 +55,7 @@ namespace PicPick.Models
                     if (this.Destination == null)
                         this.Destination = new PicPickProjectActivityDestination[0];
                     _destinationList = new ObservableCollection<PicPickProjectActivityDestination>();
-                    
+
                     foreach (PicPickProjectActivityDestination dest in this.Destination)
                     {
                         _destinationList.Add(dest);
@@ -81,7 +82,14 @@ namespace PicPick.Models
 
 
         [XmlIgnore]
-        public bool IsRunning { get; set; }
+        public bool IsRunning
+        {
+            get => _isRunning; set
+            {
+                _isRunning = value;
+                RaisePropertyChanged("IsRunning");
+            }
+        }
 
         #region Execution
 
@@ -215,7 +223,7 @@ namespace PicPick.Models
 
         //    IsRunning = true;
         //    EventAggregatorHelper.PublishActivityStarted();
- 
+
         //    progressInfo.Activity = Name;
 
         //    // Initialize.Fills the Mapping dictionary
@@ -293,7 +301,7 @@ namespace PicPick.Models
         //    }
         //}
 
-        
+
 
         //private void CopyFilesHandler_OnFileStatusChanged(object sender, string fileFullName, FILE_STATUS status)
         //{
@@ -315,7 +323,7 @@ namespace PicPick.Models
         //    //_dicFilesResult[file] = success;
         //}
 
-       
+
 
 
         #endregion

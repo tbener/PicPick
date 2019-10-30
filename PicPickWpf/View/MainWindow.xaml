@@ -41,7 +41,7 @@
                 <MenuItem Header="Open PicPick page" Command="{Binding OpenPageCommand}"/>
             </MenuItem>
         </Menu>
-        <StatusBar DockPanel.Dock="Bottom" Height="24">
+        <StatusBar DockPanel.Dock="Bottom" Height="24" >
             <StatusBar.ItemsPanel>
                 <ItemsPanelTemplate>
                     <Grid>
@@ -121,11 +121,11 @@
                         <ProgressBar Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" 
                              Height="16" Margin="5 0"
                              Value="{Binding ProgressInfo.Value, FallbackValue=0}" Maximum="{Binding ProgressInfo.Maximum, FallbackValue=100}"/>
-                        <TextBlock Text="{Binding ProgressInfo.CurrentOperation, FallbackValue=Current operation}" 
+                        <TextBlock Text="{Binding ProgressInfo.CurrentOperation}" 
                                    Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" 
                                    Margin="10 0"
                                    VerticalAlignment="Center"/>
-                        <TextBlock HorizontalAlignment="Right" Text="{Binding ProgressPercentsText, FallbackValue=0%, Mode=OneWay}" 
+                        <TextBlock HorizontalAlignment="Right" Text="{Binding ProgressPercentsText, Mode=OneWay}" 
                                    Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" 
                                    Margin="10 0"
                                    VerticalAlignment="Center"/>

@@ -41,7 +41,7 @@ namespace PicPick.ViewModel
 
         public ActivityViewModel(PicPickProjectActivity activity)
         {
-
+            
             AddDestinationCommand = new RelayCommand(AddDestination);
             StartCommand = new RelayCommand(Start, CanStart);
             StopCommand = new RelayCommand(Stop, CanStop);
@@ -49,7 +49,6 @@ namespace PicPick.ViewModel
             Activity = activity;
 
             ProgressInfo = new ProgressInformation();
-            cts = new CancellationTokenSource();
         }
 
         
@@ -120,6 +119,8 @@ namespace PicPick.ViewModel
             {
                 //progressWindow.Show();
 
+                cts = new CancellationTokenSource();
+
                 Runner runner = new Runner(Activity, ProjectLoader.Project.Options);
                 await runner.Run(ProgressInfo, cts.Token);
                 
@@ -133,6 +134,7 @@ namespace PicPick.ViewModel
                 //progressWindow.Close();
 
                 OnPropertyChanged("ProgressInfo");
+                cts.Dispose();
             }
         }
 
