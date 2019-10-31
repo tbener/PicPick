@@ -172,6 +172,8 @@ namespace PicPick.ViewModel
             if (vm.Destination != null)
                 Activity.DestinationList.Remove(vm.Destination);
             DestinationViewModelList.Remove(vm);
+            if (Activity.DestinationList.Count == 1)
+                Activity.DestinationList.First().Active = true;
         }
 
         private void AddDestination()
