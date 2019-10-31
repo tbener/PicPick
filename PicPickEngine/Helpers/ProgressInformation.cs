@@ -61,9 +61,7 @@ namespace PicPick.Helpers
         {
             get
             {
-                string s = _currentOperation == null ? $"Copying to {DestinationFolder}" : _currentOperation;
-                _currentOperation = null;
-                return s;
+                return _currentOperation == null && Value > 0 ? $"Copying to {DestinationFolder}" : _currentOperation;
             }
             set
             {
@@ -100,6 +98,8 @@ namespace PicPick.Helpers
             }
         }
 
+        public string ProgressPercentsText => Maximum > 0 & Value > 0 ? $"{Value} of {Maximum}" : "";
+
         #endregion
 
         #region Methods
@@ -113,6 +113,7 @@ namespace PicPick.Helpers
         public void Report()
         {
             Progress.Report(this);
+            RaisePropertyChanged(nameof(ProgressPercentsText));
         }
 
         public void Start()

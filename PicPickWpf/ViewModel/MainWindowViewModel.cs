@@ -60,9 +60,8 @@ namespace PicPick.ViewModel
             CurrentProject.GetIsDirtyInstance().OnGotDirty += (s, e) => OnGotDirty();
             CurrentProject.IsDirty = false;
 
-            // set the current activity
             CurrentActivity = CurrentProject.ActivityList.FirstOrDefault();
-            //CurrentProject.IsDirty = isDirty;
+
 
             ApplicationService.Instance.EventAggregator.GetEvent<ActivityStartedEvent>().Subscribe(OnActivityStart);
             ApplicationService.Instance.EventAggregator.GetEvent<ActivityEndedEvent>().Subscribe(OnActivityEnd);
@@ -158,7 +157,7 @@ namespace PicPick.ViewModel
 
         void OpenFileWithDialog()
         {
-            string file = "";
+            string file = ProjectLoader.FileName;
             if (DialogHelper.BrowseOpenFileByExtensions(new[] { "picpick" }, true, ref file))
             {
                 OpenFile(file);
@@ -169,6 +168,8 @@ namespace PicPick.ViewModel
         private void OpenFile(string file)
         {
             if (!ProjectLoader.Load(file)) return;
+            // set the current activity to refresh the window
+            CurrentActivity = CurrentProject.ActivityList.FirstOrDefault();
             UpdateFileName();
         }
 
