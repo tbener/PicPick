@@ -6,7 +6,7 @@
              xmlns:uc="clr-namespace:PicPick.View.UserControls"
              xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
              mc:Ignorable="d" 
-             d:DesignHeight="473" d:DesignWidth="466.525">
+             d:DesignHeight="320" d:DesignWidth="466.525">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition x:Name="title" Height="Auto"/>
@@ -36,15 +36,16 @@
 
             <DockPanel Grid.Row="0" Margin="0,0,5,0" LastChildFill="False">
                 <TextBlock Text="Copy from" DockPanel.Dock="Top" Height="23" Style="{StaticResource CaptionTextBlock}"/>
-                <uc:PathBrowserView DockPanel.Dock="Top" DataContext="{Binding SourceViewModel}" Height="28"/>
-                <DockPanel DockPanel.Dock="Top" LastChildFill="False">
-                    <CheckBox DockPanel.Dock="Left" IsChecked="{Binding Activity.Source.IncludeSubFolders}" Margin="0,4">Include sub folders</CheckBox>
-                    <TextBlock DockPanel.Dock="Right" Text="{Binding SourceFilesStatus, FallbackValue=No files found}" Grid.Row="1" Margin="0 1 27 0"/>
-                </DockPanel>
+                <uc:PathBrowserView DockPanel.Dock="Top" DataContext="{Binding SourceViewModel}"/>
+                
             </DockPanel>
             <DockPanel Grid.Row="0" Grid.Column="1" LastChildFill="False">
                 <TextBlock Text="File types" DockPanel.Dock="Top" Height="23"/>
                 <TextBox DockPanel.Dock="Top" Text="{Binding Activity.Source.Filter, UpdateSourceTrigger=PropertyChanged}" />
+            </DockPanel>
+            <DockPanel Grid.Row="1" Grid.ColumnSpan="2" DockPanel.Dock="Top" LastChildFill="False" Margin="0 12 0 0">
+                <CheckBox DockPanel.Dock="Left" IsChecked="{Binding Activity.Source.IncludeSubFolders}" Margin="0,4">Include sub folders</CheckBox>
+                <TextBlock DockPanel.Dock="Right" Text="{Binding SourceFilesStatus, FallbackValue=No files found}" Grid.Row="1" Margin="0 1 0 0"/>
             </DockPanel>
 
 
@@ -59,7 +60,33 @@
                     <TextBlock Text="Add more destinations" />
                 </Hyperlink>
             </TextBlock>
+            <Grid x:Name="DestinationPreview" Visibility="Collapsed" HorizontalAlignment="Stretch" DockPanel.Dock="Top">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="5"/>
+                        <RowDefinition Height="26"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="28"/>
+                        <ColumnDefinition Width="5*"/>
+                        <ColumnDefinition Width="3*"/>
+                        <ColumnDefinition Width="70"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Row 1-->
+                    <uc:PathBrowserView Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="1" Grid.RowSpan="2" DataContext="{Binding PathViewModel}" Margin="0,0,8,0"/>
+                    <TextBlock Text="\" HorizontalAlignment="Right" Grid.Row="1" Grid.Column="1" Margin="0 3 1 0"/>
+
+                    <TextBox Grid.Column="2" Grid.Row="1" Grid.ColumnSpan="2" Text="{Binding Destination.Template, UpdateSourceTrigger=PropertyChanged}" ToolTip="{Binding TemplateToolTip}" />
+
+                    <!-- Row 2 -->
+                    <!--<TextBlock Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="2" Text="{Binding PathViewModel.Path}" Foreground="Gray" ToolTip="Sample result for today's date"/>-->
+                    <TextBlock Grid.Column="2" Grid.Row="2" Text="{Binding TemplatePreview, FallbackValue=[preview]}" Foreground="Gray" ToolTip="Sample result for today's date"/>
+                </Grid>
+            </Grid>
             <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Hidden">
+
                 <ItemsControl ItemsSource="{Binding DestinationViewModelList}">
 
                     <ItemsControl.Style >
@@ -71,7 +98,6 @@
                                             <DataTemplate>
                                                 <Grid>
                                                     <Grid.RowDefinitions>
-                                                        <RowDefinition Height="5"/>
                                                         <RowDefinition Height="26"/>
                                                         <RowDefinition Height="*"/>
                                                     </Grid.RowDefinitions>
@@ -82,12 +108,13 @@
                                                         <ColumnDefinition Width="70"/>
                                                     </Grid.ColumnDefinitions>
 
-                                                    <uc:PathBrowserView Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="1" DataContext="{Binding PathViewModel}" Margin="0,0,8,0"/>
+                                                    <!-- Row 1-->
+                                                    <uc:PathBrowserView Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="0" Grid.RowSpan="2" DataContext="{Binding PathViewModel}" Margin="0,0,8,0"/>
+                                                    <TextBlock Text="\" HorizontalAlignment="Right" Grid.Row="0" Grid.Column="1" Margin="0 3 1 0"/>
+                                                    <TextBox Grid.Column="2" Grid.Row="0" Grid.ColumnSpan="2" Text="{Binding Destination.Template, UpdateSourceTrigger=PropertyChanged}" ToolTip="{Binding TemplateToolTip}" />
 
-                                                    <TextBox Grid.Column="2" Grid.Row="1" Grid.ColumnSpan="2" Text="{Binding Destination.Template, UpdateSourceTrigger=PropertyChanged}" ToolTip="{Binding TemplateToolTip}" />
-
-                                                    <!-- Row 3 -->
-                                                    <TextBlock Grid.Column="2" Grid.Row="3" Text="{Binding TemplatePreview, FallbackValue=[preview]}" Foreground="Gray" ToolTip="Sample result for today's date"/>
+                                                    <!-- Row 2 -->
+                                                    <TextBlock Grid.Column="2" Grid.Row="1" Text="{Binding TemplatePreview, FallbackValue=[preview]}" Foreground="Gray" ToolTip="Sample result for today's date"/>
                                                 </Grid>
                                             </DataTemplate>
                                         </Setter.Value>
@@ -100,9 +127,9 @@
 
                                         <Grid>
                                             <Grid.RowDefinitions>
-                                                <RowDefinition Height="5"/>
                                                 <RowDefinition Height="26"/>
                                                 <RowDefinition Height="*"/>
+                                                <RowDefinition Height="10"/>
                                             </Grid.RowDefinitions>
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="28"/>
@@ -110,18 +137,16 @@
                                                 <ColumnDefinition Width="3*"/>
                                                 <ColumnDefinition Width="70"/>
                                             </Grid.ColumnDefinitions>
-                                            <CheckBox Grid.Column="0" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" IsChecked="{Binding Destination.Active}" ToolTip="If not checked, files will not be copied to this destination"/>
 
-                                            <!--<TextBlock Grid.Column="1" Grid.Row="0" Text="Path"/>-->
-                                            <uc:PathBrowserView Grid.Column="1" Grid.Row="1" DataContext="{Binding PathViewModel}" Margin="0,0,8,0"/>
+                                            <CheckBox Grid.Column="0" Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Center" IsChecked="{Binding Destination.Active}" ToolTip="If not checked, files will not be copied to this destination"/>
 
-                                            <!--<TextBlock Grid.Column="2" Grid.Row="0" Text="Template"/>-->
-                                            <TextBox Grid.Column="2" Grid.Row="1" Text="{Binding Destination.Template, UpdateSourceTrigger=PropertyChanged}" ToolTip="{Binding TemplateToolTip}" />
+                                            <uc:PathBrowserView Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" DataContext="{Binding PathViewModel}" Margin="0,0,8,0"/>
+                                            <TextBlock Text="\" HorizontalAlignment="Right" Grid.Row="0" Grid.Column="1" Margin="0 3 1 0"/>
+                                            <TextBox Grid.Column="2" Grid.Row="0" Text="{Binding Destination.Template, UpdateSourceTrigger=PropertyChanged}" ToolTip="{Binding TemplateToolTip}" />
+                                            <Button Grid.Column="3" Grid.Row="0" Content="Delete" Width="46" Height="22" VerticalAlignment="Center" Command="{Binding DeleteCommand}"/>
 
-                                            <Button Grid.Column="3" Grid.Row="1" Content="Delete" Width="46" Height="22" VerticalAlignment="Center" Command="{Binding DeleteCommand}"/>
-
-                                            <!-- Row 3 -->
-                                            <TextBlock Grid.Column="2" Grid.Row="2" Text="{Binding TemplatePreview, FallbackValue=[preview]}" Foreground="Gray" ToolTip="Sample result for today's date"/>
+                                            <!-- Row 2 -->
+                                            <TextBlock Grid.Column="2" Grid.Row="1" Text="{Binding TemplatePreview, FallbackValue=[preview]}" Foreground="Gray" ToolTip="Sample result for today's date"/>
                                         </Grid>
 
                                         <!--<uc:DestinationView Margin="0,6"/>-->

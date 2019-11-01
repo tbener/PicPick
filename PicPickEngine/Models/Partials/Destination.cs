@@ -1,5 +1,6 @@
 ﻿using PicPick.Core;
 using PicPick.Helpers;
+using PicPick.Models.Interfaces;
 using PicPick.Models.IsDirtySupport;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ using TalUtils;
 
 namespace PicPick.Models
 {
-    public partial class PicPickProjectActivityDestination
+    public partial class PicPickProjectActivityDestination : IPath
     {
         public event CopyEventHandler OnCopyStatusChanged;
 

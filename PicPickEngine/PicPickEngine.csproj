@@ -84,6 +84,7 @@
     <Compile Include="Models\Interfaces\IActivity.cs" />
     <Compile Include="Models\Interfaces\IOptions.cs" />
     <Compile Include="Models\Interfaces\IProject.cs" />
+    <Compile Include="Models\Interfaces\IPath.cs" />
     <Compile Include="Models\Partials\Options.cs" />
     <Compile Include="Models\Partials\Source.cs" />
     <Compile Include="Models\Partials\Project.cs" />

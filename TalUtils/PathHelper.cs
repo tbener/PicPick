@@ -110,15 +110,19 @@ namespace TalUtils
             }
         }
 
-        public static string GetInnerPath(string basePath, string fullPath)
+        /// <summary>
+        /// if relativeTo = "C:\aaa\bbb\ccc"
+        /// and fullPathh = "C:\aaa\bbb\ccc\ddd"
+        /// return "ddd"
+        /// </summary>
+        /// <param name="relativeTo"></param>
+        /// <param name="fullPath"></param>
+        /// <returns></returns>
+        public static string GetRelativePath(string relativeTo, string fullPath)
         {
-            if (Path.IsPathRooted(fullPath) && basePath.Length > 3 && basePath.Length < fullPath.Length)
-            {
-                string innerPath = fullPath.Substring(basePath.Length+1);
-                string test = Path.Combine(basePath, innerPath);
-                if (test.Equals(fullPath, System.StringComparison.OrdinalIgnoreCase))
-                    return innerPath;
-            }
+            if (fullPath.StartsWith(relativeTo))
+                return fullPath.Substring(relativeTo.Length).TrimStart('\\');
+
             return fullPath;
         }
     }

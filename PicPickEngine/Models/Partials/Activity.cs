@@ -12,6 +12,7 @@ using PicPick.Models;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using PicPick.Core;
+using PicPick.Models.Interfaces;
 
 namespace PicPick.Models
 {

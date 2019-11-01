@@ -3,6 +3,7 @@ using PicPick.Models.IsDirtySupport;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Xml.Serialization;
+using PicPick.Models.Interfaces;
 
 namespace PicPick.Models
 {

@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using PicPick.Helpers;
 using PicPick.Models;
 using TalUtils;
+using PicPick.Models.Interfaces;
 
 namespace PicPick.Core
 {

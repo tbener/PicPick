@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using PicPick.Core;
 using PicPick.Helpers;
 
-namespace PicPick.Models
+namespace PicPick.Models.Interfaces
 {
     public interface IActivity
     {

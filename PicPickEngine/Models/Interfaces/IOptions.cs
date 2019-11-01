@@ -1,6 +1,6 @@
 ﻿using PicPick.Core;
 
-namespace PicPick.Models
+namespace PicPick.Models.Interfaces
 {
     public interface IOptions
     {

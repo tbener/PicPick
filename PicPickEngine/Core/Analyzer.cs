@@ -1,6 +1,7 @@
 ﻿using PicPick.Exceptions;
 using PicPick.Helpers;
 using PicPick.Models;
+using PicPick.Models.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

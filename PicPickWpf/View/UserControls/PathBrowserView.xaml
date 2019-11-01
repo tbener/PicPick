@@ -7,12 +7,12 @@
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              mc:Ignorable="d" 
              MinHeight="26"
-             d:DesignHeight="26" d:DesignWidth="300">
+             d:DesignHeight="42" d:DesignWidth="300">
     <UserControl.Resources>
         
     </UserControl.Resources>
-    <DockPanel LastChildFill="True">
-        <Button Margin="3 0 0 0" Width="24" DockPanel.Dock="Right" Command="{Binding OpenExplorerCommand}" 
+    <StackPanel>
+        <!--<Button Margin="3 0 0 0" Width="24" DockPanel.Dock="Right" Command="{Binding OpenExplorerCommand}" 
                 ToolTip="Open in Explorer"
                 Style="{DynamicResource MahApps.Metro.Styles.MetroCircleButtonStyle}">
             <Rectangle Width="14" Height="14">
@@ -20,10 +20,10 @@
                     <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_folder_open}" />
                 </Rectangle.Fill>
             </Rectangle>
-        </Button>
-        <TextBox Text="{Binding Path, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" 
+        </Button>-->
+        <TextBox Text="{Binding PathToDisplay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" 
                  Style="{DynamicResource ButtonCommandMetroTextBox}"
-                 ToolTip="{Binding TextboxTooltip}"
+                 ToolTip="{Binding TextboxTooltip}" Height="24"
                  metro:TextBoxHelper.ButtonCommand="{Binding BrowseCommand}">
             <metro:TextBoxHelper.ButtonContent>
                 <Rectangle Width="14" Height="14" ToolTip="Browse...">
@@ -36,5 +36,12 @@
                 </Rectangle>
             </metro:TextBoxHelper.ButtonContent>
         </TextBox>
-    </DockPanel>
+        <TextBlock Visibility="{Binding PreviewVisibility, Mode=OneWay}" 
+                   Cursor="Hand"
+                    ToolTip="Click to open in Explorer">
+            <Hyperlink Command="{Binding OpenExplorerCommand}" Foreground="Gray">
+                    <TextBlock Text="{Binding Path, FallbackValue=[Full path preview]}" />
+                </Hyperlink>
+        </TextBlock>
+    </StackPanel>
 </UserControl>

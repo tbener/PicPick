@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PicPick.Models.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -8,42 +9,12 @@ using System.Xml.Serialization;
 
 namespace PicPick.Models
 {
-    public partial class PicPickProjectActivitySource
+    public partial class PicPickProjectActivitySource : IPath
     {
         List<string> _fileList = new List<string>();
         bool _initialized = false;
         bool _fileListUpdated = false;
         private bool _enableAutoFileListReset;
-
-        //public async Task<int> GetFileCount(CancellationToken cancellationToken)
-        //{
-        //    HashSet<string> fileList = new HashSet<string>();
-
-        //    List<string> lst = new List<string>();
-        //    string[] filters = this.Filter.Split(new char[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries);
-
-        //    // loop on filters
-        //    foreach (string fltr in filters)
-        //    {
-        //        string filter = fltr.Trim();
-        //        // get file list for current filter
-        //        string[] fileEntries = await Task.Run(() => Directory.GetFiles(this.Path, filter));
-        //        cancellationToken.ThrowIfCancellationRequested();
-        //        // add to main file list - we're not just counting in case of duplications
-        //        lst.AddRange(fileEntries);
-        //    }
-
-        //    // create a unique file list
-        //    fileList = new HashSet<string>(lst);
-
-        //    // if cancelled - don't return
-        //    cancellationToken.ThrowIfCancellationRequested();
-
-        //    // return the count
-        //    return fileList.Count();
-        //}
-
-        
 
         private void DisposeFileList()
         {

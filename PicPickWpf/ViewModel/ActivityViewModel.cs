@@ -13,7 +13,6 @@ using PicPick.Helpers;
 using PicPick.Models;
 using PicPick.ViewModel.UserControls;
 using PicPick.View;
-using PicPick.ViewModel.UserControls;
 using TalUtils;
 
 namespace PicPick.ViewModel
@@ -189,7 +188,7 @@ namespace PicPick.ViewModel
 
         private void AddDestinationViewModel(PicPickProjectActivityDestination dest)
         {
-            var vm = new DestinationViewModel(dest);
+            var vm = new DestinationViewModel(dest, Activity.Source);
             vm.OnDeleteClicked += OnDestinationDelete;
             DestinationViewModelList.Add(vm);
         }

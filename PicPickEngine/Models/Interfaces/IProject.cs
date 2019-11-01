@@ -1,6 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 
-namespace PicPick.Models
+namespace PicPick.Models.Interfaces
 {
     public interface IProject
     {

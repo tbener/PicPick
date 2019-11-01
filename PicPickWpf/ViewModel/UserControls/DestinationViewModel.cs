@@ -29,10 +29,10 @@ namespace PicPick.ViewModel.UserControls
 
         public ICommand DeleteCommand { get; set; }
 
-        public DestinationViewModel(PicPickProjectActivityDestination destination)
+        public DestinationViewModel(PicPickProjectActivityDestination destination, PicPickProjectActivitySource source)
         {
             Destination = destination;
-            PathViewModel = new PathBrowserViewModel(Destination);
+            PathViewModel = new PathBrowserViewModel(Destination, source);
             PathViewModel.TextboxTooltip = "Use absolute path or relative to source";
 
             DeleteCommand = new RelayCommand(delegate { OnDeleteClicked?.Invoke(this, null); });
