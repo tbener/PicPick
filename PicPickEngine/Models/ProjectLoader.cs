@@ -26,6 +26,7 @@ namespace PicPick.Models
 
         public static bool LoadDefault()
         {
+            _log.Info($"Loading default");
             if (File.Exists(DEFAULT_FILE))
                 return Load(DEFAULT_FILE);
             return false;

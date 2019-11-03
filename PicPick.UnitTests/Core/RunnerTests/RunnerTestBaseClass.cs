@@ -2,6 +2,7 @@
 using PicPick.Core;
 using PicPick.Helpers;
 using PicPick.Models;
+using PicPick.Models.Interfaces;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;

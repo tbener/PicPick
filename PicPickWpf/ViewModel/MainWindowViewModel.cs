@@ -51,11 +51,18 @@ namespace PicPick.ViewModel
 
             ProjectLoader.OnSaveEventHandler += (s, e) => UpdateFileName();
 
-            _log.Info("Loading file...");
-            if (string.IsNullOrEmpty(Properties.Settings.Default.LastFile) || !File.Exists(Properties.Settings.Default.LastFile))
-                LoadOrCreateNew();
-            else
-                OpenFile(Properties.Settings.Default.LastFile);
+            try
+            {
+                _log.Info("Loading file...");
+                if (string.IsNullOrEmpty(Properties.Settings.Default.LastFile) || !File.Exists(Properties.Settings.Default.LastFile))
+                    LoadOrCreateNew();
+                else
+                    OpenFile(Properties.Settings.Default.LastFile);
+            }
+            catch (Exception ex)
+            {
+                ErrorHandler.Handle(ex, "Error loading data file");
+            }
 
             CurrentProject.GetIsDirtyInstance().OnGotDirty += (s, e) => OnGotDirty();
             CurrentProject.IsDirty = false;
