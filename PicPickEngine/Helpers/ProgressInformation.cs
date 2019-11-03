@@ -1,4 +1,6 @@
-﻿using System;
+﻿using PicPick.Core;
+using PicPick.Models.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -16,7 +18,7 @@ namespace PicPick.Helpers
         private string _mainOperation;
         private int _value;
         private int _maximum;
-        private string _activity;
+        private IActivity _activity;
 
         #endregion
 
@@ -48,13 +50,46 @@ namespace PicPick.Helpers
 
         public IProgress<ProgressInformation> Progress { get; set; }
 
+        public void PrepareToStart(IActivity activity)
+        {
+            ResetValues();
+
+            _activity = activity;
+            int countTotal = 0;
+            foreach (var map in activity.Mapping.Values)
+            {
+                countTotal += map.FileList.Count();
+            }
+            Maximum = countTotal;
+        }
+
+        public void Finished()
+        {
+            if (UserCancelled)
+            {
+                MainOperation = "Cancelled";
+            }
+            else if (Exception != null)
+            {
+                MainOperation = "Error occured";
+            }
+            else
+                MainOperation = $"Done. {Maximum} files processed";
+
+            Value = 0;
+            FileCopied = "";
+            DestinationFolder = "";
+        }
+
         public void ResetValues()
         {
             Value = 0;
+            Maximum = 0;
             MainOperation = "";
             CurrentOperation = "";
             FileCopied = "";
             DestinationFolder = "";
+            Exception = null;
         }
 
         public string CurrentOperation
@@ -79,14 +114,7 @@ namespace PicPick.Helpers
                 RaisePropertyChanged("MainOperation");
             }
         }
-        public string Activity
-        {
-            get => _activity; set
-            {
-                _activity = value;
-                RaisePropertyChanged(nameof(Activity));
-            }
-        }
+        
         public int CurrentOperationTotal { get; internal set; }
         public int Maximum
         {
@@ -99,6 +127,10 @@ namespace PicPick.Helpers
         }
 
         public string ProgressPercentsText => Maximum > 0 & Value > 0 ? $"{Value} of {Maximum}" : "";
+
+        public FileExistsResponseEnum FileExistsResponse { get; set; }
+        public Dictionary<FILE_STATUS, List<string>> Summary { get; set; }
+        public bool UserCancelled { get; set; }
 
         #endregion
 

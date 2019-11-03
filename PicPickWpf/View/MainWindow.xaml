@@ -113,6 +113,7 @@
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
+                        
                         <StackPanel>
                             <Button Command="{Binding StartCommand}" Content="Start" Height="32" Width="80" HorizontalAlignment="Left" Margin="10"/>
                             <Button Command="{Binding StopCommand}" Content="Stop" Height="32" Width="80" HorizontalAlignment="Left" Margin="10 0 10 10"/>
@@ -121,7 +122,7 @@
                         <ProgressBar Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" 
                              Height="16" Margin="5 0"
                              Value="{Binding ProgressInfo.Value, FallbackValue=0}" Maximum="{Binding ProgressInfo.Maximum, FallbackValue=100}"/>
-                        <TextBlock Text="{Binding ProgressInfo.CurrentOperation}" 
+                        <TextBlock Text="{Binding ProgressInfo.MainOperation}" 
                                    Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" 
                                    Margin="10 0"
                                    VerticalAlignment="Center"/>

@@ -31,7 +31,6 @@ namespace PicPick.Core
             if (_activity.IsRunning) throw new Exception("Activity is already running.");
             EventAggregatorHelper.PublishActivityStarted();
 
-            progressInfo.Activity = _activity.Name;
             Analyzer analyzer = new Analyzer(_activity);
 
             try
@@ -56,6 +55,8 @@ namespace PicPick.Core
                 progressInfo.Value = 0;
 
                 CopyFilesHandler.FileExistsResponse = _options.FileExistsResponse;
+                progressInfo.FileExistsResponse = _options.FileExistsResponse;
+
                 // loop on destinations
                 foreach (var kv in _activity.Mapping)
                 {
@@ -93,7 +94,7 @@ namespace PicPick.Core
             }
             catch (OperationCanceledException)
             {
-                progressInfo.CurrentOperation = "Stopping...";
+                progressInfo.UserCancelled = true;
             }
             catch (Exception ex)
             {
@@ -103,7 +104,7 @@ namespace PicPick.Core
             }
             finally
             {
-                progressInfo.ResetValues();
+                progressInfo.Finished();
                 await Task.Run(() => progressInfo.Report());
                 _activity.IsRunning = false;
                 _activity.Initialized = false;
