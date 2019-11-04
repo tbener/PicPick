@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PicPickVersionInfo>
+  <Setup URI=""/>
+  <Version version="1.0.202" notifyVersion="All">
+    <Change type="Feature">Add show/hide hotkey to configuration (manual)</Change>
+  </Version>
+  <Version version="1.0.201" notifyVersion="All">
+    <Change type="Feature">Add GIT commands Merge and Show Log</Change>
+    <Change type="Feature">Add "index.lock" icon tooltip</Change>
+    <Change type="Feature">Add text ellipsis for long branch names</Change>
+  </Version>
+</PicPickVersionInfo>
