@@ -11,6 +11,9 @@ using System.Windows;
 using Prism.Events;
 using System.IO;
 using log4net;
+using System.Net;
+using PicPick.Versioning;
+using TalUtils;
 
 //[assembly: log4net.Config.XmlConfigurator(Watch = true)]
 

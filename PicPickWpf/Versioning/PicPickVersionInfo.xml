@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PicPickVersionInfo>
-  <Setup URI=""/>
+  <Setup URI="https://github.com/tbener/PicPick/raw/picpick/PicPickWpf/Versioning/PicPickVersionInfo.xml"/>
   <Version version="1.0.202" notifyVersion="All">
     <Change type="Feature">Add show/hide hotkey to configuration (manual)</Change>
   </Version>

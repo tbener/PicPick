@@ -128,6 +128,8 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="Versioning\PicPickVersionInfo.cs" />
+    <Compile Include="Versioning\UpdateManager.cs" />
     <Compile Include="ViewModel\UserControls\DestinationViewModel.cs" />
     <Compile Include="ViewModel\UserControls\PathBrowserViewModel.cs" />
     <Compile Include="ViewModel\UserControls\ProgressViewModel.cs" />
@@ -278,6 +280,10 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <None Include="Versioning\Schema\build.bat" />
+    <None Include="Versioning\Schema\PicPickVersionInfo.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <Resource Include="Resources\Entypo.ttf" />
   </ItemGroup>
   <ItemGroup>
@@ -315,6 +321,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Entypo-license.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Versioning\PicPickVersionInfo.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

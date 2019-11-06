@@ -8,5 +8,8 @@
     <Setting Name="LastFile" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
+    <Setting Name="VersionInfoUrl" Type="System.String" Scope="User">
+      <Value Profile="(Default)">https://github.com/tbener/PicPick/raw/picpick/PicPickWpf/Versioning/PicPickVersionInfo.xml</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

@@ -46,5 +46,18 @@ namespace PicPick.Properties {
                 this["LastFile"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://github.com/tbener/PicPick/raw/picpick/PicPickWpf/Versioning/PicPickVersio" +
+            "nInfo.xml")]
+        public string VersionInfoUrl {
+            get {
+                return ((string)(this["VersionInfoUrl"]));
+            }
+            set {
+                this["VersionInfoUrl"] = value;
+            }
+        }
     }
 }

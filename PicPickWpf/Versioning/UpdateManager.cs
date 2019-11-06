@@ -4,14 +4,15 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using DiGit.Commands;
-using DiGit.Helpers;
-using DiGit.Model;
-using DiGit.Properties;
-using DiGit.Versioning;
-using DiGit.View;
+using PicPick.Commands;
+using PicPick.Helpers;
+using PicPick.Model;
+using PicPick.Properties;
+using PicPick.Versioning;
+using PicPick.View;
+using TalUtils;
 
-namespace DiGit.Versioning
+namespace PicPick.Versioning
 {
     public delegate void UpdateInfoChangedEventHandler(object sender, EventArgs arg);
     public delegate void UpdateRequiredEventHandler(object sender, EventArgs arg);
@@ -21,7 +22,7 @@ namespace DiGit.Versioning
         private static Exception _lastReadError;
         public static event UpdateInfoChangedEventHandler OnUpdateInfoChanged;
         public static event UpdateRequiredEventHandler OnUpdateRequired;
-        public static DiGitVersionInfo VersionInfo { get; private set; }
+        public static PicPickVersionInfo VersionInfo { get; private set; }
 
 
         internal static void CheckRemoteAsync()
@@ -33,15 +34,15 @@ namespace DiGit.Versioning
         {
             if (Working) return;
             Working = true;
-            UserManager.AddLog("Check Update", "Start");
+            // UserManager.AddLog("Check Update", "Start");
             try
             {
                 LastReadError = null;
                 OnUpdateInfoChanged?.Invoke(null, new EventArgs());
-                string file = GetFileName();
-                VersionInfo = SerializeHelper.Load(typeof(DiGitVersionInfo), file) as DiGitVersionInfo;
+                string file = Settings.Default.VersionInfoUrl;
+                VersionInfo = SerializeHelper.LoadFromWeb(typeof(PicPickVersionInfo), file) as PicPickVersionInfo;
                 SetData();
-                UserManager.AddLog("Check Update", "Success");
+                // UserManager.AddLog("Check Update", "Success");
             }
             catch (FileNotFoundException ex1)
             {
@@ -56,7 +57,7 @@ namespace DiGit.Versioning
                 if (LastReadError != null)
                 {
                     ResetVars();
-                    UserManager.AddLog("Check Update", "Error", LastReadError.Message);
+                    // UserManager.AddLog("Check Update", "Error", LastReadError.Message);
                 }
                 LastReadDateTime = DateTime.Now;
                 Working = false;
@@ -71,31 +72,31 @@ namespace DiGit.Versioning
         /// 3. Normal file
         /// </summary>
         /// <returns></returns>
-        private static string GetFileName()
-        {
-            string file = GetFileName(Environment.UserName);
-            if (File.Exists(file))
-            {
-                string fileDone = GetFileName(Environment.UserName + "_Done");
-                File.Move(file, fileDone);
-                return fileDone;
-            }
+        //private static string GetFileName()
+        //{
+        //    string file = GetFileName(Environment.UserName);
+        //    if (File.Exists(file))
+        //    {
+        //        string fileDone = GetFileName(Environment.UserName + "_Done");
+        //        File.Move(file, fileDone);
+        //        return fileDone;
+        //    }
 
-            if (ConfigurationHelper.Configuration.isBetaUser)
-            {
-                file = GetFileName("beta");
-                if (File.Exists(file)) return file;
-            }
+        //    //if (ConfigurationHelper.Configuration.isBetaUser)
+        //    //{
+        //    //    file = GetFileName("beta");
+        //    //    if (File.Exists(file)) return file;
+        //    //}
 
 
-            return Path.Combine(Settings.Default.InfoUrl, string.Format(Settings.Default.InfoBaseFileName, ""));
-        }
+        //    return Settings.Default.VersionInfoUrl;
+        //}
 
-        private static string GetFileName(string subname)
-        {
-            if (subname != string.Empty) subname = "_" + subname;
-            return Path.Combine(Settings.Default.InfoUrl, string.Format(Settings.Default.InfoBaseFileName, subname));
-        }
+        //private static string GetFileName(string subname)
+        //{
+        //    if (subname != string.Empty) subname = "_" + subname;
+        //    return Path.Combine(Settings.Default.InfoUrl, string.Format(Settings.Default.InfoBaseFileName, subname));
+        //}
 
         private static void ResetVars()
         {
@@ -125,10 +126,10 @@ namespace DiGit.Versioning
 
         private static void ShowUpdateAvailableMessage()
         {
-            NotificationHelper.ShowUpdateNotification(LastVersionInfo.version);
+            // NotificationHelper.ShowUpdateNotification(LastVersionInfo.version);
         }
 
-        public static List<DiGitVersionInfoVersion> GetGreaterOrEqualVersions()
+        public static List<PicPickVersionInfoVersion> GetGreaterOrEqualVersions()
         {
             Version versionToCompare = Version.Parse(AppInfo.AppVersion.ToString(3));
             var versions =
@@ -147,14 +148,14 @@ namespace DiGit.Versioning
         {
             try
             {
-                if (!File.Exists(VersionInfo.Setup.URI)) throw new FileNotFoundException();
-                if (Msg.ShowQ("DiGit will be closed and restarted after setup is complete. Your settings will be saved.\nDo you want to continue?"))
-                {
-                    Process p = new Process();
-                    p.StartInfo.FileName = VersionInfo.Setup.URI;
-                    p.Start();
-                    new ExitCommand().Execute(null);
-                }
+                //if (!File.Exists(VersionInfo.Setup.URI)) throw new FileNotFoundException();
+                //if (Msg.ShowQ("PicPick will be closed and restarted after setup is complete. Your settings will be saved.\nDo you want to continue?"))
+                //{
+                //    Process p = new Process();
+                //    p.StartInfo.FileName = VersionInfo.Setup.URI;
+                //    p.Start();
+                //    new ExitCommand().Execute(null);
+                //}
             }
             catch (Exception ex)
             {
@@ -175,7 +176,7 @@ namespace DiGit.Versioning
 
         public static bool SetupFileFound { get; private set; }
 
-        public static DiGitVersionInfoVersion LastVersionInfo { get; private set; }
+        public static PicPickVersionInfoVersion LastVersionInfo { get; private set; }
 
         public static Exception LastReadError
         {
@@ -183,7 +184,7 @@ namespace DiGit.Versioning
             private set
             {
                 _lastReadError = value;
-                if (value != null) ErrorHandler.Handle(value, false);
+                if (value != null) ErrorHandler.Handle(value, "Error reading updates from the web.", false);
             }
         }
 
