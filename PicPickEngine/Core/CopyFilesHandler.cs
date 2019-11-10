@@ -1,6 +1,5 @@
 ﻿using PicPick.Helpers;
 using PicPick.Models;
-using Prism.Events;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
