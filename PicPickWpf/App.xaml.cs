@@ -35,7 +35,7 @@ namespace PicPick
             log4net.Config.XmlConfigurator.Configure();
 
             _log.Info("----------------------------------------");
-            _log.Info("Starting...");
+            _log.Info($"Starting PicPick v{AppInfo.AppVersionString}");
 
             base.OnStartup(e);
 
@@ -65,7 +65,7 @@ namespace PicPick
 
         protected override void OnExit(ExitEventArgs e)
         {
-            _log.Info("Finishing...");
+            _log.Info("Exiting PicPick...");
 
             base.OnExit(e);
 

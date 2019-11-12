@@ -34,9 +34,6 @@ namespace PicPick.Helpers
 
         #region Public properties
 
-        public string FileCopied { get; set; }
-        public string DestinationFolder { get; set; }
-
         public Exception Exception { get; set; }
 
         public int Value
@@ -77,8 +74,6 @@ namespace PicPick.Helpers
                 MainOperation = $"Done. {Maximum} files processed";
 
             Value = 0;
-            FileCopied = "";
-            DestinationFolder = "";
         }
 
         public void ResetValues()
@@ -87,8 +82,6 @@ namespace PicPick.Helpers
             Maximum = 0;
             MainOperation = "";
             CurrentOperation = "";
-            FileCopied = "";
-            DestinationFolder = "";
             Exception = null;
         }
 
@@ -96,7 +89,7 @@ namespace PicPick.Helpers
         {
             get
             {
-                return _currentOperation == null && Value > 0 ? $"Copying to {DestinationFolder}" : _currentOperation;
+                return _currentOperation;
             }
             set
             {

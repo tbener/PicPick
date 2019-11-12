@@ -141,36 +141,9 @@ namespace PicPick.UnitTests.Core.RunnerTests
             Assert.IsTrue(Directory.Exists(checkPath), $"Folder {checkPath} doesn't exist.");
         }
 
-        /// <summary>
-        /// Destination has 2 properties that compose the full path - Path + Template.
-        /// If the path is relative, it is relative to the Source, which means if both properties are empty,
-        /// the destination is the source itself.
-        /// The UI should have some sort of handling for that case, but there must be another protection from this situation in the engine level.
-        /// </summary>
-        /// <returns></returns>
-        [TestMethod]
-        public async Task Runner_EmptyDestination_ThrowException()
-        {
-            AddDestination("");
+        
 
-            await Assert.ThrowsExceptionAsync<DestinationEqualsSourceException>(async () =>
-                await _runner.Run(new ProgressInformation(), new CancellationTokenSource().Token)
-                );
-
-            // Should raise error
-        }
-
-        [TestMethod]
-        public async Task Runner_DestinationEqualsSource_ThrowException()
-        {
-            AddDestination(SourcePath);
-
-            await Assert.ThrowsExceptionAsync<DestinationEqualsSourceException>(async () =>
-                await _runner.Run(new ProgressInformation(), new CancellationTokenSource().Token)
-                );
-
-            // Should raise error
-        }
+        
 
         [TestMethod]
         public async Task Runner_DeleteSourceFilesFalse_SourceUnchanged()

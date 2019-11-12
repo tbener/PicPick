@@ -9,11 +9,15 @@ using PicPick.Helpers;
 using PicPick.Models;
 using TalUtils;
 using PicPick.Models.Interfaces;
+using log4net;
 
 namespace PicPick.Core
 {
     public class Runner
     {
+        private static readonly ILog _log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        private static readonly ErrorHandler _errorHandler = new ErrorHandler(_log);
+
         public event CopyEventHandler OnCopyStatusChanged;
 
         private IActivity _activity;
@@ -28,6 +32,7 @@ namespace PicPick.Core
 
         public async Task Run(ProgressInformation progressInfo, CancellationToken cancellationToken)
         {
+            _log.Info($"Starting: {_activity.Name}");
             if (_activity.IsRunning) throw new Exception("Activity is already running.");
             EventAggregatorHelper.PublishActivityStarted();
 
@@ -73,7 +78,7 @@ namespace PicPick.Core
                     progressInfo.CurrentOperationTotal = copyFilesHandler.FileList.Count();
                     progressInfo.Report();
 
-                    Debug.Print("Copying {0} files to {1}", copyFilesHandler.FileList.Count(), fullPath);
+                    _log.InfoFormat("Copying {0} files to {1}", copyFilesHandler.FileList.Count(), fullPath);
 
                     // # DO THE ACTUAL COPY
                     await copyFilesHandler.DoCopyAsync(progressInfo, cancellationToken);
@@ -94,16 +99,18 @@ namespace PicPick.Core
             }
             catch (OperationCanceledException)
             {
+                _log.Info("The user cancelled the operation");
                 progressInfo.UserCancelled = true;
             }
             catch (Exception ex)
             {
                 progressInfo.Exception = ex;
 
-                ErrorHandler.Handle(ex, $"Error in operation: {progressInfo.MainOperation}.");
+                _errorHandler.Handle(ex, false, $"Error in operation: {progressInfo.MainOperation}.");
             }
             finally
             {
+                _log.Info($"Finished: {_activity.Name}");
                 progressInfo.Finished();
                 await Task.Run(() => progressInfo.Report());
                 _activity.IsRunning = false;

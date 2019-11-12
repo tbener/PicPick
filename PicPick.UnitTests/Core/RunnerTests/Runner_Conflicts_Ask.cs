@@ -200,7 +200,8 @@ namespace PicPick.UnitTests.Core.RunnerTests
             string uniqueBasePath = GetWorkingFolder(Path.Combine(subDir, nameof(Conflict_SingleFileConflictDontAskAgainTrue_AskOnce)));
 
             // 2. files
-            CreateConflicts(uniqueBasePath, 3);
+            CreateConflicts(uniqueBasePath + "-1", 3);
+            CreateConflicts(uniqueBasePath + "-2", 3); // create a second set of mapping. had a bug on this.
 
             // Act
             await Run();

@@ -1,4 +1,5 @@
-﻿using PicPick.Helpers;
+﻿using log4net;
+using PicPick.Helpers;
 using PicPick.Models;
 using System;
 using System.Collections.Generic;
@@ -14,7 +15,6 @@ namespace PicPick.Core
     public delegate void FileProcessEventHandler(object sender, string file, string msg, bool success = true);
     public delegate void FileStatusChangedEventHandler(object sender, string fileFullName, FILE_STATUS status);
     public delegate FileExistsResponseEnum FileExistsEventHandler(object sender, FileExistsAskEventArgs eventArgs);
-
 
     public enum FILE_STATUS
     {
@@ -33,13 +33,10 @@ namespace PicPick.Core
         ERROR = 9
     }
 
-
-
     public class CopyFilesHandler
     {
-        const FileExistsResponseEnum DEFAULT_FILE_EXISTS_RESPONSE = FileExistsResponseEnum.SKIP;
-
-        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        private static readonly ILog _log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        private static readonly ErrorHandler _errorHandler = new ErrorHandler(_log);
 
         public event FileProcessEventHandler OnFileProcess;
         public event FileStatusChangedEventHandler OnFileStatusChanged;
@@ -111,33 +108,35 @@ namespace PicPick.Core
 
         internal async Task DoCopyAsync(ProgressInformation progressInfo, CancellationToken cancellationToken)
         {
-            //FileExistsResponseEnum currentAction = FileExistsResponse;
-            FileExistsResponseEnum nextConflictResponse = FileExistsResponse;
             FILE_STATUS fileStatus;
             string fileName = "";
             string fullFileName = "";
-            progressInfo.DestinationFolder = DestinationFolder;
 
             FileExistsAskEventArgs fileExistsAskEventArgs = new FileExistsAskEventArgs();
-            FileExistsResponseEnum currentConflictResponse = nextConflictResponse;
+            FileExistsResponseEnum currentConflictResponse; 
 
             // iterate FileList and copy to dest
             foreach (string file in FileList)
             {
+                // log in debug level the file that we're about to process
+                _log.Debug($"Start processing file: {file}");
+
                 try
                 {
                     fileName = Path.GetFileName(file);
                     fullFileName = file;
                     fileStatus = FILE_STATUS.NONE;
-                    string dest = Path.Combine(DestinationFolder, fileName);
+                    string destFile = Path.Combine(DestinationFolder, fileName);
+                    _log.Debug($"Destination: {destFile}");
 
                     progressInfo.CurrentOperation = $"Copying {fileName}";
                     progressInfo.Report();
 
                     // if the file exists in destination
-                    if (File.Exists(dest))
+                    if (File.Exists(destFile))
                     {
-                        currentConflictResponse = nextConflictResponse;
+                        _log.Debug("File exists in destination");
+                        currentConflictResponse = FileExistsResponse;
 
                         if (currentConflictResponse == FileExistsResponseEnum.ASK)
                         {
@@ -154,12 +153,12 @@ namespace PicPick.Core
                                 throw new OperationCanceledException(cancellationToken);
 
                             if (fileExistsAskEventArgs.DontAskAgain)
-                                nextConflictResponse = currentConflictResponse;
+                                FileExistsResponse = currentConflictResponse;
                         }
 
                         if (currentConflictResponse == FileExistsResponseEnum.COMPARE)
                         {
-                            if (AreSameFiles(file, dest))
+                            if (AreSameFiles(file, destFile))
                                 currentConflictResponse = FileExistsResponseEnum.SKIP;
                             else
                                 currentConflictResponse = FileExistsResponseEnum.RENAME;
@@ -168,7 +167,7 @@ namespace PicPick.Core
                         switch (currentConflictResponse)
                         {
                             case FileExistsResponseEnum.OVERWRITE:
-                                await Task.Run(() => File.Copy(file, dest, true));
+                                await Task.Run(() => File.Copy(file, destFile, true));
                                 fileStatus = FILE_STATUS.COPIED;
                                 break;
                             case FileExistsResponseEnum.SKIP:
@@ -176,28 +175,27 @@ namespace PicPick.Core
                                 break;
                             case FileExistsResponseEnum.RENAME:
 
-                                dest = GetNewFileName(dest);
+                                destFile = GetNewFileName(destFile);
 
-                                await Task.Run(() => File.Copy(file, dest, true));
+                                await Task.Run(() => File.Copy(file, destFile, true));
                                 fileStatus = FILE_STATUS.COPIED;
                                 break;
                             default:
                                 break;
                         }
 
-                        ReportFileProcess(fileName, currentConflictResponse, dest);
+                        ReportFileProcess(fileName, currentConflictResponse, destFile);
                     }
                     else
                     {
-                        await Task.Run(() => File.Copy(file, dest));
+                        await Task.Run(() => File.Copy(file, destFile));
                         fileStatus = FILE_STATUS.COPIED;
-                        ReportFileProcess(fileName, $"Copied to {dest}", log4net.Core.Level.Info);
+                        ReportFileProcess(fileName, $"Copied to {destFile}", log4net.Core.Level.Info);
                     }
 
                     OnFileStatusChanged?.Invoke(this, file, fileStatus);
 
                     // report progress
-                    progressInfo.FileCopied = fileName;
                     progressInfo.Advance();
 
                 }
@@ -214,10 +212,11 @@ namespace PicPick.Core
                     }
                     finally
                     {
-                        if (!ErrorHandler.Handle(ex, $"An error occurred while processing the file: {fileName}.\nDo you want to continue to the next files?"))
+                        // todo: engine should not show messages to the user.
+                        if (!_errorHandler.Handle(ex, true, $"An error occurred while processing the file: {fileName}.\nDo you want to continue to the next files?"))
                             throw ex;
                     }
-                    
+
                 }
 
                 // check cancellation token
@@ -225,7 +224,7 @@ namespace PicPick.Core
             }
 
 
-            
+
         }
 
 
