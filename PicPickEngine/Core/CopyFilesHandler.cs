@@ -15,7 +15,7 @@ namespace PicPick.Core
     public delegate void FileStatusChangedEventHandler(object sender, string fileFullName, FILE_STATUS status);
     public delegate FileExistsResponseEnum FileExistsEventHandler(object sender, FileExistsAskEventArgs eventArgs);
 
-    
+
     public enum FILE_STATUS
     {
         NONE,
@@ -118,13 +118,13 @@ namespace PicPick.Core
             string fullFileName = "";
             progressInfo.DestinationFolder = DestinationFolder;
 
-            try
-            {
-                FileExistsAskEventArgs fileExistsAskEventArgs = new FileExistsAskEventArgs();
-                FileExistsResponseEnum currentConflictResponse = nextConflictResponse;
+            FileExistsAskEventArgs fileExistsAskEventArgs = new FileExistsAskEventArgs();
+            FileExistsResponseEnum currentConflictResponse = nextConflictResponse;
 
-                // iterate FileList and copy to dest
-                foreach (string file in FileList)
+            // iterate FileList and copy to dest
+            foreach (string file in FileList)
+            {
+                try
                 {
                     fileName = Path.GetFileName(file);
                     fullFileName = file;
@@ -156,11 +156,11 @@ namespace PicPick.Core
                             if (fileExistsAskEventArgs.DontAskAgain)
                                 nextConflictResponse = currentConflictResponse;
                         }
-                        
+
                         if (currentConflictResponse == FileExistsResponseEnum.COMPARE)
                         {
                             if (AreSameFiles(file, dest))
-                                currentConflictResponse = FileExistsResponseEnum.SKIP;  
+                                currentConflictResponse = FileExistsResponseEnum.SKIP;
                             else
                                 currentConflictResponse = FileExistsResponseEnum.RENAME;
                         }
@@ -200,24 +200,35 @@ namespace PicPick.Core
                     progressInfo.FileCopied = fileName;
                     progressInfo.Advance();
 
-                    // check cancellation token
-                    cancellationToken.ThrowIfCancellationRequested();
                 }
+                catch (OperationCanceledException)
+                {
+                    throw;
+                }
+                catch (Exception ex)
+                {
+                    try
+                    {
+                        ReportFileProcess(fileName, $"ERROR: {ex.Message}", log4net.Core.Level.Error);
+                        OnFileStatusChanged?.Invoke(this, fullFileName, FILE_STATUS.ERROR);
+                    }
+                    finally
+                    {
+                        if (!ErrorHandler.Handle(ex, $"An error occurred while processing the file: {fileName}.\nDo you want to continue to the next files?"))
+                            throw ex;
+                    }
+                    
+                }
+
+                // check cancellation token
+                cancellationToken.ThrowIfCancellationRequested();
             }
-            catch (OperationCanceledException)
-            {
-                throw;
-            }
-            //catch (Exception ex)
-            //{
-            //    ReportFileProcess(fileName, $"ERROR: {ex.Message}", log4net.Core.Level.Error);
-            //    OnFileStatusChanged?.Invoke(this, fullFileName, FILE_STATUS.ERROR);
-            //    if (!ErrorHandler.Handle(ex, "An error occurred. Do you want to continue to the next files?"))
-            //        return;
-            //}
+
+
+            
         }
 
- 
+
 
         private bool AreSameFiles(string file1, string file2)
         {
@@ -255,7 +266,7 @@ namespace PicPick.Core
                     file1byte = fs1.ReadByte();
                     file2byte = fs2.ReadByte();
                 }
-                while ((file1byte == file2byte) && (file1byte != -1) && (i<5000000));
+                while ((file1byte == file2byte) && (file1byte != -1) && (i < 5000000));
 
                 // Close the files.
                 fs1.Close();

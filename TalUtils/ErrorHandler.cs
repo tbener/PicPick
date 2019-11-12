@@ -34,7 +34,7 @@ namespace TalUtils
 
             if (displayMessage)
                 if (evtLogException == null)
-                    retVal = Msg.ShowQ(error.Message);
+                    retVal = Msg.ShowQ($"{msg}\nError: {error.Message}");
                 else
                     Msg.ShowE(error);
 

@@ -10,7 +10,7 @@ using System.Windows;
 [assembly: AssemblyTitle("PicPick")]
 [assembly: AssemblyDescription("Manage your media files")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("TalTools")]
 [assembly: AssemblyProduct("PicPick")]
 [assembly: AssemblyCopyright("Copyright ©  2019")]
 [assembly: AssemblyTrademark("")]
@@ -51,5 +51,5 @@ using System.Windows;
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.5.*")]
-//[assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: AssemblyVersion("1.0.4.*")]
+//[assembly: AssemblyFileVersion("2.1.0.0")]

@@ -1,5 +1,6 @@
 ﻿using PicPick.Helpers;
 using System;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace PicPick.ViewModel.UserControls
@@ -10,7 +11,10 @@ namespace PicPick.ViewModel.UserControls
         {
             ImageFileInfo imageInfo = new ImageFileInfo(true);
 
-            Source = imageInfo.BitmapImage(imagePath);
+            if (imageInfo.IsImage(imagePath))
+                Source = imageInfo.BitmapImage(imagePath);
+            else
+                Source = imageInfo.AssociatedImage(imagePath);
 
             try
             {
@@ -35,7 +39,7 @@ namespace PicPick.ViewModel.UserControls
 
         #region Properties
 
-        public BitmapImage Source { get; set; }
+        public ImageSource Source { get; set; }
 
         public string ImageDate { get; set; }
         public string ImageSize { get; set; }

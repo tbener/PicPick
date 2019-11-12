@@ -1,16 +1,22 @@
-﻿using System;
+﻿using log4net;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using TalUtils;
 
 namespace PicPick.Helpers
 {
     public class ImageFileInfo
     {
+        private static readonly ILog _log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        private static readonly ErrorHandler _errorHandler = new ErrorHandler(_log);
+
         BitmapImageCheck _bitmapImageCheck;
         FileStream _fileStream = null;
         string _fileName = "";
@@ -26,16 +32,52 @@ namespace PicPick.Helpers
         }
 
         public ImageFileInfo() : this(false)
-        {}
+        { }
 
         public BitmapImage BitmapImage(string file)
         {
-            BitmapImage image = new BitmapImage();
-            image.BeginInit();
-            image.CacheOption = BitmapCacheOption.OnLoad;
-            image.UriSource = new Uri(file);
-            image.EndInit();
-            return image;
+            try
+            {
+                BitmapImage image = new BitmapImage();
+                image.BeginInit();
+                image.CacheOption = BitmapCacheOption.OnLoad;
+                image.UriSource = new Uri(file);
+                image.EndInit();
+                return image;
+            }
+            catch (Exception ex)
+            {
+                _errorHandler.Handle(ex, false, $"Error getting image to display for the file: {file}");
+                return null;
+            }
+        }
+
+        public ImageSource AssociatedImage(string file)
+        {
+            ImageSource icon;
+
+            try
+            {
+                using (System.Drawing.Icon sysicon = System.Drawing.Icon.ExtractAssociatedIcon(file))
+                {
+                    icon = System.Windows.Interop.Imaging.CreateBitmapSourceFromHIcon(
+                              sysicon.Handle,
+                              System.Windows.Int32Rect.Empty,
+                              System.Windows.Media.Imaging.BitmapSizeOptions.FromEmptyOptions());
+                }
+                return icon;
+            }
+            catch (Exception ex)
+            {
+                _errorHandler.Handle(ex, false, $"Error getting image to display for the file: {file}");
+                return null;
+            }
+        }
+
+        public bool IsImage(string file)
+        {
+            string ext = Path.GetExtension(file);
+            return _bitmapImageCheck.IsExtensionSupported(ext);
         }
 
         public bool GetFileDate(string file, out DateTime dateTime)
@@ -51,7 +93,7 @@ namespace PicPick.Helpers
             }
             catch (Exception ex)
             {
-                Debug.Print($"{Path.GetFileName(file)} - {ex.Message}");
+                _errorHandler.Handle(ex, false, "Error extracting date from file (setting minimum sate)");
                 dateTime = DateTime.MinValue;
                 return false;
             }
@@ -95,7 +137,7 @@ namespace PicPick.Helpers
             int order = 0;
             while (len >= 1024 && order < sizes.Length - 1)
             {
-                order++; 
+                order++;
                 len = len / 1024;
             }
 
@@ -142,7 +184,7 @@ namespace PicPick.Helpers
             return new FileInfo(fileName).Length;
         }
 
-        
+
 
         public bool KeepFileOpen { get; set; }
     }
