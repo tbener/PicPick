@@ -40,7 +40,7 @@ namespace PicPick.ViewModel
 
         public ActivityViewModel(PicPickProjectActivity activity)
         {
-            
+
             AddDestinationCommand = new RelayCommand(AddDestination);
             StartCommand = new RelayCommand(Start, CanStart);
             StopCommand = new RelayCommand(Stop, CanStop);
@@ -50,7 +50,7 @@ namespace PicPick.ViewModel
             ProgressInfo = new ProgressInformation();
         }
 
-        
+
 
         /// <summary>
         /// Associate the ViewModels to the inner objects
@@ -70,7 +70,7 @@ namespace PicPick.ViewModel
             foreach (PicPickProjectActivityDestination dest in Activity.DestinationList)
                 AddDestinationViewModel(dest);
 
-            
+
         }
 
         private async Task CheckSourceStatus()
@@ -122,7 +122,7 @@ namespace PicPick.ViewModel
 
                 Runner runner = new Runner(Activity, ProjectLoader.Project.Options);
                 await runner.Run(ProgressInfo, cts.Token);
-                
+
             }
             catch (OperationCanceledException)
             {
@@ -223,6 +223,21 @@ namespace PicPick.ViewModel
             {
                 _sourceFilesStatus = value;
                 OnPropertyChanged("SourceFilesStatus");
+            }
+        }
+
+        private bool _keepDestinationsAbsolute;
+
+        public bool KeepDestinationsAbsolute
+        {
+            get { return DestinationViewModelList.FirstOrDefault().Destination.KeepAbsolute; }
+            set
+            {
+                _keepDestinationsAbsolute = value;
+                foreach (DestinationViewModel destvm in DestinationViewModelList)
+                {
+                    destvm.Destination.KeepAbsolute = _keepDestinationsAbsolute;
+                }
             }
         }
 

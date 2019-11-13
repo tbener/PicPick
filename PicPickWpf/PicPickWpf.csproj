@@ -136,12 +136,12 @@
     <Compile Include="Helpers\ApplicationService.cs" />
     <Compile Include="Helpers\NotifyPropertyChangedHelper.cs" />
     <Compile Include="Interfaces\IPath.cs" />
-    <Compile Include="Model\PathClass.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="Properties\UserSettings.cs" />
     <Compile Include="Versioning\PicPickVersionInfo.cs" />
     <Compile Include="Versioning\UpdateManager.cs" />
     <Compile Include="ViewModel\UserControls\DestinationViewModel.cs" />
@@ -339,5 +339,6 @@
   <ItemGroup>
     <Resource Include="Versioning\PicPickVersionInfo.xml" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

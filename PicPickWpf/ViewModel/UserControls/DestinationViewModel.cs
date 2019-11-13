@@ -42,8 +42,14 @@ namespace PicPick.ViewModel.UserControls
 
         private void Destination_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName.Equals("Template"))
-                OnPropertyChanged("TemplatePreview");
+            switch (e.PropertyName)
+            {
+                case "Template":
+                    OnPropertyChanged("TemplatePreview");
+                    break;
+                default:
+                    break;
+            }
         }
 
         public PicPickProjectActivityDestination Destination { get; set; }

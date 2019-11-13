@@ -259,10 +259,13 @@ namespace PicPick.Models {
         
         private bool activeField;
         
+        private bool keepAbsoluteField;
+        
         public PicPickProjectActivityDestination() {
             this.pathField = "";
             this.templateField = "yyyy-MM";
             this.activeField = true;
+            this.keepAbsoluteField = true;
         }
         
         /// <remarks/>
@@ -301,6 +304,19 @@ namespace PicPick.Models {
             set {
                 this.activeField = value;
                 this.RaisePropertyChanged("Active");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        [System.ComponentModel.DefaultValueAttribute(true)]
+        public bool KeepAbsolute {
+            get {
+                return this.keepAbsoluteField;
+            }
+            set {
+                this.keepAbsoluteField = value;
+                this.RaisePropertyChanged("KeepAbsolute");
             }
         }
         

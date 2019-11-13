@@ -40,7 +40,7 @@
                    Cursor="Hand"
                     ToolTip="Click to open in Explorer">
             <Hyperlink Command="{Binding OpenExplorerCommand}" Foreground="Gray">
-                    <TextBlock Text="{Binding Path, FallbackValue=[Full path preview]}" />
+                    <TextBlock Text="{Binding FullPath, FallbackValue=[Full path preview]}" />
                 </Hyperlink>
         </TextBlock>
     </StackPanel>

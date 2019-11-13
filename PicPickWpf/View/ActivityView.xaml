@@ -54,6 +54,7 @@
         <DockPanel Grid.Row="2" LastChildFill="True" Margin="0 16 0 8">
             <DockPanel DockPanel.Dock="Top" LastChildFill="False">
                 <TextBlock Text="Copy to" DockPanel.Dock="Left" Style="{StaticResource CaptionTextBlock}"/>
+                <CheckBox DockPanel.Dock="Right" Content="Keep paths absolute" IsChecked="{Binding KeepDestinationsAbsolute}" ToolTip="If not absolute, you can set a relative path to source" />
             </DockPanel>
             <TextBlock DockPanel.Dock="Bottom" HorizontalAlignment="Left" MinHeight="24" VerticalAlignment="Stretch">
                 <Hyperlink Command="{Binding AddDestinationCommand}">

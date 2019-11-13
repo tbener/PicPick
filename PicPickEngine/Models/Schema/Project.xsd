@@ -21,6 +21,7 @@
                         <xsd:attribute name="Path" type="xsd:string" default=""/>
                         <xsd:attribute name="Template" type="xsd:string" default="yyyy-MM" />
                         <xsd:attribute name="Active" type="xsd:boolean" default="true" />
+                        <xsd:attribute name="KeepAbsolute" type="xsd:boolean" default="true" />
                       </xsd:complexType>
                     </xsd:element>
                   </xsd:sequence>

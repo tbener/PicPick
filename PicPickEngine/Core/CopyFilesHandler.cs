@@ -1,10 +1,7 @@
 ﻿using log4net;
 using PicPick.Helpers;
-using PicPick.Models;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;

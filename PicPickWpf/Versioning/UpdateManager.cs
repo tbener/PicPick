@@ -1,15 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using PicPick.Commands;
-using PicPick.Helpers;
-using PicPick.Model;
 using PicPick.Properties;
-using PicPick.Versioning;
-using PicPick.View;
 using TalUtils;
 
 namespace PicPick.Versioning

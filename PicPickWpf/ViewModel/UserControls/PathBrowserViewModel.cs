@@ -1,7 +1,5 @@
 ﻿using PicPick.Commands;
-using PicPick.Interfaces;
 using PicPick.Models;
-using PicPick.ViewModel;
 using System;
 using System.Windows;
 using System.Windows.Forms;
@@ -30,12 +28,10 @@ namespace PicPick.ViewModel.UserControls
         public bool AllowPathNotExists = true;  // not yet in use
         private string textboxTooltip;
 
-        public string BasePath { get; set; }
-
         private PicPickProjectActivityDestination _destination;
         private PicPickProjectActivitySource _source;
-        private IPath _pathClass;
 
+        string _sourcePreviousPath = "";
 
         private PathBrowserViewModel()
         {
@@ -44,7 +40,7 @@ namespace PicPick.ViewModel.UserControls
         }
 
         /// <summary>
-        /// Provides a Path view for a Destination, relative to the Source
+        /// Provides a Path view for a Destination, which can be relative to the Source
         /// </summary>
         /// <param name="destination">The Destination object to provide the path for</param>
         /// <param name="source">The Source object that the Destination is related to</param>
@@ -52,9 +48,11 @@ namespace PicPick.ViewModel.UserControls
         {
             _destination = destination;
             _source = source;
+            SetPath(PathHelper.GetFullPath(_source.Path, _destination.Path));
 
-            OnPropertyChanged(nameof(Path));
-            OnPropertyChanged(nameof(PathToDisplay));
+            _sourcePreviousPath = _source.Path;
+
+            _source.PropertyChanged += Source_PropertyChanged;
         }
 
         /// <summary>
@@ -64,89 +62,100 @@ namespace PicPick.ViewModel.UserControls
         public PathBrowserViewModel(PicPickProjectActivitySource source) : this()
         {
             _source = source;
+            SetPath(_source.Path);
+        }
 
-            OnPropertyChanged(nameof(Path));
-            OnPropertyChanged(nameof(PathToDisplay));
+        private void Source_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            // if source path changed, and the PathToDisplay is not rooted - we need to do some manipulation
+            if (e.PropertyName == "Path")
+            {
+                if (!System.IO.Path.IsPathRooted(PathToDisplay))
+                    if (_destination.KeepAbsolute)
+                        // the path should stay as it was
+                        PathToDisplay = PathHelper.GetFullPath(_sourcePreviousPath, PathToDisplay);
+                    else
+                        // the full path should change according to the new source
+                        FullPath = PathHelper.GetFullPath(_source.Path, PathToDisplay);
+            }
         }
 
 
         private void BrowseFolder()
         {
             var dlg = new FolderBrowser2();
-            dlg.DirectoryPath = PathHelper.GetFullPath(BasePath, Path);
+            dlg.DirectoryPath = PathHelper.GetFullPath(_source.Path, FullPath);
             if (dlg.ShowDialog(null) == DialogResult.OK)
             {
-                Path = string.IsNullOrEmpty(BasePath) ? dlg.DirectoryPath : PathHelper.GetRelativePath(BasePath, dlg.DirectoryPath);
+                SetPath(dlg.DirectoryPath);
             }
         }
 
         private void OpenInExplorer()
         {
             if (PathExists())
-                ExplorerHelper.OpenPath(this.Path);
+                ExplorerHelper.OpenPath(FullPath);
             else
-                Msg.Show($"{Path} doesn't exist");
+                Msg.Show($"{FullPath} doesn't exist");
         }
 
         private bool PathExists()
         {
-            return PathHelper.Exists(this.Path);
+            return PathHelper.Exists(FullPath);
         }
 
         private PATH_TYPE_ENUM PathType => _destination == null ? PATH_TYPE_ENUM.Source : PATH_TYPE_ENUM.Destination;
 
         public Visibility PreviewVisibility => PathType == PATH_TYPE_ENUM.Destination ? Visibility.Visible : Visibility.Visible;
 
+        private string _pathToDisplay;
+
+        private void SetPath(string fullPath)
+        {
+            FullPath = fullPath;
+            if (PathType == PATH_TYPE_ENUM.Source || _destination.KeepAbsolute)
+                _pathToDisplay = fullPath;
+            else
+                _pathToDisplay = PathHelper.GetRelativePath(_source.Path, fullPath);
+            OnPropertyChanged(nameof(PathToDisplay));
+        }
 
         public string PathToDisplay
         {
-            get
-            {
-                if (PathType == PATH_TYPE_ENUM.Source)
-                    return Path;
-                return PathHelper.GetRelativePath(_source.Path, Path);
-            }
+            get { return _pathToDisplay; }
             set
             {
-                Path = PathHelper.GetFullPath(_source.Path, value);
-                //if (System.IO.Path.IsPathRooted(value) || PathType == PATH_TYPE_ENUM.Source)
-                //    Path = value;
-                //else
-                //    Path = System.IO.Path.Combine(_source.Path, value);
-            }
-        }
-
-
-        public string Path
-        {
-            get
-            {
-                return PathType == PATH_TYPE_ENUM.Source ? _source.Path : PathHelper.GetFullPath(_source.Path, _destination.Path); 
-            }
-            set
-            {
+                _pathToDisplay = value;
                 if (PathType == PATH_TYPE_ENUM.Source)
-                    _source.Path = value;
+                    FullPath = _pathToDisplay;
                 else
-                    _destination.Path = PathHelper.GetRelativePath(_source.Path, value);
-
-                OnPropertyChanged(nameof(Path));
+                    FullPath = PathHelper.GetFullPath(_source.Path, _pathToDisplay);
                 OnPropertyChanged(nameof(PathToDisplay));
             }
         }
 
+        private string _fullPath;
 
-        public static bool CheckPath(object value)
+        public string FullPath
         {
-            return true;
-
-            //if (value == null) return true;
-            //string newPath = value as string;
-            //if (newPath == "") return true;
-            //if (PathHelper.Exists(newPath))
-            //    return true;
-            //return false;
+            get
+            {
+                if (PathType == PATH_TYPE_ENUM.Source)
+                    return _source.Path;
+                else
+                    return _destination.Path;
+            }
+            set
+            {
+                _fullPath = value;
+                if (PathType == PATH_TYPE_ENUM.Source)
+                    _source.Path = _fullPath;
+                else
+                    _destination.Path = _fullPath;
+                OnPropertyChanged(nameof(FullPath));
+            }
         }
+
 
         public string TextboxTooltip
         {
