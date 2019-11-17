@@ -38,7 +38,7 @@
             <ItemsControl ItemsSource="{Binding ActionButtonsViewModels}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Button Command="{Binding SetResponseCommand}" CommandParameter="{Binding Action}" Margin="0,4" MaxHeight="120" Focusable="False" HorizontalContentAlignment="Stretch"
+                        <Button Width="Auto" Height="Auto" Command="{Binding SetResponseCommand}" CommandParameter="{Binding Action}" Margin="0,4" MaxHeight="120" Focusable="False" HorizontalContentAlignment="Stretch"
                                 Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" BorderBrush="{DynamicResource {x:Static SystemColors.WindowBrushKey}}">
                             <DockPanel Margin="4,2,4,6">
                                 <TextBlock DockPanel.Dock="Top" Text="{Binding ActionText}" HorizontalAlignment="Left" FontSize="16"/>
