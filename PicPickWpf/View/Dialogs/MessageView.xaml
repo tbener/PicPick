@@ -1,0 +1,30 @@
+﻿<metro:MetroWindow x:Class="PicPick.View.Dialogs.MessageView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
+        mc:Ignorable="d"
+        ShowMaxRestoreButton="False"
+        ShowMinButton="False"
+        ResizeMode="NoResize"
+        Title="{Binding Caption}" Height="183.502" Width="660">
+    <Grid Margin="10 20 10 5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="40"/>
+        </Grid.RowDefinitions>
+        <DockPanel>
+            <Image DockPanel.Dock="Left" Source="{Binding MessageIcon}" Width="50" Stretch="None"/>
+            <TextBlock Text="{Binding Text, FallbackValue=My text la la}" HorizontalAlignment="Left" VerticalAlignment="Top" TextAlignment="Left"/>
+        </DockPanel>
+        <DockPanel Grid.Row="1" LastChildFill="False">
+            <CheckBox DockPanel.Dock="Left" Content="Don't show again" IsChecked="{Binding DontShowAgain}"/>
+
+            <Button DockPanel.Dock="Right" Content="Cancel" Command="{Binding SetResultCommand}" CommandParameter="Cancel" Visibility="{Binding CancelButtonVisibility}" />
+            <Button DockPanel.Dock="Right" Content="OK" Command="{Binding SetResultCommand}" CommandParameter="OK" Visibility="{Binding OKButtonVisibility}" Margin="0 0 7 0" />
+            <Button DockPanel.Dock="Right" Content="No" Command="{Binding SetResultCommand}" CommandParameter="No" Visibility="{Binding NoButtonVisibility}" Margin="0 0 7 0" />
+            <Button DockPanel.Dock="Right" Content="Yes" Command="{Binding SetResultCommand}" CommandParameter="Yes" Visibility="{Binding YesButtonVisibility}" Margin="0 0 7 0" />
+        </DockPanel>
+    </Grid>
+</metro:MetroWindow>

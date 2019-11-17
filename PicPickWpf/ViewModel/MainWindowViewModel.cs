@@ -11,6 +11,8 @@ using PicPick.Helpers;
 using PicPick.Core;
 using PicPick.View;
 using log4net;
+using PicPick.ViewModel.Dialogs;
+using PicPick.View.Dialogs;
 
 namespace PicPick.ViewModel
 {
@@ -67,6 +69,8 @@ namespace PicPick.ViewModel
             ApplicationService.Instance.EventAggregator.GetEvent<ActivityEndedEvent>().Subscribe(OnActivityEnd);
             ApplicationService.Instance.EventAggregator.GetEvent<GotDirtyEvent>().Subscribe(OnGotDirty);
             ApplicationService.Instance.EventAggregator.GetEvent<FileExistsAskEvent>().Subscribe(OnFileExistsAskEvent);
+
+            
         }
 
         private PicPickProjectActivity GetNewActivity(string name)

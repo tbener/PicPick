@@ -30,7 +30,6 @@ namespace PicPick
 
         protected override void OnStartup(StartupEventArgs e)
         {
-            
             log4net.GlobalContext.Properties["LogFileFolder"] = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "PicPick");
             log4net.Config.XmlConfigurator.Configure();
 

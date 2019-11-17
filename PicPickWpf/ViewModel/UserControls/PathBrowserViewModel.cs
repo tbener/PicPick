@@ -110,6 +110,12 @@ namespace PicPick.ViewModel.UserControls
 
         private string _pathToDisplay;
 
+        /// <summary>
+        /// Given a full path, the PathToDisplay backing field(!) is being set accordingly.
+        /// On a normal flow the PathToDisplay property is changed and then changes the full path.
+        /// This function is called only on initialize and on setting the folder through the Brose button.
+        /// </summary>
+        /// <param name="fullPath">The full path to set and that will affect the PathToDisplay</param>
         private void SetPath(string fullPath)
         {
             FullPath = fullPath;

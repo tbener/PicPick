@@ -14,6 +14,8 @@ using PicPick.Models;
 using PicPick.ViewModel.UserControls;
 using PicPick.View;
 using TalUtils;
+using PicPick.ViewModel.Dialogs;
+using PicPick.View.Dialogs;
 
 namespace PicPick.ViewModel
 {
@@ -106,6 +108,31 @@ namespace PicPick.ViewModel
 
         #region Execution
 
+        private bool WarningsBeforeStart()
+        {
+            if (!_activity.DeleteSourceFiles)
+                return true;
+
+            if (!Properties.UserSettings.General.WarnDeleteSource)
+                return true;
+
+            MessageViewModel messageViewModel = new MessageViewModel("The files will be deleted from the source folder if the operation will end successfully.\nDo you want to continute?", "Warning", MessageBoxButton.OKCancel);
+            MessageView messageView = new MessageView();
+            messageView.DataContext = messageViewModel;
+
+            messageViewModel.CloseDialog = () =>
+            {
+                messageView.Close();
+            };
+
+            messageView.ShowDialog();
+
+            if (messageViewModel.DialogResult == MessageBoxResult.Cancel)
+                return false;
+
+            return true;
+        }
+
         public async void Start()
         {
             //ProgressWindowViewModel progressWindowViewModel = new ProgressWindowViewModel(ProgressInfo);
@@ -114,14 +141,16 @@ namespace PicPick.ViewModel
             //    DataContext = progressWindowViewModel
             //};
 
+
             try
             {
-                //progressWindow.Show();
+                if (WarningsBeforeStart())
+                {
+                    cts = new CancellationTokenSource();
 
-                cts = new CancellationTokenSource();
-
-                Runner runner = new Runner(Activity, ProjectLoader.Project.Options);
-                await runner.Run(ProgressInfo, cts.Token);
+                    Runner runner = new Runner(Activity, ProjectLoader.Project.Options);
+                    await runner.Run(ProgressInfo, cts.Token);
+                }
 
             }
             catch (OperationCanceledException)

@@ -108,6 +108,7 @@
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net461\System.ValueTuple.dll</HintPath>
       <Private>True</Private>
@@ -142,11 +143,20 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="Properties\UserSettings.cs" />
+    <Compile Include="Properties\UserSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>UserSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="Versioning\PicPickVersionInfo.cs" />
     <Compile Include="Versioning\UpdateManager.cs" />
+    <Compile Include="ViewModel\Dialogs\MessageViewModel.cs" />
     <Compile Include="ViewModel\UserControls\DestinationViewModel.cs" />
     <Compile Include="ViewModel\UserControls\PathBrowserViewModel.cs" />
     <Compile Include="ViewModel\UserControls\ProgressViewModel.cs" />
+    <Compile Include="View\Dialogs\MessageView.xaml.cs">
+      <DependentUpon>MessageView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\UserControls\DestinationView.xaml.cs">
       <DependentUpon>DestinationView.xaml</DependentUpon>
     </Compile>
@@ -197,6 +207,10 @@
     <Page Include="Resources\IconsNonShared.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Dialogs\MessageView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\UserControls\DestinationView.xaml">
       <SubType>Designer</SubType>
@@ -293,6 +307,10 @@
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="Properties\UserSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>UserSettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="Versioning\Schema\build.bat" />
     <None Include="Versioning\Schema\PicPickVersionInfo.xsd">
