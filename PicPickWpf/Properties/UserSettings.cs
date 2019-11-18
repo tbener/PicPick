@@ -37,7 +37,7 @@ namespace PicPick.Properties
                 Save();
         }
 
-        internal static General General { get; } = new General();
+        internal static GeneralUserSettings General { get; } = new GeneralUserSettings();
 
         internal static bool AutoSave { get; set; }
 
@@ -45,7 +45,7 @@ namespace PicPick.Properties
 
     }
 
-    public class General : UserSettingsBase
+    public class GeneralUserSettings : UserSettingsBase
     {
         //[UserSettings("WarnDeleteSource")]
         public bool WarnDeleteSource

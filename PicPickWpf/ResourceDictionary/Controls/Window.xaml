@@ -3,10 +3,8 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
 
-    <Style TargetType="{x:Type metro:MetroWindow}" BasedOn="{StaticResource {x:Type metro:MetroWindow}}" >
-        <Setter Property="FontSize" Value="14"/>
+    <Style x:Key="BaseWindowStyle" TargetType="{x:Type metro:MetroWindow}" BasedOn="{StaticResource {x:Type metro:MetroWindow}}" >
         <Setter Property="TitleCharacterCasing" Value="Normal"/>
-        <Setter Property="TitleCaps" Value="False"/>
     </Style>
 
    

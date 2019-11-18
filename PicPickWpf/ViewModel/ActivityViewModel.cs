@@ -116,7 +116,8 @@ namespace PicPick.ViewModel
             if (!Properties.UserSettings.General.WarnDeleteSource)
                 return true;
 
-            MessageViewModel messageViewModel = new MessageViewModel("The files will be deleted from the source folder if the operation will end successfully.\nDo you want to continute?", "Warning", MessageBoxButton.OKCancel);
+            MessageViewModel messageViewModel = new MessageViewModel("The files will be deleted from the source folder if the operation will end successfully.\nDo you want to continue?", 
+                "Warning", MessageBoxButton.YesNo, MessageBoxImage.Warning, true);
             MessageView messageView = new MessageView();
             messageView.DataContext = messageViewModel;
 
@@ -127,7 +128,9 @@ namespace PicPick.ViewModel
 
             messageView.ShowDialog();
 
-            if (messageViewModel.DialogResult == MessageBoxResult.Cancel)
+            Properties.UserSettings.General.WarnDeleteSource = !messageViewModel.DontShowAgain;
+
+            if (messageViewModel.DialogResult == MessageBoxResult.No)
                 return false;
 
             return true;
@@ -135,22 +138,15 @@ namespace PicPick.ViewModel
 
         public async void Start()
         {
-            //ProgressWindowViewModel progressWindowViewModel = new ProgressWindowViewModel(ProgressInfo);
-            //ProgressWindowView progressWindow = new ProgressWindowView()
-            //{
-            //    DataContext = progressWindowViewModel
-            //};
-
+            if (!WarningsBeforeStart())
+                return;
 
             try
             {
-                if (WarningsBeforeStart())
-                {
-                    cts = new CancellationTokenSource();
+                cts = new CancellationTokenSource();
 
-                    Runner runner = new Runner(Activity, ProjectLoader.Project.Options);
-                    await runner.Run(ProgressInfo, cts.Token);
-                }
+                Runner runner = new Runner(Activity, ProjectLoader.Project.Options);
+                await runner.Run(ProgressInfo, cts.Token);
 
             }
             catch (OperationCanceledException)

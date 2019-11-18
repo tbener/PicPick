@@ -8,6 +8,7 @@
         WindowStartupLocation="CenterScreen"
         mc:Ignorable="d"
         Title="PicPick - File Exists" Width="500" SizeToContent="Height" 
+        Style="{StaticResource BaseWindowStyle}"
         WindowStyle="ToolWindow">
     <DockPanel Margin="5">
         <!-- Top -->

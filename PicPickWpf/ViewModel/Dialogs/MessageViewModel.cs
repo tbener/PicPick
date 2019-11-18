@@ -18,18 +18,32 @@ namespace PicPick.ViewModel.Dialogs
 
         private MessageBoxButton _messageBoxButtons = MessageBoxButton.OK;
 
-        public MessageViewModel(string messageText, string caption, MessageBoxButton button, MessageBoxImage icon = MessageBoxImage.Information, bool showDontShowAgain = false)
+        public MessageViewModel(string messageText, string caption, MessageBoxButton button, MessageBoxImage messageIcon = MessageBoxImage.Information, bool showDontShowAgain = false)
         {
             SetResultCommand = new RelayCommand<string>(SetDialogResult);
 
             Text = messageText;
             Caption = caption;
             _messageBoxButtons = button;
+            Icon icon = GetSystemIcon(messageIcon.ToString());
             MessageIcon = System.Windows.Interop.Imaging.CreateBitmapSourceFromHIcon(
-                              SystemIcons.Information.Handle,
+                              icon.Handle,
                               System.Windows.Int32Rect.Empty,
                               System.Windows.Media.Imaging.BitmapSizeOptions.FromEmptyOptions());
+            ShowDontShowAgain = showDontShowAgain ? Visibility.Visible : Visibility.Hidden;
 
+        }
+
+        private Icon GetSystemIcon(string icon = "Information")
+        {
+            try
+            {
+                return (Icon)typeof(SystemIcons).GetProperty(icon).GetValue(null);
+            }
+            catch
+            {
+                return SystemIcons.Information;
+            }
         }
 
         private void SetDialogResult(string result)
@@ -56,6 +70,9 @@ namespace PicPick.ViewModel.Dialogs
         public Visibility OkButtonVisibility => ButtonVisibility("OK");
         public Visibility YesButtonVisibility => ButtonVisibility("Yes");
         public Visibility NoButtonVisibility => ButtonVisibility("No");
+        public Visibility ShowDontShowAgain { get; set; }
+
+        public bool DontShowAgain { get; set; }
 
         public MessageBoxResult DialogResult { get; set; }
         public Action CloseDialog { get; set; }

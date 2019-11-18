@@ -11,9 +11,9 @@
     WindowStartupLocation="CenterScreen"
     GlowBrush="{DynamicResource AccentColorBrush}"
     ShowIconOnTitleBar="True"
-    TitleCharacterCasing="Normal"
     ResizeMode="CanResizeWithGrip"
     SaveWindowPosition="True"
+    Style="{StaticResource BaseWindowStyle}"
     Height="600" Width="800" 
     Icon="/PicPickUI;component/Resources/picpick.ico">
 
@@ -39,6 +39,8 @@
                 <MenuItem Header="Report a bug or request a feature..." Command="{Binding SendMailDialogCommand}"/>
                 <Separator/>
                 <MenuItem Header="Open PicPick page" Command="{Binding OpenPageCommand}"/>
+                <Separator/>
+                <MenuItem Header="Show warning on deleting source files" IsCheckable="True" IsChecked="{Binding GeneralUserSettings.WarnDeleteSource}"/>
             </MenuItem>
         </Menu>
         <StatusBar DockPanel.Dock="Bottom" Height="24" >

@@ -70,7 +70,7 @@ namespace PicPick.ViewModel
             ApplicationService.Instance.EventAggregator.GetEvent<GotDirtyEvent>().Subscribe(OnGotDirty);
             ApplicationService.Instance.EventAggregator.GetEvent<FileExistsAskEvent>().Subscribe(OnFileExistsAskEvent);
 
-            
+
         }
 
         private PicPickProjectActivity GetNewActivity(string name)
@@ -301,6 +301,11 @@ namespace PicPick.ViewModel
         public System.Windows.Media.Brush RunningColor
         {
             get => CurrentActivity.IsRunning ? _isRunningColor : null;
+        }
+
+        public Properties.GeneralUserSettings GeneralUserSettings
+        {
+            get { return Properties.UserSettings.General; }
         }
 
         public void Dispose()
