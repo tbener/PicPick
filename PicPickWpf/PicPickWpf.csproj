@@ -169,17 +169,17 @@
     <Compile Include="View\UserControls\ProgressView.xaml.cs">
       <DependentUpon>ProgressView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ViewModel\ActionButtonViewModel.cs" />
-    <Compile Include="ViewModel\ActivityViewModel.cs" />
+    <Compile Include="ViewModel\UserControls\ActionButtonViewModel.cs" />
+    <Compile Include="ViewModel\UserControls\ActivityViewModel.cs" />
     <Compile Include="ViewModel\BaseViewModel.cs" />
-    <Compile Include="ViewModel\FileExistsDialogViewModel.cs" />
+    <Compile Include="ViewModel\Dialogs\FileExistsDialogViewModel.cs" />
     <Compile Include="ViewModel\MainWindowViewModel.cs" />
     <Compile Include="ViewModel\ProgressWindowViewModel.cs" />
     <Compile Include="ViewModel\UserControls\ImageInfoViewModel.cs" />
-    <Compile Include="View\ActivityView.xaml.cs">
+    <Compile Include="View\UserControls\ActivityView.xaml.cs">
       <DependentUpon>ActivityView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\FileExistsDialogView.xaml.cs">
+    <Compile Include="View\Dialogs\FileExistsDialogView.xaml.cs">
       <DependentUpon>FileExistsDialogView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\ProgressWindowView.xaml.cs">
@@ -224,11 +224,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="View\ActivityView.xaml">
+    <Page Include="View\UserControls\ActivityView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="View\FileExistsDialogView.xaml">
+    <Page Include="View\Dialogs\FileExistsDialogView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

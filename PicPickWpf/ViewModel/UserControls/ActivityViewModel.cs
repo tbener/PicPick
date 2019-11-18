@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -11,13 +9,11 @@ using PicPick.Commands;
 using PicPick.Core;
 using PicPick.Helpers;
 using PicPick.Models;
-using PicPick.ViewModel.UserControls;
-using PicPick.View;
 using TalUtils;
 using PicPick.ViewModel.Dialogs;
 using PicPick.View.Dialogs;
 
-namespace PicPick.ViewModel
+namespace PicPick.ViewModel.UserControls
 {
     public class ActivityViewModel : BaseViewModel
     {

@@ -4,7 +4,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
-    xmlns:local="clr-namespace:PicPick.View"
+    xmlns:uc="clr-namespace:PicPick.View.UserControls"
     x:Class="PicPick.MainWindow"
     mc:Ignorable="d"
     Title="{Binding WindowTitle, FallbackValue=PicPick}" 
@@ -88,7 +88,7 @@
                                  Background="Transparent"
                                  Foreground="White"/>
                     </GroupBox.Header>-->
-                    <local:ActivityView DataContext="{Binding ActivityViewModel}"/>
+                    <uc:ActivityView DataContext="{Binding ActivityViewModel}"/>
                 </GroupBox>
             </Grid>
 

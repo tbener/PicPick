@@ -3,8 +3,9 @@ using System.IO;
 using System.Windows.Input;
 using PicPick.Commands;
 using PicPick.Core;
+using PicPick.ViewModel.UserControls;
 
-namespace PicPick.ViewModel
+namespace PicPick.ViewModel.Dialogs
 {
     public class FileExistsDialogViewModel : BaseViewModel, IDisposable
     {

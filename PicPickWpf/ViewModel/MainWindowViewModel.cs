@@ -13,6 +13,7 @@ using PicPick.View;
 using log4net;
 using PicPick.ViewModel.Dialogs;
 using PicPick.View.Dialogs;
+using PicPick.ViewModel.UserControls;
 
 namespace PicPick.ViewModel
 {

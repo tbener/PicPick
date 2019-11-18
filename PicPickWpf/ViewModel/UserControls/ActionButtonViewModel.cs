@@ -1,15 +1,9 @@
 ﻿using PicPick.Core;
-using PicPick.Helpers;
-using PicPick.ViewModel.UserControls;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 
-namespace PicPick.ViewModel
+namespace PicPick.ViewModel.UserControls
 {
     public class ActionButtonViewModel : BaseViewModel, IDisposable
     {
