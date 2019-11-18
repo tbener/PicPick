@@ -16,19 +16,20 @@ namespace PicPick.ViewModel.Dialogs
     {
         public ICommand SetResultCommand { get; set; }
 
-        private MessageBoxButton _messageBoxButtons = MessageBoxButton.OK;
+        private readonly MessageBoxButton _messageBoxButtons = MessageBoxButton.OK;
 
         public MessageViewModel(string messageText, string caption, MessageBoxButton button, MessageBoxImage messageIcon = MessageBoxImage.Information, bool showDontShowAgain = false)
         {
-            SetResultCommand = new RelayCommand<string>(SetDialogResult);
+            SetResultCommand = new RelayCommand<string>(CloseDialogWithResult);
 
             Text = messageText;
             Caption = caption;
             _messageBoxButtons = button;
+            DialogResult = MessageBoxResult.Cancel;
             Icon icon = GetSystemIcon(messageIcon.ToString());
-            MessageIcon = System.Windows.Interop.Imaging.CreateBitmapSourceFromHIcon(
+            MessageIcon = Imaging.CreateBitmapSourceFromHIcon(
                               icon.Handle,
-                              System.Windows.Int32Rect.Empty,
+                              Int32Rect.Empty,
                               System.Windows.Media.Imaging.BitmapSizeOptions.FromEmptyOptions());
             ShowDontShowAgain = showDontShowAgain ? Visibility.Visible : Visibility.Hidden;
 
@@ -46,10 +47,9 @@ namespace PicPick.ViewModel.Dialogs
             }
         }
 
-        private void SetDialogResult(string result)
+        private void CloseDialogWithResult(string result)
         {
-            MessageBoxResult messageBoxResult;
-            if (Enum.TryParse<MessageBoxResult>(result, out messageBoxResult))
+            if (Enum.TryParse(result, out MessageBoxResult messageBoxResult))
                 DialogResult = messageBoxResult;
             CloseDialog();
         }

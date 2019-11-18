@@ -61,7 +61,7 @@
             </StatusBarItem>
             <Separator Grid.Column="1"/>
             <StatusBarItem Grid.Column="2">
-                <TextBlock Text="{Binding VersionString, FallbackValue=v1.0}" HorizontalAlignment="Right"/>
+                <TextBlock Text="{Binding VersionString}" HorizontalAlignment="Right"/>
             </StatusBarItem>
         </StatusBar>
         <Grid Margin="5">

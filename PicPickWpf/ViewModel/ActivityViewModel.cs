@@ -126,14 +126,15 @@ namespace PicPick.ViewModel
                 messageView.Close();
             };
 
+            messageView.Owner = Application.Current.MainWindow;
             messageView.ShowDialog();
 
             Properties.UserSettings.General.WarnDeleteSource = !messageViewModel.DontShowAgain;
 
-            if (messageViewModel.DialogResult == MessageBoxResult.No)
-                return false;
+            if (messageViewModel.DialogResult == MessageBoxResult.Yes)
+                return true;
 
-            return true;
+            return false;
         }
 
         public async void Start()

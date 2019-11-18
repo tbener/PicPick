@@ -7,5 +7,9 @@
         <Setter Property="TitleCharacterCasing" Value="Normal"/>
     </Style>
 
-   
+    <Style x:Key="ToolWindowStyle" TargetType="{x:Type metro:MetroWindow}" BasedOn="{StaticResource BaseWindowStyle}" >
+        <Setter Property="WindowStyle" Value="ToolWindow"/>
+    </Style>
+
+
 </ResourceDictionary>

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
         xmlns:uc="clr-namespace:PicPick.View.UserControls"
-        WindowStartupLocation="CenterScreen"
+        WindowStartupLocation="CenterOwner"
         mc:Ignorable="d"
         Title="PicPick - File Exists" Width="500" SizeToContent="Height" 
         Style="{StaticResource BaseWindowStyle}"

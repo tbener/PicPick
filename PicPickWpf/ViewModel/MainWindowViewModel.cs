@@ -190,12 +190,13 @@ namespace PicPick.ViewModel
 
         private void OnActivityStart()
         {
+            Status = "Running...";
             //if (!ApplicationService.Instance.EventAggregator.GetEvent<FileExistsAskEvent>().Contains(OnFileExistsAskEvent))
             //    ApplicationService.Instance.EventAggregator.GetEvent<FileExistsAskEvent>().Subscribe(OnFileExistsAskEvent);
         }
         private void OnActivityEnd()
         {
-
+            Status = "Ready";
         }
 
 
@@ -222,9 +223,14 @@ namespace PicPick.ViewModel
                 }
             };
 
+            Status = "File exists - displaying dialog";
+
             // #### SHOW DIALOG
+            fileExistsDialogView.Owner = Application.Current.MainWindow;
             fileExistsDialogView.ShowDialog();
             // #### 
+
+            Status = "";
 
             // Save the response to return
             args.Response = fileExistsDialogViewModel.Response;
@@ -297,6 +303,7 @@ namespace PicPick.ViewModel
         public string LogFile { get; set; }
 
         System.Windows.Media.Brush _isRunningColor = (System.Windows.Media.Brush)new System.Windows.Media.BrushConverter().ConvertFrom("#FF9DDA3E");
+        private string status;
 
         public System.Windows.Media.Brush RunningColor
         {
@@ -306,6 +313,16 @@ namespace PicPick.ViewModel
         public Properties.GeneralUserSettings GeneralUserSettings
         {
             get { return Properties.UserSettings.General; }
+        }
+
+        public string Status
+        {
+            get { return status; }
+            set
+            {
+                status = value;
+                OnPropertyChanged(nameof(Status));
+            }
         }
 
         public void Dispose()

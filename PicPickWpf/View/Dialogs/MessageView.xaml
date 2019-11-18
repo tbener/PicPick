@@ -6,9 +6,8 @@
                    xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
                    mc:Ignorable="d"
                    ResizeMode="NoResize"
-                   Style="{StaticResource BaseWindowStyle}"
-                   WindowStartupLocation="CenterScreen"
-                   WindowStyle="ToolWindow"
+                   Style="{StaticResource ToolWindowStyle}"
+                   WindowStartupLocation="CenterOwner"
                    Title="{Binding Caption}" Height="183.502" Width="660">
     <Grid Margin="10 20 10 5">
         <Grid.RowDefinitions>

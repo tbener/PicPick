@@ -23,7 +23,12 @@ namespace PicPick.View
         public FileExistsDialogView()
         {
             InitializeComponent();
+            Activated += FileExistsDialogView_Activated;
         }
-        
+
+        private void FileExistsDialogView_Activated(object sender, EventArgs e)
+        {
+            
+        }
     }
 }
