@@ -71,7 +71,7 @@ namespace PicPick.Helpers
                 MainOperation = "Error occured";
             }
             else
-                MainOperation = $"Done. {Maximum} files processed";
+                MainOperation = $"Done";
 
             Value = 0;
         }

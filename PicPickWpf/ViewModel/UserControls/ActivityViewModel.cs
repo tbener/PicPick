@@ -133,6 +133,25 @@ namespace PicPick.ViewModel.UserControls
             return false;
         }
 
+        private void DisplayEndSummary()
+        {
+            int fileCount = Activity.FilesInfo.Count;
+            string text = $"{fileCount} files processed";
+
+            MessageViewModel messageViewModel = new MessageViewModel(text,
+                "Done", MessageBoxButton.OK, MessageBoxImage.Information, false);
+            MessageView messageView = new MessageView();
+            messageView.DataContext = messageViewModel;
+
+            messageViewModel.CloseDialog = () =>
+            {
+                messageView.Close();
+            };
+
+            messageView.Owner = Application.Current.MainWindow;
+            messageView.ShowDialog();
+        }
+
         public async void Start()
         {
             if (!WarningsBeforeStart())
@@ -152,10 +171,10 @@ namespace PicPick.ViewModel.UserControls
             }
             finally
             {
-                //progressWindow.Close();
-
                 OnPropertyChanged("ProgressInfo");
                 cts.Dispose();
+
+                DisplayEndSummary();
             }
         }
 
