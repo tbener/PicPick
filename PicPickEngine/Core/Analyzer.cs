@@ -44,6 +44,7 @@ namespace PicPick.Core
             progressInfo.MainOperation = "Analyzing...";
             MappingCompletedSuccessfully = false;
             Mapping.Clear();
+            _activity.FileMapping.Clear();
 
             ValidateFields();
 
@@ -98,6 +99,7 @@ namespace PicPick.Core
         {
 
             DateTime dateTime = DateTime.MinValue;
+            DateTime? dateTime2 = null; 
             ImageFileInfo fileDateInfo = new ImageFileInfo();
 
             FilesInfo.Clear();
@@ -109,23 +111,31 @@ namespace PicPick.Core
 
             foreach (string file in _activity.Source.FileList)
             {
-                if (fileDateInfo.GetFileDate(file, out dateTime))
-                    FilesInfo.Add(file, new PicPickFileInfo(dateTime));
+                if (fileDateInfo.GetFileDate(file, out dateTime2))
+                    _activity.FileMapping.AddFile(file, dateTime2);
                 else
-                    _filesError.Add(file);
+                    _activity.FileMapping.AddFile(file, new Exception($"Error extracting date from file: {file}"));
+
+                //if (fileDateInfo.GetFileDate(file, out dateTime))
+                //{
+                //    FilesInfo.Add(file, new PicPickFileInfo(dateTime));
+                //}
+                //else
+                //{
+                //    _filesError.Add(file);
+                //}
                 await Task.Run(() => progressInfo.Advance());
                 cancellationToken.ThrowIfCancellationRequested();
             }
 
-            Debug.Print($"Found {FilesInfo.Count()} files");
-            if (_filesError.Count() > 0)
-            {
-                Debug.Print($"ERRORS: Couldn't get dates from {_filesError.Count()} files:");
-                foreach (string file in _filesError)
-                {
-                    Debug.Print($"\t{file}");
-                }
-            }
+            //if (_filesError.Count() > 0)
+            //{
+            //    Debug.Print($"ERRORS: Couldn't get dates from {_filesError.Count()} files:");
+            //    foreach (string file in _filesError)
+            //    {
+            //        Debug.Print($"\t{file}");
+            //    }
+            //}
 
         }
 

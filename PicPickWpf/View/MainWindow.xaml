@@ -14,7 +14,7 @@
     ResizeMode="CanResizeWithGrip"
     SaveWindowPosition="True"
     Style="{StaticResource BaseWindowStyle}"
-    Height="600" Width="800" 
+    Height="662" Width="839" 
     Icon="/PicPickUI;component/Resources/picpick.ico">
 
     <Window.InputBindings>
@@ -115,7 +115,7 @@
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        
+
                         <StackPanel>
                             <Button Command="{Binding StartCommand}" Content="Start" Height="32" Width="80" HorizontalAlignment="Left" Margin="10"/>
                             <Button Command="{Binding StopCommand}" Content="Stop" Height="32" Width="80" HorizontalAlignment="Left" Margin="10 0 10 10"/>

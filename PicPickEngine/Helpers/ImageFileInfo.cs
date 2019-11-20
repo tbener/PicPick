@@ -21,6 +21,13 @@ namespace PicPick.Helpers
         FileStream _fileStream = null;
         string _fileName = "";
 
+        static BitmapImageCheck _staticBitmapImageCheck;
+
+        static ImageFileInfo()
+        {
+            _staticBitmapImageCheck = new BitmapImageCheck();
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -74,10 +81,16 @@ namespace PicPick.Helpers
             }
         }
 
-        public bool IsImage(string file)
+        //public bool IsImage(string file)
+        //{
+        //    string ext = Path.GetExtension(file);
+        //    return _bitmapImageCheck.IsExtensionSupported(ext);
+        //}
+
+        public static bool IsImage(string file)
         {
             string ext = Path.GetExtension(file);
-            return _bitmapImageCheck.IsExtensionSupported(ext);
+            return _staticBitmapImageCheck.IsExtensionSupported(ext);
         }
 
         public bool GetFileDate(string file, out DateTime dateTime)
@@ -97,6 +110,44 @@ namespace PicPick.Helpers
                 dateTime = DateTime.MinValue;
                 return false;
             }
+        }
+
+        public static bool TryGetFileDate(string file, out DateTime dateTime)
+        {
+            try
+            {
+                if (IsImage(file))
+                    if (TryGetDateTaken_(file, out dateTime))
+                        return true;
+                dateTime = File.GetLastWriteTime(file);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                ErrorHandler.Handle(ex, "Error extracting date from file (setting minimum sate)", false);
+                dateTime = DateTime.MinValue;
+                return false;
+            }
+        }
+
+        public static bool TryGetDateTaken_(string fileName, out DateTime dateTime)
+        {
+            try
+            {
+                using (FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read))
+                {
+                    BitmapSource bitSource = BitmapFrame.Create(fs);
+                    BitmapMetadata metaData = (BitmapMetadata)bitSource.Metadata;
+                    return DateTime.TryParse(metaData.DateTaken, out dateTime);
+                }
+                
+            }
+            catch (Exception ex)
+            {
+                Debug.Print($"{Path.GetFileName(fileName)} - {ex.Message}");
+                dateTime = DateTime.MinValue;
+            }
+            return false;
         }
 
         public bool TryGetDateTaken(string fileName, out DateTime dateTime)
@@ -129,6 +180,8 @@ namespace PicPick.Helpers
             }
             return false;
         }
+
+
 
         public string FileSize(string fileName)
         {
