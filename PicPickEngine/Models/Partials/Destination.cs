@@ -31,7 +31,15 @@ namespace PicPick.Models
 
         public string GetTemplatePath(DateTime dt)
         {
-            return HasTemplate ? dt.ToString(Template) : string.Empty;
+            try
+            {
+                if (HasTemplate)
+                    return dt.ToString(Template);
+            }
+            catch
+            {
+            }
+            return string.Empty;
         }
 
         //public string GetTemplatePath(string file)
