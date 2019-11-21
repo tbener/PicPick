@@ -10,6 +10,7 @@ using PicPick.Models;
 using TalUtils;
 using PicPick.Models.Interfaces;
 using log4net;
+using System.IO;
 
 namespace PicPick.Core
 {
@@ -23,14 +24,135 @@ namespace PicPick.Core
         private IActivity _activity;
         private IOptions _options;
 
+        public FileExistsResponseEnum FileExistsResponse { get; set; }
+
 
         public Runner(IActivity activity, IOptions options)
         {
             _activity = activity;
             _options = options;
+
+            FileExistsResponse = _options.FileExistsResponse;
         }
 
         public async Task Run(ProgressInformation progressInfo, CancellationToken cancellationToken)
+        {
+            _log.Info($"Starting: {_activity.Name}");
+            if (_activity.IsRunning) throw new Exception("Activity is already running.");
+            EventAggregatorHelper.PublishActivityStarted();
+
+            FileExistsAskEventArgs fileExistsAskEventArgs = new FileExistsAskEventArgs();
+            FileExistsResponseEnum currentConflictResponse;
+
+            var map = _activity.FileMapping;
+
+            try
+            {
+                _activity.IsRunning = true;
+
+                progressInfo.Maximum = map.SourceFiles.Count * map.Destinations.Count;
+                progressInfo.Value = 0;
+
+                foreach (DestinationFolder destinationFolder in map.DestinationFolders.Values)
+                {
+                    foreach (DestinationFile destinationFile in destinationFolder.Files)
+                    {
+                        try
+                        {
+                            SourceFile sourceFile = destinationFile.SourceFile;
+
+                            if (destinationFile.Exists)
+                            {
+                                currentConflictResponse = FileExistsResponse;
+
+                                if (currentConflictResponse == FileExistsResponseEnum.ASK)
+                                {
+                                    fileExistsAskEventArgs.SourceFile = sourceFile.FullPath;
+                                    fileExistsAskEventArgs.DestinationFolder = destinationFolder.FullPath;
+                                    // Publish the event
+                                    currentConflictResponse = EventAggregatorHelper.PublishFileExists(fileExistsAskEventArgs);
+
+                                    if (currentConflictResponse == FileExistsResponseEnum.ASK)
+                                        // This will happen if the event wasn't handled, or wasn't handled correctly
+                                        currentConflictResponse = FileExistsResponseEnum.SKIP;
+
+                                    if (fileExistsAskEventArgs.Cancel)
+                                        throw new OperationCanceledException(cancellationToken);
+
+                                    if (fileExistsAskEventArgs.DontAskAgain)
+                                        FileExistsResponse = currentConflictResponse;
+                                }
+
+                                if (currentConflictResponse == FileExistsResponseEnum.COMPARE)
+                                {
+                                    if (FileSystemHelper.AreSameFiles(sourceFile.FullPath, destinationFile.GetFullName()))
+                                        currentConflictResponse = FileExistsResponseEnum.SKIP;
+                                    else
+                                        currentConflictResponse = FileExistsResponseEnum.RENAME;
+                                }
+
+                                switch (currentConflictResponse)
+                                {
+                                    case FileExistsResponseEnum.OVERWRITE:
+                                        await Task.Run(() => File.Copy(sourceFile.FullPath, destinationFile.GetFullName(), true));
+                                        destinationFile.Status = FILE_STATUS.COPIED;
+                                        break;
+                                    case FileExistsResponseEnum.SKIP:
+                                        destinationFile.Status = FILE_STATUS.SKIPPED;
+                                        break;
+                                    case FileExistsResponseEnum.RENAME:
+
+                                        destinationFile.NewName = FileSystemHelper.GetNewFileName(destinationFolder.FullPath, sourceFile.FileName);
+
+                                        await Task.Run(() => File.Copy(sourceFile.FullPath, destinationFile.GetFullName(), true));
+                                        destinationFile.Status = FILE_STATUS.COPIED;
+                                        break;
+                                    default:
+                                        break;
+                                }
+
+                                //ReportFileProcess(fileName, currentConflictResponse, destFile);
+                            }
+                            else
+                            {
+                                await Task.Run(() => File.Copy(sourceFile.FullPath, destinationFile.GetFullName()));
+                                destinationFile.Status = FILE_STATUS.COPIED;
+                                //ReportFileProcess(fileName, $"Copied to {destFile}", log4net.Core.Level.Info);
+                            }
+
+                            // report progress
+                            progressInfo.Advance();
+                        }
+                        catch (OperationCanceledException)
+                        {
+                            throw;
+                        }
+                        catch (Exception ex)
+                        {
+
+                            throw;
+                        }
+                    }
+                }
+
+            }
+            catch (OperationCanceledException)
+            {
+                _log.Info("The user cancelled the operation");
+                progressInfo.UserCancelled = true;
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+            finally
+            {
+                _activity.IsRunning = false;
+            }
+        }
+
+        public async Task Run2(ProgressInformation progressInfo, CancellationToken cancellationToken)
         {
             _log.Info($"Starting: {_activity.Name}");
             if (_activity.IsRunning) throw new Exception("Activity is already running.");

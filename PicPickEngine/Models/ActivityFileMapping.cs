@@ -22,7 +22,7 @@ namespace PicPick.Models
     {
         public Dictionary<string, SourceFile> SourceFiles { get; set; } = new Dictionary<string, SourceFile>();
         public Dictionary<string, DestinationFolder> DestinationFolders { get; set; } = new Dictionary<string, DestinationFolder>();
-
+        public List<PicPickProjectActivityDestination> Destinations;
 
 
 
@@ -30,50 +30,43 @@ namespace PicPick.Models
         {
             SourceFiles.Clear();
             DestinationFolders.Clear();
-        }
-
-        internal void AddFile(string file, DateTime dateTime)
-        {
-            throw new NotImplementedException();
-        }
-
-        internal void AddFile(string file, Exception exception)
-        {
-            throw new NotImplementedException();
+            Destinations = null;
         }
 
         public void Compute(PicPickProjectActivitySource source, List<PicPickProjectActivityDestination> destinations)
         {
-            ImageFileInfo fileDateInfo = new ImageFileInfo();
-
             Clear();
+
+            Destinations = destinations;
 
             bool needDates = destinations.Any(d => d.HasTemplate);
 
-            // add the source files
-            foreach (string file in source.FileList)
-            {
-                SourceFiles.Add(file, new SourceFile(file, needDates));
+            // Create SourceFile list
+            List<SourceFile> sourceFiles = source.FileList.Select(f => new SourceFile(f, needDates)).ToList();
+            // Add to dictionary
+            sourceFiles.ForEach(sf => SourceFiles.Add(sf.FullPath, sf));
 
-                //await Task.Run(() => progressInfo.Advance());
-                //cancellationToken.ThrowIfCancellationRequested();
-            }
+            // add the source files
+            //foreach (string file in source.FileList)
+            //{
+            //    SourceFiles.Add(file, new SourceFile(file, needDates));
+
+            //    //await Task.Run(() => progressInfo.Advance());
+            //    //cancellationToken.ThrowIfCancellationRequested();
+            //}
 
             foreach (PicPickProjectActivityDestination destination in destinations)
             {
-                List<SourceFile> sourceFiles = SourceFiles.Values.ToList();
-
                 if (destination.HasTemplate)
                 {
                     foreach (SourceFile sourceFile in sourceFiles)
                     {
-                        string relPath = destination.GetTemplatePath(sourceFile.DateTime);
-                        string fullPath = PathHelper.GetFullPath(destination.PathAbsolute, relPath);
+                        string destinationFullPath = destination.GetFullPath(sourceFile.DateTime);
 
-                        if (!DestinationFolders.TryGetValue(fullPath, out DestinationFolder destinationFolder))
+                        if (!DestinationFolders.TryGetValue(destinationFullPath, out DestinationFolder destinationFolder))
                         {
-                            destinationFolder = new DestinationFolder(fullPath, destination);
-                            DestinationFolders.Add(fullPath, destinationFolder);
+                            destinationFolder = new DestinationFolder(destinationFullPath, destination);
+                            DestinationFolders.Add(destinationFullPath, destinationFolder);
                         }
                         // This will do both adding a reference from the SourceFile to the destinationFolder and adding a new DestinationFile object to this destinationFolder
                         destinationFolder.AddFile(sourceFile);
@@ -82,12 +75,8 @@ namespace PicPick.Models
                 else
                 {
                     // it will be a single DestinationFolder for all files
-
-                    foreach (SourceFile sourceFile in sourceFiles)
-                    {
-
-                    }
-
+                    DestinationFolder destinationFolder = new DestinationFolder(destination.Path, destination);
+                    sourceFiles.ForEach(destinationFolder.AddFile);
                 }
             }
         }
@@ -124,8 +113,6 @@ namespace PicPick.Models
     /// </summary>
     public class DestinationFolder
     {
-        private PicPickProjectActivityDestination destination;
-
         public DestinationFolder(string fullPath, PicPickProjectActivityDestination destination)
         {
             FullPath = fullPath;
@@ -137,13 +124,13 @@ namespace PicPick.Models
         public void AddFile(SourceFile sourceFile)
         {
             sourceFile.DestinationFolders.Add(this);
-            Files.Add(new DestinationFile(sourceFile.FileName));
+            Files.Add(new DestinationFile(this, sourceFile.FileName));
         }
 
         public string FullPath { get; set; }
         public bool IsNew { get; set; }
         public bool Created { get; set; }
-        public List<DestinationFile> Files { get; set; }
+        public List<DestinationFile> Files { get; set; } = new List<DestinationFile>();
         public PicPickProjectActivityDestination BasedOnDestination { get; set; }
 
 
@@ -159,12 +146,21 @@ namespace PicPick.Models
     /// </summary>
     public class DestinationFile
     {
-        public DestinationFile(string fileName)
+        public DestinationFile(SourceFile sourceFile, DestinationFolder destinationFolder)
         {
-            OriginalFileName = fileName;
+            SourceFile = sourceFile;
+            ParentFolder = destinationFolder;
+            Exists = !(destinationFolder.IsNew || File.Exists(Path.Combine(destinationFolder.FullPath, sourceFile.FileName)));
         }
 
-        public string OriginalFileName { get; set; }
+        public string GetFullName()
+        {
+            string fileName = NewName == string.Empty ? SourceFile.FileName : NewName;
+            return Path.Combine(ParentFolder.FullPath, fileName);
+        }
+
+        public DestinationFolder ParentFolder { get; set; }
+        public SourceFile SourceFile { get; set; }
         public bool Exists { get; set; }
         public string NewName { get; set; }
         public FILE_STATUS Status { get; set; }

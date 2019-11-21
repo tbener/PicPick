@@ -112,7 +112,7 @@ namespace PicPick.ViewModel.UserControls
             if (!Properties.UserSettings.General.WarnDeleteSource)
                 return true;
 
-            MessageViewModel messageViewModel = new MessageViewModel("The files will be deleted from the source folder if the operation will end successfully.\nDo you want to continue?", 
+            MessageViewModel messageViewModel = new MessageViewModel("The files will be deleted from the source folder if the operation will end successfully.\nDo you want to continue?",
                 "Warning", MessageBoxButton.YesNo, MessageBoxImage.Warning, true);
             MessageView messageView = new MessageView();
             messageView.DataContext = messageViewModel;
@@ -153,6 +153,25 @@ namespace PicPick.ViewModel.UserControls
         }
 
         public async void Start()
+        {
+            try
+            {
+                var activeDestinations = Activity.DestinationList.Where(d => d.Active).ToList();
+                Activity.FileMapping.Compute(Activity.Source, activeDestinations);
+
+                cts = new CancellationTokenSource();
+
+                Runner runner = new Runner(Activity, ProjectLoader.Project.Options);
+                await runner.Run(ProgressInfo, cts.Token);
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+        }
+
+        public async void Start11()
         {
             if (!WarningsBeforeStart())
                 return;

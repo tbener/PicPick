@@ -44,7 +44,6 @@ namespace PicPick.Core
             progressInfo.MainOperation = "Analyzing...";
             MappingCompletedSuccessfully = false;
             Mapping.Clear();
-            _activity.FileMapping.Clear();
 
             ValidateFields();
 
@@ -55,6 +54,8 @@ namespace PicPick.Core
             var activeDestinations = _activity.DestinationList.Where(d => d.Active).ToList();
             progressInfo.Maximum = FilesInfo.Count * activeDestinations.Count;
             progressInfo.Start();
+
+            _activity.FileMapping.Compute(_activity.Source, activeDestinations);
 
             foreach (PicPickProjectActivityDestination destination in activeDestinations)
             {
@@ -99,7 +100,6 @@ namespace PicPick.Core
         {
 
             DateTime dateTime = DateTime.MinValue;
-            DateTime? dateTime2 = null; 
             ImageFileInfo fileDateInfo = new ImageFileInfo();
 
             FilesInfo.Clear();
@@ -111,19 +111,14 @@ namespace PicPick.Core
 
             foreach (string file in _activity.Source.FileList)
             {
-                if (fileDateInfo.GetFileDate(file, out dateTime2))
-                    _activity.FileMapping.AddFile(file, dateTime2);
+                if (fileDateInfo.GetFileDate(file, out dateTime))
+                {
+                    FilesInfo.Add(file, new PicPickFileInfo(dateTime));
+                }
                 else
-                    _activity.FileMapping.AddFile(file, new Exception($"Error extracting date from file: {file}"));
-
-                //if (fileDateInfo.GetFileDate(file, out dateTime))
-                //{
-                //    FilesInfo.Add(file, new PicPickFileInfo(dateTime));
-                //}
-                //else
-                //{
-                //    _filesError.Add(file);
-                //}
+                {
+                    _filesError.Add(file);
+                }
                 await Task.Run(() => progressInfo.Advance());
                 cancellationToken.ThrowIfCancellationRequested();
             }

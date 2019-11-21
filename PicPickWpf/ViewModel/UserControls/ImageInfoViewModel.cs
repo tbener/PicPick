@@ -11,7 +11,7 @@ namespace PicPick.ViewModel.UserControls
         {
             ImageFileInfo imageInfo = new ImageFileInfo(true);
 
-            if (imageInfo.IsImage(imagePath))
+            if (ImageFileInfo.IsImage(imagePath))
                 Source = imageInfo.BitmapImage(imagePath);
             else
                 Source = imageInfo.AssociatedImage(imagePath);
