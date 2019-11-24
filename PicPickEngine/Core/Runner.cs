@@ -55,15 +55,23 @@ namespace PicPick.Core
 
                 foreach (DestinationFolder destinationFolder in map.DestinationFolders.Values)
                 {
+                    _log.Info($"Destination: {destinationFolder.FullPath}");
+
                     foreach (DestinationFile destinationFile in destinationFolder.Files)
                     {
                         try
                         {
                             SourceFile sourceFile = destinationFile.SourceFile;
 
+                            _log.Info($"-- Source file: {sourceFile.FileName}");
+
+                            progressInfo.CurrentOperation = $"{sourceFile.FileName}";
+                            progressInfo.Report();
+
                             if (destinationFile.Exists)
                             {
                                 currentConflictResponse = FileExistsResponse;
+                                _log.Info($"-- File exists in destination. Response = {currentConflictResponse}");
 
                                 if (currentConflictResponse == FileExistsResponseEnum.ASK)
                                 {
@@ -71,6 +79,8 @@ namespace PicPick.Core
                                     fileExistsAskEventArgs.DestinationFolder = destinationFolder.FullPath;
                                     // Publish the event
                                     currentConflictResponse = EventAggregatorHelper.PublishFileExists(fileExistsAskEventArgs);
+
+                                    _log.Info($"-- User selected: {currentConflictResponse}");
 
                                     if (currentConflictResponse == FileExistsResponseEnum.ASK)
                                         // This will happen if the event wasn't handled, or wasn't handled correctly
@@ -90,6 +100,8 @@ namespace PicPick.Core
                                     else
                                         currentConflictResponse = FileExistsResponseEnum.RENAME;
                                 }
+
+                                _log.Info($"-- Action: {currentConflictResponse}");
 
                                 switch (currentConflictResponse)
                                 {
@@ -111,14 +123,14 @@ namespace PicPick.Core
                                         break;
                                 }
 
-                                //ReportFileProcess(fileName, currentConflictResponse, destFile);
                             }
                             else
                             {
                                 await Task.Run(() => File.Copy(sourceFile.FullPath, destinationFile.GetFullName()));
                                 destinationFile.Status = FILE_STATUS.COPIED;
-                                //ReportFileProcess(fileName, $"Copied to {destFile}", log4net.Core.Level.Info);
                             }
+
+                            _log.Info($"---- Copied to: {destinationFile.GetFullName()}");
 
                             // report progress
                             progressInfo.Advance();
@@ -129,8 +141,10 @@ namespace PicPick.Core
                         }
                         catch (Exception ex)
                         {
-
-                            throw;
+                            destinationFile.Status = FILE_STATUS.ERROR;
+                            destinationFile.Exception = ex;
+                            if (!_errorHandler.Handle(ex, true, $"An error occurred while processing the file: {destinationFile.SourceFile.FileName}.\nDo you want to continue to the next files?"))
+                                throw ex;
                         }
                     }
                 }
@@ -138,17 +152,22 @@ namespace PicPick.Core
             }
             catch (OperationCanceledException)
             {
-                _log.Info("The user cancelled the operation");
+                _log.Info("*** The user cancelled the operation ***");
                 progressInfo.UserCancelled = true;
             }
             catch (Exception ex)
             {
-
-                throw;
+                progressInfo.Exception = ex;
+                _errorHandler.Handle(ex, false, $"Error in operation: {progressInfo.MainOperation}.");
             }
             finally
             {
+                _log.Info($"Finished: {_activity.Name}\n*****************");
+                progressInfo.Finished();
+                await Task.Run(() => progressInfo.Report());
                 _activity.IsRunning = false;
+                _activity.Initialized = false;
+                EventAggregatorHelper.PublishActivityEnded();
             }
         }
 

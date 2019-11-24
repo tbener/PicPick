@@ -63,6 +63,7 @@
     <Compile Include="Helpers\BitmapImageCheck.cs" />
     <Compile Include="Core\CopyFilesHandler.cs" />
     <Compile Include="Helpers\EventAggregatorHelper.cs" />
+    <Compile Include="Helpers\FileSystemHelper.cs" />
     <Compile Include="Helpers\ImageFileInfo.cs" />
     <Compile Include="Helpers\LogHandler.cs" />
     <Compile Include="Helpers\ShellFileOperations.cs" />

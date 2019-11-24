@@ -154,10 +154,15 @@ namespace PicPick.ViewModel.UserControls
 
         public async void Start()
         {
+            if (!WarningsBeforeStart())
+                return;
+
             try
             {
                 var activeDestinations = Activity.DestinationList.Where(d => d.Active).ToList();
                 Activity.FileMapping.Compute(Activity.Source, activeDestinations);
+
+                Clipboard.SetText(Activity.FileMapping.ToString());
 
                 cts = new CancellationTokenSource();
 

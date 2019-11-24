@@ -76,9 +76,46 @@ namespace PicPick.Models
                 {
                     // it will be a single DestinationFolder for all files
                     DestinationFolder destinationFolder = new DestinationFolder(destination.Path, destination);
+                    DestinationFolders.Add(destinationFolder.FullPath, destinationFolder);
                     sourceFiles.ForEach(destinationFolder.AddFile);
                 }
             }
+        }
+
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder("");
+
+            sb.AppendLine($"Files count: {SourceFiles.Count}");
+            sb.AppendLine($"Destination folders count: {DestinationFolders.Count}");
+
+            sb.AppendLine("\nActive Destinations:");
+            foreach (PicPickProjectActivityDestination dest in Destinations)
+            {
+                sb.AppendLine($"{dest.Path}\\[{dest.Template}]");
+            }
+
+            sb.AppendLine();
+
+            foreach (DestinationFolder destination in DestinationFolders.Values)
+            {
+                sb.AppendLine(string.Format("{0} ({1})", destination.FullPath, destination.IsNew ? "New" : "Exists"));
+                foreach (DestinationFile file in destination.Files)
+                {
+                    sb.AppendLine($"--> {file.GetFullName()}");
+                }
+            }
+
+            //foreach (SourceFile sourceFile in SourceFiles.Values)
+            //{
+            //    sb.AppendLine(sourceFile.FullPath);
+            //    foreach (DestinationFolder destinationFolder in sourceFile.DestinationFolders)
+            //    {
+            //        sb.AppendLine($"--> {destinationFolder.FullPath}");
+            //    }
+            //}
+
+            return sb.ToString();
         }
 
     }
@@ -91,7 +128,8 @@ namespace PicPick.Models
             FileName = Path.GetFileName(fullPath);
             if (needDate)
             {
-                ImageFileInfo.TryGetDateTaken_(fullPath, out DateTime dateTime);
+                if (!ImageFileInfo.TryGetFileDate(fullPath, out DateTime dateTime))
+                    throw new Exception($"Could not extract date from file: {fullPath}");
                 DateTime = dateTime;
             }
         }
@@ -124,7 +162,7 @@ namespace PicPick.Models
         public void AddFile(SourceFile sourceFile)
         {
             sourceFile.DestinationFolders.Add(this);
-            Files.Add(new DestinationFile(this, sourceFile.FileName));
+            Files.Add(new DestinationFile(sourceFile, this));
         }
 
         public string FullPath { get; set; }
@@ -155,7 +193,7 @@ namespace PicPick.Models
 
         public string GetFullName()
         {
-            string fileName = NewName == string.Empty ? SourceFile.FileName : NewName;
+            string fileName = string.IsNullOrEmpty(NewName) ? SourceFile.FileName : NewName;
             return Path.Combine(ParentFolder.FullPath, fileName);
         }
 
