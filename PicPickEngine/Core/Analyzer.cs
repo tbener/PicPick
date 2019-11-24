@@ -55,8 +55,6 @@ namespace PicPick.Core
             progressInfo.Maximum = FilesInfo.Count * activeDestinations.Count;
             progressInfo.Start();
 
-            _activity.FileMapping.Compute(_activity.Source, activeDestinations);
-
             foreach (PicPickProjectActivityDestination destination in activeDestinations)
             {
                 string pathAbsolute = PathHelper.GetFullPath(_activity.Source.Path, destination.Path);

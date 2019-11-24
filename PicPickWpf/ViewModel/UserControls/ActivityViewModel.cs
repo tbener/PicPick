@@ -159,15 +159,11 @@ namespace PicPick.ViewModel.UserControls
 
             try
             {
-                var activeDestinations = Activity.DestinationList.Where(d => d.Active).ToList();
-                Activity.FileMapping.Compute(Activity.Source, activeDestinations);
+                ProgressInfo.RenewToken();
 
-                Clipboard.SetText(Activity.FileMapping.ToString());
+                await Activity.FileMapping.Compute(ProgressInfo);
 
-                cts = new CancellationTokenSource();
-
-                Runner runner = new Runner(Activity, ProjectLoader.Project.Options);
-                await runner.Run(ProgressInfo, cts.Token);
+                await Activity.Runner.Run(ProgressInfo);
             }
             catch (Exception ex)
             {
@@ -186,7 +182,7 @@ namespace PicPick.ViewModel.UserControls
                 cts = new CancellationTokenSource();
 
                 Runner runner = new Runner(Activity, ProjectLoader.Project.Options);
-                await runner.Run(ProgressInfo, cts.Token);
+                //await runner.Run(ProgressInfo, cts.Token);
 
             }
             catch (OperationCanceledException)
@@ -210,7 +206,7 @@ namespace PicPick.ViewModel.UserControls
 
         private void Stop()
         {
-            cts.Cancel();
+            ProgressInfo.Cancel();
         }
 
         private bool CanStop(object obj)

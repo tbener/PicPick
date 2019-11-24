@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace PicPick.Helpers
@@ -19,6 +20,7 @@ namespace PicPick.Helpers
         private int _value;
         private int _maximum;
         private IActivity _activity;
+        private CancellationTokenSource cts;
 
         #endregion
 
@@ -32,20 +34,7 @@ namespace PicPick.Helpers
 
         #endregion
 
-        #region Public properties
-
-        public Exception Exception { get; set; }
-
-        public int Value
-        {
-            get => _value; set
-            {
-                _value = value;
-                RaisePropertyChanged("Value");
-            }
-        }
-
-        public IProgress<ProgressInformation> Progress { get; set; }
+        #region Public Methods
 
         public void PrepareToStart(IActivity activity)
         {
@@ -108,7 +97,6 @@ namespace PicPick.Helpers
             }
         }
         
-        public int CurrentOperationTotal { get; internal set; }
         public int Maximum
         {
             get => _maximum;
@@ -119,15 +107,6 @@ namespace PicPick.Helpers
             }
         }
 
-        public string ProgressPercentsText => Maximum > 0 & Value > 0 ? $"{Value} of {Maximum}" : "";
-
-        public FileExistsResponseEnum FileExistsResponse { get; set; }
-        public Dictionary<FILE_STATUS, List<string>> Summary { get; set; }
-        public bool UserCancelled { get; set; }
-
-        #endregion
-
-        #region Methods
 
         public void Advance(int step = 1)
         {
@@ -147,6 +126,43 @@ namespace PicPick.Helpers
             Exception = null;
         }
 
+        public void RenewToken()
+        {
+            cts = new CancellationTokenSource();
+            CancellationToken = cts.Token;
+        }
+
+        public void Cancel()
+        {
+            cts.Cancel();
+        }
+
+        #endregion
+
+        #region Public properties
+
+        public Exception Exception { get; set; }
+
+        public int Value
+        {
+            get => _value; set
+            {
+                _value = value;
+                RaisePropertyChanged("Value");
+            }
+        }
+
+        public IProgress<ProgressInformation> Progress { get; set; }
+
+        public string ProgressPercentsText => Maximum > 0 & Value > 0 ? $"{Value} of {Maximum}" : "";
+
+        public int CurrentOperationTotal { get; internal set; }
+        public FileExistsResponseEnum FileExistsResponse { get; set; }
+        public Dictionary<FILE_STATUS, List<string>> Summary { get; set; }
+        public bool UserCancelled { get; set; }
+
+        public CancellationToken CancellationToken { get; set; }
+
         #endregion
 
         #region INotifyPropertyChanged Implementation
@@ -161,6 +177,7 @@ namespace PicPick.Helpers
                 propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
             }
         }
+
 
         #endregion
     }

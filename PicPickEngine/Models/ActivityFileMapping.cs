@@ -1,10 +1,12 @@
 ﻿using PicPick.Core;
 using PicPick.Helpers;
+using PicPick.Models.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using TalUtils;
 
@@ -23,7 +25,12 @@ namespace PicPick.Models
         public Dictionary<string, SourceFile> SourceFiles { get; set; } = new Dictionary<string, SourceFile>();
         public Dictionary<string, DestinationFolder> DestinationFolders { get; set; } = new Dictionary<string, DestinationFolder>();
         public List<PicPickProjectActivityDestination> Destinations;
+        public IActivity Activity { get; set; }
 
+        public ActivityFileMapping(IActivity activity)
+        {
+            Activity = activity;
+        }
 
 
         internal void Clear()
@@ -33,7 +40,13 @@ namespace PicPick.Models
             Destinations = null;
         }
 
-        public void Compute(PicPickProjectActivitySource source, List<PicPickProjectActivityDestination> destinations)
+        public async Task Compute(ProgressInformation progressInfo)
+        {
+            var activeDestinations = Activity.DestinationList.Where(d => d.Active).ToList();
+            await Activity.FileMapping.Compute(progressInfo, Activity.Source, activeDestinations);
+        }
+
+        public async Task Compute(ProgressInformation progressInfo, PicPickProjectActivitySource source, List<PicPickProjectActivityDestination> destinations)
         {
             Clear();
 
@@ -45,15 +58,6 @@ namespace PicPick.Models
             List<SourceFile> sourceFiles = source.FileList.Select(f => new SourceFile(f, needDates)).ToList();
             // Add to dictionary
             sourceFiles.ForEach(sf => SourceFiles.Add(sf.FullPath, sf));
-
-            // add the source files
-            //foreach (string file in source.FileList)
-            //{
-            //    SourceFiles.Add(file, new SourceFile(file, needDates));
-
-            //    //await Task.Run(() => progressInfo.Advance());
-            //    //cancellationToken.ThrowIfCancellationRequested();
-            //}
 
             foreach (PicPickProjectActivityDestination destination in destinations)
             {

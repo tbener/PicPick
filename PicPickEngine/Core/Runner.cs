@@ -35,7 +35,7 @@ namespace PicPick.Core
             FileExistsResponse = _options.FileExistsResponse;
         }
 
-        public async Task Run(ProgressInformation progressInfo, CancellationToken cancellationToken)
+        public async Task Run(ProgressInformation progressInfo)
         {
             _log.Info($"Starting: {_activity.Name}");
             if (_activity.IsRunning) throw new Exception("Activity is already running.");
@@ -87,7 +87,7 @@ namespace PicPick.Core
                                         currentConflictResponse = FileExistsResponseEnum.SKIP;
 
                                     if (fileExistsAskEventArgs.Cancel)
-                                        throw new OperationCanceledException(cancellationToken);
+                                        throw new OperationCanceledException(progressInfo.CancellationToken);
 
                                     if (fileExistsAskEventArgs.DontAskAgain)
                                         FileExistsResponse = currentConflictResponse;

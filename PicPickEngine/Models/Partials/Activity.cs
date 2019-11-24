@@ -33,6 +33,8 @@ namespace PicPick.Models
         private Dictionary<string, PicPickFileInfo> _dicFiles = new Dictionary<string, PicPickFileInfo>();
         private List<string> _errorFiles = new List<string>();
         private bool _isRunning;
+        private ActivityFileMapping _fileMapping;
+        private Runner _runner;
 
         public PicPickProjectActivity(string name)
         {
@@ -83,8 +85,29 @@ namespace PicPick.Models
 
         [XmlIgnore]
         [IsDirtySupport.IsDirtyIgnore]
-        public ActivityFileMapping FileMapping { get; set; } = new ActivityFileMapping();
+        public ActivityFileMapping FileMapping
+        {
+            get
+            {
+                if (_fileMapping == null)
+                    _fileMapping = new ActivityFileMapping(this);
+                return _fileMapping;
+            }
+            set => _fileMapping = value;
+        }
 
+        [XmlIgnore]
+        [IsDirtySupport.IsDirtyIgnore]
+        public Runner Runner
+        {
+            get
+            {
+                if (_runner == null)
+                    _runner = new Runner(this, ProjectLoader.Project.Options);
+                return _runner;
+            }
+            set => _runner = value;
+        }
 
         [XmlIgnore]
         public bool IsRunning
@@ -95,7 +118,7 @@ namespace PicPick.Models
                 RaisePropertyChanged("IsRunning");
             }
         }
-        
+
         #region ICloneable
 
         public object Clone()
