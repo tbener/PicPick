@@ -36,18 +36,18 @@ namespace PicPick.Helpers
 
         #region Public Methods
 
-        public void PrepareToStart(IActivity activity)
-        {
-            ResetValues();
+        //public void PrepareToStart(IActivity activity)
+        //{
+        //    ResetValues();
 
-            _activity = activity;
-            int countTotal = 0;
-            foreach (var map in activity.Mapping.Values)
-            {
-                countTotal += map.FileList.Count();
-            }
-            Maximum = countTotal;
-        }
+        //    _activity = activity;
+        //    int countTotal = 0;
+        //    foreach (var map in activity.Mapping.Values)
+        //    {
+        //        countTotal += map.FileList.Count();
+        //    }
+        //    Maximum = countTotal;
+        //}
 
         public void Finished()
         {
@@ -62,7 +62,8 @@ namespace PicPick.Helpers
             else
                 MainOperation = "Done";
 
-            cts.Dispose();
+            if (cts != null)
+                cts.Dispose();
             Value = 0;
         }
 

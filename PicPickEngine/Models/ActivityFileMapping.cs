@@ -174,10 +174,24 @@ namespace PicPick.Models
         public string FileName { get; set; }
         public DateTime DateTime { get; set; }
         public List<DestinationFolder> DestinationFolders { get; set; } = new List<DestinationFolder>();
+        public FILE_STATUS Status { get; private set; } = FILE_STATUS.NONE;
 
         public bool HasError()
         {
             return DestinationFolders.Any(dm => dm.HasError());
+        }
+
+        /// <summary>
+        /// Source File holds a status that accumulates all its destinations.
+        /// The order is: None -> Copied -> Skipped -> Error
+        /// The highest status wins.
+        /// (e.g. if one destination copied and one skipped, the final status is Skipped).
+        /// </summary>
+        /// <param name="status"></param>
+        internal void ReportStatus(FILE_STATUS status)
+        {
+            if (Status < status)
+                Status = status;
         }
     }
 
@@ -224,7 +238,8 @@ namespace PicPick.Models
         {
             SourceFile = sourceFile;
             ParentFolder = destinationFolder;
-            Exists = !(destinationFolder.IsNew || File.Exists(Path.Combine(destinationFolder.FullPath, sourceFile.FileName)));
+            // if the folder is new - it will return false, so we don't need to check the file.
+            Exists = !(destinationFolder.IsNew || !File.Exists(Path.Combine(destinationFolder.FullPath, sourceFile.FileName)));
         }
 
         public string GetFullName()
@@ -233,11 +248,17 @@ namespace PicPick.Models
             return Path.Combine(ParentFolder.FullPath, fileName);
         }
 
+        public void SetStatus(FILE_STATUS status)
+        {
+            Status = status;
+            SourceFile.ReportStatus(status);
+        }
+
         public DestinationFolder ParentFolder { get; set; }
         public SourceFile SourceFile { get; set; }
         public bool Exists { get; set; }
         public string NewName { get; set; }
-        public FILE_STATUS Status { get; set; }
+        public FILE_STATUS Status { get; private set; }
         public Exception Exception { get; set; }
 
         public bool HasError()

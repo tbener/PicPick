@@ -54,6 +54,12 @@ namespace PicPick.UnitTests.Core.RunnerTests
             EventAggregatorHelper.EventAggregator.GetEvent<FileExistsAskEvent>().Subscribe(OnFileExistsAskEvent);
         }
 
+        [TestCleanup]
+        public void TestClean()
+        {
+            EventAggregatorHelper.EventAggregator.GetEvent<FileExistsAskEvent>().Unsubscribe(OnFileExistsAskEvent);
+        }
+
         private void OnFileExistsAskEvent(FileExistsAskEventArgs fileExistsAskEventArgs)
         {
             FileExistsResponseEnum returnResponse = FileExistsResponseEnum.SKIP;

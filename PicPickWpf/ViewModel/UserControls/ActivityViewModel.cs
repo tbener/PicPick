@@ -135,7 +135,7 @@ namespace PicPick.ViewModel.UserControls
 
         private void DisplayEndSummary()
         {
-            int fileCount = Activity.FilesInfo.Count;
+            int fileCount = Activity.FileMapping.SourceFiles.Values.Where(f => f.Status != FILE_STATUS.NONE).Count();
             string text = $"{fileCount} files processed";
 
             MessageViewModel messageViewModel = new MessageViewModel(text,

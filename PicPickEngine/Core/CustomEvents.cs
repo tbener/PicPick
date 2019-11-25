@@ -14,4 +14,6 @@ namespace PicPick.Core
     public class ActivityEndedEvent : PubSubEvent { }
 
     public class GotDirtyEvent : PubSubEvent { }
+
+    public class FileErrorEvent : PubSubEvent<FileErrorEventArgs> { }
 }

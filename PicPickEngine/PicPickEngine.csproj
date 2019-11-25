@@ -57,7 +57,6 @@
     <Compile Include="Core\CustomEvents.cs" />
     <Compile Include="Core\CustomEventArgs.cs" />
     <Compile Include="Core\FileExistsResponse.cs" />
-    <Compile Include="Core\Analyzer.cs" />
     <Compile Include="Core\Runner.cs" />
     <Compile Include="Exceptions\Exceptions.cs" />
     <Compile Include="Helpers\BitmapImageCheck.cs" />

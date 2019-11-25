@@ -76,12 +76,12 @@ namespace PicPick.Models
         [XmlIgnore]
         public FileExistsResponseEnum FileExistsResponse { get; set; }
 
-        [XmlIgnore]
-        public Dictionary<string, CopyFilesHandler> Mapping { get; set; }
+        //[XmlIgnore]
+        //public Dictionary<string, CopyFilesHandler> Mapping { get; set; }
 
-        [XmlIgnore]
-        [IsDirtySupport.IsDirtyIgnore]
-        public Dictionary<string, PicPickFileInfo> FilesInfo { get; set; }
+        //[XmlIgnore]
+        //[IsDirtySupport.IsDirtyIgnore]
+        //public Dictionary<string, PicPickFileInfo> FilesInfo { get; set; }
 
         [XmlIgnore]
         [IsDirtySupport.IsDirtyIgnore]

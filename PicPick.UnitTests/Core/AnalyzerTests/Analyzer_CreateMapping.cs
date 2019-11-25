@@ -32,7 +32,6 @@ namespace PicPick.UnitTests.Core.AnalyzerTests
         //private string WorkingPath;
 
         private IActivity _activity;
-        private Analyzer _analyzer;
 
         public TestContext TestContext { get; set; }
 
@@ -44,8 +43,6 @@ namespace PicPick.UnitTests.Core.AnalyzerTests
             _activity = new PicPickProjectActivity("test");
             _activity.Source.Path = SourcePath;
             _activity.Source.Filter = "";
-
-            _analyzer = new Analyzer(_activity);
         }
 
         [TestCleanup]

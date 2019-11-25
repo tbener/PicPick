@@ -29,6 +29,12 @@ namespace PicPick.Helpers
             return payload.Response;
         }
 
+        public static bool PublishFileError(FileErrorEventArgs payload)
+        {
+            EventAggregator?.GetEvent<FileErrorEvent>().Publish(payload);
+            return payload.Cancel;
+        }
+
         public static void PublishActivityStarted()
         {
             EventAggregator?.GetEvent<ActivityStartedEvent>().Publish();

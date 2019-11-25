@@ -80,7 +80,7 @@ namespace PicPick.UnitTests.Core.RunnerTests
             AssertFiles(fileInfoExpected, fileInfoDest);
 
             // 3. file status
-            FILE_STATUS actualStatus = _activity.FilesInfo[checkedSourceFile].Status;
+            FILE_STATUS actualStatus = _activity.FileMapping.SourceFiles[checkedSourceFile].Status;
             Assert.AreEqual(expectedStatus, actualStatus, "File status was not set as expected.");
 
         }
@@ -131,7 +131,7 @@ namespace PicPick.UnitTests.Core.RunnerTests
             AssertFiles(fileInfoExpected, fileInfoDest);
 
             // 3. file status
-            FILE_STATUS actualStatus = _activity.FilesInfo[checkedSourceFile].Status;
+            FILE_STATUS actualStatus = _activity.FileMapping.SourceFiles[checkedSourceFile].Status;
             Assert.AreEqual(expectedStatus, actualStatus, "File status was not set as expected.");
 
         }
@@ -185,7 +185,7 @@ namespace PicPick.UnitTests.Core.RunnerTests
             Assert.IsFalse(File.Exists(checkedSourceFile), $"Source file supposed to be deleted: {checkedSourceFile}");
 
             // 3. file status 
-            FILE_STATUS actualStatus = _activity.FilesInfo[checkedSourceFile].Status;
+            FILE_STATUS actualStatus = _activity.FileMapping.SourceFiles[checkedSourceFile].Status;
             Assert.AreEqual(expectedStatus, actualStatus, "File status was not set as expected.");
 
         }
@@ -228,7 +228,7 @@ namespace PicPick.UnitTests.Core.RunnerTests
             await Run();
 
             // 1. file status 
-            FILE_STATUS actualStatus = _activity.FilesInfo[checkedSourceFile].Status;
+            FILE_STATUS actualStatus = _activity.FileMapping.SourceFiles[checkedSourceFile].Status;
             Assert.AreEqual(expectedStatus, actualStatus, "File status was not set as expected.");
 
             // 2. verify file count in destination

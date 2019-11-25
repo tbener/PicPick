@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PicPick.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,6 +15,18 @@ namespace PicPick.Core
         public FileExistsResponseEnum Response { get; set; }
         public bool Cancel { get; set; }
         public bool DontAskAgain { get; set; }
+    }
+
+    public class FileErrorEventArgs : EventArgs
+    {
+        public FileErrorEventArgs(DestinationFile destinationFile)
+        {
+            DestinationFile = destinationFile;
+            Cancel = true;
+        }
+
+        public DestinationFile DestinationFile { get; set; }
+        public bool Cancel { get; set; } 
     }
 
     public class CopyEventArgs : EventArgs

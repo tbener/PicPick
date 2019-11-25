@@ -36,7 +36,9 @@ namespace PicPick.UnitTests.Core.RunnerTests
 
         public async Task Run()
         {
-            await _runner.Run(new ProgressInformation());
+            var pi = new ProgressInformation();
+            await _activity.FileMapping.Compute(pi);
+            await _runner.Run(pi);
         }
 
         public void InitActivity()
@@ -79,7 +81,7 @@ namespace PicPick.UnitTests.Core.RunnerTests
 
         protected void AssertStatus(FILE_STATUS expectedStatus, string file)
         {
-            FILE_STATUS actualStatus = _activity.FilesInfo[file].Status;
+            FILE_STATUS actualStatus = _activity.FileMapping.SourceFiles[file].Status;
             Assert.AreEqual(expectedStatus, actualStatus, "File status was not set as expected.");
         }
 

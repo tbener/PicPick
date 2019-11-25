@@ -19,9 +19,10 @@ namespace PicPick.Models.Interfaces
 
         event CopyEventHandler OnCopyStatusChanged;
 
-        Dictionary<string, CopyFilesHandler> Mapping { get; set; }
+        //Dictionary<string, CopyFilesHandler> Mapping { get; set; }
 
-        Dictionary<string, PicPickFileInfo> FilesInfo { get; set; }
+        //Dictionary<string, PicPickFileInfo> FilesInfo { get; set; }
         ActivityFileMapping FileMapping { get; set; }
+        Runner Runner { get; set; }
     }
 }

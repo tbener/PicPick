@@ -19,7 +19,6 @@ namespace PicPick.UnitTests.Core.AnalyzerTests
     {
         
         private IActivity _activity;
-        private Analyzer _analyzer;
 
         [TestInitialize]
         public void Initialize()
@@ -27,13 +26,11 @@ namespace PicPick.UnitTests.Core.AnalyzerTests
             _activity = new PicPickProjectActivity("test");
             _activity.Source.Path = @"c:\";
 
-            _analyzer = new Analyzer(_activity);
         }
 
         [TestCleanup]
         public void Cleanup()
         {
-            _analyzer = null;
             _activity = null;
         }
 
@@ -52,7 +49,7 @@ namespace PicPick.UnitTests.Core.AnalyzerTests
             string actual = "error";
             try
             {
-                _analyzer.ValidateFields();
+                _activity.FileMapping.ValidateFields();
                 actual = "";
             }
             catch (Exception ex)
@@ -72,7 +69,7 @@ namespace PicPick.UnitTests.Core.AnalyzerTests
             // act
 
             // assert
-            Assert.ThrowsException<NoDestinationsException>(() => _analyzer.ValidateFields());
+            Assert.ThrowsException<NoDestinationsException>(() => _activity.FileMapping.ValidateFields());
         }
 
         [TestMethod]
@@ -84,7 +81,7 @@ namespace PicPick.UnitTests.Core.AnalyzerTests
             // act
 
             // assert
-            Assert.ThrowsException<NoSourceException>(() => _analyzer.ValidateFields());
+            Assert.ThrowsException<NoSourceException>(() => _activity.FileMapping.ValidateFields());
         }
 
         [TestMethod]
@@ -103,7 +100,7 @@ namespace PicPick.UnitTests.Core.AnalyzerTests
             // act
 
             // assert
-            Assert.ThrowsException<DestinationEqualsSourceException>(() => _analyzer.ValidateFields());
+            Assert.ThrowsException<DestinationEqualsSourceException>(() => _activity.FileMapping.ValidateFields());
         }
 
         [TestMethod]
@@ -115,7 +112,7 @@ namespace PicPick.UnitTests.Core.AnalyzerTests
             // act
 
             // assert
-            Assert.ThrowsException<SourceDirectoryNotFoundException>(() => _analyzer.ValidateFields());
+            Assert.ThrowsException<SourceDirectoryNotFoundException>(() => _activity.FileMapping.ValidateFields());
         }
 
     }
