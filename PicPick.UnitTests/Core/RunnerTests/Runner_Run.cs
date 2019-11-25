@@ -48,7 +48,7 @@ namespace PicPick.UnitTests.Core.RunnerTests
             Assert.AreEqual(1, _activity.DestinationList.Count());
             Assert.IsFalse(dest.HasTemplate, "There was no Template supplied and the HasTemplate property returned true.");
 
-            await _runner.Run(new ProgressInformation(), new CancellationTokenSource().Token);
+            await _runner.Run(new ProgressInformation());
 
             // folder "yyyy"
             string checkPath = Path.Combine(DestinationPath, "yyyy");
@@ -64,7 +64,7 @@ namespace PicPick.UnitTests.Core.RunnerTests
             Assert.AreEqual(1, _activity.DestinationList.Count());
             Assert.IsTrue(dest.HasTemplate, "There is a Template supplied and the HasTemplate property returned false.");
 
-            await _runner.Run(new ProgressInformation(), new CancellationTokenSource().Token);
+            await _runner.Run(new ProgressInformation());
 
            
             // check that expected sub-folder exists
@@ -88,7 +88,7 @@ namespace PicPick.UnitTests.Core.RunnerTests
             Assert.AreEqual(templates.Length, _activity.DestinationList.Count());
 
             // Act
-            await _runner.Run(new ProgressInformation(), new CancellationTokenSource().Token);
+            await _runner.Run(new ProgressInformation());
 
             // Assert
             DirectoryInfo dirInfo = new DirectoryInfo(destination);
@@ -134,7 +134,7 @@ namespace PicPick.UnitTests.Core.RunnerTests
             AddDestination(DestinationPath, template);
 
             // Act
-            await _runner.Run(new ProgressInformation(), new CancellationTokenSource().Token);
+            await _runner.Run(new ProgressInformation());
 
             // Assert
             string checkPath = Path.Combine(DestinationPath, expected);
@@ -156,7 +156,7 @@ namespace PicPick.UnitTests.Core.RunnerTests
 
             AddDestination(DestinationPath, "yyyy");
 
-            await _runner.Run(new ProgressInformation(), new CancellationTokenSource().Token);
+            await _runner.Run(new ProgressInformation());
 
             // compare hashes
             Assert.IsTrue(GetDirectoryHash(di).Equals(hash1));
@@ -185,7 +185,7 @@ namespace PicPick.UnitTests.Core.RunnerTests
             AddDestination(Path.Combine(DestinationPath, "DeleteSourceFilesTest"));
 
             // Act
-            await _runner.Run(new ProgressInformation(), new CancellationTokenSource().Token);
+            await _runner.Run(new ProgressInformation());
 
             // verify source files deleted
             Assert.AreEqual(0, (new DirectoryInfo(newSourcePath)).GetFiles().Count());

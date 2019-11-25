@@ -62,6 +62,7 @@ namespace PicPick.Helpers
             else
                 MainOperation = "Done";
 
+            cts.Dispose();
             Value = 0;
         }
 

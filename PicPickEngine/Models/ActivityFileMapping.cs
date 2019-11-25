@@ -1,4 +1,5 @@
 ﻿using PicPick.Core;
+using PicPick.Exceptions;
 using PicPick.Helpers;
 using PicPick.Models.Interfaces;
 using System;
@@ -49,6 +50,7 @@ namespace PicPick.Models
         public async Task Compute(ProgressInformation progressInfo, PicPickProjectActivitySource source, List<PicPickProjectActivityDestination> destinations)
         {
             Clear();
+            ValidateFields();
 
             Destinations = destinations;
 
@@ -122,7 +124,37 @@ namespace PicPick.Models
             return sb.ToString();
         }
 
+        public void ValidateFields()
+        {
+            string realPath;
+            bool isRealTemplate;
+
+            if (Activity.Source == null || Activity.Source.Path == "")
+                throw new NoSourceException();
+
+            if (!Directory.Exists(Activity.Source.Path))
+                throw new SourceDirectoryNotFoundException();
+
+            if (Activity.DestinationList.Count == 0)
+                throw new NoDestinationsException();
+
+            foreach (var dest in Activity.DestinationList.Where(d => d.Active))
+            {
+                realPath = dest.GetTemplatePath(DateTime.Now);
+                isRealTemplate = !realPath.Equals(dest.Template);
+                if (isRealTemplate)
+                    continue;
+
+                realPath = Path.Combine(PathHelper.GetFullPath(Activity.Source.Path, dest.Path), dest.Template);
+
+                if (realPath.Equals(Activity.Source.Path, StringComparison.OrdinalIgnoreCase))
+                    throw new DestinationEqualsSourceException();
+            }
+        }
+
     }
+
+    
 
     public class SourceFile
     {

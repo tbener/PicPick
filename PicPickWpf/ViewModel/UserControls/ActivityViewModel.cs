@@ -19,7 +19,7 @@ namespace PicPick.ViewModel.UserControls
     {
         #region Private Members
 
-        CancellationTokenSource cts;
+        //CancellationTokenSource cts;
 
         PicPickProjectActivity _activity;
         string _sourceFilesStatus;
@@ -162,7 +162,6 @@ namespace PicPick.ViewModel.UserControls
                 ProgressInfo.RenewToken();
 
                 await Activity.FileMapping.Compute(ProgressInfo);
-
                 await Activity.Runner.Run(ProgressInfo);
             }
             catch (Exception ex)
@@ -179,7 +178,7 @@ namespace PicPick.ViewModel.UserControls
 
             try
             {
-                cts = new CancellationTokenSource();
+                //cts = new CancellationTokenSource();
 
                 Runner runner = new Runner(Activity, ProjectLoader.Project.Options);
                 //await runner.Run(ProgressInfo, cts.Token);
@@ -192,7 +191,7 @@ namespace PicPick.ViewModel.UserControls
             finally
             {
                 OnPropertyChanged("ProgressInfo");
-                cts.Dispose();
+                //cts.Dispose();
 
                 DisplayEndSummary();
             }

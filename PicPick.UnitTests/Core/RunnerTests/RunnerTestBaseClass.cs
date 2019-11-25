@@ -36,7 +36,7 @@ namespace PicPick.UnitTests.Core.RunnerTests
 
         public async Task Run()
         {
-            await _runner.Run(new ProgressInformation(), new CancellationTokenSource().Token);
+            await _runner.Run(new ProgressInformation());
         }
 
         public void InitActivity()

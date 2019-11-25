@@ -74,7 +74,7 @@ namespace PicPick.UnitTests.Core.AnalyzerTests
                 );
 
             await Assert.ThrowsExceptionAsync<DestinationEqualsSourceException>(async () =>
-                await _analyzer.CreateMapping(new ProgressInformation(), new CancellationTokenSource().Token)
+                await _activity.FileMapping.Compute(new ProgressInformation())
                 );
 
             // Should raise error
@@ -92,7 +92,7 @@ namespace PicPick.UnitTests.Core.AnalyzerTests
                 );
 
             await Assert.ThrowsExceptionAsync<DestinationEqualsSourceException>(async () =>
-                await _analyzer.CreateMapping(new ProgressInformation(), new CancellationTokenSource().Token)
+                await _activity.FileMapping.Compute(new ProgressInformation())
                 );
 
             // Should raise error
@@ -114,13 +114,13 @@ namespace PicPick.UnitTests.Core.AnalyzerTests
                 );
 
             // act
-            await _analyzer.CreateMapping(new ProgressInformation(), new CancellationTokenSource().Token);
+            await _activity.FileMapping.Compute(new ProgressInformation());
 
             // assert
-            Assert.AreEqual(expectedDestinationCount, _activity.Mapping.Count, "The amount of destination folders is not as expected.");
-            foreach (var mappedFiles in _activity.Mapping.Values)
+            Assert.AreEqual(expectedDestinationCount, _activity.FileMapping.DestinationFolders.Count, "The amount of destination folders is not as expected.");
+            foreach (DestinationFolder destinationFolder in _activity.FileMapping.DestinationFolders.Values)
             {
-                Assert.AreEqual(expectedFileCount, mappedFiles.FileList.Count, $"The amount of files for {mappedFiles.DestinationFolder} is not as expected.");
+                Assert.AreEqual(expectedFileCount, destinationFolder.Files.Count, $"The amount of files for {destinationFolder.FullPath} is not as expected.");
             }
         }
 
@@ -139,19 +139,21 @@ namespace PicPick.UnitTests.Core.AnalyzerTests
             TestContext.WriteLine($"Template: {dest.Template} (DateTime.Now: {dest.GetTemplatePath(DateTime.Now)})");
 
             // act
-            await _analyzer.CreateMapping(new ProgressInformation(), new CancellationTokenSource().Token);
+            await _activity.FileMapping.Compute(new ProgressInformation());
+
+            var map = _activity.FileMapping;
 
             // assert
-            Assert.IsTrue(_activity.Mapping.Count > 1, "The amount of destination folders is expected to be larger than 1.");
+            Assert.IsTrue(map.DestinationFolders.Count > 1, "The amount of destination folders is expected to be larger than 1.");
             int fileCountTotal = 0;
-            foreach (var mappedFiles in _activity.Mapping.Values)
+            foreach (var destinationFolder in map.DestinationFolders.Values)
             {
-                fileCountTotal += mappedFiles.FileList.Count;
+                fileCountTotal += destinationFolder.Files.Count;
 
-                TestContext.WriteLine($"Destination: {mappedFiles.DestinationFolder}");
-                foreach (var file in mappedFiles.FileList)
+                TestContext.WriteLine($"Destination: {destinationFolder.FullPath}");
+                foreach (var file in destinationFolder.Files)
                 {
-                    TestContext.WriteLine($"\t {file}");
+                    TestContext.WriteLine($"\t {file.SourceFile.FileName}");
                 }
             }
             Assert.AreEqual(expectedFileCount, fileCountTotal, $"The amount of files for all folders is different than the total amount of files.");
