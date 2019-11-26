@@ -135,6 +135,7 @@
     <Compile Include="Commands\RelayCommand.cs" />
     <Compile Include="Commands\SaveCommand.cs" />
     <Compile Include="Helpers\ApplicationService.cs" />
+    <Compile Include="Helpers\MessageBoxHelper.cs" />
     <Compile Include="Helpers\NotifyPropertyChangedHelper.cs" />
     <Compile Include="Interfaces\IPath.cs" />
     <Compile Include="Properties\Settings.Designer.cs">

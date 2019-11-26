@@ -66,7 +66,7 @@ namespace PicPick.Core
 
                             _log.Info($"-- Source file: {sourceFile.FileName}");
 
-                            progressInfo.CurrentOperation = $"{sourceFile.FileName}";
+                            progressInfo.Text = $"{sourceFile.FileName}";
                             progressInfo.Report();
 
                             if (destinationFile.Exists)
@@ -161,7 +161,7 @@ namespace PicPick.Core
 
                 if (_activity.DeleteSourceFiles)
                 {
-                    progressInfo.MainOperation = "Cleaning up...";
+                    progressInfo.Header = "Cleaning up...";
                     var copiedFileList = _activity.FileMapping.SourceFiles.Values.Where(f => f.Status == FILE_STATUS.COPIED).Select(f => f.FullPath).ToList();
                     string backupPath = PathHelper.GetFullPath(PathHelper.AppPath("backup"), false);
                     _log.Info($"Moving {copiedFileList.Count()} files to backup folder ({backupPath})");
@@ -180,7 +180,7 @@ namespace PicPick.Core
             catch (Exception ex)
             {
                 progressInfo.Exception = ex;
-                _errorHandler.Handle(ex, false, $"Error in operation: {progressInfo.MainOperation}.");
+                _errorHandler.Handle(ex, false, $"Error in operation: {progressInfo.Header}.");
             }
             finally
             {

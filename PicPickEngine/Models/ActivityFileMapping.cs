@@ -49,6 +49,7 @@ namespace PicPick.Models
 
         public async Task Compute(ProgressInformation progressInfo, PicPickProjectActivitySource source, List<PicPickProjectActivityDestination> destinations)
         {
+            progressInfo.Text = "Analying...";
             Clear();
             ValidateFields();
 

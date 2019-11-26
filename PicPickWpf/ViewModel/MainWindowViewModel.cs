@@ -70,8 +70,32 @@ namespace PicPick.ViewModel
             ApplicationService.Instance.EventAggregator.GetEvent<ActivityEndedEvent>().Subscribe(OnActivityEnd);
             ApplicationService.Instance.EventAggregator.GetEvent<GotDirtyEvent>().Subscribe(OnGotDirty);
             ApplicationService.Instance.EventAggregator.GetEvent<FileExistsAskEvent>().Subscribe(OnFileExistsAskEvent);
+            ApplicationService.Instance.EventAggregator.GetEvent<FileErrorEvent>().Subscribe(OnFileErrorEvent);
 
+        }
 
+        private void OnFileErrorEvent(FileErrorEventArgs e)
+        {
+            string text = $"Error while copying to {e.DestinationFile.GetFullName()}";
+            text += $"\n{e.DestinationFile.Exception}";
+            text += "\n\nDo you want to continue to the next file?";
+
+            MessageBoxResult result = MessageBoxHelper.Show(text, "Error", MessageBoxButton.YesNo, MessageBoxImage.Error);
+            e.Cancel = result == MessageBoxResult.No;
+
+            //MessageViewModel messageViewModel = new MessageViewModel(text, "Error", MessageBoxButton.YesNo, MessageBoxImage.Error, false);
+            //MessageView messageView = new MessageView();
+            //messageView.DataContext = messageViewModel;
+
+            //messageViewModel.CloseDialog = () =>
+            //{
+            //    messageView.Close();
+            //};
+
+            //messageView.Owner = Application.Current.MainWindow;
+            //messageView.ShowDialog();
+
+            //e.Cancel = messageViewModel.DialogResult == MessageBoxResult.No;
         }
 
         private PicPickProjectActivity GetNewActivity(string name)
@@ -163,7 +187,7 @@ namespace PicPick.ViewModel
         void OpenFileWithDialog()
         {
             string file = ProjectLoader.FileName;
-            if (DialogHelper.BrowseOpenFileByExtensions(new[] { "picpick" }, true, ref file))
+            if (FileSystemDialogHelper.BrowseOpenFileByExtensions(new[] { "picpick" }, true, ref file))
             {
                 OpenFile(file);
             }
@@ -332,6 +356,7 @@ namespace PicPick.ViewModel
             ApplicationService.Instance.EventAggregator.GetEvent<ActivityEndedEvent>().Unsubscribe(OnActivityEnd);
             ApplicationService.Instance.EventAggregator.GetEvent<GotDirtyEvent>().Unsubscribe(OnGotDirty);
             ApplicationService.Instance.EventAggregator.GetEvent<FileExistsAskEvent>().Unsubscribe(OnFileExistsAskEvent);
+            ApplicationService.Instance.EventAggregator.GetEvent<FileErrorEvent>().Unsubscribe(OnFileErrorEvent);
 
             _currentActivity = null;
         }

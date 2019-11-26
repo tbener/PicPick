@@ -126,7 +126,7 @@ namespace PicPick.Core
                     string destFile = Path.Combine(DestinationFolder, fileName);
                     _log.Debug($"Destination: {destFile}");
 
-                    progressInfo.CurrentOperation = $"Copying {fileName}";
+                    progressInfo.Text = $"Copying {fileName}";
                     progressInfo.Report();
 
                     // if the file exists in destination

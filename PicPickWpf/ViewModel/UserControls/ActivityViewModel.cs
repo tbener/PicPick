@@ -112,25 +112,12 @@ namespace PicPick.ViewModel.UserControls
             if (!Properties.UserSettings.General.WarnDeleteSource)
                 return true;
 
-            MessageViewModel messageViewModel = new MessageViewModel("The files will be deleted from the source folder if the operation will end successfully.\nDo you want to continue?",
-                "Warning", MessageBoxButton.YesNo, MessageBoxImage.Warning, true);
-            MessageView messageView = new MessageView();
-            messageView.DataContext = messageViewModel;
+            string msgText = "The files will be deleted from the source folder if the operation will end successfully.\nDo you want to continue?";
+            MessageBoxResult result = MessageBoxHelper.Show(msgText, "Warning", MessageBoxButton.YesNo, MessageBoxImage.Warning, out bool dontShowAgain);
 
-            messageViewModel.CloseDialog = () =>
-            {
-                messageView.Close();
-            };
+            Properties.UserSettings.General.WarnDeleteSource = !dontShowAgain;
 
-            messageView.Owner = Application.Current.MainWindow;
-            messageView.ShowDialog();
-
-            Properties.UserSettings.General.WarnDeleteSource = !messageViewModel.DontShowAgain;
-
-            if (messageViewModel.DialogResult == MessageBoxResult.Yes)
-                return true;
-
-            return false;
+            return result == MessageBoxResult.Yes;
         }
 
         private void DisplayEndSummary()
@@ -138,22 +125,13 @@ namespace PicPick.ViewModel.UserControls
             int fileCount = Activity.FileMapping.SourceFiles.Values.Where(f => f.Status != FILE_STATUS.NONE).Count();
             string text = $"{fileCount} files processed";
 
-            MessageViewModel messageViewModel = new MessageViewModel(text,
-                "Done", MessageBoxButton.OK, MessageBoxImage.Information, false);
-            MessageView messageView = new MessageView();
-            messageView.DataContext = messageViewModel;
-
-            messageViewModel.CloseDialog = () =>
-            {
-                messageView.Close();
-            };
-
-            messageView.Owner = Application.Current.MainWindow;
-            messageView.ShowDialog();
+            MessageBoxHelper.Show(text, "Done");
         }
 
         public async void Start()
         {
+            ProgressInfo.Reset();
+
             if (!WarningsBeforeStart())
                 return;
 
@@ -166,8 +144,7 @@ namespace PicPick.ViewModel.UserControls
             }
             catch (Exception ex)
             {
-
-                throw;
+                MessageBoxHelper.ShowError(ex);
             }
         }
 

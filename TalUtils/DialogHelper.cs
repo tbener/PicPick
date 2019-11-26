@@ -7,7 +7,7 @@ namespace TalUtils
 {
 
 
-    public class DialogHelper
+    public class FileSystemDialogHelper
     {
         public static bool BrowseOpenFileByExtensions(string[] extensions, bool allowAllFiles, ref string fileNameOrFolder)
         {

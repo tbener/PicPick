@@ -15,11 +15,10 @@ namespace PicPick.Helpers
 
         #region Private members
 
-        private string _currentOperation = null;
-        private string _mainOperation;
+        private string _text = null;
+        private string _header;
         private int _value;
         private int _maximum;
-        private IActivity _activity;
         private CancellationTokenSource cts;
 
         #endregion
@@ -36,66 +35,53 @@ namespace PicPick.Helpers
 
         #region Public Methods
 
-        //public void PrepareToStart(IActivity activity)
-        //{
-        //    ResetValues();
-
-        //    _activity = activity;
-        //    int countTotal = 0;
-        //    foreach (var map in activity.Mapping.Values)
-        //    {
-        //        countTotal += map.FileList.Count();
-        //    }
-        //    Maximum = countTotal;
-        //}
-
         public void Finished()
         {
             if (UserCancelled)
             {
-                MainOperation = "Cancelled";
+                Header = "Cancelled";
             }
             else if (Exception != null)
             {
-                MainOperation = "Error occured";
+                Header = "Error occured";
             }
             else
-                MainOperation = "Done";
+                Header = "Done";
 
             if (cts != null)
                 cts.Dispose();
             Value = 0;
         }
 
-        public void ResetValues()
+        public void Reset()
         {
             Value = 0;
             Maximum = 0;
-            MainOperation = "";
-            CurrentOperation = "";
+            Header = "";
+            Text = "";
             Exception = null;
         }
 
-        public string CurrentOperation
+        public string Text
         {
             get
             {
-                return _currentOperation;
+                return _text;
             }
             set
             {
-                _currentOperation = value;
-                RaisePropertyChanged("CurrentOperation");
+                _text = value;
+                RaisePropertyChanged("Text");
             }
         }
 
-        public string MainOperation
+        public string Header
         {
-            get => _mainOperation;
+            get => _header;
             set
             {
-                _mainOperation = value;
-                RaisePropertyChanged("MainOperation");
+                _header = value;
+                RaisePropertyChanged("Header");
             }
         }
         
@@ -156,7 +142,7 @@ namespace PicPick.Helpers
 
         public IProgress<ProgressInformation> Progress { get; set; }
 
-        public string ProgressPercentsText => Maximum > 0 & Value > 0 ? $"{Value} of {Maximum}" : "";
+        public string ProgressPercentsText => Maximum > 0 & Value > 0 ? $"{(100*Value)/Maximum}%" : "";
 
         public int CurrentOperationTotal { get; internal set; }
         public FileExistsResponseEnum FileExistsResponse { get; set; }
