@@ -131,6 +131,7 @@ namespace PicPick.ViewModel.UserControls
         public async void Start()
         {
             ProgressInfo.Reset();
+            _log.Info("Start");
 
             if (!WarningsBeforeStart())
                 return;
@@ -144,8 +145,11 @@ namespace PicPick.ViewModel.UserControls
             }
             catch (Exception ex)
             {
+                _errorHandler.Handle(ex);
                 MessageBoxHelper.Show(ex);
             }
+
+            ProgressInfo.Finished();
         }
 
         public async void Start11()
