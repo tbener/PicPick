@@ -70,8 +70,13 @@ namespace TalUtils
             set { _logger = value; }
         }
 
+        public void Handle(Exception ex)
+        {
+            Handle(ex, "Unhandled error", false, _logger);
+        }
+
         #endregion
 
-        
+
     }
 }

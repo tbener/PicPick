@@ -144,7 +144,7 @@ namespace PicPick.ViewModel.UserControls
             }
             catch (Exception ex)
             {
-                MessageBoxHelper.ShowError(ex);
+                MessageBoxHelper.Show(ex);
             }
         }
 

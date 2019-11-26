@@ -3,12 +3,17 @@ using System.ComponentModel;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Windows;
+using log4net;
 using PicPick.Helpers;
+using TalUtils;
 
 namespace PicPick.ViewModel
 {
     public abstract class BaseViewModel : DependencyObject, INotifyPropertyChanged
     {
+        protected static readonly ILog _log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        protected static readonly ErrorHandler _errorHandler = new ErrorHandler(_log);
+
         #region INotifyPropertyChanged Members and helper
 
         readonly NotifyPropertyChangedHelper _propertyChangeHelper = new NotifyPropertyChangedHelper();

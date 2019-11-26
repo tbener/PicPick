@@ -35,6 +35,7 @@ namespace PicPick.Core
 
         public async Task Run(ProgressInformation progressInfo)
         {
+            progressInfo.Text = "Start copying...";
             _log.Info($"Starting: {_activity.Name}");
             if (_activity.IsRunning) throw new Exception("Activity is already running.");
             EventAggregatorHelper.PublishActivityStarted();

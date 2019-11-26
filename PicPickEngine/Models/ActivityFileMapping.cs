@@ -1,4 +1,5 @@
-﻿using PicPick.Core;
+﻿using log4net;
+using PicPick.Core;
 using PicPick.Exceptions;
 using PicPick.Helpers;
 using PicPick.Models.Interfaces;
@@ -23,6 +24,9 @@ namespace PicPick.Models
     /// </summary>
     public class ActivityFileMapping
     {
+        private static readonly ILog _log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        private static readonly ErrorHandler _errorHandler = new ErrorHandler(_log);
+
         public Dictionary<string, SourceFile> SourceFiles { get; set; } = new Dictionary<string, SourceFile>();
         public Dictionary<string, DestinationFolder> DestinationFolders { get; set; } = new Dictionary<string, DestinationFolder>();
         public List<PicPickProjectActivityDestination> Destinations;
@@ -57,11 +61,13 @@ namespace PicPick.Models
 
             bool needDates = destinations.Any(d => d.HasTemplate);
 
+            progressInfo.Text = "Reading files";
             // Create SourceFile list
             List<SourceFile> sourceFiles = source.FileList.Select(f => new SourceFile(f, needDates)).ToList();
             // Add to dictionary
             sourceFiles.ForEach(sf => SourceFiles.Add(sf.FullPath, sf));
 
+            progressInfo.Text = "Mapping destinations";
             foreach (PicPickProjectActivityDestination destination in destinations)
             {
                 if (destination.HasTemplate)
@@ -87,6 +93,8 @@ namespace PicPick.Models
                     sourceFiles.ForEach(destinationFolder.AddFile);
                 }
             }
+
+            _log.Info("Plan is:\n" + ToString());
         }
 
         public override string ToString()
