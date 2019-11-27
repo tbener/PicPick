@@ -13,6 +13,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using PicPick.Core;
 using PicPick.Models.Interfaces;
+using log4net;
 
 namespace PicPick.Models
 {
@@ -24,8 +25,8 @@ namespace PicPick.Models
     /// </summary>
     public partial class PicPickProjectActivity : ICloneable, IActivity
     {
-
-        public event CopyEventHandler OnCopyStatusChanged;
+        private static readonly ILog _log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        private static readonly ErrorHandler _errorHandler = new ErrorHandler(_log);
 
         private ObservableCollection<PicPickProjectActivityDestination> _destinationList = null;
 
@@ -42,6 +43,37 @@ namespace PicPick.Models
             Source = new PicPickProjectActivitySource();
         }
 
+        public async Task Start(ProgressInformation progressInfo)
+        {
+            if (IsRunning) throw new Exception("Activity is already running.");
+
+            try
+            {
+                IsRunning = true;
+                EventAggregatorHelper.PublishActivityStarted();
+
+                await FileMapping.Compute(progressInfo);
+                //await Runner.Run(progressInfo);
+            }
+            catch (OperationCanceledException)
+            {
+                _log.Info("*** The user cancelled the operation ***");
+                progressInfo.UserCancelled = true;
+            }
+            catch (Exception ex)
+            {
+                progressInfo.Exception = ex;
+                _errorHandler.Handle(ex, false, $"Error in operation: {progressInfo.Header}.");
+            }
+            finally
+            {
+                _log.Info($"Finished: {Name}\n*****************");
+                progressInfo.Finished();
+                await Task.Run(() => progressInfo.Report());
+                EventAggregatorHelper.PublishActivityEnded();
+                IsRunning = false;
+            }
+        }
 
 
         /// <summary>
@@ -75,13 +107,6 @@ namespace PicPick.Models
 
         [XmlIgnore]
         public FileExistsResponseEnum FileExistsResponse { get; set; }
-
-        //[XmlIgnore]
-        //public Dictionary<string, CopyFilesHandler> Mapping { get; set; }
-
-        //[XmlIgnore]
-        //[IsDirtySupport.IsDirtyIgnore]
-        //public Dictionary<string, PicPickFileInfo> FilesInfo { get; set; }
 
         [XmlIgnore]
         [IsDirtySupport.IsDirtyIgnore]

@@ -35,11 +35,10 @@ namespace PicPick.Core
 
         public async Task Run(ProgressInformation progressInfo)
         {
+            
             progressInfo.Text = "Start copying...";
-            _log.Info($"Starting: {_activity.Name}");
-            if (_activity.IsRunning) throw new Exception("Activity is already running.");
-            EventAggregatorHelper.PublishActivityStarted();
-
+            _log.Info($"Starting: {_activity.Name}"); 
+            
             FileExistsAskEventArgs fileExistsAskEventArgs = new FileExistsAskEventArgs();
             FileExistsResponseEnum currentConflictResponse;
             FileExistsResponse = _options.FileExistsResponse;
@@ -48,9 +47,7 @@ namespace PicPick.Core
 
             try
             {
-                _activity.IsRunning = true;
-
-                progressInfo.Maximum = map.SourceFiles.Count * map.Destinations.Count;
+                //progressInfo.Maximum = map.SourceFiles.Count * map.Destinations.Count;
                 progressInfo.Value = 0;
 
                 foreach (DestinationFolder destinationFolder in map.DestinationFolders.Values)
@@ -64,10 +61,9 @@ namespace PicPick.Core
                         try
                         {
                             SourceFile sourceFile = destinationFile.SourceFile;
-
                             _log.Info($"-- Source file: {sourceFile.FileName}");
 
-                            progressInfo.Text = $"{sourceFile.FileName}";
+                            progressInfo.Text = sourceFile.FileName;
                             progressInfo.Report();
 
                             if (destinationFile.Exists)
@@ -136,6 +132,7 @@ namespace PicPick.Core
 
                             // report progress
                             progressInfo.Advance();
+                            progressInfo.CancellationToken.ThrowIfCancellationRequested();
                         }
                         catch (OperationCanceledException)
                         {
@@ -154,15 +151,13 @@ namespace PicPick.Core
                             bool cancel = EventAggregatorHelper.PublishFileError(args);
                             if (cancel)
                                 throw ex;
-                            //if (!_errorHandler.Handle(ex, true, $"An error occurred while processing the file: {destinationFile.SourceFile.FileName}.\nDo you want to continue to the next files?"))
-                            //    throw ex;
                         }
                     }
                 }
 
                 if (_activity.DeleteSourceFiles)
                 {
-                    progressInfo.Header = "Cleaning up...";
+                    progressInfo.Text = "Cleaning up...";
                     var copiedFileList = _activity.FileMapping.SourceFiles.Values.Where(f => f.Status == FILE_STATUS.COPIED).Select(f => f.FullPath).ToList();
                     string backupPath = PathHelper.GetFullPath(PathHelper.AppPath("backup"), false);
                     _log.Info($"Moving {copiedFileList.Count()} files to backup folder ({backupPath})");
@@ -173,24 +168,9 @@ namespace PicPick.Core
                 }
 
             }
-            catch (OperationCanceledException)
-            {
-                _log.Info("*** The user cancelled the operation ***");
-                progressInfo.UserCancelled = true;
-            }
-            catch (Exception ex)
-            {
-                progressInfo.Exception = ex;
-                _errorHandler.Handle(ex, false, $"Error in operation: {progressInfo.Header}.");
-            }
             finally
             {
-                _log.Info($"Finished: {_activity.Name}\n*****************");
-                progressInfo.Finished();
-                await Task.Run(() => progressInfo.Report());
-                _activity.IsRunning = false;
-                _activity.Initialized = false;
-                EventAggregatorHelper.PublishActivityEnded();
+                
             }
         }
 

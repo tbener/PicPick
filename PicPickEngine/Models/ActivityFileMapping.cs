@@ -62,12 +62,18 @@ namespace PicPick.Models
             bool needDates = destinations.Any(d => d.HasTemplate);
 
             progressInfo.Text = "Reading files";
+            progressInfo.Report();
+
             // Create SourceFile list
             List<SourceFile> sourceFiles = source.FileList.Select(f => new SourceFile(f, needDates)).ToList();
             // Add to dictionary
             sourceFiles.ForEach(sf => SourceFiles.Add(sf.FullPath, sf));
 
+            progressInfo.Maximum = SourceFiles.Count * destinations.Count;
+            progressInfo.Value = 0;
             progressInfo.Text = "Mapping destinations";
+            progressInfo.Report();
+
             foreach (PicPickProjectActivityDestination destination in destinations)
             {
                 if (destination.HasTemplate)
@@ -83,6 +89,9 @@ namespace PicPick.Models
                         }
                         // This will do both adding a reference from the SourceFile to the destinationFolder and adding a new DestinationFile object to this destinationFolder
                         destinationFolder.AddFile(sourceFile);
+                        //await Task.Run(() => progressInfo.Advance());
+                        progressInfo.Advance();
+                        progressInfo.CancellationToken.ThrowIfCancellationRequested();
                     }
                 }
                 else
@@ -91,6 +100,8 @@ namespace PicPick.Models
                     DestinationFolder destinationFolder = new DestinationFolder(destination.Path, destination);
                     DestinationFolders.Add(destinationFolder.FullPath, destinationFolder);
                     sourceFiles.ForEach(destinationFolder.AddFile);
+                    progressInfo.CancellationToken.ThrowIfCancellationRequested();
+                    await Task.Run(() => progressInfo.Advance(SourceFiles.Count));
                 }
             }
 

@@ -140,17 +140,22 @@ namespace PicPick.ViewModel.UserControls
             {
                 ProgressInfo.RenewToken();
 
-                await Activity.FileMapping.Compute(ProgressInfo);
-                await Activity.Runner.Run(ProgressInfo);
+                await Activity.Start(ProgressInfo);
             }
             catch (Exception ex)
             {
                 _errorHandler.Handle(ex);
                 MessageBoxHelper.Show(ex);
             }
+            finally
+            {
+                ProgressInfo.Finished();
+                CommandManager.InvalidateRequerySuggested();
+            }
 
-            ProgressInfo.Finished();
         }
+
+        public string ProgressInfoText { get; set; }
 
         public async void Start11()
         {

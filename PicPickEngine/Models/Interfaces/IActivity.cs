@@ -9,19 +9,14 @@ namespace PicPick.Models.Interfaces
 {
     public interface IActivity
     {
-        bool Active { get; set; }
         bool DeleteSourceFiles { get; set; }
-        ObservableCollection<PicPickProjectActivityDestination> DestinationList { get; }
         bool Initialized { get; set; }
         bool IsRunning { get; set; }
         string Name { get; set; }
+
         PicPickProjectActivitySource Source { get; set; }
+        ObservableCollection<PicPickProjectActivityDestination> DestinationList { get; }
 
-        event CopyEventHandler OnCopyStatusChanged;
-
-        //Dictionary<string, CopyFilesHandler> Mapping { get; set; }
-
-        //Dictionary<string, PicPickFileInfo> FilesInfo { get; set; }
         ActivityFileMapping FileMapping { get; set; }
         Runner Runner { get; set; }
     }

@@ -39,18 +39,19 @@ namespace PicPick.Helpers
         {
             if (UserCancelled)
             {
-                Header = "Cancelled";
+                Text = "Cancelled";
             }
             else if (Exception != null)
             {
-                Header = "Error occured";
+                Text = "Error occured";
             }
             else
-                Header = "Done";
+                Text = "Done";
 
             if (cts != null)
                 cts.Dispose();
-            Value = 0;
+
+            Report();
         }
 
         public void Reset()
@@ -106,6 +107,7 @@ namespace PicPick.Helpers
         {
             Progress.Report(this);
             RaisePropertyChanged(nameof(ProgressPercentsText));
+            RaisePropertyChanged(nameof(Text));
         }
 
         public void Start()
