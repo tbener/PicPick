@@ -47,7 +47,7 @@ namespace PicPick.Core
 
             try
             {
-                //progressInfo.Maximum = map.SourceFiles.Count * map.Destinations.Count;
+                progressInfo.Maximum = map.SourceFiles.Count * map.Destinations.Count;
                 progressInfo.Value = 0;
 
                 foreach (DestinationFolder destinationFolder in map.DestinationFolders.Values)

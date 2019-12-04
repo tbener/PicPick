@@ -37,7 +37,7 @@ namespace PicPick.UnitTests.Core.RunnerTests
         public async Task Run()
         {
             var pi = new ProgressInformation();
-            await _activity.FileMapping.Compute(pi);
+            await _activity.FileMapping.ComputeAsync(pi);
             await _runner.Run(pi);
         }
 

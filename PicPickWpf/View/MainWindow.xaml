@@ -121,10 +121,12 @@
                             <Button Command="{Binding StopCommand}" Content="Stop" Height="32" Width="80" HorizontalAlignment="Left" Margin="10 0 10 10"/>
                         </StackPanel>
 
+                        <!--<Button Grid.Column="1" Command="{Binding StartCommand}" CommandParameter="True" Content="Analyze" Height="32" Width="80" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10"/>-->
+
                         <ProgressBar Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" 
                              Height="16" Margin="5 0"
                              Value="{Binding ProgressInfo.Value, FallbackValue=0}" Maximum="{Binding ProgressInfo.Maximum, FallbackValue=100}"/>
-                        <TextBlock Text="{Binding ProgressInfo.Text}" 
+                        <TextBlock Text="{Binding ProgressInfo.Text, Mode=OneWay}" 
                                    Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" 
                                    Margin="10 0"
                                    VerticalAlignment="Center"/>

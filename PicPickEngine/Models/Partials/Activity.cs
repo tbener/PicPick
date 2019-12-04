@@ -43,7 +43,7 @@ namespace PicPick.Models
             Source = new PicPickProjectActivitySource();
         }
 
-        public async Task Start(ProgressInformation progressInfo)
+        public async Task Start(ProgressInformation progressInfo, bool analyzeOnly = false)
         {
             if (IsRunning) throw new Exception("Activity is already running.");
 
@@ -52,8 +52,9 @@ namespace PicPick.Models
                 IsRunning = true;
                 EventAggregatorHelper.PublishActivityStarted();
 
-                await FileMapping.Compute(progressInfo);
-                //await Runner.Run(progressInfo);
+                await FileMapping.ComputeAsync(progressInfo);
+                if (analyzeOnly) return;
+                await Runner.Run(progressInfo);
             }
             catch (OperationCanceledException)
             {
@@ -69,7 +70,6 @@ namespace PicPick.Models
             {
                 _log.Info($"Finished: {Name}\n*****************");
                 progressInfo.Finished();
-                await Task.Run(() => progressInfo.Report());
                 EventAggregatorHelper.PublishActivityEnded();
                 IsRunning = false;
             }

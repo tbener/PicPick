@@ -45,35 +45,53 @@ namespace PicPick.Models
             Destinations = null;
         }
 
-        public async Task Compute(ProgressInformation progressInfo)
+        public async Task ComputeAsync(ProgressInformation progressInfo)
         {
             var activeDestinations = Activity.DestinationList.Where(d => d.Active).ToList();
-            await Activity.FileMapping.Compute(progressInfo, Activity.Source, activeDestinations);
+            await Activity.FileMapping.ComputeAsync(progressInfo, Activity.Source, activeDestinations);
         }
 
-        public async Task Compute(ProgressInformation progressInfo, PicPickProjectActivitySource source, List<PicPickProjectActivityDestination> destinations)
+        public async Task ComputeAsync(ProgressInformation progressInfo, PicPickProjectActivitySource source, List<PicPickProjectActivityDestination> destinations)
         {
             progressInfo.Text = "Analying...";
+            progressInfo.Report();
+            //await Task.Run(() => progressInfo.Report());
             Clear();
             ValidateFields();
 
             Destinations = destinations;
 
             bool needDates = destinations.Any(d => d.HasTemplate);
-
-            progressInfo.Text = "Reading files";
-            progressInfo.Report();
-
+            
+            //   -- The Short Way!!!
             // Create SourceFile list
-            List<SourceFile> sourceFiles = source.FileList.Select(f => new SourceFile(f, needDates)).ToList();
+            // List<SourceFile> sourceFiles = await Task.Run(() => source.FileList.Select(f => new SourceFile(f, needDates)).ToList());
+
+            //   -- The Long Way...
+            // ####
+            // (note that the loop is not slowing down (relative to the Linq expression) but the progress update does)
+            List<SourceFile> sourceFiles = new List<SourceFile>();
+            var fileList = source.FileList;
+
+            progressInfo.Maximum = fileList.Count();
+            progressInfo.Value = 0;
+            await Task.Run(() =>
+            {
+                foreach (string sourceFile in fileList)
+                {
+                    sourceFiles.Add(new SourceFile(sourceFile, needDates));
+                    progressInfo.Advance();
+                    progressInfo.CancellationToken.ThrowIfCancellationRequested();
+                }
+            });
+
+            // ####
+
             // Add to dictionary
             sourceFiles.ForEach(sf => SourceFiles.Add(sf.FullPath, sf));
 
-            progressInfo.Maximum = SourceFiles.Count * destinations.Count;
-            progressInfo.Value = 0;
-            progressInfo.Text = "Mapping destinations";
-            progressInfo.Report();
-
+            // the following loop should be very quick
+            // no need for progress update
             foreach (PicPickProjectActivityDestination destination in destinations)
             {
                 if (destination.HasTemplate)
@@ -89,9 +107,6 @@ namespace PicPick.Models
                         }
                         // This will do both adding a reference from the SourceFile to the destinationFolder and adding a new DestinationFile object to this destinationFolder
                         destinationFolder.AddFile(sourceFile);
-                        //await Task.Run(() => progressInfo.Advance());
-                        progressInfo.Advance();
-                        progressInfo.CancellationToken.ThrowIfCancellationRequested();
                     }
                 }
                 else
@@ -100,10 +115,9 @@ namespace PicPick.Models
                     DestinationFolder destinationFolder = new DestinationFolder(destination.Path, destination);
                     DestinationFolders.Add(destinationFolder.FullPath, destinationFolder);
                     sourceFiles.ForEach(destinationFolder.AddFile);
-                    progressInfo.CancellationToken.ThrowIfCancellationRequested();
-                    await Task.Run(() => progressInfo.Advance(SourceFiles.Count));
                 }
             }
+
 
             _log.Info("Plan is:\n" + ToString());
         }
@@ -174,7 +188,7 @@ namespace PicPick.Models
 
     }
 
-    
+
 
     public class SourceFile
     {

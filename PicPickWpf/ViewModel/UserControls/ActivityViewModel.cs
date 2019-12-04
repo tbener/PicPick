@@ -15,7 +15,7 @@ using PicPick.View.Dialogs;
 
 namespace PicPick.ViewModel.UserControls
 {
-    public class ActivityViewModel : BaseViewModel
+    public class ActivityViewModel : BaseViewModel, IDisposable
     {
         #region Private Members
 
@@ -40,15 +40,15 @@ namespace PicPick.ViewModel.UserControls
         {
 
             AddDestinationCommand = new RelayCommand(AddDestination);
-            StartCommand = new RelayCommand(Start, CanStart);
+            //StartCommand = new RelayCommand<object>(Start, CanStart);
+            StartCommand = new AsyncRelayCommand(Start, CanStart);
             StopCommand = new RelayCommand(Stop, CanStop);
 
             Activity = activity;
 
             ProgressInfo = new ProgressInformation();
+            //((Progress<ProgressInformation>)ProgressInfo.Progress).ProgressChanged += ActivityViewModel_ProgressChanged;
         }
-
-
 
         /// <summary>
         /// Associate the ViewModels to the inner objects
@@ -73,7 +73,6 @@ namespace PicPick.ViewModel.UserControls
 
         private async Task CheckSourceStatus()
         {
-
 
             try
             {
@@ -128,9 +127,11 @@ namespace PicPick.ViewModel.UserControls
             MessageBoxHelper.Show(text, "Done");
         }
 
-        public async void Start()
+        public async Task Start()
         {
             ProgressInfo.Reset();
+            ProgressInfo.Report();
+
             _log.Info("Start");
 
             if (!WarningsBeforeStart())
@@ -151,37 +152,12 @@ namespace PicPick.ViewModel.UserControls
             {
                 ProgressInfo.Finished();
                 CommandManager.InvalidateRequerySuggested();
-            }
-
-        }
-
-        public string ProgressInfoText { get; set; }
-
-        public async void Start11()
-        {
-            if (!WarningsBeforeStart())
-                return;
-
-            try
-            {
-                //cts = new CancellationTokenSource();
-
-                Runner runner = new Runner(Activity, ProjectLoader.Project.Options);
-                //await runner.Run(ProgressInfo, cts.Token);
-
-            }
-            catch (OperationCanceledException)
-            {
-                // user cancelled...
-            }
-            finally
-            {
-                OnPropertyChanged("ProgressInfo");
-                //cts.Dispose();
 
                 DisplayEndSummary();
             }
+
         }
+
 
         private bool CanStart()
         {
@@ -194,7 +170,7 @@ namespace PicPick.ViewModel.UserControls
             ProgressInfo.Cancel();
         }
 
-        private bool CanStop(object obj)
+        private bool CanStop()
         {
             return Activity.IsRunning;
         }
@@ -239,11 +215,19 @@ namespace PicPick.ViewModel.UserControls
             DestinationViewModelList.Add(vm);
         }
 
+        public void Dispose()
+        {
+            Activity.Source.PropertyChanged -= Source_PropertyChanged;
+            Activity = null;
+        }
+
         public PicPickProjectActivity Activity
         {
             get => _activity; set
             {
                 _activity = value;
+                if (_activity == null) return;
+
                 InitActivity();
                 OnPropertyChanged("Activity");
             }

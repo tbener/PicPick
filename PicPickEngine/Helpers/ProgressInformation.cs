@@ -61,6 +61,7 @@ namespace PicPick.Helpers
             Header = "";
             Text = "";
             Exception = null;
+            UserCancelled = false;
         }
 
         public string Text
@@ -109,13 +110,7 @@ namespace PicPick.Helpers
             RaisePropertyChanged(nameof(ProgressPercentsText));
             RaisePropertyChanged(nameof(Text));
         }
-
-        public void Start()
-        {
-            Value = 0;
-            Exception = null;
-        }
-
+        
         public void RenewToken()
         {
             cts = new CancellationTokenSource();

@@ -71,7 +71,7 @@ namespace PicPick.UnitTests.Core.AnalyzerTests
                 );
 
             await Assert.ThrowsExceptionAsync<DestinationEqualsSourceException>(async () =>
-                await _activity.FileMapping.Compute(new ProgressInformation())
+                await _activity.FileMapping.ComputeAsync(new ProgressInformation())
                 );
 
             // Should raise error
@@ -89,7 +89,7 @@ namespace PicPick.UnitTests.Core.AnalyzerTests
                 );
 
             await Assert.ThrowsExceptionAsync<DestinationEqualsSourceException>(async () =>
-                await _activity.FileMapping.Compute(new ProgressInformation())
+                await _activity.FileMapping.ComputeAsync(new ProgressInformation())
                 );
 
             // Should raise error
@@ -111,7 +111,7 @@ namespace PicPick.UnitTests.Core.AnalyzerTests
                 );
 
             // act
-            await _activity.FileMapping.Compute(new ProgressInformation());
+            await _activity.FileMapping.ComputeAsync(new ProgressInformation());
 
             // assert
             Assert.AreEqual(expectedDestinationCount, _activity.FileMapping.DestinationFolders.Count, "The amount of destination folders is not as expected.");
@@ -136,7 +136,7 @@ namespace PicPick.UnitTests.Core.AnalyzerTests
             TestContext.WriteLine($"Template: {dest.Template} (DateTime.Now: {dest.GetTemplatePath(DateTime.Now)})");
 
             // act
-            await _activity.FileMapping.Compute(new ProgressInformation());
+            await _activity.FileMapping.ComputeAsync(new ProgressInformation());
 
             var map = _activity.FileMapping;
 

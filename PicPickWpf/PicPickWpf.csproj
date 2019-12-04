@@ -84,6 +84,12 @@
     <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AsyncAwaitBestPractices, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\AsyncAwaitBestPractices.3.1.0\lib\netstandard1.0\AsyncAwaitBestPractices.dll</HintPath>
+    </Reference>
+    <Reference Include="AsyncAwaitBestPractices.MVVM, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\AsyncAwaitBestPractices.MVVM.3.1.0\lib\netstandard1.0\AsyncAwaitBestPractices.MVVM.dll</HintPath>
+    </Reference>
     <Reference Include="CommonServiceLocator, Version=2.0.4.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
       <HintPath>..\packages\CommonServiceLocator.2.0.4\lib\net46\CommonServiceLocator.dll</HintPath>
     </Reference>
@@ -132,6 +138,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Commands\AsyncRelayCommand.cs" />
     <Compile Include="Commands\RelayCommand.cs" />
     <Compile Include="Commands\SaveCommand.cs" />
     <Compile Include="Helpers\ApplicationService.cs" />

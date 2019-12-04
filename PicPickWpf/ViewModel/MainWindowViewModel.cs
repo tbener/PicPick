@@ -17,10 +17,11 @@ using PicPick.ViewModel.UserControls;
 
 namespace PicPick.ViewModel
 {
-    class MainWindowViewModel : BaseViewModel, IDisposable
+    internal class MainWindowViewModel : BaseViewModel, IDisposable
     {
 
         private PicPickProjectActivity _currentActivity;
+        private Dictionary<PicPickProjectActivity, ActivityViewModel> _activityViewModels = new Dictionary<PicPickProjectActivity, ActivityViewModel>();
 
         public ICommand OpenFileCommand { get; set; }
         public ICommand SaveCommand { get; set; }
@@ -170,6 +171,14 @@ namespace PicPick.ViewModel
 
             if (Msg.ShowQ($"Are you sure you want to delete {CurrentActivity.Name}?"))
             {
+                // remove view model from dictionary
+                if (_activityViewModels.ContainsKey(CurrentActivity))
+                {
+                    _activityViewModels[CurrentActivity].Dispose();
+                    _activityViewModels.Remove(CurrentActivity);
+                }
+
+                // remove from activity list (also sets CurrentActivity to null)
                 int selIndex = CurrentProject.ActivityList.IndexOf(CurrentActivity);
                 CurrentProject.ActivityList.Remove(CurrentActivity);
 
@@ -279,17 +288,7 @@ namespace PicPick.ViewModel
         public PicPickProject CurrentProject { get => ProjectLoader.Project; }
 
 
-        public ActivityViewModel ActivityViewModel
-        {
-            get { return (ActivityViewModel)GetValue(ActivityViewModelProperty); }
-            set { SetValue(ActivityViewModelProperty, value); }
-        }
-
-        // Using a DependencyProperty as the backing store for ActivityViewModel.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty ActivityViewModelProperty =
-            DependencyProperty.Register("ActivityViewModel", typeof(ActivityViewModel), typeof(MainWindowViewModel), new PropertyMetadata(null));
-
-
+        public ActivityViewModel ActivityViewModel => _activityViewModels[CurrentActivity];
 
         public PicPickProjectActivity CurrentActivity
         {
@@ -298,14 +297,18 @@ namespace PicPick.ViewModel
             {
                 if (_currentActivity != value)
                 {
-                    //FileExistsResponseEnum fer = _currentActivity == null ?
-                    //    (FileExistsResponseEnum)Enum.Parse(typeof(FileExistsResponseEnum), Properties.Settings.Default.FileExistsResponse, true)
-                    //    : _currentActivity.FileExistsResponse;
                     _currentActivity = value;
-                    //_currentActivity.FileExistsResponse = fer;
-                    ActivityViewModel = new ActivityViewModel(_currentActivity);
+                    lock (_currentActivity)
+                    {
+                        if (!_activityViewModels.ContainsKey(_currentActivity))
+                        {
+                            _activityViewModels.Add(_currentActivity, new ActivityViewModel(_currentActivity));
+                        }
+                    }
+
                 }
                 OnPropertyChanged("CurrentActivity");
+                OnPropertyChanged("ActivityViewModel");
             }
         }
 
@@ -357,6 +360,7 @@ namespace PicPick.ViewModel
             ApplicationService.Instance.EventAggregator.GetEvent<FileErrorEvent>().Unsubscribe(OnFileErrorEvent);
 
             _currentActivity = null;
+            _activityViewModels = null;
         }
 
 
