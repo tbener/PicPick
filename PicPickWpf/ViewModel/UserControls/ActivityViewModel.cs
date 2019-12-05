@@ -122,6 +122,8 @@ namespace PicPick.ViewModel.UserControls
         private void DisplayEndSummary()
         {
             int fileCount = Activity.FileMapping.SourceFiles.Values.Where(f => f.Status != FILE_STATUS.NONE).Count();
+            if (fileCount == 0) return;
+
             string text = $"{fileCount} files processed";
 
             MessageBoxHelper.Show(text, "Done");

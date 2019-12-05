@@ -155,9 +155,15 @@ namespace PicPick.ViewModel.UserControls
             {
                 _fullPath = value;
                 if (PathType == PATH_TYPE_ENUM.Source)
-                    _source.Path = _fullPath;
+                {
+                    if (_source.Path != _fullPath)
+                        _source.Path = _fullPath;
+                }
                 else
-                    _destination.Path = _fullPath;
+                {
+                    if (_destination.Path != _fullPath)
+                        _destination.Path = _fullPath;
+                }
                 OnPropertyChanged(nameof(FullPath));
             }
         }

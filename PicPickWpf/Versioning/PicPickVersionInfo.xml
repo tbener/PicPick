@@ -1,12 +1,20 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PicPickVersionInfo>
   <Setup URI="https://github.com/tbener/PicPick/raw/picpick/PicPickWpf/Versioning/PicPickVersionInfo.xml"/>
-  <Version version="1.0.xx" notifyVersion="All">
-    <Change type="Bug">Fixed File Exists dialog displayed hidden</Change>
-    <Change type="Feature">Add warning on "Delete from source" option</Change>
-    <Change type="Feature">Add relative\absolue option for destinations</Change>
+  <Version version="1.0.6" notifyVersion="All">
+	<Change type="Bug">Fixed bug - could not rename a Task</Change>
+    <Change type="Bug">Fixed bug of File Exists dialog being displayed not on top of the main window</Change>
+    <Change type="Feature">Added warning on "Delete from source" option</Change>
+    <Change type="Feature">Added relative\absolue option for destinations</Change>
+    <Change type="Feature">Added a breif message when done</Change>
+    <Change type="Change">Changes in core engine for better tracking and reporting</Change>
+    <Change type="Change">Improved logging</Change>
+    <Change type="Bug">Fixed bug which caused an error when a conflict occurred for a non-picture file</Change>
+  </Version>
+  <Version version="1.0.5" notifyVersion="All">
+    <Change type="Bug">Fixed File Exists Dialog bug - "Don't ask again" didn't always work as expected</Change>
   </Version>
   <Version version="1.0.0" notifyVersion="All">
-    <Change type="Feature"></Change>
+    <Change type="Feature">Initial version</Change>
   </Version>
 </PicPickVersionInfo>

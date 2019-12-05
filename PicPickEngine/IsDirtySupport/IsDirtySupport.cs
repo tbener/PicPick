@@ -170,12 +170,22 @@ namespace PicPick.Models.IsDirtySupport
         private void SetDirty(object sender, PropertyChangedEventArgs e)
         {
             Console.WriteLine($"+ Item Changed: {sender.GetType().Name}.{e.PropertyName}");
+            if (Pause)
+            {
+                Console.WriteLine("But IsDirtySupport is PAUSED!! Event is not triggered");
+                return;
+            }
             IsDirty = true;
         }
 
         private void SetDirty(object sender, NotifyCollectionChangedEventArgs e)
         {
             Console.WriteLine($"+ Collection Changed: {sender.GetType().Name} -> {e.Action.ToString()}");
+            if (Pause)
+            {
+                Console.WriteLine("But IsDirtySupport is PAUSED!! Event is not triggered");
+                return;
+            }
             IsDirty = true;
         }
 
@@ -192,6 +202,12 @@ namespace PicPick.Models.IsDirtySupport
                 }
             }
         }
+
+        #endregion
+
+        #region Other public properties
+
+        public bool Pause { get; set; }
 
         #endregion
 
