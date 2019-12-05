@@ -88,15 +88,24 @@ namespace PicPick.Core
                                         throw new OperationCanceledException(progressInfo.CancellationToken);
 
                                     if (fileExistsAskEventArgs.DontAskAgain)
+                                    {
+                                        _log.Info($"   + Dont Ask Again!");
                                         FileExistsResponse = currentConflictResponse;
+                                    }
                                 }
 
                                 if (currentConflictResponse == FileExistsResponseEnum.COMPARE)
                                 {
                                     if (FileSystemHelper.AreSameFiles(sourceFile.FullPath, destinationFile.GetFullName()))
+                                    {
+                                        _log.Info($"-- Comparison result: Same.");
                                         currentConflictResponse = FileExistsResponseEnum.SKIP;
+                                    }
                                     else
+                                    {
+                                        _log.Info($"-- Comparison result: Not same.");
                                         currentConflictResponse = FileExistsResponseEnum.RENAME;
+                                    }
                                 }
 
                                 _log.Info($"-- Action: {currentConflictResponse}");
@@ -104,18 +113,14 @@ namespace PicPick.Core
                                 switch (currentConflictResponse)
                                 {
                                     case FileExistsResponseEnum.OVERWRITE:
-                                        await Task.Run(() => File.Copy(sourceFile.FullPath, destinationFile.GetFullName(), true));
-                                        destinationFile.SetStatus(FILE_STATUS.COPIED);
+                                        await DoCopy(sourceFile, destinationFile);
                                         break;
                                     case FileExistsResponseEnum.SKIP:
                                         destinationFile.SetStatus(FILE_STATUS.SKIPPED);
                                         break;
                                     case FileExistsResponseEnum.RENAME:
-
                                         destinationFile.NewName = FileSystemHelper.GetNewFileName(destinationFolder.FullPath, sourceFile.FileName);
-
-                                        await Task.Run(() => File.Copy(sourceFile.FullPath, destinationFile.GetFullName(), true));
-                                        destinationFile.SetStatus(FILE_STATUS.COPIED);
+                                        await DoCopy(sourceFile, destinationFile);
                                         break;
                                     default:
                                         break;
@@ -124,11 +129,8 @@ namespace PicPick.Core
                             }
                             else
                             {
-                                await Task.Run(() => File.Copy(sourceFile.FullPath, destinationFile.GetFullName()));
-                                destinationFile.SetStatus(FILE_STATUS.COPIED);
+                                await DoCopy(sourceFile, destinationFile, false);
                             }
-
-                            _log.Info($"---- Copied to: {destinationFile.GetFullName()}");
 
                             // report progress
                             progressInfo.Advance();
@@ -172,6 +174,13 @@ namespace PicPick.Core
             {
                 
             }
+        }
+
+        private async Task DoCopy(SourceFile sourceFile, DestinationFile destinationFile, bool overwrite = true)
+        {
+            await Task.Run(() => File.Copy(sourceFile.FullPath, destinationFile.GetFullName(), overwrite));
+            destinationFile.SetStatus(FILE_STATUS.COPIED);
+            _log.Info($"---- Copied to: {destinationFile.GetFullName()}");
         }
 
         //public async Task Run2(ProgressInformation progressInfo, CancellationToken cancellationToken)

@@ -124,7 +124,7 @@ namespace PicPick.Models
 
         public override string ToString()
         {
-            StringBuilder sb = new StringBuilder("");
+            StringBuilder sb = new StringBuilder("----- Plan Start -----\n");
 
             sb.AppendLine($"Files count: {SourceFiles.Count}");
             sb.AppendLine($"Destination folders count: {DestinationFolders.Count}");
@@ -154,6 +154,8 @@ namespace PicPick.Models
             //        sb.AppendLine($"--> {destinationFolder.FullPath}");
             //    }
             //}
+
+            sb.AppendLine("----- Plan End -----");
 
             return sb.ToString();
         }
