@@ -77,17 +77,19 @@
             <GridSplitter Grid.Column="0" HorizontalAlignment="Right" Width="5"/>
 
             <Grid x:Name="TopLeft" Margin="0 0 5 5">
-                <GroupBox Header="{Binding CurrentActivity.Name, FallbackValue=Main}" 
-                          metro:ControlsHelper.ContentCharacterCasing="Normal" 
+                <GroupBox metro:ControlsHelper.ContentCharacterCasing="Normal" 
                           metro:ControlsHelper.HeaderFontWeight="Heavy">
-                    <!--<GroupBox.Header>
-                        <TextBlock Text="{Binding CurrentActivity.Name, FallbackValue=Main}" MinHeight="10"
-                                 FontSize="12"
-                                   FontWeight="Bold"
-                                 Height="18"
-                                 Background="Transparent"
-                                 Foreground="White"/>
-                    </GroupBox.Header>-->
+                    <GroupBox.Header>
+                            <TextBox Text="{Binding CurrentActivity.Name, UpdateSourceTrigger=PropertyChanged}"
+                                     FontWeight="Bold"
+                                     Background="Transparent"
+                                     Foreground="White"
+                                     FontSize="14"
+                                     BorderThickness="0"
+                                     VerticalAlignment="Top"
+                                     metro:TextBoxHelper.Watermark="Task Name"
+                                 />
+                    </GroupBox.Header>
                     <uc:ActivityView DataContext="{Binding ActivityViewModel}"/>
                 </GroupBox>
             </Grid>
