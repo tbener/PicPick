@@ -98,6 +98,10 @@ namespace PicPick.Models
                 }
                 return _destinationList;
             }
+            set
+            {
+                _destinationList = value;
+            }
         }
 
 
@@ -135,6 +139,7 @@ namespace PicPick.Models
         }
 
         [XmlIgnore]
+        [IsDirtySupport.IsDirtyIgnore]
         public bool IsRunning
         {
             get => _isRunning; set
@@ -148,23 +153,20 @@ namespace PicPick.Models
 
         public object Clone()
         {
-            PicPickProjectActivity newTask = new PicPickProjectActivity()
-            {
-                Name = Name,
-                DeleteSourceFiles = DeleteSourceFiles
-            };
+            PicPickProjectActivity newActivity = (PicPickProjectActivity)this.MemberwiseClone();
             if (Source != null)
-                newTask.Source = new PicPickProjectActivitySource()
-                {
-                    Path = Source.Path,
-                    Filter = Source.Filter
-                };
+                newActivity.Source = (PicPickProjectActivitySource)this.Source.Clone();
 
-            if (Destination != null)
-                newTask.Destination = (PicPickProjectActivityDestination[])Destination.Clone();
+            newActivity.DestinationList = new ObservableCollection<PicPickProjectActivityDestination>(DestinationList.Select(dst => (PicPickProjectActivityDestination)dst.Clone()).ToList());
 
-            return newTask;
+            return newActivity;
+        }
 
+        public PicPickProjectActivity Clone(string newName)
+        {
+            PicPickProjectActivity newActivity = (PicPickProjectActivity)Clone();
+            newActivity.Name = newName;
+            return newActivity;
         }
 
         #endregion

@@ -43,16 +43,10 @@ namespace PicPick
             MainWindowViewModel vm = new MainWindowViewModel();
             MainWindow view = new MainWindow();
             view.Closing += (s, e1) => {
-                if (vm.CurrentProject.IsDirty)
+                if (!vm.CheckSaveIfDirty("Project is not saved. Would you like to save before exiting?"))
                 {
-                    var result = MessageBox.Show("Project is not saved. Would you like to save before exiting?", "PicPick", MessageBoxButton.YesNoCancel, MessageBoxImage.Question, MessageBoxResult.Yes);
-                    if (result == MessageBoxResult.Cancel)
-                    {
-                        e1.Cancel = true;
-                        return;
-                    }
-                    if (result == MessageBoxResult.Yes)
-                        ProjectLoader.Save();
+                    e1.Cancel = true;
+                    return;
                 }
                 vm.Dispose();
                 vm = null;

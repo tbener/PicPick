@@ -19,8 +19,6 @@ namespace PicPick.Core
         private static readonly ILog _log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         private static readonly ErrorHandler _errorHandler = new ErrorHandler(_log);
 
-        public event CopyEventHandler OnCopyStatusChanged;
-
         private IActivity _activity;
         private IOptions _options;
 

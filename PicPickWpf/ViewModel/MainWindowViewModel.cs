@@ -30,6 +30,9 @@ namespace PicPick.ViewModel
         public ICommand BrowseLogFileCommand { get; set; }
         public ICommand SendMailDialogCommand { get; set; }
         public ICommand OpenPageCommand { get; set; }
+        public ICommand DuplicateActivityCommand { get; set; }
+        public ICommand MoveActivityDownCommand { get; set; }
+        public ICommand MoveActivityUpCommand { get; set; }
 
         public MainWindowViewModel()
         {
@@ -41,6 +44,9 @@ namespace PicPick.ViewModel
             BrowseLogFileCommand = new RelayCommand(BrowseLogFile);
             SendMailDialogCommand = new RelayCommand(SendMailDialog);
             OpenPageCommand = new RelayCommand(OpenPicPickPage);
+            DuplicateActivityCommand = new RelayCommand(DuplicateActivity);
+            MoveActivityDownCommand = new RelayCommand(MoveActivityDown, CanMoveActivityDown);
+            MoveActivityUpCommand = new RelayCommand(MoveActivityUp, CanMoveActivityUp);
 
             LogFile = LogManager.GetRepository().GetAppenders().OfType<log4net.Appender.RollingFileAppender>().FirstOrDefault()?.File;
 
@@ -59,11 +65,7 @@ namespace PicPick.ViewModel
                 ErrorHandler.Handle(ex, "Error loading data file");
             }
 
-            CurrentProject.GetIsDirtyInstance().OnGotDirty += (s, e) => OnGotDirty();
-            CurrentProject.IsDirty = false;
-
             CurrentActivity = CurrentProject.ActivityList.FirstOrDefault();
-
 
             ApplicationService.Instance.EventAggregator.GetEvent<ActivityStartedEvent>().Subscribe(OnActivityStart);
             ApplicationService.Instance.EventAggregator.GetEvent<ActivityEndedEvent>().Subscribe(OnActivityEnd);
@@ -71,6 +73,13 @@ namespace PicPick.ViewModel
             ApplicationService.Instance.EventAggregator.GetEvent<FileExistsAskEvent>().Subscribe(OnFileExistsAskEvent);
             ApplicationService.Instance.EventAggregator.GetEvent<FileErrorEvent>().Subscribe(OnFileErrorEvent);
 
+        }
+
+        
+        private void InitIsDirty()
+        {
+            CurrentProject.GetIsDirtyInstance().OnGotDirty += (s, e) => OnGotDirty();
+            CurrentProject.IsDirty = false;
         }
 
         private void OnFileErrorEvent(FileErrorEventArgs e)
@@ -121,6 +130,13 @@ namespace PicPick.ViewModel
             return proj;
         }
 
+        private void DuplicateActivity()
+        {
+            PicPickProjectActivity activity = CurrentActivity.Clone(CurrentActivity.Name + " 2");
+            CurrentProject.ActivityList.Insert(CurrentProject.ActivityList.IndexOf(CurrentActivity) + 1, activity);
+            CurrentActivity = activity;
+        }
+
         private void CreateNewActivity()
         {
             string activityName = (string)Application.Current.FindResource("ppk_new_activity");
@@ -129,14 +145,28 @@ namespace PicPick.ViewModel
             CurrentActivity = activity;
         }
 
-        private void LoadOrCreateNew()
+        private bool CanMoveActivityUp(object obj)
         {
-            if (!ProjectLoader.LoadDefault())
-            {
-                PicPickProject project = CreateNewProject();
-                ProjectLoader.Create(project);
-            }
+            return CurrentActivity != null && CurrentProject.ActivityList.IndexOf(CurrentActivity) > 0;
         }
+
+        private void MoveActivityUp()
+        {
+            int idx = CurrentProject.ActivityList.IndexOf(CurrentActivity);
+            CurrentProject.ActivityList.Move(idx, idx - 1);
+        }
+
+        private bool CanMoveActivityDown(object obj)
+        {
+            return CurrentActivity != null && CurrentProject.ActivityList.IndexOf(CurrentActivity) < CurrentProject.ActivityList.Count-1;
+        }
+
+        private void MoveActivityDown()
+        {
+            int idx = CurrentProject.ActivityList.IndexOf(CurrentActivity);
+            CurrentProject.ActivityList.Move(idx, idx + 1);
+        }
+
 
         private void OpenPicPickPage()
         {
@@ -189,10 +219,33 @@ namespace PicPick.ViewModel
             }
         }
 
+        public bool CheckSaveIfDirty(string msg)
+        {
+            if (!CurrentProject.IsDirty)
+                return true;
+            var result = MessageBoxHelper.Show(msg, "PicPick file is not saved", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
+            if (result == MessageBoxResult.Cancel)
+                return false;
+            if (result == MessageBoxResult.Yes)
+                ProjectLoader.Save();
+            return true;
+        }
 
+        private void LoadOrCreateNew()
+        {
+            if (!ProjectLoader.LoadDefault())
+            {
+                PicPickProject project = CreateNewProject();
+                ProjectLoader.Create(project);
+            }
+            InitIsDirty();
+        }
 
         void OpenFileWithDialog()
         {
+            if (!CheckSaveIfDirty("Current project is not saved. Would you like to save before opening a new one?"))
+                return;
+
             string file = ProjectLoader.FileName;
             if (FileSystemDialogHelper.BrowseOpenFileByExtensions(new[] { "picpick" }, true, ref file))
             {
@@ -207,6 +260,7 @@ namespace PicPick.ViewModel
             // set the current activity to refresh the window
             CurrentActivity = CurrentProject.ActivityList.FirstOrDefault();
             UpdateFileName();
+            InitIsDirty();
         }
 
         private void UpdateFileName()
@@ -298,6 +352,8 @@ namespace PicPick.ViewModel
                 if (_currentActivity != value)
                 {
                     _currentActivity = value;
+                    if (_currentActivity == null)
+                        return;
                     lock (_currentActivity)
                     {
                         if (!_activityViewModels.ContainsKey(_currentActivity))

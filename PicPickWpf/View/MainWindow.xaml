@@ -14,8 +14,19 @@
     ResizeMode="CanResizeWithGrip"
     SaveWindowPosition="True"
     Style="{StaticResource BaseWindowStyle}"
-    Height="662" Width="839" 
+    Height="700" Width="900" 
     Icon="/PicPickUI;component/Resources/picpick.ico">
+
+    <Window.Resources>
+        <CompositeCollection x:Key="ActivityMenu" x:Shared="False">
+            <MenuItem Header="_Add" Command="{Binding AddActivityCommand}" InputGestureText="Ctrl+N"/>
+            <MenuItem Header="_Delete..." Command="{Binding DeleteActivityCommand}"/>
+            <MenuItem Header="Du_plicate..." Command="{Binding DuplicateActivityCommand}"/>
+            <Separator/>
+            <MenuItem Header="Move up" Command="{Binding MoveActivityUpCommand}"/>
+            <MenuItem Header="Move down" Command="{Binding MoveActivityDownCommand}"/>
+        </CompositeCollection>
+    </Window.Resources>
 
     <Window.InputBindings>
         <KeyBinding Command="{Binding OpenFileCommand}" Key="O" Modifiers="Ctrl"/>
@@ -31,8 +42,11 @@
                 <MenuItem Header="Save _As..." Command="{Binding SaveCommand}" CommandParameter="true" />
             </MenuItem>
             <MenuItem Header="{StaticResource ppk_activity}">
-                <MenuItem Header="_Add" Command="{Binding AddActivityCommand}" InputGestureText="Ctrl+N"/>
-                <MenuItem Header="_Delete..." Command="{Binding DeleteActivityCommand}"/>
+                <MenuItem.ItemsSource>
+                    <CompositeCollection>
+                        <CollectionContainer Collection="{StaticResource ActivityMenu}"/>
+                    </CompositeCollection>
+                </MenuItem.ItemsSource>
             </MenuItem>
             <MenuItem Header="Tools">
                 <MenuItem Header="Browse to log file in _Explorer..." Command="{Binding BrowseLogFileCommand}" ToolTip="{Binding LogFile}"/>
@@ -80,7 +94,7 @@
                 <GroupBox metro:ControlsHelper.ContentCharacterCasing="Normal" 
                           metro:ControlsHelper.HeaderFontWeight="Heavy">
                     <GroupBox.Header>
-                            <TextBox Text="{Binding CurrentActivity.Name, UpdateSourceTrigger=PropertyChanged}"
+                        <TextBox Text="{Binding CurrentActivity.Name, UpdateSourceTrigger=PropertyChanged}"
                                      FontWeight="Bold"
                                      Background="Transparent"
                                      Foreground="White"
@@ -97,6 +111,15 @@
             <Grid x:Name="TopRight" Grid.Column="1" Margin="0 0 0 5">
                 <GroupBox Header="{StaticResource ppk_activities}">
                     <ListBox x:Name="lstActivities" ItemsSource="{Binding CurrentProject.ActivityList}" SelectedItem="{Binding CurrentActivity}">
+                        <ListBox.ContextMenu>
+                            <ContextMenu>
+                                <ContextMenu.ItemsSource>
+                                    <CompositeCollection>
+                                        <CollectionContainer Collection="{StaticResource ActivityMenu}"></CollectionContainer>
+                                    </CompositeCollection>
+                                </ContextMenu.ItemsSource>
+                            </ContextMenu>
+                        </ListBox.ContextMenu>
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding Name}"/>

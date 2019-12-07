@@ -6,6 +6,7 @@
                    xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
                    mc:Ignorable="d"
                    ResizeMode="NoResize"
+                   ShowInTaskbar="False"
                    Style="{StaticResource ToolWindowStyle}"
                    WindowStartupLocation="CenterOwner"
                    Title="{Binding Caption}" Height="183.502" Width="660">

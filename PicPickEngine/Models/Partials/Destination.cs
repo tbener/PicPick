@@ -11,17 +11,11 @@ using TalUtils;
 
 namespace PicPick.Models
 {
-    public partial class PicPickProjectActivityDestination : IPath
+    public partial class PicPickProjectActivityDestination : IPath, ICloneable
     {
-        public event CopyEventHandler OnCopyStatusChanged;
-
-
         [XmlIgnore]
         [IsDirtyIgnore]
         public Dictionary<string, CopyFilesHandler> Mapping { get; set; }
-
-        [XmlIgnore]
-        public bool Move { get; set; }
 
         [XmlIgnore]
         public bool HasTemplate { get => !string.IsNullOrEmpty(Template); }
@@ -93,45 +87,10 @@ namespace PicPick.Models
             return PathHelper.GetFullPath(PathAbsolute, path, buildPath);
         }
 
-        public void Execute()
+        public object Clone()
         {
-            foreach (var kv in Mapping)
-            {
-                CopyEventArgs e = new CopyEventArgs(kv.Value);
-
-                // get the full path and CREATE it if not exists
-                string fullPath = GetPath(kv.Key, true);
-                CopyFilesHandler map = kv.Value;
-                map.SetStart();
-                OnCopyStatusChanged?.Invoke(this, e);
-
-                try
-                {
-
-                    // The operation is done on a banch of files at once!
-                    if (Move)
-                    {
-                        Debug.Print("Moving {0} files to {1}", map.FileList.Count(), fullPath);
-                        ShellFileOperation.MoveItems(map.FileList, fullPath);
-                    }
-                    else
-                    {
-                        Debug.Print("Copying {0} files to {1}", map.FileList.Count(), fullPath);
-                        ShellFileOperation.CopyItems(map.FileList, fullPath);
-                    }
-                    map.SetFinished();
-                }
-                catch (Exception ex)
-                {
-                    map.SetError(ex);
-                    throw;
-                }
-
-                OnCopyStatusChanged?.Invoke(this, e);
-            }
+            return this.MemberwiseClone();
         }
-
-
     }
 
 

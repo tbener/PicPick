@@ -1,8 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PicPickVersionInfo>
   <Setup URI="https://github.com/tbener/PicPick/raw/picpick/PicPickWpf/Versioning/PicPickVersionInfo.xml"/>
+  <Version version="1.0.7" notifyVersion="All">
+    <Change type="Change">Extended Task menu</Change>
+    <Change type="Change">Added Task context menu</Change>
+    <Change type="Bug">After running, the picpick file was marked as changed</Change>
+  </Version>
   <Version version="1.0.6" notifyVersion="All">
-	<Change type="Bug">Fixed bug - could not rename a Task</Change>
+	  <Change type="Bug">Fixed bug - could not rename a Task</Change>
     <Change type="Bug">Fixed bug of File Exists dialog being displayed not on top of the main window</Change>
     <Change type="Feature">Added warning on "Delete from source" option</Change>
     <Change type="Feature">Added relative\absolute option for destinations</Change>

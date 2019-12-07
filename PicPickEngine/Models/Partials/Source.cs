@@ -9,7 +9,7 @@ using System.Xml.Serialization;
 
 namespace PicPick.Models
 {
-    public partial class PicPickProjectActivitySource : IPath
+    public partial class PicPickProjectActivitySource : IPath, ICloneable
     {
         List<string> _fileList = new List<string>();
         bool _initialized = false;
@@ -46,6 +46,11 @@ namespace PicPick.Models
             // create a unique file list
             _fileList.AddRange(new HashSet<string>(lstFiles));
             _fileListUpdated = true;
+        }
+
+        public object Clone()
+        {
+            return this.MemberwiseClone();
         }
 
         [XmlIgnore]
