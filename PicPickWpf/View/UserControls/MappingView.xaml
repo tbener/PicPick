@@ -3,11 +3,42 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:PicPick.View.UserControls"
+             xmlns:local="clr-namespace:PicPick.ViewModel.UserControls"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <!--<HierarchicalDataTemplate DataType="{x:Type local:MappingDoneViewModel}" ItemsSource="{Binding DestinationList}">
+            
+        </HierarchicalDataTemplate>-->
+        <HierarchicalDataTemplate DataType="{x:Type local:MappingPlanViewModel}" ItemsSource="{Binding DestinationList}">
+            <StackPanel Orientation="Vertical">
+                <TextBlock Text="{Binding Path}"/>
+                <TreeView>
+                    <TreeViewItem ItemsSource="{Binding Folders}">
+                        <TreeViewItem.Header>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="3*"/>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="{Binding Folder}"/>
+                                <TextBlock Grid.Column="1" Text="{Binding FilesCount}"/>
+                                <TextBlock Grid.Column="2" Text="{Binding FolderState}"/>
+                            </Grid>
+                        </TreeViewItem.Header>
+                    </TreeViewItem>
+                </TreeView>
+            </StackPanel>
+        </HierarchicalDataTemplate>
+    </UserControl.Resources>
     <Grid>
-        <StackPanel Orientation="Vertical">
+        <StackPanel Orientation="Vertical" >
+
+            <ListView DataContext="{Binding MappingViewModel}">
+                
+            </ListView>
+            
             <TextBlock Text="Before:"/>
             <TextBlock Text="Destination: c:\blabla\bla\"/>
 
@@ -96,6 +127,7 @@
             </TreeView>
         </StackPanel>
         <!--<ListView ItemsSource="{Binding NewFolders}">
+            <HierarchicalDataTemplate></HierarchicalDataTemplate>
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <Expander Header="{Binding RelativePath}">

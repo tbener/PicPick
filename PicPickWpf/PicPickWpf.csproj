@@ -161,7 +161,10 @@
     <Compile Include="ViewModel\Dialogs\PreviewDialogViewModel.cs" />
     <Compile Include="ViewModel\Dialogs\MessageViewModel.cs" />
     <Compile Include="ViewModel\UserControls\DestinationViewModel.cs" />
-    <Compile Include="ViewModel\UserControls\MappingViewModel.cs" />
+    <Compile Include="ViewModel\UserControls\Mapping\MappingDestinationViewModel.cs" />
+    <Compile Include="ViewModel\UserControls\Mapping\MappingFileViewModel.cs" />
+    <Compile Include="ViewModel\UserControls\Mapping\MappingFolderViewModel.cs" />
+    <Compile Include="ViewModel\UserControls\MappingPlanViewModel.cs" />
     <Compile Include="ViewModel\UserControls\PathBrowserViewModel.cs" />
     <Compile Include="ViewModel\UserControls\ProgressViewModel.cs" />
     <Compile Include="View\Dialogs\MessageView.xaml.cs">

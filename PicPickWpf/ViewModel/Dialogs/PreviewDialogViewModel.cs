@@ -12,9 +12,9 @@ namespace PicPick.ViewModel.Dialogs
     {
         public PreviewDialogViewModel(ActivityFileMapping fileMapping)
         {
-            MappingViewModel = new MappingViewModel(fileMapping);
+            MappingViewModel = new MappingPlanViewModel(fileMapping);
         }
 
-        public MappingViewModel MappingViewModel { get; set; }
+        public MappingPlanViewModel MappingViewModel { get; set; }
     }
 }
