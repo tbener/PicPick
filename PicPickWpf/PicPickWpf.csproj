@@ -158,18 +158,26 @@
     </Compile>
     <Compile Include="Versioning\PicPickVersionInfo.cs" />
     <Compile Include="Versioning\UpdateManager.cs" />
+    <Compile Include="ViewModel\Dialogs\PreviewDialogViewModel.cs" />
     <Compile Include="ViewModel\Dialogs\MessageViewModel.cs" />
     <Compile Include="ViewModel\UserControls\DestinationViewModel.cs" />
+    <Compile Include="ViewModel\UserControls\MappingViewModel.cs" />
     <Compile Include="ViewModel\UserControls\PathBrowserViewModel.cs" />
     <Compile Include="ViewModel\UserControls\ProgressViewModel.cs" />
     <Compile Include="View\Dialogs\MessageView.xaml.cs">
       <DependentUpon>MessageView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Dialogs\PreviewDialogView.xaml.cs">
+      <DependentUpon>PreviewDialogView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\UserControls\DestinationView.xaml.cs">
       <DependentUpon>DestinationView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\UserControls\ExecutionView.xaml.cs">
       <DependentUpon>ExecutionView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\UserControls\MappingView.xaml.cs">
+      <DependentUpon>MappingView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\UserControls\PathBrowserView.xaml.cs">
       <DependentUpon>PathBrowserView.xaml</DependentUpon>
@@ -220,11 +228,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="View\Dialogs\PreviewDialogView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\UserControls\DestinationView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\UserControls\ExecutionView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\UserControls\MappingView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

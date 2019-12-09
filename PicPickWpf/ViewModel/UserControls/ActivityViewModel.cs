@@ -35,6 +35,7 @@ namespace PicPick.ViewModel.UserControls
 
         #endregion
 
+        #region CTOR
 
         public ActivityViewModel(PicPickProjectActivity activity)
         {
@@ -49,6 +50,10 @@ namespace PicPick.ViewModel.UserControls
             ProgressInfo = new ProgressInformation();
             //((Progress<ProgressInformation>)ProgressInfo.Progress).ProgressChanged += ActivityViewModel_ProgressChanged;
         }
+
+        #endregion
+
+        #region Private Methods
 
         /// <summary>
         /// Associate the ViewModels to the inner objects
@@ -101,6 +106,8 @@ namespace PicPick.ViewModel.UserControls
             }
         }
 
+        #endregion
+
         #region Execution
 
         private bool WarningsBeforeStart()
@@ -143,7 +150,19 @@ namespace PicPick.ViewModel.UserControls
             {
                 ProgressInfo.RenewToken();
 
-                await Activity.Start(ProgressInfo);
+                Activity.IsRunning = true;
+                EventAggregatorHelper.PublishActivityStarted();
+
+                await Activity.FileMapping.ComputeAsync(ProgressInfo);
+                PreviewDialogViewModel vm = new PreviewDialogViewModel(Activity.FileMapping);
+                PreviewDialogView view = new PreviewDialogView()
+                {
+                    DataContext = vm
+                };
+
+                view.ShowDialog();
+
+                //await Activity.Start(ProgressInfo);
             }
             catch (Exception ex)
             {

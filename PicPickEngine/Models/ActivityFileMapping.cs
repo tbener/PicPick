@@ -62,7 +62,7 @@ namespace PicPick.Models
             Destinations = destinations;
 
             bool needDates = destinations.Any(d => d.HasTemplate);
-            
+
             //   -- The Short Way!!!
             // Create SourceFile list
             // List<SourceFile> sourceFiles = await Task.Run(() => source.FileList.Select(f => new SourceFile(f, needDates)).ToList());
@@ -249,6 +249,21 @@ namespace PicPick.Models
         {
             sourceFile.DestinationFolders.Add(this);
             Files.Add(new DestinationFile(sourceFile, this));
+        }
+
+        public string RelativePath
+        {
+            get
+            {
+                try
+                {
+                    return PathHelper.GetRelativePath(BasedOnDestination.Path, FullPath);
+                }
+                catch 
+                {
+                    return "";
+                }
+            }
         }
 
         public string FullPath { get; set; }
