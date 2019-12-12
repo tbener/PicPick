@@ -10,7 +10,7 @@
         <!--<HierarchicalDataTemplate DataType="{x:Type local:MappingDoneViewModel}" ItemsSource="{Binding DestinationList}">
             
         </HierarchicalDataTemplate>-->
-        <HierarchicalDataTemplate DataType="{x:Type local:MappingPlanViewModel}" ItemsSource="{Binding DestinationList}">
+        <HierarchicalDataTemplate DataType="{x:Type local:MappingPlanViewModel}" >
             <StackPanel Orientation="Vertical">
                 <TextBlock Text="{Binding Path}"/>
                 <TreeView>
@@ -32,13 +32,38 @@
             </StackPanel>
         </HierarchicalDataTemplate>
     </UserControl.Resources>
-    <Grid>
-        <StackPanel Orientation="Vertical" >
-
-            <ListView DataContext="{Binding MappingViewModel}">
-                
+    <ScrollViewer>
+        <StackPanel Orientation="Vertical">
+            <ListView ItemsSource="{Binding DestinationList}">
+                <ListView.ItemTemplate>
+                    <DataTemplate  >
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Text="{Binding Path}"/>
+                            <TreeView ItemsSource="{Binding Folders}">
+                                <TreeView.ItemTemplate>
+                                    <HierarchicalDataTemplate>
+                                        <TreeViewItem>
+                                            <TreeViewItem.Header>
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="3*"/>
+                                                        <ColumnDefinition/>
+                                                        <ColumnDefinition/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <TextBlock Text="{Binding Folder}"/>
+                                                    <TextBlock Grid.Column="1" Text="{Binding FilesCount}"/>
+                                                    <TextBlock Grid.Column="2" Text="{Binding FolderState}"/>
+                                                </Grid>
+                                            </TreeViewItem.Header>
+                                        </TreeViewItem>
+                                    </HierarchicalDataTemplate>
+                                </TreeView.ItemTemplate>
+                            </TreeView>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
             </ListView>
-            
+
             <TextBlock Text="Before:"/>
             <TextBlock Text="Destination: c:\blabla\bla\"/>
 
@@ -64,7 +89,7 @@
             <TextBlock Text="After:"/>
             <TextBlock Text="Destination: c:\blabla\bla\"/>
 
-            <TreeView>
+            <TreeView ScrollViewer.VerticalScrollBarVisibility="Auto">
                 <TreeViewItem>
                     <TreeViewItem.Header>
                         <Grid>
@@ -136,5 +161,5 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>-->
-    </Grid>
+    </ScrollViewer>
 </UserControl>
