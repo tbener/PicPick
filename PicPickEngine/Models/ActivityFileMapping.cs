@@ -88,7 +88,7 @@ namespace PicPick.Models
             // ####
 
             // Add to dictionary
-            sourceFiles.ForEach(sf => SourceFiles.Add(sf.FullPath, sf));
+            sourceFiles.ForEach(sf => SourceFiles.Add(sf.FullFileName, sf));
 
             // the following loop should be very quick
             // no need for progress update
@@ -196,7 +196,7 @@ namespace PicPick.Models
     {
         public SourceFile(string fullPath, bool needDate)
         {
-            FullPath = fullPath;
+            FullFileName = fullPath;
             FileName = Path.GetFileName(fullPath);
             if (needDate)
             {
@@ -206,7 +206,7 @@ namespace PicPick.Models
             }
         }
 
-        public string FullPath { get; set; }
+        public string FullFileName { get; set; }
         public string FileName { get; set; }
         public DateTime DateTime { get; set; }
         public List<DestinationFolder> DestinationFolders { get; set; } = new List<DestinationFolder>();

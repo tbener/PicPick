@@ -15,10 +15,14 @@ namespace PicPick.ViewModel.UserControls.Mapping
             Folder = PathHelper.GetRelativePath(destinationFolder.BasedOnDestination.Path, destinationFolder.FullPath);
             FilesCount = $"{destinationFolder.Files.Count} files";
             State = destinationFolder.IsNew ? "New" : "Exists";
+
+            Files = destinationFolder.Files.Select(f => new MappingFileViewModel(f)).ToList();
         }
 
         public string Folder { get; set; }
         public string FilesCount { get; set; }
         public string State { get; set; }
+
+        public List<MappingFileViewModel> Files { get; set; }
     }
 }

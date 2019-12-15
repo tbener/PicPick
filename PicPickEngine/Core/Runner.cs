@@ -71,7 +71,7 @@ namespace PicPick.Core
 
                                 if (currentConflictResponse == FileExistsResponseEnum.ASK)
                                 {
-                                    fileExistsAskEventArgs.SourceFile = sourceFile.FullPath;
+                                    fileExistsAskEventArgs.SourceFile = sourceFile.FullFileName;
                                     fileExistsAskEventArgs.DestinationFolder = destinationFolder.FullPath;
                                     // Publish the event
                                     currentConflictResponse = EventAggregatorHelper.PublishFileExists(fileExistsAskEventArgs);
@@ -94,7 +94,7 @@ namespace PicPick.Core
 
                                 if (currentConflictResponse == FileExistsResponseEnum.COMPARE)
                                 {
-                                    if (FileSystemHelper.AreSameFiles(sourceFile.FullPath, destinationFile.GetFullName()))
+                                    if (FileSystemHelper.AreSameFiles(sourceFile.FullFileName, destinationFile.GetFullName()))
                                     {
                                         _log.Info($"-- Comparison result: Same.");
                                         currentConflictResponse = FileExistsResponseEnum.SKIP;
@@ -158,7 +158,7 @@ namespace PicPick.Core
                 if (_activity.DeleteSourceFiles)
                 {
                     progressInfo.Text = "Cleaning up...";
-                    var copiedFileList = _activity.FileMapping.SourceFiles.Values.Where(f => f.Status == FILE_STATUS.COPIED).Select(f => f.FullPath).ToList();
+                    var copiedFileList = _activity.FileMapping.SourceFiles.Values.Where(f => f.Status == FILE_STATUS.COPIED).Select(f => f.FullFileName).ToList();
                     string backupPath = PathHelper.GetFullPath(PathHelper.AppPath("backup"), false);
                     _log.Info($"Moving {copiedFileList.Count()} files to backup folder ({backupPath})");
                     if (Directory.Exists(backupPath))
@@ -176,7 +176,7 @@ namespace PicPick.Core
 
         private async Task DoCopy(SourceFile sourceFile, DestinationFile destinationFile, bool overwrite = true)
         {
-            await Task.Run(() => File.Copy(sourceFile.FullPath, destinationFile.GetFullName(), overwrite));
+            await Task.Run(() => File.Copy(sourceFile.FullFileName, destinationFile.GetFullName(), overwrite));
             destinationFile.SetStatus(FILE_STATUS.COPIED);
             _log.Info($"---- Copied to: {destinationFile.GetFullName()}");
         }
