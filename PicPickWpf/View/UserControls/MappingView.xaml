@@ -6,111 +6,33 @@
              xmlns:local="clr-namespace:PicPick.ViewModel.UserControls.Mapping"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <UserControl.Resources>
-        <!--<HierarchicalDataTemplate DataType="{x:Type local:MappingDoneViewModel}" ItemsSource="{Binding DestinationList}">
-            
-        </HierarchicalDataTemplate>-->
-        <!--<HierarchicalDataTemplate DataType="{x:Type local:MappingPlanViewModel}" >
-            <StackPanel Orientation="Vertical">
-                <TextBlock Text="{Binding Path}"/>
-                <TreeView>
-                    <TreeViewItem ItemsSource="{Binding Folders}">
-                        <TreeViewItem.Header>
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="3*"/>
-                                    <ColumnDefinition/>
-                                    <ColumnDefinition/>
-                                </Grid.ColumnDefinitions>
-                                <TextBlock Text="{Binding Folder}"/>
-                                <TextBlock Grid.Column="1" Text="{Binding FilesCount}"/>
-                                <TextBlock Grid.Column="2" Text="{Binding FolderState}"/>
-                            </Grid>
-                        </TreeViewItem.Header>
-                    </TreeViewItem>
-                </TreeView>
-            </StackPanel>
-        </HierarchicalDataTemplate>-->
-    </UserControl.Resources>
+    
     <ScrollViewer>
         <StackPanel Orientation="Vertical">
-            <ItemsControl ItemsSource="{Binding DestinationList}">
-                <ItemsControl.ItemTemplate>
-                    <!-- An item if a base destination. Contains a title and list of physical folders. -->
-                    <DataTemplate  >
-                        <StackPanel Orientation="Vertical">
-                            <TextBlock Text="{Binding Path}"/>
-                            <TreeView x:Name="foldersTreeView" >
-                                <TreeView.Resources>
-                                    <HierarchicalDataTemplate DataType="{x:Type local:MappingFolderViewModel}" ItemsSource="{Binding Folders}">
-                                        <ContentPresenter ContentSource="Header">
-                                            <ContentPresenter.Content>
-                                                <Grid x:Name="folderHeader">
-                                                    <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="3*"/>
-                                                        <ColumnDefinition/>
-                                                        <ColumnDefinition/>
-                                                    </Grid.ColumnDefinitions>
-                                                    <TextBlock Text="{Binding Folder}"/>
-                                                    <TextBlock Grid.Column="1" Text="{Binding FilesCount}"/>
-                                                    <TextBlock Grid.Column="2" Text="{Binding FolderState}"/>
-                                                </Grid>
-                                            </ContentPresenter.Content>
-                                        </ContentPresenter>
-                                    </HierarchicalDataTemplate>
-                                </TreeView.Resources>
-                                <TreeView.ItemTemplate>
-                                    <HierarchicalDataTemplate ItemsSource="{Binding Files}">
-                                        <TreeViewItem>
-                                            <TreeViewItem.Header>
-                                                <Grid x:Name="folderHeaderGrid">
-                                                    <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="3*"/>
-                                                        <ColumnDefinition/>
-                                                        <ColumnDefinition/>
-                                                    </Grid.ColumnDefinitions>
-                                                    <TextBlock Text="{Binding Folder}"/>
-                                                    <TextBlock Grid.Column="1" Text="{Binding FilesCount}"/>
-                                                    <TextBlock Grid.Column="2" Text="{Binding FolderState}"/>
-                                                </Grid>
-                                            </TreeViewItem.Header>
-
-                                        </TreeViewItem>
-                                        <HierarchicalDataTemplate.ItemTemplate>
-                                            <DataTemplate>
-                                                <TreeViewItem Header="{Binding FullFileName}"/>
-                                            </DataTemplate>
-                                        </HierarchicalDataTemplate.ItemTemplate>
-                                    </HierarchicalDataTemplate>
-                                </TreeView.ItemTemplate>
-                            </TreeView>
-                        </StackPanel>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-
-            <TextBlock Text="Before:"/>
-            <TextBlock Text="Destination: c:\blabla\bla\"/>
-
-            <TreeView>
-                <TreeViewItem>
-                    <TreeViewItem.Header>
-                        <Grid>
+            <TreeView ItemsSource="{Binding DestinationList}">
+                <TreeView.Resources>
+                    <HierarchicalDataTemplate DataType="{x:Type local:MappingDestinationViewModel}" ItemsSource="{Binding Folders}">
+                        <TextBlock Text="{Binding Path}"/>
+                    </HierarchicalDataTemplate>
+                    <HierarchicalDataTemplate DataType="{x:Type local:MappingFolderViewModel}" ItemsSource="{Binding Files}">
+                        <Grid x:Name="PART_Header">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="3*"/>
                                 <ColumnDefinition/>
                                 <ColumnDefinition/>
                             </Grid.ColumnDefinitions>
-                            <TextBlock Text="Folder 1"/>
-                            <TextBlock Grid.Column="1" Text="9 files"/>
-                            <TextBlock Grid.Column="2" Text="New"/>
+                            <TextBlock Text="{Binding FullPath}"/>
+                            <TextBlock Grid.Column="1" Text="{Binding FilesCount}"/>
+                            <TextBlock Grid.Column="2" Text="{Binding State}"/>
                         </Grid>
-                    </TreeViewItem.Header>
-                    <TreeViewItem Header="SourceFile1.txt"/>
-                    <TreeViewItem Header="SourceFile2.txt"/>
-                </TreeViewItem>
+                    </HierarchicalDataTemplate>
+                    <DataTemplate DataType="{x:Type local:MappingFileViewModel}">
+                        <!--<TreeViewItem Header="{Binding SourceFileName}"/>-->
+                        <TextBlock Text="{Binding SourceFileName}"/>
+                    </DataTemplate>
+                </TreeView.Resources>
             </TreeView>
-
+            
             <TextBlock Text="After:"/>
             <TextBlock Text="Destination: c:\blabla\bla\"/>
 

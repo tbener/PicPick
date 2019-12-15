@@ -18,6 +18,17 @@ namespace PicPick.ViewModel.Dialogs
 
         private readonly MessageBoxButton _messageBoxButtons = MessageBoxButton.OK;
 
+        public MessageViewModel(object contentViewModel, string caption, MessageBoxButton button)
+        {
+            SetResultCommand = new RelayCommand<string>(CloseDialogWithResult);
+
+            CustomContent = contentViewModel;
+            Caption = caption;
+            _messageBoxButtons = button;
+            DialogResult = MessageBoxResult.Cancel;
+            ShowDontShowAgain = Visibility.Visible;
+        }
+
         public MessageViewModel(string messageText, string caption, MessageBoxButton button, MessageBoxImage messageIcon = MessageBoxImage.Information, bool showDontShowAgain = false)
         {
             SetResultCommand = new RelayCommand<string>(CloseDialogWithResult);
@@ -32,7 +43,6 @@ namespace PicPick.ViewModel.Dialogs
                               Int32Rect.Empty,
                               System.Windows.Media.Imaging.BitmapSizeOptions.FromEmptyOptions());
             ShowDontShowAgain = showDontShowAgain ? Visibility.Visible : Visibility.Hidden;
-
         }
 
         private Icon GetSystemIcon(string icon = "Information")
@@ -76,5 +86,7 @@ namespace PicPick.ViewModel.Dialogs
 
         public MessageBoxResult DialogResult { get; set; }
         public Action CloseDialog { get; set; }
+
+        public object CustomContent { get; set; }
     }
 }

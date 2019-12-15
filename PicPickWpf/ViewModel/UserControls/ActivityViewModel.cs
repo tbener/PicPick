@@ -154,15 +154,17 @@ namespace PicPick.ViewModel.UserControls
                 EventAggregatorHelper.PublishActivityStarted();
 
                 await Activity.FileMapping.ComputeAsync(ProgressInfo);
-                PreviewDialogViewModel vm = new PreviewDialogViewModel(Activity.FileMapping);
-                PreviewDialogView view = new PreviewDialogView()
-                {
-                    DataContext = vm
-                };
 
-                view.ShowDialog();
+                //if (Properties.UserSettings.General.ShowPreviewWindow)
 
-                //await Activity.Start(ProgressInfo);
+                MappingPlanViewModel vm = new MappingPlanViewModel(Activity.FileMapping);
+
+                var result = MessageBoxHelper.Show(vm, "Mapping Preview", MessageBoxButton.OKCancel, out bool dontShowAgain);
+
+                if (result != MessageBoxResult.OK)
+                    return;
+
+                await Activity.Start(ProgressInfo);
             }
             catch (Exception ex)
             {

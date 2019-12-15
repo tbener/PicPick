@@ -4,17 +4,27 @@
                    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                    xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
+                   xmlns:viewmodels="clr-namespace:PicPick.ViewModel.UserControls"
+                   xmlns:views="clr-namespace:PicPick.View.UserControls"
                    mc:Ignorable="d"
                    ResizeMode="NoResize"
                    ShowInTaskbar="False"
                    Style="{StaticResource ToolWindowStyle}"
                    WindowStartupLocation="CenterOwner"
                    Title="{Binding Caption}" Height="183.502" Width="660">
+    <metro:MetroWindow.Resources>
+        <DataTemplate DataType="{x:Type viewmodels:MappingPlanViewModel}">
+            <views:MappingView/>
+        </DataTemplate>
+    </metro:MetroWindow.Resources>
     <Grid Margin="10 20 10 5">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="40"/>
         </Grid.RowDefinitions>
+        <ContentControl Content="{Binding CustomContent}">
+            
+        </ContentControl>
         <DockPanel>
             <Image DockPanel.Dock="Left" Source="{Binding MessageIcon}" Width="50" Stretch="None" VerticalAlignment="Top"/>
             <TextBlock Text="{Binding Text, FallbackValue=My text la la}" HorizontalAlignment="Left" VerticalAlignment="Top" TextAlignment="Left"/>

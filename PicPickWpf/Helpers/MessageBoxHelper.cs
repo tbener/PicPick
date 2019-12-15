@@ -1,5 +1,6 @@
 ﻿using PicPick.View.Dialogs;
 using PicPick.ViewModel.Dialogs;
+using PicPick.ViewModel.UserControls;
 using System;
 using System.Windows;
 
@@ -81,6 +82,23 @@ namespace PicPick.Helpers
             Show(text, caption, MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
+        internal static MessageBoxResult Show(MappingPlanViewModel vm, string caption, MessageBoxButton button, out bool dontShowAgain)
+        {
+            MessageViewModel viewModel = new MessageViewModel(vm, caption, button);
+            MessageView messageView = new MessageView();
+            messageView.Height = 450;
+            messageView.DataContext = viewModel;
 
+            viewModel.CloseDialog = () =>
+            {
+                messageView.Close();
+            };
+
+            messageView.Owner = System.Windows.Application.Current.MainWindow;
+            messageView.ShowDialog();
+
+            dontShowAgain = viewModel.DontShowAgain;
+            return viewModel.DialogResult;
+        }
     }
 }

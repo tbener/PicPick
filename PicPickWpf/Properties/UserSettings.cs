@@ -32,7 +32,6 @@ namespace PicPick.Properties
 
         private void Settings_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            //string settingsKey = sender.GetType().GetProperty(e.PropertyName).GetCustomAttribute<UserSettingsAttribute>().SettingsKey;
             if (AutoSave)
                 Save();
         }
@@ -47,7 +46,6 @@ namespace PicPick.Properties
 
     public class GeneralUserSettings : UserSettingsBase
     {
-        //[UserSettings("WarnDeleteSource")]
         public bool WarnDeleteSource
         {
             get { return UserSettings.Default.WarnDeleteSource; }
@@ -58,22 +56,26 @@ namespace PicPick.Properties
             }
         }
 
+        public bool ShowPreviewWindow
+        {
+            get { return UserSettings.Default.ShowPreviewWindow; }
+            set
+            {
+                UserSettings.Default.ShowPreviewWindow = value;
+                RaisePropertyChanged(nameof(ShowPreviewWindow));
+            }
+        }
+
+        public bool ShowSummaryWindow
+        {
+            get { return UserSettings.Default.ShowSummaryWindow; }
+            set
+            {
+                UserSettings.Default.ShowSummaryWindow = value;
+                RaisePropertyChanged(nameof(ShowSummaryWindow));
+            }
+        }
+
     }
 
-    public class TestUserSettings
-    {
-
-    }
-
-    //[AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
-    //public class UserSettingsAttribute : Attribute
-    //{
-    //    public string SettingsKey { get; private set; }
-
-    //    public UserSettingsAttribute(string settingsKey)
-    //    {
-    //        SettingsKey = settingsKey;
-    //    }
-        
-    //}
 }
