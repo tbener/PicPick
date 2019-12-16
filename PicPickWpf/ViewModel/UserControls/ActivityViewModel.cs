@@ -157,7 +157,7 @@ namespace PicPick.ViewModel.UserControls
 
                 //if (Properties.UserSettings.General.ShowPreviewWindow)
 
-                MappingPlanViewModel vm = new MappingPlanViewModel(Activity.FileMapping);
+                MappingPlanViewModel vm = new MappingPlanViewModel(Activity);
 
                 var result = MessageBoxHelper.Show(vm, "Mapping Preview", MessageBoxButton.OKCancel, out bool dontShowAgain);
 

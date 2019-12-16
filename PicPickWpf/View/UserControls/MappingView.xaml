@@ -6,34 +6,43 @@
              xmlns:local="clr-namespace:PicPick.ViewModel.UserControls.Mapping"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    
+
     <ScrollViewer>
         <StackPanel Orientation="Vertical">
-            <TreeView ItemsSource="{Binding DestinationList}">
-                <TreeView.Resources>
-                    <HierarchicalDataTemplate DataType="{x:Type local:MappingDestinationViewModel}" ItemsSource="{Binding Folders}">
-                        <TextBlock Text="{Binding Path}"/>
-                    </HierarchicalDataTemplate>
-                    <HierarchicalDataTemplate DataType="{x:Type local:MappingFolderViewModel}" ItemsSource="{Binding Files}">
-                        <Grid x:Name="PART_Header">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="3*"/>
-                                <ColumnDefinition/>
-                                <ColumnDefinition/>
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Text="{Binding FullPath}"/>
-                            <TextBlock Grid.Column="1" Text="{Binding FilesCount}"/>
-                            <TextBlock Grid.Column="2" Text="{Binding State}"/>
-                        </Grid>
-                    </HierarchicalDataTemplate>
-                    <DataTemplate DataType="{x:Type local:MappingFileViewModel}">
-                        <!--<TreeViewItem Header="{Binding SourceFileName}"/>-->
-                        <TextBlock Text="{Binding SourceFileName}"/>
-                    </DataTemplate>
-                </TreeView.Resources>
-            </TreeView>
-            
-            <TextBlock Text="After:"/>
+            <Border BorderBrush="DarkGray" BorderThickness="1" CornerRadius="4" Margin="4" Padding="4">
+                <StackPanel Orientation="Vertical">
+                    <TextBlock><Run Text="Source: "/><Run Text="{Binding SourceDisplay}"/></TextBlock>
+                    <TextBlock Text="{Binding SourceFoundFiles}"/>
+                    <TextBlock Text="{Binding SourceFilesDeleteWarning}"/>
+                </StackPanel>
+            </Border>
+            <Border BorderBrush="DarkGray" BorderThickness="1" CornerRadius="4" Margin="4" Padding="4">
+                <TreeView ItemsSource="{Binding DestinationList}">
+                    <TreeView.Resources>
+                        <HierarchicalDataTemplate DataType="{x:Type local:MappingDestinationViewModel}" ItemsSource="{Binding Folders}">
+                            <TextBlock Text="{Binding Path}"/>
+                        </HierarchicalDataTemplate>
+                        <HierarchicalDataTemplate DataType="{x:Type local:MappingFolderViewModel}" ItemsSource="{Binding Files}">
+                            <Grid x:Name="PART_Header">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="3*"/>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="{Binding FullPath}"/>
+                                <TextBlock Grid.Column="1" Text="{Binding FilesCount}"/>
+                                <TextBlock Grid.Column="2" Text="{Binding State}"/>
+                            </Grid>
+                        </HierarchicalDataTemplate>
+                        <DataTemplate DataType="{x:Type local:MappingFileViewModel}">
+                            <!--<TreeViewItem Header="{Binding SourceFileName}"/>-->
+                            <TextBlock Text="{Binding SourceFileName}"/>
+                        </DataTemplate>
+                    </TreeView.Resources>
+                </TreeView>
+            </Border>
+
+            <!--<TextBlock Text="After:"/>
             <TextBlock Text="Destination: c:\blabla\bla\"/>
 
             <TreeView ScrollViewer.VerticalScrollBarVisibility="Auto">
@@ -96,17 +105,8 @@
                         </TreeViewItem>
                     </TreeViewItem>
                 </TreeViewItem>
-            </TreeView>
+            </TreeView>-->
         </StackPanel>
-        <!--<ListView ItemsSource="{Binding NewFolders}">
-            <HierarchicalDataTemplate></HierarchicalDataTemplate>
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <Expander Header="{Binding RelativePath}">
-                        
-                    </Expander>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>-->
+        
     </ScrollViewer>
 </UserControl>

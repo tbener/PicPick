@@ -11,8 +11,17 @@ namespace PicPick.ViewModel.UserControls
 {
     public class MappingPlanViewModel
     {
-        public MappingPlanViewModel(ActivityFileMapping mapping)
+        public MappingPlanViewModel(PicPickProjectActivity activity)
         {
+            PicPickProjectActivitySource source = activity.Source;
+            string subFolders = source.IncludeSubFolders ? "including sub-folders" : "not including sub-folders";
+            SourceDisplay = $"{source.Path} ({source.Filter}), {subFolders}";
+            SourceFoundFiles = $"{source.FileList.Count} files found";
+            SourceFilesDeleteWarning = activity.DeleteSourceFiles ? "The files will be deleted!" : "The files won't be deleted.";
+
+
+            ActivityFileMapping mapping = activity.FileMapping;
+
             Dictionary<PicPickProjectActivityDestination, List<DestinationFolder>> destinations = new Dictionary<PicPickProjectActivityDestination, List<DestinationFolder>>();
 
             foreach (var dest in mapping.Destinations)
@@ -28,5 +37,9 @@ namespace PicPick.ViewModel.UserControls
         }
 
         public List<MappingDestinationViewModel> DestinationList { get; set; }
+
+        public string SourceDisplay { get; set; }
+        public string SourceFoundFiles { get; set; }
+        public string SourceFilesDeleteWarning { get; set; }
     }
 }
