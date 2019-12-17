@@ -21,9 +21,12 @@ namespace PicPick.ViewModel.UserControls
 
         //CancellationTokenSource cts;
 
-        PicPickProjectActivity _activity;
+        //PicPickProjectActivity _activity;
         string _sourceFilesStatus;
         CancellationTokenSource ctsSourceCheck;
+
+        private bool _keepDestinationsAbsolute;
+        private bool _isRunning;
 
         #endregion
 
@@ -42,10 +45,11 @@ namespace PicPick.ViewModel.UserControls
 
             AddDestinationCommand = new RelayCommand(AddDestination);
             //StartCommand = new RelayCommand<object>(Start, CanStart);
-            StartCommand = new AsyncRelayCommand(Start, CanStart);
+            StartCommand = new AsyncRelayCommand(StartAsync, CanStart);
             StopCommand = new RelayCommand(Stop, CanStop);
 
             Activity = activity;
+            InitActivity();
 
             ProgressInfo = new ProgressInformation();
             //((Progress<ProgressInformation>)ProgressInfo.Progress).ProgressChanged += ActivityViewModel_ProgressChanged;
@@ -73,8 +77,11 @@ namespace PicPick.ViewModel.UserControls
             foreach (PicPickProjectActivityDestination dest in Activity.DestinationList)
                 AddDestinationViewModel(dest);
 
+            Activity.OnActivityStateChanged += Activity_OnActivityStateChanged;
 
         }
+
+
 
         private async Task CheckSourceStatus()
         {
@@ -112,7 +119,7 @@ namespace PicPick.ViewModel.UserControls
 
         private bool WarningsBeforeStart()
         {
-            if (!_activity.DeleteSourceFiles)
+            if (!Activity.DeleteSourceFiles)
                 return true;
 
             if (!Properties.UserSettings.General.WarnDeleteSource)
@@ -136,7 +143,44 @@ namespace PicPick.ViewModel.UserControls
             MessageBoxHelper.Show(text, "Done");
         }
 
-        public async Task Start()
+        bool DisplayMappingPlan()
+        {
+            MappingPlanViewModel vm = new MappingPlanViewModel(Activity);
+            var result = MessageBoxHelper.Show(vm, "Mapping Preview", MessageBoxButton.OKCancel, out bool dontShowAgain);
+            if (result != MessageBoxResult.OK)
+                return false;
+            return true;
+        }
+
+        private void Activity_OnActivityStateChanged(PicPickProjectActivity activity, ActivityStateChangedEventArgs e)
+        {
+            MappingPlanViewModel vm;
+            bool dontShowAgain;
+
+            switch (activity.State)
+            {
+                case ACTIVITY_STATE.NOT_STARTED:
+                    break;
+                case ACTIVITY_STATE.ANALYZING:
+                    break;
+                case ACTIVITY_STATE.ANALYZED:
+                    vm = new MappingPlanViewModel(Activity);
+                    var result = MessageBoxHelper.Show(vm, "Mapping Preview", MessageBoxButton.OKCancel, out dontShowAgain);
+                    if (result != MessageBoxResult.OK)
+                        e.Cancel = true;
+                    break;
+                case ACTIVITY_STATE.RUNNING:
+                    break;
+                case ACTIVITY_STATE.DONE:
+                    vm = new MappingPlanViewModel(Activity);
+                    MessageBoxHelper.Show(vm, "Finished", MessageBoxButton.OK, out dontShowAgain);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        public async Task StartAsync()
         {
             ProgressInfo.Reset();
             ProgressInfo.Report();
@@ -149,22 +193,11 @@ namespace PicPick.ViewModel.UserControls
             try
             {
                 ProgressInfo.RenewToken();
-
-                Activity.IsRunning = true;
+                IsRunning = true;
                 EventAggregatorHelper.PublishActivityStarted();
 
-                await Activity.FileMapping.ComputeAsync(ProgressInfo);
+                await Activity.ExecuteAsync(ProgressInfo, DisplayMappingPlan);
 
-                //if (Properties.UserSettings.General.ShowPreviewWindow)
-
-                MappingPlanViewModel vm = new MappingPlanViewModel(Activity);
-
-                var result = MessageBoxHelper.Show(vm, "Mapping Preview", MessageBoxButton.OKCancel, out bool dontShowAgain);
-
-                if (result != MessageBoxResult.OK)
-                    return;
-
-                await Activity.Start(ProgressInfo);
             }
             catch (Exception ex)
             {
@@ -173,10 +206,12 @@ namespace PicPick.ViewModel.UserControls
             }
             finally
             {
-                ProgressInfo.Finished();
+                IsRunning = false;
+                await Task.Run(() => ProgressInfo.Finished());
                 CommandManager.InvalidateRequerySuggested();
 
-                DisplayEndSummary();
+                
+                //DisplayEndSummary();
             }
 
         }
@@ -184,7 +219,7 @@ namespace PicPick.ViewModel.UserControls
 
         private bool CanStart()
         {
-            return !string.IsNullOrEmpty(Activity.Source.Path) && !Activity.IsRunning;
+            return !string.IsNullOrEmpty(Activity.Source.Path) && !IsRunning;
         }
 
 
@@ -195,7 +230,7 @@ namespace PicPick.ViewModel.UserControls
 
         private bool CanStop()
         {
-            return Activity.IsRunning;
+            return IsRunning;
         }
 
 
@@ -244,17 +279,8 @@ namespace PicPick.ViewModel.UserControls
             Activity = null;
         }
 
-        public PicPickProjectActivity Activity
-        {
-            get => _activity; set
-            {
-                _activity = value;
-                if (_activity == null) return;
 
-                InitActivity();
-                OnPropertyChanged("Activity");
-            }
-        }
+        public PicPickProjectActivity Activity { get; set; }
 
         public ObservableCollection<DestinationViewModel> DestinationViewModelList { get; set; }
 
@@ -279,7 +305,7 @@ namespace PicPick.ViewModel.UserControls
             }
         }
 
-        private bool _keepDestinationsAbsolute;
+
 
         public bool KeepDestinationsAbsolute
         {
@@ -294,7 +320,15 @@ namespace PicPick.ViewModel.UserControls
             }
         }
 
-
+        public bool IsRunning
+        {
+            get => _isRunning;
+            set
+            {
+                _isRunning = value;
+                OnPropertyChanged(nameof(IsRunning));
+            }
+        }
 
     }
 }

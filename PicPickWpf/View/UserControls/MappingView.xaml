@@ -19,11 +19,11 @@
             <Border BorderBrush="DarkGray" BorderThickness="1" CornerRadius="4" Margin="4" Padding="4">
                 <TreeView ItemsSource="{Binding DestinationList}">
                     <TreeView.Resources>
-                        <HierarchicalDataTemplate DataType="{x:Type local:MappingDestinationViewModel}" ItemsSource="{Binding Folders}">
-                            <TextBlock Text="{Binding Path}"/>
+                        <HierarchicalDataTemplate DataType="{x:Type local:MappingDestinationViewModel}" ItemsSource="{Binding FolderList}">
+                            <TextBlock Text="{Binding DestinationDisplay}"/>
                         </HierarchicalDataTemplate>
-                        <HierarchicalDataTemplate DataType="{x:Type local:MappingFolderViewModel}" ItemsSource="{Binding Files}">
-                            <Grid x:Name="PART_Header">
+                        <HierarchicalDataTemplate DataType="{x:Type local:MappingFolderViewModel}" ItemsSource="{Binding SubItems}">
+                            <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="3*"/>
                                     <ColumnDefinition/>
@@ -34,6 +34,10 @@
                                 <TextBlock Grid.Column="2" Text="{Binding State}"/>
                             </Grid>
                         </HierarchicalDataTemplate>
+                        <HierarchicalDataTemplate DataType="{x:Type local:MappingStatusViewModel}" ItemsSource="{Binding FileList}">
+                            <!--<TreeViewItem Header="{Binding SourceFileName}"/>-->
+                            <TextBlock Text="{Binding StatusDisplay}"/>
+                        </HierarchicalDataTemplate>
                         <DataTemplate DataType="{x:Type local:MappingFileViewModel}">
                             <!--<TreeViewItem Header="{Binding SourceFileName}"/>-->
                             <TextBlock Text="{Binding SourceFileName}"/>
@@ -42,7 +46,7 @@
                 </TreeView>
             </Border>
 
-            <!--<TextBlock Text="After:"/>
+            <TextBlock Text="After:"/>
             <TextBlock Text="Destination: c:\blabla\bla\"/>
 
             <TreeView ScrollViewer.VerticalScrollBarVisibility="Auto">
@@ -105,7 +109,7 @@
                         </TreeViewItem>
                     </TreeViewItem>
                 </TreeViewItem>
-            </TreeView>-->
+            </TreeView>
         </StackPanel>
         
     </ScrollViewer>

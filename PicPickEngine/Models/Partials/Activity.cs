@@ -1,22 +1,27 @@
 ﻿using PicPick.Helpers;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using TalUtils;
-using PicPick.Models;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using PicPick.Core;
 using PicPick.Models.Interfaces;
 using log4net;
 
 namespace PicPick.Models
 {
+
+    public enum ACTIVITY_STATE
+    {
+        NOT_STARTED,
+        ANALYZING,
+        ANALYZED,
+        RUNNING,
+        DONE
+    }
+
+    public delegate void ActivityStateChangedEventHandler(PicPickProjectActivity activity, ActivityStateChangedEventArgs e);
 
     /// <summary>
     /// This class extends PicPickProjectActivity and includes:
@@ -29,13 +34,11 @@ namespace PicPick.Models
         private static readonly ErrorHandler _errorHandler = new ErrorHandler(_log);
 
         private ObservableCollection<PicPickProjectActivityDestination> _destinationList = null;
-
-        private Dictionary<string, CopyFilesHandler> _mapping = new Dictionary<string, CopyFilesHandler>();
-        private Dictionary<string, PicPickFileInfo> _dicFiles = new Dictionary<string, PicPickFileInfo>();
-        private List<string> _errorFiles = new List<string>();
         private bool _isRunning;
         private ActivityFileMapping _fileMapping;
         private Runner _runner;
+
+        public event ActivityStateChangedEventHandler OnActivityStateChanged;
 
         public PicPickProjectActivity(string name)
         {
@@ -43,18 +46,37 @@ namespace PicPick.Models
             Source = new PicPickProjectActivitySource();
         }
 
-        public async Task Start(ProgressInformation progressInfo, bool analyzeOnly = false)
+        private bool SetState(ACTIVITY_STATE newState)
         {
-            if (IsRunning) throw new Exception("Activity is already running.");
+            this.State = newState;
+            if (OnActivityStateChanged != null)
+            {
+                ActivityStateChangedEventArgs e = new ActivityStateChangedEventArgs();
+                OnActivityStateChanged(this, e);
+                if (e.Cancel)
+                    return false;
+            }
+            return true;
+        }
+
+        public async Task ExecuteAsync(ProgressInformation progressInfo)
+        {
+            if (_isRunning) throw new Exception("Activity is already running.");
 
             try
             {
-                IsRunning = true;
-                EventAggregatorHelper.PublishActivityStarted();
+                _isRunning = true;
 
+                // Analyze
+                SetState(ACTIVITY_STATE.ANALYZING);
                 await FileMapping.ComputeAsync(progressInfo);
-                if (analyzeOnly) return;
+                if (!SetState(ACTIVITY_STATE.ANALYZED))
+                    return;
+
+                // Run
+                SetState(ACTIVITY_STATE.RUNNING);
                 await Runner.Run(progressInfo);
+                SetState(ACTIVITY_STATE.DONE);
             }
             catch (OperationCanceledException)
             {
@@ -71,7 +93,7 @@ namespace PicPick.Models
                 _log.Info($"Finished: {Name}\n*****************");
                 progressInfo.Finished();
                 EventAggregatorHelper.PublishActivityEnded();
-                IsRunning = false;
+                _isRunning = false;
             }
         }
 
@@ -140,14 +162,8 @@ namespace PicPick.Models
 
         [XmlIgnore]
         [IsDirtySupport.IsDirtyIgnore]
-        public bool IsRunning
-        {
-            get => _isRunning; set
-            {
-                _isRunning = value;
-                RaisePropertyChanged("IsRunning");
-            }
-        }
+        public ACTIVITY_STATE State { get; set; }
+
 
         #region ICloneable
 

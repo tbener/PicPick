@@ -41,4 +41,13 @@ namespace PicPick.Core
         public CopyFilesHandler Info { get; set; }
 
     }
+
+    public class ActivityStateChangedEventArgs : EventArgs
+    {
+        public ActivityStateChangedEventArgs()
+        { }
+
+        public bool Cancel { get; set; }
+
+    }
 }

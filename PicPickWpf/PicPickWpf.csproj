@@ -165,6 +165,7 @@
     <Compile Include="ViewModel\UserControls\Mapping\MappingFileViewModel.cs" />
     <Compile Include="ViewModel\UserControls\Mapping\MappingFolderViewModel.cs" />
     <Compile Include="ViewModel\UserControls\MappingPlanViewModel.cs" />
+    <Compile Include="ViewModel\UserControls\Mapping\MappingStatusViewModel.cs" />
     <Compile Include="ViewModel\UserControls\PathBrowserViewModel.cs" />
     <Compile Include="ViewModel\UserControls\ProgressViewModel.cs" />
     <Compile Include="View\Dialogs\MessageView.xaml.cs">

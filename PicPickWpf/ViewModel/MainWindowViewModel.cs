@@ -67,8 +67,6 @@ namespace PicPick.ViewModel
 
             CurrentActivity = CurrentProject.ActivityList.FirstOrDefault();
 
-            ApplicationService.Instance.EventAggregator.GetEvent<ActivityStartedEvent>().Subscribe(OnActivityStart);
-            ApplicationService.Instance.EventAggregator.GetEvent<ActivityEndedEvent>().Subscribe(OnActivityEnd);
             ApplicationService.Instance.EventAggregator.GetEvent<GotDirtyEvent>().Subscribe(OnGotDirty);
             ApplicationService.Instance.EventAggregator.GetEvent<FileExistsAskEvent>().Subscribe(OnFileExistsAskEvent);
             ApplicationService.Instance.EventAggregator.GetEvent<FileErrorEvent>().Subscribe(OnFileErrorEvent);
@@ -274,18 +272,6 @@ namespace PicPick.ViewModel
 
         #region File Exists handling - need refactor
 
-        private void OnActivityStart()
-        {
-            Status = "Running...";
-            //if (!ApplicationService.Instance.EventAggregator.GetEvent<FileExistsAskEvent>().Contains(OnFileExistsAskEvent))
-            //    ApplicationService.Instance.EventAggregator.GetEvent<FileExistsAskEvent>().Subscribe(OnFileExistsAskEvent);
-        }
-        private void OnActivityEnd()
-        {
-            Status = "Ready";
-        }
-
-
         private void OnFileExistsAskEvent(FileExistsAskEventArgs args)
         {
             // Init dialog
@@ -389,7 +375,7 @@ namespace PicPick.ViewModel
 
         public System.Windows.Media.Brush RunningColor
         {
-            get => CurrentActivity.IsRunning ? _isRunningColor : null;
+            get => ActivityViewModel.IsRunning ? _isRunningColor : null;
         }
 
         public Properties.GeneralUserSettings GeneralUserSettings
@@ -409,8 +395,6 @@ namespace PicPick.ViewModel
 
         public void Dispose()
         {
-            ApplicationService.Instance.EventAggregator.GetEvent<ActivityStartedEvent>().Unsubscribe(OnActivityStart);
-            ApplicationService.Instance.EventAggregator.GetEvent<ActivityEndedEvent>().Unsubscribe(OnActivityEnd);
             ApplicationService.Instance.EventAggregator.GetEvent<GotDirtyEvent>().Unsubscribe(OnGotDirty);
             ApplicationService.Instance.EventAggregator.GetEvent<FileExistsAskEvent>().Unsubscribe(OnFileExistsAskEvent);
             ApplicationService.Instance.EventAggregator.GetEvent<FileErrorEvent>().Unsubscribe(OnFileErrorEvent);

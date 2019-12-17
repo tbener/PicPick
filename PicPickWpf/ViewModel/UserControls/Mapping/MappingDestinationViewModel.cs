@@ -11,12 +11,12 @@ namespace PicPick.ViewModel.UserControls.Mapping
     {
         public MappingDestinationViewModel(PicPickProjectActivityDestination baseDestination, List<DestinationFolder> destinationFolders)
         {
-            Path = baseDestination.Path;
-            Folders = destinationFolders.Select(df => new MappingFolderViewModel(df)).ToList();
+            DestinationDisplay = $"{baseDestination.Path}\\{{{baseDestination.Template}}}";
+            FolderList = destinationFolders.Select(df => new MappingFolderViewModel(df)).ToList();
         }
 
-        public string Path { get; set; }
+        public string DestinationDisplay { get; set; }
 
-        public List<MappingFolderViewModel> Folders { get; set; }
+        public List<MappingFolderViewModel> FolderList { get; set; }
     }
 }
