@@ -82,7 +82,7 @@ namespace PicPick.Helpers
             Show(text, caption, MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
-        internal static MessageBoxResult Show(MappingPlanViewModel vm, string caption, MessageBoxButton button, out bool dontShowAgain)
+        internal static MessageBoxResult Show(MappingBaseViewModel vm, string caption, MessageBoxButton button, out bool dontShowAgain)
         {
             MessageViewModel viewModel = new MessageViewModel(vm, caption, button);
             MessageView messageView = new MessageView();

@@ -14,7 +14,7 @@
                    WindowStartupLocation="CenterOwner"
                    Title="{Binding Caption}" Height="183.502" Width="660">
     <metro:MetroWindow.Resources>
-        <DataTemplate DataType="{x:Type viewmodels:MappingPlanViewModel}">
+        <DataTemplate DataType="{x:Type viewmodels:MappingBaseViewModel}">
             <views:MappingView/>
         </DataTemplate>
     </metro:MetroWindow.Resources>

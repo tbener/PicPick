@@ -11,7 +11,7 @@ namespace PicPick.ViewModel.UserControls.Mapping
 {
     public class MappingFolderViewModel
     {
-        public MappingFolderViewModel(DestinationFolder destinationFolder, bool isDone = false)
+        public MappingFolderViewModel(DestinationFolder destinationFolder)
         {
             Folder = PathHelper.GetRelativePath(destinationFolder.BasedOnDestination.Path, destinationFolder.FullPath);
             FullPath = destinationFolder.FullPath;
@@ -22,15 +22,9 @@ namespace PicPick.ViewModel.UserControls.Mapping
 
             //var g = destinationFolder.Files.GroupBy(f => f.Status, f => f, (key, grp) => new {status = key, files = grp.ToList() });
 
-            List<MappingStatusViewModel> mappingStatuses = new List<MappingStatusViewModel>();
-            ILookup<FILE_STATUS, DestinationFile> lookup = destinationFolder.Files.ToLookup(f => f.Status);
-            foreach (var item in lookup)
-            {
-                mappingStatuses.Add(new MappingStatusViewModel(item.Key, item.ToList()));
-            }
-            SubItems = mappingStatuses;
-
             
+
+
         }
 
         public string Folder { get; set; }
@@ -41,5 +35,27 @@ namespace PicPick.ViewModel.UserControls.Mapping
         public List<MappingFileViewModel> Files { get; set; }
 
         public object SubItems { get; set; }
+    }
+
+    public class MappingPlanFolderViewModel : MappingFolderViewModel
+    {
+        public MappingPlanFolderViewModel(DestinationFolder destinationFolder) : base(destinationFolder)
+        {
+            SubItems = destinationFolder.Files.Select(f => new MappingFileViewModel(f)).ToList();
+        }
+    }
+
+    public class MappingResultsFolderViewModel : MappingFolderViewModel
+    {
+        public MappingResultsFolderViewModel(DestinationFolder destinationFolder) : base(destinationFolder)
+        {
+            List<MappingStatusViewModel> mappingStatuses = new List<MappingStatusViewModel>();
+            ILookup<FILE_STATUS, DestinationFile> lookup = destinationFolder.Files.ToLookup(f => f.Status);
+            foreach (var item in lookup)
+            {
+                mappingStatuses.Add(new MappingStatusViewModel(item.Key, item.ToList()));
+            }
+            SubItems = mappingStatuses;
+        }
     }
 }

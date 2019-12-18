@@ -136,7 +136,7 @@ namespace PicPick.ViewModel.UserControls
 
         private void Activity_OnActivityStateChanged(PicPickProjectActivity activity, ActivityStateChangedEventArgs e)
         {
-            MappingPlanViewModel vm;
+            MappingBaseViewModel vm;
             bool dontShowAgain;
 
             switch (activity.State)
@@ -160,7 +160,7 @@ namespace PicPick.ViewModel.UserControls
                 case ACTIVITY_STATE.DONE:
                     if (!Properties.UserSettings.General.ShowSummaryWindow)
                         return;
-                    vm = new MappingPlanViewModel(Activity);
+                    vm = new MappingResultsViewModel(Activity);
                     MessageBoxHelper.Show(vm, "Finished", MessageBoxButton.OK, out dontShowAgain);
                     if (dontShowAgain)
                         Properties.UserSettings.General.ShowSummaryWindow = false;
