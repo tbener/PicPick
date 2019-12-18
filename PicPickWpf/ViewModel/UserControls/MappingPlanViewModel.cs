@@ -13,27 +13,16 @@ namespace PicPick.ViewModel.UserControls
     {
         public MappingPlanViewModel(PicPickProjectActivity activity)
         {
+            // Source Pane
             PicPickProjectActivitySource source = activity.Source;
             string subFolders = source.IncludeSubFolders ? "including sub-folders" : "not including sub-folders";
             SourceDisplay = $"{source.Path} ({source.Filter}), {subFolders}";
             SourceFoundFiles = $"{source.FileList.Count} files found";
             SourceFilesDeleteWarning = activity.DeleteSourceFiles ? "The files will be deleted!" : "The files won't be deleted.";
 
-
-            ActivityFileMapping mapping = activity.FileMapping;
-
-            Dictionary<PicPickProjectActivityDestination, List<DestinationFolder>> destinations = new Dictionary<PicPickProjectActivityDestination, List<DestinationFolder>>();
-
-            foreach (var dest in mapping.Destinations)
-            {
-                destinations.Add(dest, new List<DestinationFolder>());
-            }
-            foreach (var destinationFolder in mapping.DestinationFolders.Values)
-            {
-                destinations[destinationFolder.BasedOnDestination].Add(destinationFolder);
-            }
-
-            DestinationList = destinations.Select(d => new MappingDestinationViewModel(d.Key, d.Value)).ToList();
+            // Destinations Pane
+            var lookup = activity.FileMapping.DestinationFolders.Values.ToLookup(df => df.BasedOnDestination);
+            DestinationList = lookup.Select(item => new MappingDestinationViewModel(item.Key, item.ToList())).ToList();
         }
 
         public List<MappingDestinationViewModel> DestinationList { get; set; }

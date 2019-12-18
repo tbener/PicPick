@@ -55,6 +55,8 @@
                 <MenuItem Header="Open PicPick page" Command="{Binding OpenPageCommand}"/>
                 <Separator/>
                 <MenuItem Header="Show warning on deleting source files" IsCheckable="True" IsChecked="{Binding GeneralUserSettings.WarnDeleteSource}"/>
+                <MenuItem Header="Show preview before running" IsCheckable="True" IsChecked="{Binding GeneralUserSettings.ShowPreviewWindow}"/>
+                <MenuItem Header="Show summary window" IsCheckable="True" IsChecked="{Binding GeneralUserSettings.ShowSummaryWindow}"/>
             </MenuItem>
         </Menu>
         <StatusBar DockPanel.Dock="Bottom" Height="24" >

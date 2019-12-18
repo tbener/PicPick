@@ -35,11 +35,9 @@
                             </Grid>
                         </HierarchicalDataTemplate>
                         <HierarchicalDataTemplate DataType="{x:Type local:MappingStatusViewModel}" ItemsSource="{Binding FileList}">
-                            <!--<TreeViewItem Header="{Binding SourceFileName}"/>-->
                             <TextBlock Text="{Binding StatusDisplay}"/>
                         </HierarchicalDataTemplate>
                         <DataTemplate DataType="{x:Type local:MappingFileViewModel}">
-                            <!--<TreeViewItem Header="{Binding SourceFileName}"/>-->
                             <TextBlock Text="{Binding SourceFileName}"/>
                         </DataTemplate>
                     </TreeView.Resources>

@@ -57,7 +57,7 @@
             </DockPanel>
             <TextBlock DockPanel.Dock="Bottom" HorizontalAlignment="Left" MinHeight="24" VerticalAlignment="Stretch">
                 <Hyperlink Command="{Binding AddDestinationCommand}">
-                    <TextBlock Text="Add more destinations" />
+                    <TextBlock Text="Add another destination" />
                 </Hyperlink>
             </TextBlock>
             <Grid x:Name="DestinationPreview" Visibility="Collapsed" HorizontalAlignment="Stretch" DockPanel.Dock="Top">

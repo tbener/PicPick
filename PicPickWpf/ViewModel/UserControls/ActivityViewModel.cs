@@ -146,16 +146,24 @@ namespace PicPick.ViewModel.UserControls
                 case ACTIVITY_STATE.ANALYZING:
                     break;
                 case ACTIVITY_STATE.ANALYZED:
+                    if (!Properties.UserSettings.General.ShowPreviewWindow)
+                        return;
                     vm = new MappingPlanViewModel(Activity);
                     var result = MessageBoxHelper.Show(vm, "Mapping Preview", MessageBoxButton.OKCancel, out dontShowAgain);
+                    if (dontShowAgain)
+                        Properties.UserSettings.General.ShowPreviewWindow = false;
                     if (result != MessageBoxResult.OK)
                         e.Cancel = true;
                     break;
                 case ACTIVITY_STATE.RUNNING:
                     break;
                 case ACTIVITY_STATE.DONE:
+                    if (!Properties.UserSettings.General.ShowSummaryWindow)
+                        return;
                     vm = new MappingPlanViewModel(Activity);
                     MessageBoxHelper.Show(vm, "Finished", MessageBoxButton.OK, out dontShowAgain);
+                    if (dontShowAgain)
+                        Properties.UserSettings.General.ShowSummaryWindow = false;
                     break;
                 default:
                     break;
