@@ -133,24 +133,6 @@ namespace PicPick.ViewModel.UserControls
             return result == MessageBoxResult.Yes;
         }
 
-        private void DisplayEndSummary()
-        {
-            int fileCount = Activity.FileMapping.SourceFiles.Values.Where(f => f.Status != FILE_STATUS.NONE).Count();
-            if (fileCount == 0) return;
-
-            string text = $"{fileCount} files processed";
-
-            MessageBoxHelper.Show(text, "Done");
-        }
-
-        bool DisplayMappingPlan()
-        {
-            MappingPlanViewModel vm = new MappingPlanViewModel(Activity);
-            var result = MessageBoxHelper.Show(vm, "Mapping Preview", MessageBoxButton.OKCancel, out bool dontShowAgain);
-            if (result != MessageBoxResult.OK)
-                return false;
-            return true;
-        }
 
         private void Activity_OnActivityStateChanged(PicPickProjectActivity activity, ActivityStateChangedEventArgs e)
         {
@@ -196,7 +178,7 @@ namespace PicPick.ViewModel.UserControls
                 IsRunning = true;
                 EventAggregatorHelper.PublishActivityStarted();
 
-                await Activity.ExecuteAsync(ProgressInfo, DisplayMappingPlan);
+                await Activity.ExecuteAsync(ProgressInfo);
 
             }
             catch (Exception ex)
@@ -210,8 +192,6 @@ namespace PicPick.ViewModel.UserControls
                 await Task.Run(() => ProgressInfo.Finished());
                 CommandManager.InvalidateRequerySuggested();
 
-                
-                //DisplayEndSummary();
             }
 
         }
