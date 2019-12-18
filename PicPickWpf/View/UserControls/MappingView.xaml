@@ -7,17 +7,22 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
 
-        <DockPanel>
-            <Border DockPanel.Dock="Top" BorderBrush="DarkGray" BorderThickness="1" CornerRadius="4" Margin="4" Padding="4">
-                <StackPanel Orientation="Vertical">
-                    <TextBlock><Run Text="Source: "/><Run Text="{Binding SourceDisplay}"/></TextBlock>
-                    <TextBlock Text="{Binding SourceFoundFiles}"/>
-                    <TextBlock Text="{Binding SourceFilesDeleteWarning}"/>
-                </StackPanel>
-            </Border>
-            <Border BorderBrush="DarkGray" BorderThickness="1" CornerRadius="4" Margin="4" Padding="4">
-                <ScrollViewer>
-                <TreeView ItemsSource="{Binding DestinationList}">
+    <UserControl.Resources>
+        <local:MappingFileDataTemplateSelector x:Key="fileDataTemplateSelector"/>
+    </UserControl.Resources>
+    
+    <DockPanel>
+        <Border DockPanel.Dock="Top" BorderBrush="DarkGray" BorderThickness="1" CornerRadius="4" Margin="4" Padding="4">
+            <StackPanel Orientation="Vertical">
+                <TextBlock><Run Text="Source: "/><Run Text="{Binding SourceDisplay}"/></TextBlock>
+                <TextBlock Text="{Binding SourceFoundFiles}"/>
+                <TextBlock Text="{Binding SourceFilesDeleteWarning}"/>
+            </StackPanel>
+        </Border>
+        <Border BorderBrush="DarkGray" BorderThickness="1" CornerRadius="4" Margin="4" Padding="4">
+            <ScrollViewer>
+                <TreeView ItemsSource="{Binding DestinationList}"
+                          ItemTemplateSelector="{StaticResource fileDataTemplateSelector}">
                     <TreeView.Resources>
                         <HierarchicalDataTemplate DataType="{x:Type local:MappingDestinationViewModel}" ItemsSource="{Binding FolderList}">
                             <TextBlock Text="{Binding DestinationDisplay}"/>
@@ -40,12 +45,18 @@
                         <DataTemplate DataType="{x:Type local:MappingFileViewModel}">
                             <TextBlock Text="{Binding SourceFileName}"/>
                         </DataTemplate>
+                        <DataTemplate x:Key="CopiedFile">
+                            <TextBlock><Run Text="{Binding DestinationFileName}"/> (from: <Run Text="{Binding SourceFileName}"/>)</TextBlock>
+                        </DataTemplate>
+                        <DataTemplate x:Key="ErrorFile">
+                            <TextBlock><Run Text="{Binding SourceFileName}"/> (<Run Text="{Binding Error}"/>)</TextBlock>
+                        </DataTemplate>
                     </TreeView.Resources>
                 </TreeView>
-                </ScrollViewer>
-            </Border>
+            </ScrollViewer>
+        </Border>
 
-            <!--<TextBlock Text="After:"/>
+        <!--<TextBlock Text="After:"/>
             <TextBlock Text="Destination: c:\blabla\bla\"/>
 
             <TreeView ScrollViewer.VerticalScrollBarVisibility="Auto">
@@ -109,6 +120,6 @@
                     </TreeViewItem>
                 </TreeViewItem>
             </TreeView>-->
-        </DockPanel>
-        
+    </DockPanel>
+
 </UserControl>
