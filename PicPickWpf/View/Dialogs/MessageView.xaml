@@ -7,8 +7,9 @@
                    xmlns:viewmodels="clr-namespace:PicPick.ViewModel.UserControls"
                    xmlns:views="clr-namespace:PicPick.View.UserControls"
                    mc:Ignorable="d"
-                   ResizeMode="NoResize"
-                   ShowInTaskbar="False"
+                   ResizeMode="CanResizeWithGrip"
+                   MinWidth="200"
+                   MinHeight="120"
                    Style="{StaticResource ToolWindowStyle}"
                    WindowStartupLocation="CenterOwner"
                    Title="{Binding Caption}" Height="183.502" Width="660">

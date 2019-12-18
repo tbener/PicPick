@@ -9,6 +9,9 @@
 
     <Style x:Key="ToolWindowStyle" TargetType="{x:Type metro:MetroWindow}" BasedOn="{StaticResource BaseWindowStyle}" >
         <Setter Property="WindowStyle" Value="ToolWindow"/>
+        <Setter Property="ShowMinButton" Value="False"/>
+        <Setter Property="ShowMaxRestoreButton" Value="False"/>
+        <Setter Property="ShowInTaskbar" Value="False"/>
     </Style>
 
 
