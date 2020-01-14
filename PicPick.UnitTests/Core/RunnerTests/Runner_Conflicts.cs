@@ -37,7 +37,6 @@ namespace PicPick.UnitTests.Core.RunnerTests
         public void TestInit()
         {
             InitActivity();
-
         }
         
 
@@ -290,7 +289,39 @@ namespace PicPick.UnitTests.Core.RunnerTests
             
         }
 
-        
-        
+        [TestMethod]
+        public async Task Conflict_SingleFileComesDuringExecution_Conflict()
+        {
+            // Arrange
+
+            // 1. general settings
+            _project.Options.FileExistsResponse = FileExistsResponseEnum.SKIP;
+            string uniqueBasePath = GetWorkingFolder(Path.Combine(subDir, nameof(Conflict_SingleFileComesDuringExecution_Conflict)));
+
+            // 2. files
+            // create source with 2 sub folders
+            string sourcePath = PathHelper.GetFullPath(uniqueBasePath, "source", true);
+            string srcSub1 = PathHelper.GetFullPath(sourcePath, "file1", true);
+            string srcSub2 = PathHelper.GetFullPath(sourcePath, "file2", true);
+            string destPath = PathHelper.GetFullPath(uniqueBasePath, "destination", true);
+            string fileName = "01.jpg";
+            // copy the file to the 2 sub folders
+            File.Copy(_sourceFiles[0], Path.Combine(srcSub1, fileName));
+            File.Copy(_sourceFiles[0], Path.Combine(srcSub2, fileName));
+
+            AddDestination(destPath);
+
+            _activity.Source.Path = sourcePath;
+            _activity.Source.IncludeSubFolders = true;
+
+            // Act
+            await Run();
+
+            // Assert
+            Assert.IsTrue(_activity.FileMapping.SourceFiles.First().Value.Status == FILE_STATUS.COPIED, "First file wasn't copied");
+            Assert.IsTrue(_activity.FileMapping.SourceFiles.Last().Value.Status == FILE_STATUS.SKIPPED, "Second file wasn't skipped");
+
+        }
+
     }
 }

@@ -1,6 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PicPickVersionInfo>
   <Setup URI="https://github.com/tbener/PicPick/raw/picpick/PicPickWpf/Versioning/PicPickVersionInfo.xml"/>
+  <Version version="1.0.8" notifyVersion="All">
+    <Change type="Bug">Fixed a bug of conflict wasn't checked during execution</Change>
+  </Version>
   <Version version="1.0.7" notifyVersion="All">
     <Change type="Feature">Preview and results (ugly) windows added!!</Change>
     <Change type="Feature">Added the ability to stop after the analyzing stage</Change>
