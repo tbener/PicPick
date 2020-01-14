@@ -158,8 +158,8 @@
     </Compile>
     <Compile Include="Versioning\PicPickVersionInfo.cs" />
     <Compile Include="Versioning\UpdateManager.cs" />
-    <Compile Include="ViewModel\Dialogs\PreviewDialogViewModel.cs" />
     <Compile Include="ViewModel\Dialogs\MessageViewModel.cs" />
+    <Compile Include="ViewModel\Dialogs\WhatsNewViewModel.cs" />
     <Compile Include="ViewModel\UserControls\DestinationViewModel.cs" />
     <Compile Include="ViewModel\UserControls\Mapping\DataTemplateSelector.cs" />
     <Compile Include="ViewModel\UserControls\Mapping\MappingDestinationViewModel.cs" />
@@ -172,8 +172,8 @@
     <Compile Include="View\Dialogs\MessageView.xaml.cs">
       <DependentUpon>MessageView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\Dialogs\PreviewDialogView.xaml.cs">
-      <DependentUpon>PreviewDialogView.xaml</DependentUpon>
+    <Compile Include="View\Dialogs\WhatsNewView.xaml.cs">
+      <DependentUpon>WhatsNewView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\UserControls\DestinationView.xaml.cs">
       <DependentUpon>DestinationView.xaml</DependentUpon>
@@ -195,16 +195,12 @@
     <Compile Include="ViewModel\BaseViewModel.cs" />
     <Compile Include="ViewModel\Dialogs\FileExistsDialogViewModel.cs" />
     <Compile Include="ViewModel\MainWindowViewModel.cs" />
-    <Compile Include="ViewModel\ProgressWindowViewModel.cs" />
     <Compile Include="ViewModel\UserControls\ImageInfoViewModel.cs" />
     <Compile Include="View\UserControls\ActivityView.xaml.cs">
       <DependentUpon>ActivityView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\Dialogs\FileExistsDialogView.xaml.cs">
       <DependentUpon>FileExistsDialogView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="View\ProgressWindowView.xaml.cs">
-      <DependentUpon>ProgressWindowView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\UserControls\ImageInfoView.xaml.cs">
       <DependentUpon>ImageInfoView.xaml</DependentUpon>
@@ -233,7 +229,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="View\Dialogs\PreviewDialogView.xaml">
+    <Page Include="View\Dialogs\WhatsNewView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -308,10 +304,6 @@
     <Page Include="View\UserControls\PathBrowserView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="View\ProgressWindowView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\UserControls\ImageInfoView.xaml">
       <SubType>Designer</SubType>

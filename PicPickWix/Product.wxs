@@ -8,7 +8,7 @@
     <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" Manufacturer="TalTools" Comments="Manage your media files" Description="PicPick" />
     <CustomAction Id="PreventDowngrading" Error="Newer version already installed." />
     <Upgrade Id="$(var.UpgradeCode)">
-      <UpgradeVersion Property="PREVIOUSVERSIONSINSTALLED" OnlyDetect="no" RemoveFeatures="ALL" IncludeMaximum="no" IncludeMinimum="yes" Minimum="0.0.0.0" />
+      <UpgradeVersion Property="PREVIOUSVERSIONSINSTALLED" OnlyDetect="no" RemoveFeatures="ALL" IncludeMaximum="yes" IncludeMinimum="yes" Minimum="0.0.0.0" />
     </Upgrade>
     <Binary Id="InstallUtilConfig" SourceFile="Resources\Binary\InstallUtilConfig" />
     <?if $(var.Platform)=x86 ?>

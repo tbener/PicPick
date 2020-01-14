@@ -199,7 +199,6 @@ namespace PicPick.ViewModel.UserControls
                 IsRunning = false;
                 await Task.Run(() => ProgressInfo.Finished());
                 CommandManager.InvalidateRequerySuggested();
-
             }
 
         }
