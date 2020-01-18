@@ -16,11 +16,11 @@ using System.Windows.Shapes;
 namespace PicPick.View.Dialogs
 {
     /// <summary>
-    /// Interaction logic for PreviewDialogView.xaml
+    /// Interaction logic for WhatsNewView.xaml
     /// </summary>
-    public partial class PreviewDialogView : MetroWindow
+    public partial class WhatsNewView : MetroWindow
     {
-        public PreviewDialogView()
+        public WhatsNewView()
         {
             InitializeComponent();
         }

@@ -64,7 +64,7 @@ namespace PicPick.Core
                             progressInfo.Text = sourceFile.FileName;
                             progressInfo.Report();
 
-                            if (destinationFile.Exists)
+                            if (destinationFile.Exists(true))
                             {
                                 currentConflictResponse = FileExistsResponse;
                                 _log.Info($"-- File exists in destination. Response = {currentConflictResponse}");

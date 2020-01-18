@@ -12,6 +12,8 @@
         <Setter Property="ShowMinButton" Value="False"/>
         <Setter Property="ShowMaxRestoreButton" Value="False"/>
         <Setter Property="ShowInTaskbar" Value="False"/>
+        <Setter Property="MinHeight" Value="120"/>
+        <Setter Property="MinWidth" Value="300"/>
     </Style>
 
 
