@@ -95,8 +95,8 @@ namespace TalUtils
         /// <summary>
         /// Returns true if the given file path is a folder.
         /// </summary>
-        /// <param name="path">File path</param>
-        /// <returns>True if a folder</returns>
+        /// <param name="path">File or folder path</param>
+        /// <returns>True if the path is a folder</returns>
         public static bool IsFolder(string path)
         {
             try

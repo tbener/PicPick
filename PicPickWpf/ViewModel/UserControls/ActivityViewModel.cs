@@ -12,6 +12,7 @@ using PicPick.Models;
 using TalUtils;
 using PicPick.ViewModel.Dialogs;
 using PicPick.View.Dialogs;
+using System.IO;
 
 namespace PicPick.ViewModel.UserControls
 {
@@ -27,6 +28,9 @@ namespace PicPick.ViewModel.UserControls
 
         private bool _keepDestinationsAbsolute;
         private bool _isRunning;
+
+        private FileSystemWatcher _fileSystemWatcher;
+        private System.Timers.Timer _timerCheckFiles;
 
         #endregion
 
@@ -79,6 +83,8 @@ namespace PicPick.ViewModel.UserControls
 
             Activity.OnActivityStateChanged += Activity_OnActivityStateChanged;
 
+            InitSystemWatcher();
+
         }
 
 
@@ -92,10 +98,13 @@ namespace PicPick.ViewModel.UserControls
                 ctsSourceCheck?.Cancel();
 
                 // reset state
-                SourceFilesStatus = "";
+                SourceFilesStatus = "Reading...";
 
                 if (!PathHelper.Exists(Activity.Source.Path))
+                {
+                    SourceFilesStatus = "Path not found";
                     return;
+                }
 
                 // Create a new cancellations token and await a new task to count files
                 ctsSourceCheck = new CancellationTokenSource();
@@ -105,12 +114,68 @@ namespace PicPick.ViewModel.UserControls
             catch (OperationCanceledException)
             {
                 // operation was canceled
+                SourceFilesStatus = "";
             }
             catch (Exception)
             {
                 // error in counting files. most probably because folder doesn't exist.
                 SourceFilesStatus = "---";
             }
+        }
+
+        private void InitSystemWatcher()
+        {
+            try
+            {
+                if (_fileSystemWatcher == null)
+                {
+                    _fileSystemWatcher = new FileSystemWatcher();
+                    _fileSystemWatcher.Renamed += FileSystemWatcher_OnMappingChanged;
+                    _fileSystemWatcher.Created += FileSystemWatcher_OnCountChanged;
+                    _fileSystemWatcher.Deleted += FileSystemWatcher_OnCountChanged;
+
+                    _timerCheckFiles = new System.Timers.Timer(1000);
+                    _timerCheckFiles.Elapsed += TimerCheckFiles_Elapsed;
+                    _timerCheckFiles.AutoReset = false;
+                }
+                else
+                {
+                    _fileSystemWatcher.EnableRaisingEvents = false;
+                }
+
+                if (Directory.Exists(Activity.Source.Path))
+                {
+                    _fileSystemWatcher.Path = Activity.Source.Path;
+                    _fileSystemWatcher.IncludeSubdirectories = Activity.Source.IncludeSubFolders;
+                    _fileSystemWatcher.EnableRaisingEvents = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                _errorHandler.Handle(ex);
+            }
+        }
+
+        private async void TimerCheckFiles_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            await CheckSourceStatus();
+        }
+
+        private void timerCallback(object state)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void FileSystemWatcher_OnMappingChanged(object sender, RenamedEventArgs e)
+        {
+            //
+        }
+
+        private void FileSystemWatcher_OnCountChanged(object sender, FileSystemEventArgs e)
+        {
+            _timerCheckFiles.Stop();
+            SourceFilesStatus = "Changes detected...";
+            _timerCheckFiles.Start();
         }
 
         #endregion
@@ -134,7 +199,7 @@ namespace PicPick.ViewModel.UserControls
         }
 
 
-        private void Activity_OnActivityStateChanged(PicPickProjectActivity activity, ActivityStateChangedEventArgs e)
+        private async void Activity_OnActivityStateChanged(PicPickProjectActivity activity, ActivityStateChangedEventArgs e)
         {
             MappingBaseViewModel vm;
             bool dontShowAgain;
@@ -158,6 +223,7 @@ namespace PicPick.ViewModel.UserControls
                 case ACTIVITY_STATE.RUNNING:
                     break;
                 case ACTIVITY_STATE.DONE:
+                    await CheckSourceStatus();
                     if (!Properties.UserSettings.General.ShowSummaryWindow)
                         return;
                     vm = new MappingResultsViewModel(Activity);
@@ -229,6 +295,8 @@ namespace PicPick.ViewModel.UserControls
         private async void Source_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             await CheckSourceStatus();
+
+            InitSystemWatcher();
         }
 
         private void OnDestinationDelete(object sender, EventArgs e)
@@ -264,6 +332,15 @@ namespace PicPick.ViewModel.UserControls
         {
             Activity.Source.PropertyChanged -= Source_PropertyChanged;
             Activity = null;
+
+            if (_fileSystemWatcher != null)
+            {
+                _fileSystemWatcher.EnableRaisingEvents = false;
+                _fileSystemWatcher.Renamed -= FileSystemWatcher_OnMappingChanged;
+                _fileSystemWatcher.Created -= FileSystemWatcher_OnCountChanged;
+                _fileSystemWatcher.Deleted -= FileSystemWatcher_OnCountChanged;
+                _fileSystemWatcher = null;
+            }
         }
 
 

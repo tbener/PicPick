@@ -52,7 +52,7 @@
                 <MenuItem Header="Browse to log file in _Explorer..." Command="{Binding BrowseLogFileCommand}" ToolTip="{Binding LogFile}"/>
                 <MenuItem Header="Report a bug or request a feature..." Command="{Binding SendMailDialogCommand}"/>
                 <Separator/>
-                <MenuItem Header="Open PicPick page" Command="{Binding OpenPageCommand}"/>
+                <MenuItem Header="Open PicPick web page" Command="{Binding OpenPageCommand}"/>
                 <Separator/>
                 <MenuItem Header="Show warning on deleting source files" IsCheckable="True" IsChecked="{Binding GeneralUserSettings.WarnDeleteSource}"/>
                 <MenuItem Header="Show preview before running" IsCheckable="True" IsChecked="{Binding GeneralUserSettings.ShowPreviewWindow}"/>
