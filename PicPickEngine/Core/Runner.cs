@@ -159,12 +159,8 @@ namespace PicPick.Core
                 {
                     progressInfo.Text = "Cleaning up...";
                     var copiedFileList = _activity.FileMapping.SourceFiles.Values.Where(f => f.Status == FILE_STATUS.COPIED).Select(f => f.FullFileName).ToList();
-                    string backupPath = PathHelper.GetFullPath(PathHelper.AppPath("backup"), false);
-                    _log.Info($"Moving {copiedFileList.Count()} files to backup folder ({backupPath})");
-                    if (Directory.Exists(backupPath))
-                        ShellFileOperation.DeleteCompletelySilent(backupPath);
-                    Directory.CreateDirectory(backupPath);
-                    ShellFileOperation.MoveItems(copiedFileList, backupPath);
+                    ShellFileOperation.MoveItemsToRecycleBin(copiedFileList);
+                    progressInfo.Text = "";
                 }
 
             }

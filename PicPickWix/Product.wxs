@@ -3,7 +3,7 @@
   <?define UpgradeCode=A51BD2B3-7BDF-4817-BD54-01CC96137F5C?>
   <!--<?define VERSION=!(bind.assemblyVersion.PicPickWpf)?>-->
   <!--<?define VERSION="$(fileVersion.ProductVersion($(var.PicPick.TargetPath)))" ?>-->
-  <?define VERSION=1.0.7?>
+  <?define VERSION=1.0.9?>
   <Product Id="*" Name="PicPick" Language="1033" Version="$(var.VERSION)" Manufacturer="Tal Bener (TalTools)" UpgradeCode="$(var.UpgradeCode)">
     <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" Manufacturer="TalTools" Comments="Manage your media files" Description="PicPick" />
     <CustomAction Id="PreventDowngrading" Error="Newer version already installed." />
@@ -16,7 +16,7 @@
     <Binary Id="InstallUtil" SourceFile="Resources\Binary\InstallUtil" />
     <?else ?>
     <Binary Id="ADXDPCADLL" SourceFile="Resources\Binary\adxdpca64.dll" />
-    <Binary Id="InstallUtil" SourceFile="Resources\Binary\InstallUtil64" />
+    <Binary Id="InstallUtil" SourceFile="Resources\Binary\InstallUtil64" />bpk 
     <?endif ?>
     <Property Id="ARPCOMMENTS" Value="Manage your media files" />
     <Property Id="ARPCONTACT" Value="Tal Bener" />

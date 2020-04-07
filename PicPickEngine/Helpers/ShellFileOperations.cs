@@ -131,6 +131,31 @@ namespace PicPick.Helpers
 
         }
 
+        /// <summary>
+        /// (tbener 2020)
+        /// Send file(s) silently to recycle bin.  Surpress dialog, surpress errors, delete if too large.
+        /// </summary>
+        /// <param name="items">List of files to recycle</param>
+        /// <returns>True if success</returns>
+        public static bool MoveItemsToRecycleBin(List<string> items)
+        {
+            try
+            {
+                var fs = new SHFILEOPSTRUCT
+                {
+                    wFunc = FileOperationType.FO_DELETE,
+                    pFrom = string.Join("\0", items.ToArray()) + '\0' + '\0',
+                    fFlags = FileOperationFlags.FOF_ALLOWUNDO | FileOperationFlags.FOF_NOCONFIRMATION | FileOperationFlags.FOF_NOERRORUI | FileOperationFlags.FOF_SILENT
+                };
+                SHFileOperation(ref fs);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
         private static bool deleteFile(string path, FileOperationFlags flags)
         {
             try
