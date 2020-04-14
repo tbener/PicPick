@@ -19,7 +19,10 @@
 
     <Window.Resources>
         <CompositeCollection x:Key="ActivityMenu" x:Shared="False">
-            <MenuItem Header="_Add" Command="{Binding AddActivityCommand}" InputGestureText="Ctrl+N"/>
+            <MenuItem Header="_Start" Command="{Binding StartCommand}"/>
+            <MenuItem Header="_Analyze" Command="{Binding AnalyzeCommand}"/>
+            <Separator/>
+            <MenuItem Header="Add" Command="{Binding AddActivityCommand}" InputGestureText="Ctrl+N"/>
             <MenuItem Header="_Delete..." Command="{Binding DeleteActivityCommand}"/>
             <MenuItem Header="Du_plicate..." Command="{Binding DuplicateActivityCommand}"/>
             <Separator/>

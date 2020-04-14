@@ -70,7 +70,7 @@ namespace PicPick.Models
                 // Analyze
                 SetState(ACTIVITY_STATE.ANALYZING);
                 await FileMapping.ComputeAsync(progressInfo);
-                if (!SetState(ACTIVITY_STATE.ANALYZED))
+                if (!SetState(ACTIVITY_STATE.ANALYZED) || RunMode_AnalyzeOnly)
                     return;
 
                 // Run
@@ -90,9 +90,11 @@ namespace PicPick.Models
             }
             finally
             {
-                _log.Info($"Finished: {Name}\n*****************");
+                string analyzeOnlyMode = RunMode_AnalyzeOnly ? " (AnalyzeOnly mode)" : "";
+                _log.Info($"Finished{analyzeOnlyMode}: {Name}\n*****************");
                 progressInfo.Finished();
-                EventAggregatorHelper.PublishActivityEnded();
+                if (!RunMode_AnalyzeOnly)
+                    EventAggregatorHelper.PublishActivityEnded();
                 _isRunning = false;
             }
         }
@@ -163,6 +165,10 @@ namespace PicPick.Models
         [XmlIgnore]
         [IsDirtySupport.IsDirtyIgnore]
         public ACTIVITY_STATE State { get; set; }
+
+        [XmlIgnore]
+        [IsDirtySupport.IsDirtyIgnore]
+        public bool RunMode_AnalyzeOnly { get; set; }
 
 
         #region ICloneable

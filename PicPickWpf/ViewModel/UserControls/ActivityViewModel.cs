@@ -37,6 +37,7 @@ namespace PicPick.ViewModel.UserControls
         #region Commands
 
         public ICommand StartCommand { get; set; }
+        public ICommand AnalyzeCommand { get; set; }
         public ICommand StopCommand { get; set; }
         public ICommand AddDestinationCommand { get; set; }
 
@@ -48,8 +49,8 @@ namespace PicPick.ViewModel.UserControls
         {
 
             AddDestinationCommand = new RelayCommand(AddDestination);
-            //StartCommand = new RelayCommand<object>(Start, CanStart);
             StartCommand = new AsyncRelayCommand(StartAsync, CanStart);
+            AnalyzeCommand = new AsyncRelayCommand(AnalyzeAsync, CanStart);
             StopCommand = new RelayCommand(Stop, CanStop);
 
             Activity = activity;
@@ -211,7 +212,7 @@ namespace PicPick.ViewModel.UserControls
                 case ACTIVITY_STATE.ANALYZING:
                     break;
                 case ACTIVITY_STATE.ANALYZED:
-                    if (!Properties.UserSettings.General.ShowPreviewWindow)
+                    if (!Properties.UserSettings.General.ShowPreviewWindow && !Activity.RunMode_AnalyzeOnly)
                         return;
                     vm = new MappingPlanViewModel(Activity);
                     var result = MessageBoxHelper.Show(vm, "Mapping Preview", MessageBoxButton.OKCancel, out dontShowAgain);
@@ -234,6 +235,13 @@ namespace PicPick.ViewModel.UserControls
                 default:
                     break;
             }
+        }
+
+        public async Task AnalyzeAsync()
+        {
+            Activity.RunMode_AnalyzeOnly = true;
+            await StartAsync();
+            Activity.RunMode_AnalyzeOnly = false;
         }
 
         public async Task StartAsync()
@@ -270,7 +278,7 @@ namespace PicPick.ViewModel.UserControls
         }
 
 
-        private bool CanStart()
+        public bool CanStart()
         {
             return !string.IsNullOrEmpty(Activity.Source.Path) && !IsRunning;
         }

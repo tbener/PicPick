@@ -6,6 +6,7 @@
   </Version>
   <Version version="1.0.8" notifyVersion="All">
     <Change type="Bug">Fixed a bug of conflict wasn't checked during execution</Change>
+    <Change type="Feature">A watcher added for file structure changes in the Source folder</Change>
   </Version>
   <Version version="1.0.7" notifyVersion="All">
     <Change type="Feature">Preview and results (ugly) windows added!!</Change>

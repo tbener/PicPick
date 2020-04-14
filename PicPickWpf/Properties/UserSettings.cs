@@ -21,6 +21,11 @@ namespace PicPick.Properties
                 propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
             }
         }
+
+        internal void Save()
+        {
+            UserSettings.Default.Save();
+        }
     }
 
     internal partial class UserSettings
@@ -28,6 +33,7 @@ namespace PicPick.Properties
         internal UserSettings()
         {
             General.PropertyChanged += Settings_PropertyChanged;
+            AutoSave = true;
         }
 
         private void Settings_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -39,9 +45,6 @@ namespace PicPick.Properties
         internal static GeneralUserSettings General { get; } = new GeneralUserSettings();
 
         internal static bool AutoSave { get; set; }
-
-        
-
     }
 
     public class GeneralUserSettings : UserSettingsBase
@@ -75,7 +78,6 @@ namespace PicPick.Properties
                 RaisePropertyChanged(nameof(ShowSummaryWindow));
             }
         }
-
     }
 
 }

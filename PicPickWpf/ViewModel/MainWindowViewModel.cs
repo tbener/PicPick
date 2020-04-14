@@ -14,6 +14,7 @@ using log4net;
 using PicPick.ViewModel.Dialogs;
 using PicPick.View.Dialogs;
 using PicPick.ViewModel.UserControls;
+using System.Threading.Tasks;
 
 namespace PicPick.ViewModel
 {
@@ -33,6 +34,8 @@ namespace PicPick.ViewModel
         public ICommand DuplicateActivityCommand { get; set; }
         public ICommand MoveActivityDownCommand { get; set; }
         public ICommand MoveActivityUpCommand { get; set; }
+        public ICommand StartCommand { get; set; }
+        public ICommand AnalyzeCommand { get; set; }
 
         public MainWindowViewModel()
         {
@@ -47,6 +50,8 @@ namespace PicPick.ViewModel
             DuplicateActivityCommand = new RelayCommand(DuplicateActivity);
             MoveActivityDownCommand = new RelayCommand(MoveActivityDown, CanMoveActivityDown);
             MoveActivityUpCommand = new RelayCommand(MoveActivityUp, CanMoveActivityUp);
+            StartCommand = new AsyncRelayCommand(StartAsync, CanStart);
+            AnalyzeCommand = new AsyncRelayCommand(AnalyzeAsync, CanStart);
 
             LogFile = LogManager.GetRepository().GetAppenders().OfType<log4net.Appender.RollingFileAppender>().FirstOrDefault()?.File;
 
@@ -73,7 +78,6 @@ namespace PicPick.ViewModel
 
         }
 
-        
         private void InitIsDirty()
         {
             CurrentProject.GetIsDirtyInstance().OnGotDirty += (s, e) => OnGotDirty();
@@ -126,6 +130,36 @@ namespace PicPick.ViewModel
             proj.ActivityList.Add(activity);
 
             return proj;
+        }
+
+        public bool CanStart()
+        {
+            try
+            {
+                return ActivityViewModel.CanStart();
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public async Task StartAsync()
+        {
+            try
+            {
+                await ActivityViewModel.StartAsync();
+            }
+            catch { }
+        }
+
+        public async Task AnalyzeAsync()
+        {
+            try
+            {
+                await ActivityViewModel.AnalyzeAsync();
+            }
+            catch { }
         }
 
         private void DuplicateActivity()
@@ -295,7 +329,7 @@ namespace PicPick.ViewModel
                 }
             };
 
-            Status = "File exists - displaying dialog";
+            Status = "File exists - waiting for user decision...";
 
             // #### SHOW DIALOG
             fileExistsDialogView.Owner = Application.Current.MainWindow;
@@ -395,6 +429,8 @@ namespace PicPick.ViewModel
 
         public void Dispose()
         {
+            GeneralUserSettings.Save();
+
             ApplicationService.Instance.EventAggregator.GetEvent<GotDirtyEvent>().Unsubscribe(OnGotDirty);
             ApplicationService.Instance.EventAggregator.GetEvent<FileExistsAskEvent>().Unsubscribe(OnFileExistsAskEvent);
             ApplicationService.Instance.EventAggregator.GetEvent<FileErrorEvent>().Unsubscribe(OnFileErrorEvent);

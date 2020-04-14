@@ -22,7 +22,7 @@ namespace PicPick.Core
     {
         [FileExistsResponse(Description = "Ask me", Details = "Show a dialog and let me decide what to do")]
         ASK,        // Needs to be implemented by the host application
-        [FileExistsResponse(Description = "Copy and Replace", Details = "Overwrite the file in the destination folder")]
+        [FileExistsResponse(Description = "Copy and replace", Details = "Overwrite the file in the destination folder")]
         OVERWRITE,
         [FileExistsResponse(Description = "Don't copy", Details = "Skip this file (the file will remain in the source folder)")]
         SKIP,
