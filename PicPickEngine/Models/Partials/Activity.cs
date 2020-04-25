@@ -8,6 +8,7 @@ using System.Collections.ObjectModel;
 using PicPick.Core;
 using PicPick.Models.Interfaces;
 using log4net;
+using PicPick.Models.Mapping;
 
 namespace PicPick.Models
 {

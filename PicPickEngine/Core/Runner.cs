@@ -6,11 +6,11 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using PicPick.Helpers;
-using PicPick.Models;
 using TalUtils;
 using PicPick.Models.Interfaces;
 using log4net;
 using System.IO;
+using PicPick.Models.Mapping;
 
 namespace PicPick.Core
 {

@@ -1,5 +1,4 @@
 ﻿using log4net;
-using PicPick.Core;
 using PicPick.Exceptions;
 using PicPick.Helpers;
 using PicPick.Models.Interfaces;
@@ -12,7 +11,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using TalUtils;
 
-namespace PicPick.Models
+namespace PicPick.Models.Mapping
 {
     /// <summary>
     /// This class is a dictionary that 
@@ -61,7 +60,7 @@ namespace PicPick.Models
 
             Destinations = destinations;
 
-            bool needDates = destinations.Any(d => d.HasTemplate);
+            var needDates = destinations.Any(d => d.HasTemplate);
 
             //   -- The Short Way!!!
             // Create SourceFile list
@@ -77,7 +76,7 @@ namespace PicPick.Models
             progressInfo.Value = 0;
             await Task.Run(() =>
             {
-                foreach (string sourceFile in fileList)
+                foreach (var sourceFile in fileList)
                 {
                     sourceFiles.Add(new SourceFile(sourceFile, needDates));
                     progressInfo.Advance();
@@ -98,7 +97,7 @@ namespace PicPick.Models
                 {
                     foreach (SourceFile sourceFile in sourceFiles)
                     {
-                        string destinationFullPath = destination.GetFullPath(sourceFile.DateTime);
+                        var destinationFullPath = destination.GetFullPath(sourceFile.DateTime);
 
                         if (!DestinationFolders.TryGetValue(destinationFullPath, out DestinationFolder destinationFolder))
                         {
@@ -188,150 +187,5 @@ namespace PicPick.Models
             }
         }
 
-    }
-
-
-
-    public class SourceFile
-    {
-        public SourceFile(string fullPath, bool needDate)
-        {
-            FullFileName = fullPath;
-            FileName = Path.GetFileName(fullPath);
-            if (needDate)
-            {
-                if (!ImageFileInfo.TryGetFileDate(fullPath, out DateTime dateTime))
-                    throw new Exception($"Could not extract date from file: {fullPath}");
-                DateTime = dateTime;
-            }
-        }
-
-        public string FullFileName { get; set; }
-        public string FileName { get; set; }
-        public DateTime DateTime { get; set; }
-        public List<DestinationFolder> DestinationFolders { get; set; } = new List<DestinationFolder>();
-        public FILE_STATUS Status { get; private set; } = FILE_STATUS.NONE;
-
-        public bool HasError()
-        {
-            return DestinationFolders.Any(dm => dm.HasError());
-        }
-
-        /// <summary>
-        /// Source File holds a status that accumulates all its destinations.
-        /// The order is: None -> Copied -> Skipped -> Error
-        /// The highest status wins.
-        /// (e.g. if one destination copied and one skipped, the final status is Skipped).
-        /// </summary>
-        /// <param name="status"></param>
-        internal void ReportStatus(FILE_STATUS status)
-        {
-            if (Status < status)
-                Status = status;
-        }
-    }
-
-    /// <summary>
-    /// Represents a real destination path.
-    /// A single source files is expected to have a reference to this class as many as the active destinations.
-    /// </summary>
-    public class DestinationFolder
-    {
-        public DestinationFolder(string fullPath, PicPickProjectActivityDestination destination)
-        {
-            FullPath = fullPath;
-            BasedOnDestination = destination;
-            IsNew = !PathHelper.Exists(fullPath);
-            Created = false;
-        }
-
-        public void AddFile(SourceFile sourceFile)
-        {
-            sourceFile.DestinationFolders.Add(this);
-            Files.Add(new DestinationFile(sourceFile, this));
-        }
-
-        public string RelativePath
-        {
-            get
-            {
-                try
-                {
-                    return PathHelper.GetRelativePath(BasedOnDestination.Path, FullPath);
-                }
-                catch
-                {
-                    return "";
-                }
-            }
-        }
-
-        public string FullPath { get; set; }
-        public bool IsNew { get; set; }
-        public bool Created { get; set; }
-        public List<DestinationFile> Files { get; set; } = new List<DestinationFile>();
-        public PicPickProjectActivityDestination BasedOnDestination { get; set; }
-
-
-
-        public bool HasError()
-        {
-            return Files.Any(ds => ds.HasError());
-        }
-    }
-
-    /// <summary>
-    /// Represents a file in the destination folder
-    /// </summary>
-    public class DestinationFile
-    {
-        private bool? _exists;
-
-        public DestinationFile(SourceFile sourceFile, DestinationFolder destinationFolder)
-        {
-            SourceFile = sourceFile;
-            ParentFolder = destinationFolder;
-            // if the folder is new - it will return false, so we don't need to check the file.
-            // IMPORTANT: this value might change during the process (as new files might appear). This is why the property is a method with [force] parameter.
-            _exists = !(destinationFolder.IsNew || !File.Exists(Path.Combine(destinationFolder.FullPath, sourceFile.FileName)));
-        }
-
-        public string GetFullName()
-        {
-            string fileName = string.IsNullOrEmpty(NewName) ? SourceFile.FileName : NewName;
-            return Path.Combine(ParentFolder.FullPath, fileName);
-        }
-
-        public void SetStatus(FILE_STATUS status)
-        {
-            Status = status;
-            SourceFile.ReportStatus(status);
-        }
-
-        public DestinationFolder ParentFolder { get; set; }
-        public SourceFile SourceFile { get; set; }
-
-        /// <summary>
-        /// Returns whether the file exists in the destination.
-        /// The backing field is initialized in the CTOR but it might be changed during the execution.
-        /// For that purpose the forceCheck is actually checking the file.
-        /// </summary>
-        /// <param name="forceCheck">Force checking if the file actually exists in the destination.</param>
-        /// <returns>True if the file exists in the destination.</returns>
-        public bool Exists(bool forceCheck = false)
-        {
-            if (!_exists.HasValue || forceCheck)
-                _exists = File.Exists(Path.Combine(ParentFolder.FullPath, SourceFile.FileName));
-            return _exists.Value;
-        }
-        
-        public string NewName { get; set; }
-        public FILE_STATUS Status { get; private set; }
-        public Exception Exception { get; set; }
-
-        public bool HasError()
-        {
-            return Exception != null;
-        }
     }
 }

@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using PicPick.Core;
 using PicPick.Helpers;
+using PicPick.Models.Mapping;
 
 namespace PicPick.Models.Interfaces
 {

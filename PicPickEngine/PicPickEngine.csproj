@@ -69,7 +69,7 @@
     <Compile Include="IsDirtySupport\IsDirtyException.cs" />
     <Compile Include="IsDirtySupport\IsDirtyIgnoreAttribute.cs" />
     <Compile Include="IsDirtySupport\ObjectPropertiesDictionary.cs" />
-    <Compile Include="Models\ActivityFileMapping.cs" />
+    <Compile Include="Models\Mapping\ActivityFileMapping.cs" />
     <Compile Include="Models\FileInfoItem.cs" />
     <Compile Include="Helpers\ProgressInformation.cs" />
     <Compile Include="Models\Partials\Activity.cs" />
