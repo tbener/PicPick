@@ -13,6 +13,7 @@ using TalUtils;
 using PicPick.ViewModel.Dialogs;
 using PicPick.View.Dialogs;
 using System.IO;
+using PicPick.ViewModel.UserControls.Mapping;
 
 namespace PicPick.ViewModel.UserControls
 {
@@ -70,12 +71,14 @@ namespace PicPick.ViewModel.UserControls
         private void InitActivity()
         {
             // source
-            SourceViewModel = new PathBrowserViewModel(Activity.Source);
+            SourcePathViewModel = new PathBrowserViewModel(Activity.Source);
             Activity.Source.PropertyChanged += Source_PropertyChanged;
 
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
             CheckSourceStatus();
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+
+            this.SourceViewModel = new SourceViewModel(Activity);
 
             // destinations
             DestinationViewModelList = new ObservableCollection<DestinationViewModel>();
@@ -161,12 +164,7 @@ namespace PicPick.ViewModel.UserControls
         {
             await CheckSourceStatus();
         }
-
-        private void timerCallback(object state)
-        {
-            throw new NotImplementedException();
-        }
-
+        
         private void FileSystemWatcher_OnMappingChanged(object sender, RenamedEventArgs e)
         {
             //
@@ -358,14 +356,27 @@ namespace PicPick.ViewModel.UserControls
 
 
 
-        public PathBrowserViewModel SourceViewModel
+
+        public SourceViewModel SourceViewModel
         {
-            get { return (PathBrowserViewModel)GetValue(SourceViewModelProperty); }
+            get { return (SourceViewModel)GetValue(SourceViewModelProperty); }
             set { SetValue(SourceViewModelProperty, value); }
         }
 
+        // Using a DependencyProperty as the backing store for SourceViewModel.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty SourceViewModelProperty =
-            DependencyProperty.Register("SourceViewModel", typeof(PathBrowserViewModel), typeof(ActivityViewModel), new PropertyMetadata(null));
+            DependencyProperty.Register("SourceViewModel", typeof(SourceViewModel), typeof(ActivityViewModel), new PropertyMetadata(null));
+
+
+
+        public PathBrowserViewModel SourcePathViewModel
+        {
+            get { return (PathBrowserViewModel)GetValue(SourcePathViewModelProperty); }
+            set { SetValue(SourcePathViewModelProperty, value); }
+        }
+
+        public static readonly DependencyProperty SourcePathViewModelProperty =
+            DependencyProperty.Register("SourcePathViewModelProperty", typeof(PathBrowserViewModel), typeof(ActivityViewModel), new PropertyMetadata(null));
 
         public string SourceFilesStatus
         {

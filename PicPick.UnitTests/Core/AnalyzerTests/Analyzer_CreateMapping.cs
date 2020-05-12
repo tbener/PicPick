@@ -4,6 +4,7 @@ using PicPick.Exceptions;
 using PicPick.Helpers;
 using PicPick.Models;
 using PicPick.Models.Interfaces;
+using PicPick.Models.Mapping;
 using System;
 using System.IO;
 using System.Threading;

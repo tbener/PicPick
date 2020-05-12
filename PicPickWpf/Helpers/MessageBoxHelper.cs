@@ -1,6 +1,6 @@
 ﻿using PicPick.View.Dialogs;
 using PicPick.ViewModel.Dialogs;
-using PicPick.ViewModel.UserControls;
+using PicPick.ViewModel.UserControls.Mapping;
 using System;
 using System.Windows;
 

@@ -72,6 +72,9 @@
     <Compile Include="Models\Mapping\ActivityFileMapping.cs" />
     <Compile Include="Models\FileInfoItem.cs" />
     <Compile Include="Helpers\ProgressInformation.cs" />
+    <Compile Include="Models\Mapping\DestinationFile.cs" />
+    <Compile Include="Models\Mapping\DestinationFolder.cs" />
+    <Compile Include="Models\Mapping\SourceFile.cs" />
     <Compile Include="Models\Partials\Activity.cs" />
     <Compile Include="IsDirtySupport\IIsDirtySupport.cs" />
     <Compile Include="IsDirtySupport\IsDirtySupport.cs" />

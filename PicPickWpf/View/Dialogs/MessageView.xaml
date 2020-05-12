@@ -4,7 +4,7 @@
                    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                    xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
-                   xmlns:viewmodels="clr-namespace:PicPick.ViewModel.UserControls"
+                   xmlns:viewmodels="clr-namespace:PicPick.ViewModel.UserControls.Mapping"
                    xmlns:views="clr-namespace:PicPick.View.UserControls"
                    mc:Ignorable="d"
                    ResizeMode="CanResizeWithGrip"

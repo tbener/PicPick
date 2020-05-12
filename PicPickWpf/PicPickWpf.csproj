@@ -161,6 +161,8 @@
     <Compile Include="ViewModel\Dialogs\MessageViewModel.cs" />
     <Compile Include="ViewModel\Dialogs\WhatsNewViewModel.cs" />
     <Compile Include="ViewModel\UserControls\DestinationViewModel.cs" />
+    <Compile Include="ViewModel\UserControls\Mapping\MappingBaseViewModel.cs" />
+    <Compile Include="ViewModel\UserControls\MappingResultsViewModel.cs" />
     <Compile Include="ViewModel\UserControls\Mapping\DataTemplateSelector.cs" />
     <Compile Include="ViewModel\UserControls\Mapping\MappingDestinationViewModel.cs" />
     <Compile Include="ViewModel\UserControls\Mapping\MappingFileViewModel.cs" />
@@ -169,6 +171,7 @@
     <Compile Include="ViewModel\UserControls\Mapping\MappingStatusViewModel.cs" />
     <Compile Include="ViewModel\UserControls\PathBrowserViewModel.cs" />
     <Compile Include="ViewModel\UserControls\ProgressViewModel.cs" />
+    <Compile Include="ViewModel\UserControls\SourceViewModel.cs" />
     <Compile Include="View\Dialogs\MessageView.xaml.cs">
       <DependentUpon>MessageView.xaml</DependentUpon>
     </Compile>
@@ -204,6 +207,9 @@
     </Compile>
     <Compile Include="View\UserControls\ImageInfoView.xaml.cs">
       <DependentUpon>ImageInfoView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\UserControls\SourceView.xaml.cs">
+      <DependentUpon>SourceView.xaml</DependentUpon>
     </Compile>
     <Page Include="ResourceDictionary\Controls\General.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -306,6 +312,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="View\UserControls\ImageInfoView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\UserControls\SourceView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

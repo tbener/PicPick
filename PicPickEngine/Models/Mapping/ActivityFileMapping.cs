@@ -86,7 +86,7 @@ namespace PicPick.Models.Mapping
 
             // ####
 
-            // Add to dictionary
+            // Add Source Files to dictionary
             sourceFiles.ForEach(sf => SourceFiles.Add(sf.FullFileName, sf));
 
             // the following loop should be very quick

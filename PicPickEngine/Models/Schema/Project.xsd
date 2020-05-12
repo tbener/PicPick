@@ -14,6 +14,9 @@
                         <xsd:attribute name="Path" type="xsd:string" default="" />
                         <xsd:attribute name="Filter" type="xsd:string" default="*.jpg" />
                         <xsd:attribute name="IncludeSubFolders" type="xsd:boolean" default="true" />
+                        <xsd:attribute name="FromDate" type="xsd:date" default="0001-01-01" />
+                        <xsd:attribute name="ToDate" type="xsd:date" default="9999-12-31" />
+                        <xsd:attribute name="OnlyNewFiles" type="xsd:boolean" default="false" />
                       </xsd:complexType>
                     </xsd:element>
                     <xsd:element maxOccurs="unbounded" name="Destination">
