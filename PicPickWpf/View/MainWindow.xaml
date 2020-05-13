@@ -14,7 +14,7 @@
     ResizeMode="CanResizeWithGrip"
     SaveWindowPosition="True"
     Style="{StaticResource BaseWindowStyle}"
-    Height="700" Width="900" 
+    Height="800" Width="1400" 
     Icon="/PicPickUI;component/Resources/picpick.ico">
 
     <Window.Resources>
@@ -85,8 +85,8 @@
         </StatusBar>
         <Grid Margin="5">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="3*"/>
-                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition />
+                <ColumnDefinition Width="280"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>

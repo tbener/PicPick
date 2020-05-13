@@ -160,6 +160,7 @@
     <Compile Include="Versioning\UpdateManager.cs" />
     <Compile Include="ViewModel\Dialogs\MessageViewModel.cs" />
     <Compile Include="ViewModel\Dialogs\WhatsNewViewModel.cs" />
+    <Compile Include="ViewModel\UserControls\DestinationListViewModel.cs" />
     <Compile Include="ViewModel\UserControls\DestinationViewModel.cs" />
     <Compile Include="ViewModel\UserControls\Mapping\MappingBaseViewModel.cs" />
     <Compile Include="ViewModel\UserControls\MappingResultsViewModel.cs" />
@@ -177,6 +178,9 @@
     </Compile>
     <Compile Include="View\Dialogs\WhatsNewView.xaml.cs">
       <DependentUpon>WhatsNewView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\UserControls\DestinationListView.xaml.cs">
+      <DependentUpon>DestinationListView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\UserControls\DestinationView.xaml.cs">
       <DependentUpon>DestinationView.xaml</DependentUpon>
@@ -236,6 +240,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\Dialogs\WhatsNewView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\UserControls\DestinationListView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

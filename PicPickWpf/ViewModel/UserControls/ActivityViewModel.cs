@@ -24,15 +24,12 @@ namespace PicPick.ViewModel.UserControls
         //CancellationTokenSource cts;
 
         //PicPickProjectActivity _activity;
-        string _sourceFilesStatus;
-        CancellationTokenSource ctsSourceCheck;
+        //string _sourceFilesStatus;
+        //CancellationTokenSource ctsSourceCheck;
 
-        private bool _keepDestinationsAbsolute;
         private bool _isRunning;
 
-        private FileSystemWatcher _fileSystemWatcher;
-        private System.Timers.Timer _timerCheckFiles;
-
+        
         #endregion
 
         #region Commands
@@ -40,7 +37,7 @@ namespace PicPick.ViewModel.UserControls
         public ICommand StartCommand { get; set; }
         public ICommand AnalyzeCommand { get; set; }
         public ICommand StopCommand { get; set; }
-        public ICommand AddDestinationCommand { get; set; }
+        //public ICommand AddDestinationCommand { get; set; }
 
         #endregion
 
@@ -49,7 +46,7 @@ namespace PicPick.ViewModel.UserControls
         public ActivityViewModel(PicPickProjectActivity activity)
         {
 
-            AddDestinationCommand = new RelayCommand(AddDestination);
+            //AddDestinationCommand = new RelayCommand(AddDestination);
             StartCommand = new AsyncRelayCommand(StartAsync, CanStart);
             AnalyzeCommand = new AsyncRelayCommand(AnalyzeAsync, CanStart);
             StopCommand = new RelayCommand(Stop, CanStop);
@@ -70,112 +67,18 @@ namespace PicPick.ViewModel.UserControls
         /// </summary>
         private void InitActivity()
         {
-            // source
-            SourcePathViewModel = new PathBrowserViewModel(Activity.Source);
-            Activity.Source.PropertyChanged += Source_PropertyChanged;
-
-#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-            CheckSourceStatus();
-#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-
-            this.SourceViewModel = new SourceViewModel(Activity);
-
-            // destinations
-            DestinationViewModelList = new ObservableCollection<DestinationViewModel>();
-            foreach (PicPickProjectActivityDestination dest in Activity.DestinationList)
-                AddDestinationViewModel(dest);
+            
+            SourceViewModel = new SourceViewModel(Activity);
+            DestinationListViewModel = new DestinationListViewModel(Activity);
 
             Activity.OnActivityStateChanged += Activity_OnActivityStateChanged;
 
-            InitSystemWatcher();
-
         }
 
 
 
-        private async Task CheckSourceStatus()
-        {
+       
 
-            try
-            {
-                // Cancel previous operations
-                ctsSourceCheck?.Cancel();
-
-                // reset state
-                SourceFilesStatus = "Reading...";
-
-                if (!PathHelper.Exists(Activity.Source.Path))
-                {
-                    SourceFilesStatus = "Path not found";
-                    return;
-                }
-
-                // Create a new cancellations token and await a new task to count files
-                ctsSourceCheck = new CancellationTokenSource();
-                int count = await Task.Run(() => Activity.Source.FileList.Count);
-                SourceFilesStatus = $"{count} files found";
-            }
-            catch (OperationCanceledException)
-            {
-                // operation was canceled
-                SourceFilesStatus = "";
-            }
-            catch (Exception)
-            {
-                // error in counting files. most probably because folder doesn't exist.
-                SourceFilesStatus = "---";
-            }
-        }
-
-        private void InitSystemWatcher()
-        {
-            try
-            {
-                if (_fileSystemWatcher == null)
-                {
-                    _fileSystemWatcher = new FileSystemWatcher();
-                    _fileSystemWatcher.Renamed += FileSystemWatcher_OnMappingChanged;
-                    _fileSystemWatcher.Created += FileSystemWatcher_OnCountChanged;
-                    _fileSystemWatcher.Deleted += FileSystemWatcher_OnCountChanged;
-
-                    _timerCheckFiles = new System.Timers.Timer(1000);
-                    _timerCheckFiles.Elapsed += TimerCheckFiles_Elapsed;
-                    _timerCheckFiles.AutoReset = false;
-                }
-                else
-                {
-                    _fileSystemWatcher.EnableRaisingEvents = false;
-                }
-
-                if (Directory.Exists(Activity.Source.Path))
-                {
-                    _fileSystemWatcher.Path = Activity.Source.Path;
-                    _fileSystemWatcher.IncludeSubdirectories = Activity.Source.IncludeSubFolders;
-                    _fileSystemWatcher.EnableRaisingEvents = true;
-                }
-            }
-            catch (Exception ex)
-            {
-                _errorHandler.Handle(ex);
-            }
-        }
-
-        private async void TimerCheckFiles_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
-        {
-            await CheckSourceStatus();
-        }
-        
-        private void FileSystemWatcher_OnMappingChanged(object sender, RenamedEventArgs e)
-        {
-            //
-        }
-
-        private void FileSystemWatcher_OnCountChanged(object sender, FileSystemEventArgs e)
-        {
-            _timerCheckFiles.Stop();
-            SourceFilesStatus = "Changes detected...";
-            _timerCheckFiles.Start();
-        }
 
         #endregion
 
@@ -222,7 +125,6 @@ namespace PicPick.ViewModel.UserControls
                 case ACTIVITY_STATE.RUNNING:
                     break;
                 case ACTIVITY_STATE.DONE:
-                    await CheckSourceStatus();
                     if (!Properties.UserSettings.General.ShowSummaryWindow)
                         return;
                     vm = new MappingResultsViewModel(Activity);
@@ -298,61 +200,45 @@ namespace PicPick.ViewModel.UserControls
 
         #endregion
 
-        private async void Source_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            await CheckSourceStatus();
 
-            InitSystemWatcher();
-        }
+        //private void OnDestinationDelete(object sender, EventArgs e)
+        //{
+        //    DestinationViewModel vm = sender as DestinationViewModel;
+        //    if (vm == null) return;
+        //    if (vm.Destination != null)
+        //        Activity.DestinationList.Remove(vm.Destination);
+        //    DestinationViewModelList.Remove(vm);
+        //    if (Activity.DestinationList.Count == 1)
+        //        Activity.DestinationList.First().Active = true;
+        //}
 
-        private void OnDestinationDelete(object sender, EventArgs e)
-        {
-            DestinationViewModel vm = sender as DestinationViewModel;
-            if (vm == null) return;
-            if (vm.Destination != null)
-                Activity.DestinationList.Remove(vm.Destination);
-            DestinationViewModelList.Remove(vm);
-            if (Activity.DestinationList.Count == 1)
-                Activity.DestinationList.First().Active = true;
-        }
+        //private void AddDestination()
+        //{
+        //    PicPickProjectActivityDestination dest = new PicPickProjectActivityDestination()
+        //    {
+        //        Path = "",
+        //        Template = "dd-yy"
+        //    };
+        //    Activity.DestinationList.Add(dest);
+        //    AddDestinationViewModel(dest);
+        //}
 
-        private void AddDestination()
-        {
-            PicPickProjectActivityDestination dest = new PicPickProjectActivityDestination()
-            {
-                Path = "",
-                Template = "dd-yy"
-            };
-            Activity.DestinationList.Add(dest);
-            AddDestinationViewModel(dest);
-        }
-
-        private void AddDestinationViewModel(PicPickProjectActivityDestination dest)
-        {
-            var vm = new DestinationViewModel(dest, Activity.Source);
-            vm.OnDeleteClicked += OnDestinationDelete;
-            DestinationViewModelList.Add(vm);
-        }
+        //private void AddDestinationViewModel(PicPickProjectActivityDestination dest)
+        //{
+        //    var vm = new DestinationViewModel(dest, Activity.Source);
+        //    vm.OnDeleteClicked += OnDestinationDelete;
+        //    DestinationViewModelList.Add(vm);
+        //}
 
         public void Dispose()
         {
-            Activity.Source.PropertyChanged -= Source_PropertyChanged;
             Activity = null;
-
-            if (_fileSystemWatcher != null)
-            {
-                _fileSystemWatcher.EnableRaisingEvents = false;
-                _fileSystemWatcher.Renamed -= FileSystemWatcher_OnMappingChanged;
-                _fileSystemWatcher.Created -= FileSystemWatcher_OnCountChanged;
-                _fileSystemWatcher.Deleted -= FileSystemWatcher_OnCountChanged;
-                _fileSystemWatcher = null;
-            }
         }
 
 
         public PicPickProjectActivity Activity { get; set; }
 
-        public ObservableCollection<DestinationViewModel> DestinationViewModelList { get; set; }
+        //public ObservableCollection<DestinationViewModel> DestinationViewModelList { get; set; }
 
 
 
@@ -368,40 +254,19 @@ namespace PicPick.ViewModel.UserControls
             DependencyProperty.Register("SourceViewModel", typeof(SourceViewModel), typeof(ActivityViewModel), new PropertyMetadata(null));
 
 
-
-        public PathBrowserViewModel SourcePathViewModel
+        public DestinationListViewModel DestinationListViewModel
         {
-            get { return (PathBrowserViewModel)GetValue(SourcePathViewModelProperty); }
-            set { SetValue(SourcePathViewModelProperty, value); }
+            get { return (DestinationListViewModel)GetValue(DestinationListViewModelProperty); }
+            set { SetValue(DestinationListViewModelProperty, value); }
         }
 
-        public static readonly DependencyProperty SourcePathViewModelProperty =
-            DependencyProperty.Register("SourcePathViewModelProperty", typeof(PathBrowserViewModel), typeof(ActivityViewModel), new PropertyMetadata(null));
-
-        public string SourceFilesStatus
-        {
-            get => _sourceFilesStatus;
-            set
-            {
-                _sourceFilesStatus = value;
-                OnPropertyChanged("SourceFilesStatus");
-            }
-        }
+        // Using a DependencyProperty as the backing store for DestinationListViewModel.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty DestinationListViewModelProperty =
+            DependencyProperty.Register("DestinationListViewModel", typeof(DestinationListViewModel), typeof(ActivityViewModel), new PropertyMetadata(null));
 
 
 
-        public bool KeepDestinationsAbsolute
-        {
-            get { return DestinationViewModelList.FirstOrDefault().Destination.KeepAbsolute; }
-            set
-            {
-                _keepDestinationsAbsolute = value;
-                foreach (DestinationViewModel destvm in DestinationViewModelList)
-                {
-                    destvm.Destination.KeepAbsolute = _keepDestinationsAbsolute;
-                }
-            }
-        }
+
 
         public bool IsRunning
         {

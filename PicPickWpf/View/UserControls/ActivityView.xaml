@@ -5,139 +5,28 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:uc="clr-namespace:PicPick.View.UserControls"
              mc:Ignorable="d" 
-             d:DesignHeight="550" d:DesignWidth="466.525">
+             d:DesignHeight="550" d:DesignWidth="743.525">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition x:Name="title" Height="Auto"/>
-            <RowDefinition x:Name="source" Height="Auto"/>
-            <RowDefinition x:Name="destinations" Height="*"/>
-            <RowDefinition x:Name="more_properties" Height="Auto"/>
-            <RowDefinition x:Name="buttons" Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition x:Name="source"/>
+            <ColumnDefinition x:Name="destinations"/>
+        </Grid.ColumnDefinitions>
 
+        <Border BorderThickness="1" CornerRadius="4" BorderBrush="LightGray" Padding="7" Margin="7">
+            <uc:SourceView DataContext="{Binding SourceViewModel}"/>
+        </Border>
+        <GridSplitter Grid.RowSpan="2" Background="LightGray" Margin="0,0,-2,0" Width="4"/>
 
+        <Border Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" BorderThickness="1" CornerRadius="4" BorderBrush="LightGray" Padding="7" Margin="7">
+            <uc:DestinationListView DataContext="{Binding DestinationListViewModel}"/>
+        </Border>
 
-        <!--<TextBox metro:TextBoxHelper.Watermark="Type Activity Name" x:Name="ActivityName" 
-                 BorderThickness="0" Grid.Row="0" Text="{Binding Activity.Name, UpdateSourceTrigger=PropertyChanged}" 
-                 FontSize="16" FontWeight="Bold" Margin="0, 0, 0, 10"/>-->
-
-        <uc:SourceView DataContext="{Binding SourceViewModel}" Grid.Row="1" Height="300"/>
-
-        <DockPanel Grid.Row="2" LastChildFill="True" Margin="0 16 0 8">
-            <DockPanel DockPanel.Dock="Top" LastChildFill="False">
-                <TextBlock Text="Copy to" DockPanel.Dock="Left" Style="{StaticResource CaptionTextBlock}"/>
-                <CheckBox DockPanel.Dock="Right" Content="Keep paths absolute" IsChecked="{Binding KeepDestinationsAbsolute}" ToolTip="If not absolute, you can set a relative path to source" />
-            </DockPanel>
-            <TextBlock DockPanel.Dock="Bottom" HorizontalAlignment="Left" MinHeight="24" VerticalAlignment="Stretch">
-                <Hyperlink Command="{Binding AddDestinationCommand}">
-                    <TextBlock Text="Add another destination" />
-                </Hyperlink>
-            </TextBlock>
-            <Grid x:Name="DestinationPreview" Visibility="Collapsed" HorizontalAlignment="Stretch" DockPanel.Dock="Top">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="5"/>
-                        <RowDefinition Height="26"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="28"/>
-                        <ColumnDefinition Width="5*"/>
-                        <ColumnDefinition Width="3*"/>
-                        <ColumnDefinition Width="70"/>
-                    </Grid.ColumnDefinitions>
-
-                    <!-- Row 1-->
-                    <uc:PathBrowserView Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="1" Grid.RowSpan="2" DataContext="{Binding PathViewModel}" Margin="0,0,8,0"/>
-                    <TextBlock Text="\" HorizontalAlignment="Right" Grid.Row="1" Grid.Column="1" Margin="0 3 1 0"/>
-
-                    <TextBox Grid.Column="2" Grid.Row="1" Grid.ColumnSpan="2" Text="{Binding Destination.Template, UpdateSourceTrigger=PropertyChanged}" ToolTip="{Binding TemplateToolTip}" />
-
-                    <!-- Row 2 -->
-                    <!--<TextBlock Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="2" Text="{Binding PathViewModel.Path}" Foreground="Gray" ToolTip="Sample result for today's date"/>-->
-                    <TextBlock Grid.Column="2" Grid.Row="2" Text="{Binding TemplatePreview, FallbackValue=[preview]}" Foreground="Gray" ToolTip="Sample result for today's date"/>
-                </Grid>
-            </Grid>
-            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Hidden">
-
-                <ItemsControl ItemsSource="{Binding DestinationViewModelList}">
-
-                    <ItemsControl.Style >
-                        <Style TargetType="ItemsControl">
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding RelativeSource={x:Static RelativeSource.Self}, Path=Items.Count}" Value="1">
-                                    <Setter Property="ItemTemplate">
-                                        <Setter.Value>
-                                            <DataTemplate>
-                                                <Grid>
-                                                    <Grid.RowDefinitions>
-                                                        <RowDefinition Height="26"/>
-                                                        <RowDefinition Height="*"/>
-                                                    </Grid.RowDefinitions>
-                                                    <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="28"/>
-                                                        <ColumnDefinition Width="5*"/>
-                                                        <ColumnDefinition Width="3*"/>
-                                                        <ColumnDefinition Width="70"/>
-                                                    </Grid.ColumnDefinitions>
-
-                                                    <!-- Row 1-->
-                                                    <uc:PathBrowserView Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="0" Grid.RowSpan="2" DataContext="{Binding PathViewModel}" Margin="0,0,8,0"/>
-                                                    <TextBlock Text="\" HorizontalAlignment="Right" Grid.Row="0" Grid.Column="1" Margin="0 3 1 0"/>
-                                                    <TextBox Grid.Column="2" Grid.Row="0" Grid.ColumnSpan="2" Text="{Binding Destination.Template, UpdateSourceTrigger=PropertyChanged}" ToolTip="{Binding TemplateToolTip}" />
-
-                                                    <!-- Row 2 -->
-                                                    <TextBlock Grid.Column="2" Grid.Row="1" Text="{Binding TemplatePreview, FallbackValue=[preview]}" Foreground="Gray" ToolTip="Sample result for today's date"/>
-                                                </Grid>
-                                            </DataTemplate>
-                                        </Setter.Value>
-                                    </Setter>
-                                </DataTrigger>
-                            </Style.Triggers>
-                            <Setter Property="ItemTemplate">
-                                <Setter.Value>
-                                    <DataTemplate>
-
-                                        <Grid>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition Height="26"/>
-                                                <RowDefinition Height="*"/>
-                                                <RowDefinition Height="10"/>
-                                            </Grid.RowDefinitions>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="28"/>
-                                                <ColumnDefinition Width="5*"/>
-                                                <ColumnDefinition Width="3*"/>
-                                                <ColumnDefinition Width="70"/>
-                                            </Grid.ColumnDefinitions>
-
-                                            <CheckBox Grid.Column="0" Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Center" IsChecked="{Binding Destination.Active}" ToolTip="If not checked, files will not be copied to this destination"/>
-
-                                            <uc:PathBrowserView Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" DataContext="{Binding PathViewModel}" Margin="0,0,8,0"/>
-                                            <TextBlock Text="\" HorizontalAlignment="Right" Grid.Row="0" Grid.Column="1" Margin="0 3 1 0"/>
-                                            <TextBox Grid.Column="2" Grid.Row="0" Text="{Binding Destination.Template, UpdateSourceTrigger=PropertyChanged}" ToolTip="{Binding TemplateToolTip}" />
-                                            <Button Grid.Column="3" Grid.Row="0" Content="Delete" Width="46" Height="22" VerticalAlignment="Center" Command="{Binding DeleteCommand}"/>
-
-                                            <!-- Row 2 -->
-                                            <TextBlock Grid.Column="2" Grid.Row="1" Text="{Binding TemplatePreview, FallbackValue=[preview]}" Foreground="Gray" ToolTip="Sample result for today's date"/>
-                                        </Grid>
-
-                                        <!--<uc:DestinationView Margin="0,6"/>-->
-                                    </DataTemplate>
-
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-                    </ItemsControl.Style>
-
-                </ItemsControl>
-            </ScrollViewer>
-
-
-        </DockPanel>
-
-        <Border Grid.Row="3" BorderBrush="Black" BorderThickness="0,0,0,0" Margin="0,5" Padding="5">
-            <CheckBox IsChecked="{Binding Activity.DeleteSourceFiles}" Margin="0,4">Delete source files</CheckBox>
+        <Border Grid.Row="1" Grid.Column="0" BorderBrush="Black" BorderThickness="0" Margin="7" Padding="7">
+            <CheckBox IsChecked="{Binding Activity.DeleteSourceFiles}" VerticalAlignment="Top">Delete source files</CheckBox>
         </Border>
 
     </Grid>

@@ -28,9 +28,12 @@ namespace PicPick.ViewModel.UserControls
         public SourceViewModel(PicPickProjectActivity activity)
         {
             Source = activity.Source;
+            activity.OnActivityStateChanged += Activity_OnActivityStateChanged;
 
             Init();
         }
+
+        
 
         #endregion
 
@@ -45,12 +48,19 @@ namespace PicPick.ViewModel.UserControls
             PathViewModel = new PathBrowserViewModel(Source);
             Source.PropertyChanged += Source_PropertyChanged;
 
+            // todo: make this async
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
             CheckSourceStatus();
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
 
             InitSystemWatcher();
 
+        }
+
+        private async void Activity_OnActivityStateChanged(PicPickProjectActivity activity, Core.ActivityStateChangedEventArgs e)
+        {
+            if (activity.State == ACTIVITY_STATE.DONE)
+                await CheckSourceStatus();
         }
 
         private async Task CheckSourceStatus()
@@ -187,7 +197,7 @@ namespace PicPick.ViewModel.UserControls
         }
 
         public static readonly DependencyProperty PathViewModelProperty =
-            DependencyProperty.Register("PathViewModel", typeof(PathBrowserViewModel), typeof(ActivityViewModel), new PropertyMetadata(null));
+            DependencyProperty.Register("PathViewModel", typeof(PathBrowserViewModel), typeof(SourceViewModel), new PropertyMetadata(null));
 
         #endregion
     }
