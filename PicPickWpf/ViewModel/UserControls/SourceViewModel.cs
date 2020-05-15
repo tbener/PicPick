@@ -20,6 +20,8 @@ namespace PicPick.ViewModel.UserControls
 
         private FileSystemWatcher _fileSystemWatcher;
         private System.Timers.Timer _timerCheckFiles;
+        private bool _useDateFrom;
+        private DateTime _dateFrom;
 
         #endregion
 
@@ -33,7 +35,7 @@ namespace PicPick.ViewModel.UserControls
             Init();
         }
 
-        
+
 
         #endregion
 
@@ -198,6 +200,71 @@ namespace PicPick.ViewModel.UserControls
 
         public static readonly DependencyProperty PathViewModelProperty =
             DependencyProperty.Register("PathViewModel", typeof(PathBrowserViewModel), typeof(SourceViewModel), new PropertyMetadata(null));
+
+
+        private DateComplex SetDate(DateComplex dateProp, DateTime date, bool use)
+        {
+            if (dateProp == null)
+                dateProp = new DateComplex();
+
+            dateProp.Use = use;
+            dateProp.Date = date;
+
+            return dateProp;
+        }
+
+        public bool UseFromDate
+        {
+            get
+            {
+                return Source.FromDate.Use;
+            }
+            set
+            {
+                Source.FromDate = SetDate(Source.FromDate, DateFrom, value);
+                OnPropertyChanged("DateFrom");
+            }
+        }
+
+
+        public DateTime DateFrom
+        {
+            get
+            {
+                return Source.FromDate == null ? DateTime.Today.AddMonths(-1) : Source.FromDate.Date;
+            }
+            set
+            {
+                Source.FromDate = SetDate(Source.FromDate, value, true);
+                OnPropertyChanged("UseFromDate");
+            }
+        }
+
+        public bool UseToDate
+        {
+            get
+            {
+                return Source.ToDate.Use;
+            }
+            set
+            {
+                Source.ToDate = SetDate(Source.ToDate, DateTo, value);
+                OnPropertyChanged("DateTo");
+            }
+        }
+
+        public DateTime DateTo
+        {
+            get
+            {
+                return Source.ToDate == null ? DateTime.Today : Source.ToDate.Date;
+            }
+            set
+            {
+                Source.ToDate = SetDate(Source.ToDate, value, true);
+                OnPropertyChanged("UseToDate");
+            }
+        }
 
         #endregion
     }

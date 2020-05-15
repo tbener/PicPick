@@ -63,6 +63,8 @@ namespace PicPick.Models
             }
         }
 
+
+        [XmlIgnore]
         public bool EnableAutoFileListReset
         {
             get => _enableAutoFileListReset;

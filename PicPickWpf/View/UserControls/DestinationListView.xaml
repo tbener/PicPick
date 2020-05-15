@@ -25,7 +25,9 @@
                         <Setter Property="ItemTemplate">
                             <Setter.Value>
                                 <DataTemplate>
-                                    <uc:DestinationView />
+                                    <Border BorderThickness="0,1,0,0" BorderBrush="LightGray" Margin="0,5,0,10" Padding="5,10,5,0">
+                                        <uc:DestinationView />
+                                    </Border>
                                 </DataTemplate>
                             </Setter.Value>
                         </Setter>

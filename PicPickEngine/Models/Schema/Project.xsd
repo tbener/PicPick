@@ -1,5 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <xs:schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xs="http://www.w3.org/2001/XMLSchema" attributeFormDefault="unqualified" elementFormDefault="qualified">
+  <xsd:complexType name="DateComplex">
+    <xsd:sequence>
+      <xsd:element name="Date" type="xs:date" />
+      <xsd:element name="Use" type="xs:boolean" />
+    </xsd:sequence>
+  </xsd:complexType>
   <xsd:element name="PicPickProject">
     <xsd:complexType>
       <xsd:sequence>
@@ -11,11 +17,13 @@
                   <xsd:sequence>
                     <xsd:element name="Source">
                       <xsd:complexType>
+                        <xsd:sequence>
+                          <xsd:element name ="FromDate" type="DateComplex"/>
+                          <xsd:element name ="ToDate" type="DateComplex"/>
+                        </xsd:sequence>
                         <xsd:attribute name="Path" type="xsd:string" default="" />
                         <xsd:attribute name="Filter" type="xsd:string" default="*.jpg" />
                         <xsd:attribute name="IncludeSubFolders" type="xsd:boolean" default="true" />
-                        <xsd:attribute name="FromDate" type="xsd:date" default="0001-01-01" />
-                        <xsd:attribute name="ToDate" type="xsd:date" default="9999-12-31" />
                         <xsd:attribute name="OnlyNewFiles" type="xsd:boolean" default="false" />
                       </xsd:complexType>
                     </xsd:element>

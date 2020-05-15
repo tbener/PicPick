@@ -30,15 +30,15 @@
             </StackPanel>
 
             <CheckBox IsChecked="{Binding Source.IncludeSubFolders}" Margin="0,4">Include sub folders</CheckBox>
-            <CheckBox IsChecked="{Binding Source.IncludeSubFolders}" Margin="0,4" ToolTip="Read only files that don't exist in any of the destinations in the first place">Only new files</CheckBox>
+            <CheckBox IsChecked="{Binding Source.OnlyNewFiles}" Margin="0,4" ToolTip="Read only files that don't exist in any of the destinations in the first place">Only new files</CheckBox>
 
             <StackPanel Orientation="Horizontal">
-                <CheckBox Width="93">From date:</CheckBox>
-                <DatePicker IsTodayHighlighted="True" Width="200"/>
+                <CheckBox Width="93" IsChecked="{Binding UseFromDate}">From date:</CheckBox>
+                <DatePicker IsTodayHighlighted="True" Width="200" SelectedDate="{Binding DateFrom}"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" Margin="0, 5">
-                <CheckBox Width="93">To date:</CheckBox>
-                <DatePicker IsTodayHighlighted="True" Width="200"/>
+                <CheckBox Width="93" IsChecked="{Binding UseToDate}">To date:</CheckBox>
+                <DatePicker IsTodayHighlighted="True" Width="200" SelectedDate="{Binding DateTo}"/>
             </StackPanel>
         </StackPanel>
 

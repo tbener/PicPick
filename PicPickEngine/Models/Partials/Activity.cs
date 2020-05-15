@@ -45,6 +45,10 @@ namespace PicPick.Models
         {
             Name = name;
             Source = new PicPickProjectActivitySource();
+            Source.FromDate = new DateComplex();
+            Source.FromDate.Date = DateTime.Today.AddDays(-30);
+            Source.ToDate = new DateComplex();
+            Source.ToDate.Date = DateTime.Today;
         }
 
         private bool SetState(ACTIVITY_STATE newState)
