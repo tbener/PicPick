@@ -17,7 +17,11 @@ namespace PicPick.Models.Mapping
             ParentFolder = destinationFolder;
             // if the folder is new - it will return false, so we don't need to check the file.
             // IMPORTANT: this value might change during the process (as new files might appear). This is why the property is a method with [force] parameter.
-            _exists = !(destinationFolder.IsNew || !File.Exists(Path.Combine(destinationFolder.FullPath, sourceFile.FileName)));
+            if (!(destinationFolder.IsNew || !File.Exists(Path.Combine(destinationFolder.FullPath, sourceFile.FileName))))
+            {
+                _exists = true;
+                sourceFile.ExistsInDestination = true;
+            }
         }
 
         public string GetFullName()

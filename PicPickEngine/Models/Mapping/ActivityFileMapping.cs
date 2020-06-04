@@ -26,7 +26,9 @@ namespace PicPick.Models.Mapping
         private static readonly ILog _log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         private static readonly ErrorHandler _errorHandler = new ErrorHandler(_log);
 
-        public Dictionary<string, SourceFile> SourceFiles { get; set; } = new Dictionary<string, SourceFile>();
+        private Dictionary<string, SourceFile> _sourceFiles { get; set; } = new Dictionary<string, SourceFile>();
+        private Dictionary<string, SourceFile> _filteredSourceFiles { get; set; } = new Dictionary<string, SourceFile>();
+
         public Dictionary<string, DestinationFolder> DestinationFolders { get; set; } = new Dictionary<string, DestinationFolder>();
         public List<PicPickProjectActivityDestination> Destinations;
         public IActivity Activity { get; set; }
@@ -39,7 +41,7 @@ namespace PicPick.Models.Mapping
 
         internal void Clear()
         {
-            SourceFiles.Clear();
+            _sourceFiles.Clear();
             DestinationFolders.Clear();
             Destinations = null;
         }
@@ -54,13 +56,13 @@ namespace PicPick.Models.Mapping
         {
             progressInfo.Text = "Analying...";
             progressInfo.Report();
-            //await Task.Run(() => progressInfo.Report());
             Clear();
             ValidateFields();
 
             Destinations = destinations;
 
-            var needDates = destinations.Any(d => d.HasTemplate);
+            bool needDates = destinations.Any(d => d.HasTemplate);
+            needDates = needDates || Activity.Source.FromDate.Use || Activity.Source.ToDate.Use;
 
             //   -- The Short Way!!!
             // Create SourceFile list
@@ -87,7 +89,20 @@ namespace PicPick.Models.Mapping
             // ####
 
             // Add Source Files to dictionary
-            sourceFiles.ForEach(sf => SourceFiles.Add(sf.FullFileName, sf));
+            if (Activity.Source.FromDate.Use || Activity.Source.ToDate.Use)
+            {
+                DateTime fromDate = Activity.Source.FromDate.Use ? Activity.Source.FromDate.Date : DateTime.MinValue;
+                DateTime toDate = Activity.Source.ToDate.Use ? Activity.Source.ToDate.Date : DateTime.MaxValue;
+                foreach (SourceFile sf in sourceFiles)
+                {
+                    if (sf.DateTime >= fromDate && sf.DateTime <= toDate)
+                        _sourceFiles.Add(sf.FullFileName, sf);
+                }
+            }
+            else
+                sourceFiles.ForEach(sf => _sourceFiles.Add(sf.FullFileName, sf));
+
+            List<SourceFile> filesToRemove = new List<SourceFile>();
 
             // the following loop should be very quick
             // no need for progress update
@@ -95,7 +110,7 @@ namespace PicPick.Models.Mapping
             {
                 if (destination.HasTemplate)
                 {
-                    foreach (SourceFile sourceFile in sourceFiles)
+                    foreach (SourceFile sourceFile in _sourceFiles.Values)
                     {
                         var destinationFullPath = destination.GetFullPath(sourceFile.DateTime);
 
@@ -117,15 +132,32 @@ namespace PicPick.Models.Mapping
                 }
             }
 
+            ApplyFinalFilters();
 
             _log.Info("Plan is:\n" + ToString());
+        }
+
+        public Dictionary<string, SourceFile> SourceFiles 
+        {
+            get
+            {
+                return _filteredSourceFiles;
+            }
+        }
+
+        public void ApplyFinalFilters()
+        {
+            if (Activity.Source.OnlyNewFiles)
+                _filteredSourceFiles = _sourceFiles.Where(sf => !sf.Value.ExistsInDestination).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+            else
+                _filteredSourceFiles = _sourceFiles;
         }
 
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder("----- Plan Start -----\n");
 
-            sb.AppendLine($"Files count: {SourceFiles.Count}");
+            sb.AppendLine($"Files count: {_sourceFiles.Count}");
             sb.AppendLine($"Destination folders count: {DestinationFolders.Count}");
 
             sb.AppendLine("\nActive Destinations:");

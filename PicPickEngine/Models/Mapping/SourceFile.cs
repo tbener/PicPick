@@ -26,6 +26,7 @@ namespace PicPick.Models.Mapping
         public DateTime DateTime { get; set; }
         public List<DestinationFolder> DestinationFolders { get; set; } = new List<DestinationFolder>();
         public FILE_STATUS Status { get; private set; } = FILE_STATUS.NONE;
+        public bool ExistsInDestination { get; set; }
 
         public bool HasError()
         {
