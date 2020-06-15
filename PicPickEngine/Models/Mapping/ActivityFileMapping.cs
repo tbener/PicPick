@@ -54,7 +54,7 @@ namespace PicPick.Models.Mapping
 
         public async Task ComputeAsync(ProgressInformation progressInfo, PicPickProjectActivitySource source, List<PicPickProjectActivityDestination> destinations)
         {
-            progressInfo.Text = "Analying...";
+            progressInfo.Text = "Analysing...";
             progressInfo.Report();
             Clear();
             ValidateFields();
