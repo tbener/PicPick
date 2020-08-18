@@ -22,46 +22,46 @@ namespace PicPick.Models
             _fileListUpdated = false;
         }
 
-        private void ReadFiles()
-        {
-            DisposeFileList();
+        //public void ReadFiles()
+        //{
+        //    DisposeFileList();
 
-            List<string> lstFiles = new List<string>();
-            string[] filters = this.Filter.Replace(" ", "").Split(new char[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries);
-            SearchOption searchOption = IncludeSubFolders ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
+        //    List<string> lstFiles = new List<string>();
+        //    string[] filters = this.Filter.Replace(" ", "").Split(new char[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries);
+        //    SearchOption searchOption = IncludeSubFolders ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
 
-            if (filters.Count() == 0 || filters.Contains("*.*"))
-                filters = new []{"*.*"};
+        //    if (filters.Count() == 0 || filters.Contains("*.*"))
+        //        filters = new []{"*.*"};
 
-            // loop on filters
-            foreach (string fltr in filters)
-            {
-                string filter = fltr.Trim();
-                // get file list for current filter
-                string[] fileEntries = Directory.GetFiles(this.Path, filter, searchOption);
-                // add to main file list (could include duplicates)
-                lstFiles.AddRange(fileEntries);
-            }
+        //    // loop on filters
+        //    foreach (string fltr in filters)
+        //    {
+        //        string filter = fltr.Trim();
+        //        // get file list for current filter
+        //        string[] fileEntries = Directory.GetFiles(this.Path, filter, searchOption);
+        //        // add to main file list (could include duplicates)
+        //        lstFiles.AddRange(fileEntries);
+        //    }
 
-            // create a unique file list
-            _fileList.AddRange(new HashSet<string>(lstFiles));
-            _fileListUpdated = true;
-        }
+        //    // create a unique file list
+        //    _fileList.AddRange(new HashSet<string>(lstFiles));
+        //    _fileListUpdated = true;
+        //}
 
         public object Clone()
         {
             return this.MemberwiseClone();
         }
 
-        [XmlIgnore]
-        public List<string> FileList
-        {
-            get
-            {
-                if (!_fileListUpdated || !EnableAutoFileListReset) ReadFiles();
-                return _fileList;
-            }
-        }
+        //[XmlIgnore]
+        //public List<string> FileList
+        //{
+        //    get
+        //    {
+        //        if (!_fileListUpdated || !EnableAutoFileListReset) ReadFiles();
+        //        return _fileList;
+        //    }
+        //}
 
 
         [XmlIgnore]

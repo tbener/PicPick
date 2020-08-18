@@ -14,6 +14,8 @@ using PicPick.ViewModel.Dialogs;
 using PicPick.View.Dialogs;
 using System.IO;
 using PicPick.ViewModel.UserControls.Mapping;
+using System.Diagnostics;
+using PicPick.StateMachine;
 
 namespace PicPick.ViewModel.UserControls
 {
@@ -52,33 +54,66 @@ namespace PicPick.ViewModel.UserControls
             StopCommand = new RelayCommand(Stop, CanStop);
 
             Activity = activity;
-            InitActivity();
 
             ProgressInfo = new ProgressInformation();
-            //((Progress<ProgressInformation>)ProgressInfo.Progress).ProgressChanged += ActivityViewModel_ProgressChanged;
+
+            Activity.StateMachine.ProgressInfo = ProgressInfo;
+            Activity.StateMachine.OnStateChanged += StateMachine_OnStateCompleted;
+            Activity.StateMachine.Start(PicPickState.READ, PicPickState.FILTER);
+            Activity.Source.PropertyChanged += Source_PropertyChanged;
+
+            SourceViewModel = new SourceViewModel(Activity);
+            DestinationListViewModel = new DestinationListViewModel(Activity);
+
+            Activity.OnActivityStateChanged += Activity_OnActivityStateChanged;
         }
+
 
         #endregion
 
         #region Private Methods
 
-        /// <summary>
-        /// Associate the ViewModels to the inner objects
-        /// </summary>
-        private void InitActivity()
+        private void Source_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            
-            SourceViewModel = new SourceViewModel(Activity);
-            DestinationListViewModel = new DestinationListViewModel(Activity);
-
-            Activity.OnActivityStateChanged += Activity_OnActivityStateChanged;
-
+            switch (e.PropertyName)
+            {
+                case "OnlyNewFiles":
+                    Activity.StateMachine.RestartFrom(PicPickState.FILTER);
+                    break;
+                case "FromDate":
+                case "ToDate":
+                    Activity.StateMachine.RestartFrom(PicPickState.MAP);
+                    break;
+                default:
+                    Activity.StateMachine.RestartFrom(PicPickState.READ);
+                    break;
+            }
         }
 
+        private void StateMachine_OnStateCompleted(object sender, EventArgs e)
+        {
+            switch (Activity.StateMachine.CurrentState)
+            {
+                case PicPickState.NOT_STARTED:
+                    break;
+                case PicPickState.READ:
+                    break;
+                case PicPickState.MAP:
+                    break;
+                case PicPickState.FILTER:
+                    // update file count
 
-
-       
-
+                    // if during run - show mapping preview
+                    break;
+                case PicPickState.RUN:
+                    // show summary
+                    break;
+                case PicPickState.DONE:
+                    break;
+                default:
+                    break;
+            }
+        }
 
         #endregion
 
@@ -137,6 +172,11 @@ namespace PicPick.ViewModel.UserControls
             }
         }
 
+        public async Task RefreshAsync(int level)
+        {
+
+        }
+
         public async Task AnalyzeAsync()
         {
             Activity.RunMode_AnalyzeOnly = true;
@@ -160,7 +200,7 @@ namespace PicPick.ViewModel.UserControls
                 IsRunning = true;
                 EventAggregatorHelper.PublishActivityStarted();
 
-                await Activity.ExecuteAsync(ProgressInfo);
+                Activity.StateMachine.Run();
 
             }
             catch (Exception ex)
@@ -192,6 +232,38 @@ namespace PicPick.ViewModel.UserControls
         private bool CanStop()
         {
             return IsRunning;
+        }
+
+        public void Start()
+        {
+            ProgressInfo.Reset();
+            ProgressInfo.Report();
+
+            _log.Info("Start");
+
+            if (!WarningsBeforeStart())
+                return;
+
+
+            try
+            {
+                ProgressInfo.RenewToken();
+                IsRunning = true;
+                EventAggregatorHelper.PublishActivityStarted();
+
+                Activity.StateMachine.Run();
+            }
+            catch (Exception ex)
+            {
+                _errorHandler.Handle(ex);
+                MessageBoxHelper.Show(ex);
+            }
+            finally
+            {
+                IsRunning = false;
+                ProgressInfo.Finished();
+                CommandManager.InvalidateRequerySuggested();
+            }
         }
 
 
@@ -263,9 +335,6 @@ namespace PicPick.ViewModel.UserControls
         // Using a DependencyProperty as the backing store for DestinationListViewModel.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty DestinationListViewModelProperty =
             DependencyProperty.Register("DestinationListViewModel", typeof(DestinationListViewModel), typeof(ActivityViewModel), new PropertyMetadata(null));
-
-
-
 
 
         public bool IsRunning

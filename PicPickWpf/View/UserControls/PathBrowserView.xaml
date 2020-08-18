@@ -22,7 +22,6 @@
             </Rectangle>
         </Button>-->
         <TextBox Text="{Binding PathToDisplay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" 
-                 Style="{DynamicResource ButtonCommandMetroTextBox}"
                  ToolTip="{Binding TextboxTooltip}" Height="24"
                  metro:TextBoxHelper.ButtonCommand="{Binding BrowseCommand}">
             <metro:TextBoxHelper.ButtonContent>

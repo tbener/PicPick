@@ -1,5 +1,8 @@
 ﻿using PicPick.Models;
+using PicPick.Models.Mapping;
+using PicPick.StateMachine;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -22,6 +25,7 @@ namespace PicPick.ViewModel.UserControls
         private System.Timers.Timer _timerCheckFiles;
         private bool _useDateFrom;
         private DateTime _dateFrom;
+        PicPickProjectActivity Activity;
 
         #endregion
 
@@ -30,9 +34,18 @@ namespace PicPick.ViewModel.UserControls
         public SourceViewModel(PicPickProjectActivity activity)
         {
             Source = activity.Source;
-            activity.OnActivityStateChanged += Activity_OnActivityStateChanged;
+            Activity = activity;
+            activity.StateMachine.OnStateChanged += StateMachine_OnStateCompleted;
 
-            Init();
+            PathViewModel = new PathBrowserViewModel(Source);
+            Source.PropertyChanged += Source_PropertyChanged;
+
+            InitSystemWatcher();
+        }
+
+        private void StateMachine_OnStateCompleted(object sender, EventArgs e)
+        {
+            OnPropertyChanged("SourceFilesStatus");
         }
 
 
@@ -41,71 +54,9 @@ namespace PicPick.ViewModel.UserControls
 
         #region Private Methods
 
-        /// <summary>
-        /// Associate the ViewModels to the inner objects
-        /// </summary>
-        private void Init()
-        {
-            // source
-            PathViewModel = new PathBrowserViewModel(Source);
-            Source.PropertyChanged += Source_PropertyChanged;
-
-            // todo: make this async
-#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-            CheckSourceStatus();
-#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-
-            InitSystemWatcher();
-
-        }
-
-        private async void Activity_OnActivityStateChanged(PicPickProjectActivity activity, Core.ActivityStateChangedEventArgs e)
-        {
-            if (activity.State == ACTIVITY_STATE.DONE)
-                await CheckSourceStatus();
-        }
-
-        private async Task CheckSourceStatus()
-        {
-
-            try
-            {
-                // Cancel previous operations
-                ctsSourceCheck?.Cancel();
-
-                // reset state
-                SetFilesStatus(-1, "Reading...");
-
-                if (!PathHelper.Exists(Source.Path))
-                {
-                    SetFilesStatus(0, "Path not found");
-                    return;
-                }
-
-                // Create a new cancellations token and await a new task to count files
-                ctsSourceCheck = new CancellationTokenSource();
-                int count = await Task.Run(() => Source.FileList.Count);
-                SetFilesStatus(count);
-            }
-            catch (OperationCanceledException)
-            {
-                // operation was canceled
-                SetFilesStatus(-1);
-            }
-            catch (Exception ex)
-            {
-                // error in counting files. most probably because folder doesn't exist.
-                SetFilesStatus(-1, ex.Message);
-            }
-        }
-
-        private void SetFilesStatus(int num, string status = "")
-        {
-            SourceFilesStatus = num < 0 ? status : $"{num}  ({status})";
-        }
-
         private void InitSystemWatcher()
         {
+            return;
             try
             {
                 if (_fileSystemWatcher == null)
@@ -137,9 +88,9 @@ namespace PicPick.ViewModel.UserControls
             }
         }
 
-        private async void TimerCheckFiles_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        private void TimerCheckFiles_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
-            await CheckSourceStatus();
+            OnPropertyChanged("SourceFilesStatus");
         }
 
         private void FileSystemWatcher_OnMappingChanged(object sender, RenamedEventArgs e)
@@ -150,15 +101,30 @@ namespace PicPick.ViewModel.UserControls
         private void FileSystemWatcher_OnCountChanged(object sender, FileSystemEventArgs e)
         {
             _timerCheckFiles.Stop();
-            SetFilesStatus(-1, "changes detected...");
+            
+            // todo:
+            // need to mark that the FileGraph is not updated
+            // we can update the counter according to the change
+            // and set the timer for re-read and map the files
+
             _timerCheckFiles.Start();
         }
 
-        private async void Source_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void Source_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            await CheckSourceStatus();
-
-            InitSystemWatcher();
+            switch (e.PropertyName)
+            {
+                case "OnlyNewFiles":
+                    break;
+                case "FromDate":
+                case "ToDate":
+                    break;
+                case "Path":
+                    InitSystemWatcher();
+                    break;
+                default:
+                    break;
+            }
         }
 
         public void Dispose()
@@ -184,7 +150,18 @@ namespace PicPick.ViewModel.UserControls
 
         public string SourceFilesStatus
         {
-            get => _sourceFilesStatus;
+            get
+            {
+                if (Activity.StateMachine.CurrentState < PicPickState.READY_TO_RUN)
+                {
+                    if (!PathHelper.Exists(Source.Path))
+                        return "Path not found";
+
+                    return Activity.StateMachine.GetStatus();
+                }
+
+                return $"{Activity.FilesGraph.Files.Count()} files found";
+            }
             set
             {
                 _sourceFilesStatus = value;
@@ -217,7 +194,7 @@ namespace PicPick.ViewModel.UserControls
         {
             get
             {
-                return Source.FromDate.Use;
+                return Source.FromDate != null && Source.FromDate.Use;
             }
             set
             {
@@ -225,7 +202,6 @@ namespace PicPick.ViewModel.UserControls
                 OnPropertyChanged("DateFrom");
             }
         }
-
 
         public DateTime DateFrom
         {
@@ -244,7 +220,7 @@ namespace PicPick.ViewModel.UserControls
         {
             get
             {
-                return Source.ToDate.Use;
+                return Source.ToDate != null && Source.ToDate.Use;
             }
             set
             {

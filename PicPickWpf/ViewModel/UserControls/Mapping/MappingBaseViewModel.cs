@@ -12,10 +12,10 @@ namespace PicPick.ViewModel.UserControls.Mapping
             PicPickProjectActivitySource source = activity.Source;
             var subFolders = source.IncludeSubFolders ? "including sub-folders" : "not including sub-folders";
             SourceDisplay = $"{source.Path} ({source.Filter}), {subFolders}";
-            SourceFoundFiles = $"{source.FileList.Count} files found";
+            SourceFoundFiles = $"{activity.FilesGraph.Files.Count} files found";
 
             // Destinations Pane
-            var lookup = activity.FileMapping.DestinationFolders.Values.ToLookup(df => df.BasedOnDestination);
+            var lookup = activity.FilesGraph.DestinationFolders.Values.ToLookup(df => df.BasedOnDestination);
             DestinationList = lookup.Select(item => new MappingDestinationViewModel(item.Key, item.ToList(), activity)).ToList();
         }
 

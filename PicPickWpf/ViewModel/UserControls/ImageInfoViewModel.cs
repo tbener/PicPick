@@ -1,7 +1,6 @@
 ﻿using PicPick.Helpers;
 using System;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 
 namespace PicPick.ViewModel.UserControls
 {
@@ -33,7 +32,6 @@ namespace PicPick.ViewModel.UserControls
             finally
             {
                 imageInfo.CloseFileStream();
-                imageInfo = null;
             }
         }
 

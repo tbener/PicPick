@@ -11,44 +11,48 @@ using PicPick.Models.Interfaces;
 using log4net;
 using System.IO;
 using PicPick.Models.Mapping;
+using PicPick.Models;
 
 namespace PicPick.Core
 {
-    public class Runner
+    public class Runner : IAction
     {
         private static readonly ILog _log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         private static readonly ErrorHandler _errorHandler = new ErrorHandler(_log);
 
-        private IActivity _activity;
         private IOptions _options;
 
         public FileExistsResponseEnum FileExistsResponse { get; set; }
+        public IActivity Activity { get; private set; }
 
 
         public Runner(IActivity activity, IOptions options)
         {
-            _activity = activity;
+            Activity = activity;
             _options = options;
         }
+
+        public Runner(IActivity activity) : this(activity, ProjectLoader.Project.Options)
+        { }
 
         public async Task Run(ProgressInformation progressInfo)
         {
             
             progressInfo.Text = "Start copying...";
-            _log.Info($"Starting: {_activity.Name}"); 
+            _log.Info($"Starting: {Activity.Name}"); 
             
             FileExistsAskEventArgs fileExistsAskEventArgs = new FileExistsAskEventArgs();
             FileExistsResponseEnum currentConflictResponse;
             FileExistsResponse = _options.FileExistsResponse;
 
-            var map = _activity.FileMapping;
+            var filesGraph = Activity.FilesGraph;
 
             try
             {
-                progressInfo.Maximum = map.SourceFiles.Count * map.Destinations.Count;
+                progressInfo.Maximum = filesGraph.Files.Count * Activity.DestinationList.Where(d => d.Active).Count();
                 progressInfo.Value = 0;
 
-                foreach (DestinationFolder destinationFolder in map.DestinationFolders.Values)
+                foreach (DestinationFolder destinationFolder in filesGraph.DestinationFolders.Values)
                 {
                     _log.Info($"Destination: {destinationFolder.FullPath}");
                     if (!Directory.Exists(destinationFolder.FullPath))
@@ -155,10 +159,10 @@ namespace PicPick.Core
                     }
                 }
 
-                if (_activity.DeleteSourceFiles)
+                if (Activity.DeleteSourceFiles)
                 {
                     progressInfo.Text = "Cleaning up...";
-                    var copiedFileList = _activity.FileMapping.SourceFiles.Values.Where(f => f.Status == FILE_STATUS.COPIED).Select(f => f.FullFileName).ToList();
+                    var copiedFileList = filesGraph.Files.Values.Where(f => f.Status == FILE_STATUS.COPIED).Select(f => f.FullFileName).ToList();
                     ShellFileOperation.MoveItemsToRecycleBin(copiedFileList);
                     progressInfo.Text = "";
                 }

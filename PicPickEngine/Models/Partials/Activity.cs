@@ -9,6 +9,8 @@ using PicPick.Core;
 using PicPick.Models.Interfaces;
 using log4net;
 using PicPick.Models.Mapping;
+using System.Threading;
+using PicPick.StateMachine;
 
 namespace PicPick.Models
 {
@@ -35,15 +37,14 @@ namespace PicPick.Models
         private static readonly ErrorHandler _errorHandler = new ErrorHandler(_log);
 
         private ObservableCollection<PicPickProjectActivityDestination> _destinationList = null;
-        private bool _isRunning;
-        private ActivityFileMapping _fileMapping;
+        private Mapper _fileMapping;
         private Runner _runner;
+        private StateManager _stateMachine;
 
         public event ActivityStateChangedEventHandler OnActivityStateChanged;
 
         public PicPickProjectActivity(string name)
         {
-            Name = name;
             Source = new PicPickProjectActivitySource();
             Source.FromDate = new DateComplex();
             Source.FromDate.Date = DateTime.Today.AddDays(-30);
@@ -51,58 +52,58 @@ namespace PicPick.Models
             Source.ToDate.Date = DateTime.Today;
         }
 
-        private bool SetState(ACTIVITY_STATE newState)
-        {
-            this.State = newState;
-            if (OnActivityStateChanged != null)
-            {
-                ActivityStateChangedEventArgs e = new ActivityStateChangedEventArgs();
-                OnActivityStateChanged(this, e);
-                if (e.Cancel)
-                    return false;
-            }
-            return true;
-        }
+        //private bool SetState(ACTIVITY_STATE newState)
+        //{
+        //    this.State = newState;
+        //    if (OnActivityStateChanged != null)
+        //    {
+        //        ActivityStateChangedEventArgs e = new ActivityStateChangedEventArgs();
+        //        OnActivityStateChanged(this, e);
+        //        if (e.Cancel)
+        //            return false;
+        //    }
+        //    return true;
+        //}
 
-        public async Task ExecuteAsync(ProgressInformation progressInfo)
-        {
-            if (_isRunning) throw new Exception("Activity is already running.");
+        //public async Task ExecuteAsync(ProgressInformation progressInfo)
+        //{
+        //    if (_isRunning) throw new Exception("Activity is already running.");
 
-            try
-            {
-                _isRunning = true;
+        //    try
+        //    {
+        //        _isRunning = true;
 
-                // Analyze
-                SetState(ACTIVITY_STATE.ANALYZING);
-                await FileMapping.ComputeAsync(progressInfo);
-                if (!SetState(ACTIVITY_STATE.ANALYZED) || RunMode_AnalyzeOnly)
-                    return;
+        //        // Analyze
+        //        SetState(ACTIVITY_STATE.ANALYZING);
+        //        await FileMapping.ComputeAsync(progressInfo);
+        //        if (!SetState(ACTIVITY_STATE.ANALYZED) || RunMode_AnalyzeOnly)
+        //            return;
 
-                // Run
-                SetState(ACTIVITY_STATE.RUNNING);
-                await Runner.Run(progressInfo);
-                SetState(ACTIVITY_STATE.DONE);
-            }
-            catch (OperationCanceledException)
-            {
-                _log.Info("*** The user cancelled the operation ***");
-                progressInfo.UserCancelled = true;
-            }
-            catch (Exception ex)
-            {
-                progressInfo.Exception = ex;
-                _errorHandler.Handle(ex, false, $"Error in operation: {progressInfo.Header}.");
-            }
-            finally
-            {
-                string analyzeOnlyMode = RunMode_AnalyzeOnly ? " (AnalyzeOnly mode)" : "";
-                _log.Info($"Finished{analyzeOnlyMode}: {Name}\n*****************");
-                progressInfo.Finished();
-                if (!RunMode_AnalyzeOnly)
-                    EventAggregatorHelper.PublishActivityEnded();
-                _isRunning = false;
-            }
-        }
+        //        // Run
+        //        SetState(ACTIVITY_STATE.RUNNING);
+        //        await Runner.Run(progressInfo);
+        //        SetState(ACTIVITY_STATE.DONE);
+        //    }
+        //    catch (OperationCanceledException)
+        //    {
+        //        _log.Info("*** The user cancelled the operation ***");
+        //        progressInfo.UserCancelled = true;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        progressInfo.Exception = ex;
+        //        _errorHandler.Handle(ex, false, $"Error in operation: {progressInfo.Header}.");
+        //    }
+        //    finally
+        //    {
+        //        string analyzeOnlyMode = RunMode_AnalyzeOnly ? " (AnalyzeOnly mode)" : "";
+        //        _log.Info($"Finished{analyzeOnlyMode}: {Name}\n*****************");
+        //        progressInfo.Finished();
+        //        if (!RunMode_AnalyzeOnly)
+        //            EventAggregatorHelper.PublishActivityEnded();
+        //        _isRunning = false;
+        //    }
+        //}
 
 
         /// <summary>
@@ -143,12 +144,12 @@ namespace PicPick.Models
 
         [XmlIgnore]
         [IsDirtySupport.IsDirtyIgnore]
-        public ActivityFileMapping FileMapping
+        public Mapper FileMapping
         {
             get
             {
                 if (_fileMapping == null)
-                    _fileMapping = new ActivityFileMapping(this);
+                    _fileMapping = new Mapper(this);
                 return _fileMapping;
             }
             set => _fileMapping = value;
@@ -174,6 +175,24 @@ namespace PicPick.Models
         [XmlIgnore]
         [IsDirtySupport.IsDirtyIgnore]
         public bool RunMode_AnalyzeOnly { get; set; }
+
+        [XmlIgnore]
+        [IsDirtySupport.IsDirtyIgnore]
+        public StateManager StateMachine
+        {
+            get
+            {
+                if (_stateMachine == null) _stateMachine = new StateManager(this);
+                return _stateMachine;
+            }
+        }
+
+        [XmlIgnore]
+        [IsDirtySupport.IsDirtyIgnore]
+        public CoreActions CoreActions => StateMachine.CoreActions;
+
+        [XmlIgnore]
+        public FilesGraph FilesGraph { get; set; } = new FilesGraph();
 
 
         #region ICloneable

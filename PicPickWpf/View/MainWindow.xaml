@@ -96,8 +96,7 @@
             <GridSplitter Grid.Column="0" HorizontalAlignment="Right" Width="5"/>
 
             <Grid x:Name="TopLeft" Margin="0 0 5 5">
-                <GroupBox metro:ControlsHelper.ContentCharacterCasing="Normal" 
-                          metro:ControlsHelper.HeaderFontWeight="Heavy">
+                <GroupBox metro:ControlsHelper.ContentCharacterCasing="Normal" >
                     <GroupBox.Header>
                         <TextBox Text="{Binding CurrentActivity.Name, UpdateSourceTrigger=PropertyChanged}"
                                      FontWeight="Bold"
