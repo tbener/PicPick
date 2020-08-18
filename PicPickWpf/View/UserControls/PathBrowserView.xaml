@@ -22,18 +22,10 @@
             </Rectangle>
         </Button>-->
         <TextBox Text="{Binding PathToDisplay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" 
+                 Style="{DynamicResource MahApps.Styles.TextBox.Button}"
                  ToolTip="{Binding TextboxTooltip}" Height="24"
-                 metro:TextBoxHelper.ButtonCommand="{Binding BrowseCommand}">
-            <metro:TextBoxHelper.ButtonContent>
-                <Rectangle Width="14" Height="14" ToolTip="Browse...">
-                    <!--<Rectangle.Resources>
-                        <SolidColorBrush x:Key="BlackBrush" Color="White" />
-                    </Rectangle.Resources>-->
-                    <Rectangle.Fill>
-                        <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_folder_ellipsis}" />
-                    </Rectangle.Fill>
-                </Rectangle>
-            </metro:TextBoxHelper.ButtonContent>
+                 metro:TextBoxHelper.ButtonCommand="{Binding BrowseCommand}" 
+                 metro:TextBoxHelper.ButtonContent="{iconPacks:Material Kind=FolderOpenOutline}">
         </TextBox>
         <TextBlock Visibility="{Binding PreviewVisibility, Mode=OneWay}" 
                    Cursor="Hand"
