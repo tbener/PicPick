@@ -193,7 +193,7 @@ namespace PicPick.Core
                     OnFileStatusChanged?.Invoke(this, file, fileStatus);
 
                     // report progress
-                    progressInfo.Advance();
+                    progressInfo.AdvanceWithCancellationToken();
 
                 }
                 catch (OperationCanceledException)

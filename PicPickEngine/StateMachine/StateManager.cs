@@ -12,12 +12,12 @@ namespace PicPick.StateMachine
 {
     public enum PicPickState
     {
-        NOT_STARTED,
-        READ,
-        MAP,
-        FILTER,
+        READY,
+        READING,
+        MAPPING,
+        FILTERING,
         READY_TO_RUN,
-        RUN,
+        RUNNING,
         DONE
     }
 
@@ -25,10 +25,9 @@ namespace PicPick.StateMachine
     {
         public event EventHandler OnStateChanged;
 
-        private bool _isRunning = false;
-
         public PicPickState CurrentState { get; private set; }
-        public PicPickState EndState { get; set; }
+        private PicPickState _toState;
+
         public PicPickProjectActivity Activity { get; private set; }
         public ProgressInformation ProgressInfo { get; set; }
         public CoreActions CoreActions { get; private set; }
@@ -40,10 +39,10 @@ namespace PicPick.StateMachine
             Activity = activity;
             CoreActions = new CoreActions(Activity);
 
-            _stateTransitions.Add(PicPickState.READ, new StateTransition_Read(this));
-            _stateTransitions.Add(PicPickState.MAP, new StateTransition_Map(this));
-            _stateTransitions.Add(PicPickState.FILTER, new StateTransition_Filter(this));
-            _stateTransitions.Add(PicPickState.RUN, new StateTransition_Run(this));
+            _stateTransitions.Add(PicPickState.READING, new StateTransition_Read(this));
+            _stateTransitions.Add(PicPickState.MAPPING, new StateTransition_Map(this));
+            _stateTransitions.Add(PicPickState.FILTERING, new StateTransition_Filter(this));
+            _stateTransitions.Add(PicPickState.RUNNING, new StateTransition_Run(this));
         }
 
         public StateManager(PicPickProjectActivity activity, ProgressInformation progressInfo) : this(activity)
@@ -51,25 +50,29 @@ namespace PicPick.StateMachine
             ProgressInfo = progressInfo;
         }
 
-        public void Start(PicPickState startState, PicPickState endState)
+        public void Start(PicPickState toState)
         {
-            CurrentState = startState;
-            EndState = endState;
-            Start();
+            Task.Run(() => StartAsync(toState));
         }
 
-        public void Start()
+        public async Task StartAsync(PicPickState toState)
         {
-            Task.Run(() => StartAsync());
+            _toState = toState;
+            await StartAsync();
         }
 
-        public async Task StartAsync()
+        private async Task StartAsync()
         {
-            _isRunning = true;
+            if (IsRunning)
+                return;
+
+            IsRunning = true;
+
+            ProgressInfo.Reset();
 
             try
             {
-                while (CurrentState <= EndState)
+                while (CurrentState < _toState)
                 {
                     if (_stateTransitions.ContainsKey(CurrentState))
                         await _stateTransitions[CurrentState].ExecuteAsync();
@@ -78,125 +81,55 @@ namespace PicPick.StateMachine
                     CurrentState = GetNextState(CurrentState);
                 };
             }
+            catch (OperationCanceledException)
+            {
+                // do nothing
+            }
             finally
             {
-                _isRunning = false;
+                IsRunning = false;
                 OnStateChanged?.Invoke(this, null);
             }
 
-        }
-
-        public void Run()
-        {
-            if (CurrentState > PicPickState.RUN)
-                CurrentState = PicPickState.RUN;
-
-            ContinueTo(PicPickState.DONE);
-        }
-
-        public void ContinueTo(PicPickState endState)
-        {
-            EndState = endState;
-
-            if (_isRunning)
-                return;
-
-            Start();
-        }
-
-        public void StartFrom(PicPickState startState)
-        {
-            if (_isRunning)
-                Stop();
-
-            CurrentState = startState;
-            Start();
-
+            if (CurrentState == PicPickState.DONE)
+            {
+                CurrentState = PicPickState.READY;
+                OnStateChanged?.Invoke(this, null);
+            }
         }
 
         /// <summary>
         /// Restarts the process from the given state ONLY if we already passed that state.
         /// </summary>
-        /// <param name="startState"></param>
-        public void RestartFrom(PicPickState startState)
+        /// <param name="fromtState"></param>
+        public void Restart(PicPickState fromtState, PicPickState toState)
         {
-            if (CurrentState < startState)
+            if (CurrentState < fromtState)
                 return;
 
-            if (_isRunning)
+            if (IsRunning)
                 Stop();
 
-            CurrentState = startState;
-            Start();
-
+            CurrentState = fromtState;
+            Start(toState);
         }
 
         public void Stop()
         {
-            ProgressInfo.Cancel();
+            if (IsRunning)
+                ProgressInfo.Cancel();
         }
+
+        public bool IsRunning { get; private set; }
+
 
         private PicPickState GetNextState(PicPickState state)
         {
-            switch (state)
-            {
-                case PicPickState.NOT_STARTED:
-                    return PicPickState.READ;
-                case PicPickState.READ:
-                    return PicPickState.MAP;
-                case PicPickState.MAP:
-                    return PicPickState.FILTER;
-                case PicPickState.FILTER:
-                    return PicPickState.READY_TO_RUN;
-                case PicPickState.READY_TO_RUN:
-                    return PicPickState.RUN;
-                case PicPickState.RUN:
-                    return PicPickState.DONE;
-                default:
-                    return PicPickState.NOT_STARTED;
-            }
+            if (state == PicPickState.DONE)
+                return PicPickState.READY;
+
+            return (PicPickState)((int)state + 1);
         }
 
-        private PicPickState GetPreviousState(PicPickState state)
-        {
-            switch (state)
-            {
-                case PicPickState.READ:
-                    return PicPickState.NOT_STARTED;
-                case PicPickState.MAP:
-                    return PicPickState.READ;
-                case PicPickState.FILTER:
-                    return PicPickState.MAP;
-                case PicPickState.RUN:
-                    return PicPickState.FILTER;
-                case PicPickState.DONE:
-                    return PicPickState.RUN;
-                default:
-                    return PicPickState.DONE;
-            }
-        }
-
-        public string GetStatus()
-        {
-            switch (CurrentState)
-            {
-                case PicPickState.NOT_STARTED:
-                    return "Not started";
-                case PicPickState.READ:
-                    return _isRunning ? "Reading..." : "Not mapped";
-                case PicPickState.MAP:
-                    return _isRunning ? "Mapping..." : "Not filtered";
-                case PicPickState.FILTER:
-                    return _isRunning ? "Filtering..." : "Ready";
-                case PicPickState.READY_TO_RUN:
-                    return "Ready";
-                case PicPickState.RUN:
-                    return "Running...";
-                case PicPickState.DONE:
-                    return "Done";
-                default:
-                    return "Unknown";
-            }
-        }
     }
 }

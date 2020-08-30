@@ -135,8 +135,7 @@ namespace PicPick.Core
                             }
 
                             // report progress
-                            progressInfo.Advance();
-                            progressInfo.CancellationToken.ThrowIfCancellationRequested();
+                            progressInfo.AdvanceWithCancellationToken();
                         }
                         catch (OperationCanceledException)
                         {

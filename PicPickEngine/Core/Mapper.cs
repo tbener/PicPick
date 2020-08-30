@@ -106,8 +106,7 @@ namespace PicPick.Core
                 foreach (string files in Activity.FilesGraph.RawFileList)
                 {
                     sourceFilesList.Add(new SourceFile(files, needDates));
-                    progressInfo.Advance();
-                    progressInfo.CancellationToken.ThrowIfCancellationRequested();
+                    progressInfo.AdvanceWithCancellationToken();
                 }
             });
 

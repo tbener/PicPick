@@ -30,8 +30,10 @@ namespace PicPick.ViewModel.UserControls
         //CancellationTokenSource ctsSourceCheck;
 
         private bool _isRunning;
+        private bool _readInBackground;
 
-        
+        private readonly PicPickState _backgroundEndState = PicPickState.READY_TO_RUN;
+
         #endregion
 
         #region Commands
@@ -39,7 +41,6 @@ namespace PicPick.ViewModel.UserControls
         public ICommand StartCommand { get; set; }
         public ICommand AnalyzeCommand { get; set; }
         public ICommand StopCommand { get; set; }
-        //public ICommand AddDestinationCommand { get; set; }
 
         #endregion
 
@@ -48,7 +49,6 @@ namespace PicPick.ViewModel.UserControls
         public ActivityViewModel(PicPickProjectActivity activity)
         {
 
-            //AddDestinationCommand = new RelayCommand(AddDestination);
             StartCommand = new AsyncRelayCommand(StartAsync, CanStart);
             AnalyzeCommand = new AsyncRelayCommand(AnalyzeAsync, CanStart);
             StopCommand = new RelayCommand(Stop, CanStop);
@@ -59,13 +59,15 @@ namespace PicPick.ViewModel.UserControls
 
             Activity.StateMachine.ProgressInfo = ProgressInfo;
             Activity.StateMachine.OnStateChanged += StateMachine_OnStateCompleted;
-            Activity.StateMachine.Start(PicPickState.READ, PicPickState.FILTER);
             Activity.Source.PropertyChanged += Source_PropertyChanged;
 
             SourceViewModel = new SourceViewModel(Activity);
             DestinationListViewModel = new DestinationListViewModel(Activity);
 
             Activity.OnActivityStateChanged += Activity_OnActivityStateChanged;
+
+            ReadInBackground = true;
+            Activity.StateMachine.Start(_backgroundEndState);
         }
 
 
@@ -75,17 +77,19 @@ namespace PicPick.ViewModel.UserControls
 
         private void Source_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
+            if (!ReadInBackground) return;
+
             switch (e.PropertyName)
             {
                 case "OnlyNewFiles":
-                    Activity.StateMachine.RestartFrom(PicPickState.FILTER);
+                    Activity.StateMachine.Restart(PicPickState.FILTERING, _backgroundEndState);
                     break;
                 case "FromDate":
                 case "ToDate":
-                    Activity.StateMachine.RestartFrom(PicPickState.MAP);
+                    Activity.StateMachine.Restart(PicPickState.MAPPING, _backgroundEndState);
                     break;
                 default:
-                    Activity.StateMachine.RestartFrom(PicPickState.READ);
+                    Activity.StateMachine.Restart(PicPickState.READING, _backgroundEndState);
                     break;
             }
         }
@@ -94,21 +98,29 @@ namespace PicPick.ViewModel.UserControls
         {
             switch (Activity.StateMachine.CurrentState)
             {
-                case PicPickState.NOT_STARTED:
+                case PicPickState.READY:
+                    //if (ReadInBackground)
+                    //    Activity.StateMachine.Start(_backgroundEndState);
                     break;
-                case PicPickState.READ:
-                    break;
-                case PicPickState.MAP:
-                    break;
-                case PicPickState.FILTER:
-                    // update file count
-
-                    // if during run - show mapping preview
-                    break;
-                case PicPickState.RUN:
-                    // show summary
+                case PicPickState.READY_TO_RUN:
+                    //if (!IsRunning)
+                    //    return;
+                    //if (!Properties.UserSettings.General.ShowPreviewWindow && !Activity.RunMode_AnalyzeOnly)
+                    //    return;
+                    //vm = new MappingPlanViewModel(Activity);
+                    //var result = MessageBoxHelper.Show(vm, "Mapping Preview", MessageBoxButton.OKCancel, out bool dontShowAgain);
+                    //if (dontShowAgain)
+                    //    Properties.UserSettings.General.ShowPreviewWindow = false;
+                    //if (result != MessageBoxResult.OK)
+                    //    e.Cancel = true;
                     break;
                 case PicPickState.DONE:
+                    //if (!Properties.UserSettings.General.ShowSummaryWindow)
+                    //    return;
+                    //var vm = new MappingResultsViewModel(Activity);
+                    //MessageBoxHelper.Show(vm, "Finished", MessageBoxButton.OK, out bool dontShowAgain);
+                    //if (dontShowAgain)
+                    //    Properties.UserSettings.General.ShowSummaryWindow = false;
                     break;
                 default:
                     break;
@@ -172,36 +184,64 @@ namespace PicPick.ViewModel.UserControls
             }
         }
 
-        public async Task RefreshAsync(int level)
-        {
-
-        }
-
         public async Task AnalyzeAsync()
         {
-            Activity.RunMode_AnalyzeOnly = true;
-            await StartAsync();
-            Activity.RunMode_AnalyzeOnly = false;
+            await RunAsync(true);
         }
 
         public async Task StartAsync()
         {
-            ProgressInfo.Reset();
-            ProgressInfo.Report();
-
             _log.Info("Start");
 
             if (!WarningsBeforeStart())
                 return;
 
+            await RunAsync(false);
+
+        }
+
+        private bool ShowMappingDialog()
+        {
+            var vm = new MappingPlanViewModel(Activity);
+            var result = MessageBoxHelper.Show(vm, "Mapping Preview", MessageBoxButton.OKCancel, out bool dontShowAgain);
+            if (dontShowAgain)
+                Properties.UserSettings.General.ShowPreviewWindow = false;
+            return result == MessageBoxResult.OK;
+        }
+
+        private void ShowResultsDialog()
+        {
+            var vm = new MappingResultsViewModel(Activity);
+            MessageBoxHelper.Show(vm, "Finished", MessageBoxButton.OK, out bool dontShowAgain);
+            if (dontShowAgain)
+                Properties.UserSettings.General.ShowSummaryWindow = false;
+        }
+
+        private async Task RunAsync(bool onlyMapping)
+        {
             try
             {
-                ProgressInfo.RenewToken();
                 IsRunning = true;
                 EventAggregatorHelper.PublishActivityStarted();
 
-                Activity.StateMachine.Run();
+                await Activity.StateMachine.StartAsync(PicPickState.READY_TO_RUN);
+                if (Properties.UserSettings.General.ShowPreviewWindow || onlyMapping)
+                {
+                    if (!ShowMappingDialog() || onlyMapping)
+                        return;
+                }
 
+                await Activity.StateMachine.StartAsync(PicPickState.DONE);
+                IsRunning = false;
+
+                // It would be nice to perform an asynchronous reading while display the results dialog,
+                //   but since we're currently sharing the same FileMap object we must do this synchronously.
+                //new Task(() => Activity.StateMachine.Restart(PicPickState.READY, _backgroundEndState)).Start();
+
+                if (Properties.UserSettings.General.ShowSummaryWindow)
+                    ShowResultsDialog();
+
+                Activity.StateMachine.Restart(PicPickState.READY, _backgroundEndState);
             }
             catch (Exception ex)
             {
@@ -214,9 +254,7 @@ namespace PicPick.ViewModel.UserControls
                 await Task.Run(() => ProgressInfo.Finished());
                 CommandManager.InvalidateRequerySuggested();
             }
-
         }
-
 
         public bool CanStart()
         {
@@ -224,49 +262,28 @@ namespace PicPick.ViewModel.UserControls
         }
 
 
-        private void Stop()
+        public void Stop()
         {
             ProgressInfo.Cancel();
         }
 
-        private bool CanStop()
+        public bool CanStop()
         {
             return IsRunning;
         }
 
-        public void Start()
+        public bool ReadInBackground
         {
-            ProgressInfo.Reset();
-            ProgressInfo.Report();
-
-            _log.Info("Start");
-
-            if (!WarningsBeforeStart())
-                return;
-
-
-            try
+            get => _readInBackground;
+            set
             {
-                ProgressInfo.RenewToken();
-                IsRunning = true;
-                EventAggregatorHelper.PublishActivityStarted();
-
-                Activity.StateMachine.Run();
-            }
-            catch (Exception ex)
-            {
-                _errorHandler.Handle(ex);
-                MessageBoxHelper.Show(ex);
-            }
-            finally
-            {
-                IsRunning = false;
-                ProgressInfo.Finished();
-                CommandManager.InvalidateRequerySuggested();
+                _readInBackground = value;
+                if (_readInBackground)
+                    Activity.StateMachine.Restart(PicPickState.READING, _backgroundEndState);
+                else
+                    Activity.StateMachine.Stop();
             }
         }
-
-
 
         public ProgressInformation ProgressInfo { get; set; }
 

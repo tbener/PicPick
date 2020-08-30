@@ -36,6 +36,7 @@ namespace PicPick.ViewModel
         public ICommand MoveActivityUpCommand { get; set; }
         public ICommand StartCommand { get; set; }
         public ICommand AnalyzeCommand { get; set; }
+        public ICommand StopCommand { get; set; }
 
         public MainWindowViewModel()
         {
@@ -52,6 +53,7 @@ namespace PicPick.ViewModel
             MoveActivityUpCommand = new RelayCommand(MoveActivityUp, CanMoveActivityUp);
             StartCommand = new AsyncRelayCommand(StartAsync, CanStart);
             AnalyzeCommand = new AsyncRelayCommand(AnalyzeAsync, CanStart);
+            StopCommand = new RelayCommand(Stop, CanStop);
 
             LogFile = LogManager.GetRepository().GetAppenders().OfType<log4net.Appender.RollingFileAppender>().FirstOrDefault()?.File;
 
@@ -151,6 +153,17 @@ namespace PicPick.ViewModel
                 await ActivityViewModel.StartAsync();
             }
             catch { }
+        }
+
+        public void Stop()
+        {
+            if (CurrentActivity != null)
+                ActivityViewModel.Stop();
+        }
+
+        public bool CanStop()
+        {
+            return CurrentActivity == null ? false : ActivityViewModel.IsRunning;
         }
 
         public async Task AnalyzeAsync()

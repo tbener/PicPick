@@ -157,7 +157,7 @@ namespace PicPick.ViewModel.UserControls
                     if (!PathHelper.Exists(Source.Path))
                         return "Path not found";
 
-                    return Activity.StateMachine.GetStatus();
+                    return Activity.StateMachine.CurrentState.ToString();
                 }
 
                 return $"{Activity.FilesGraph.Files.Count()} files found";

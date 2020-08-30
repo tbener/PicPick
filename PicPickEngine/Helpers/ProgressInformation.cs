@@ -62,6 +62,10 @@ namespace PicPick.Helpers
             Text = "";
             Exception = null;
             UserCancelled = false;
+
+            Report();
+
+            RenewToken();
         }
 
         public string Text
@@ -97,11 +101,16 @@ namespace PicPick.Helpers
             }
         }
 
-
         public void Advance(int step = 1)
         {
             Value += step;
             Report();
+        }
+
+        public void AdvanceWithCancellationToken(int step = 1)
+        {
+            Advance(step);
+            CancellationToken.ThrowIfCancellationRequested();
         }
 
         public void Report()
