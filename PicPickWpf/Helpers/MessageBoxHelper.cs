@@ -10,9 +10,9 @@ namespace PicPick.Helpers
     {
         
         
-        private static MessageViewModel DisplayMessage(string messageText, string caption, MessageBoxButton button, MessageBoxImage messageIcon, bool showDontShowAgain)
+        private static MessageViewModel DisplayMessage(string messageText, string caption, MessageBoxButton button, MessageBoxImage messageIcon, bool displayDontShowAgain)
         {
-            MessageViewModel messageViewModel = new MessageViewModel(messageText, caption, button, messageIcon, showDontShowAgain);
+            MessageViewModel messageViewModel = new MessageViewModel(messageText, caption, button, messageIcon, displayDontShowAgain);
             MessageView messageView = new MessageView();
             messageView.DataContext = messageViewModel;
 
@@ -27,9 +27,9 @@ namespace PicPick.Helpers
             return messageViewModel;
         }
 
-        private static MessageBoxResult Show(string text, string caption, MessageBoxButton button, MessageBoxImage icon, bool showDontShowAgain, out bool dontShowAgainValue)
+        private static MessageBoxResult Show(string text, string caption, MessageBoxButton button, MessageBoxImage icon, bool displayDontShowAgain, out bool dontShowAgainValue)
         {
-            MessageViewModel messageViewModel = DisplayMessage(text, caption, button, icon, showDontShowAgain);
+            MessageViewModel messageViewModel = DisplayMessage(text, caption, button, icon, displayDontShowAgain);
             dontShowAgainValue = messageViewModel.DontShowAgain;
             return messageViewModel.DialogResult;
         }
@@ -82,9 +82,10 @@ namespace PicPick.Helpers
             Show(text, caption, MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
-        internal static MessageBoxResult Show(MappingBaseViewModel vm, string caption, MessageBoxButton button, out bool dontShowAgain)
+        internal static MessageBoxResult Show(MappingBaseViewModel vm, string caption, MessageBoxButton button, bool displayDontShowAgain, out bool dontShowAgain)
         {
             MessageViewModel viewModel = new MessageViewModel(vm, caption, button);
+            viewModel.ShowDontShowAgain = displayDontShowAgain ? Visibility.Visible : Visibility.Hidden;
             MessageView messageView = new MessageView();
             messageView.Height = 450;
             messageView.DataContext = viewModel;

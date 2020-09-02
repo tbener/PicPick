@@ -41,6 +41,7 @@ namespace PicPick.ViewModel.UserControls
         public ICommand StartCommand { get; set; }
         public ICommand AnalyzeCommand { get; set; }
         public ICommand StopCommand { get; set; }
+        public ICommand BackgroundReadingCommand { get; set; }
 
         #endregion
 
@@ -52,6 +53,7 @@ namespace PicPick.ViewModel.UserControls
             StartCommand = new AsyncRelayCommand(StartAsync, CanStart);
             AnalyzeCommand = new AsyncRelayCommand(AnalyzeAsync, CanStart);
             StopCommand = new RelayCommand(Stop, CanStop);
+            BackgroundReadingCommand = new RelayCommand(() => Activity.StateMachine.Restart(PicPickState.READING, _backgroundEndState));
 
             Activity = activity;
 
@@ -62,6 +64,7 @@ namespace PicPick.ViewModel.UserControls
             Activity.Source.PropertyChanged += Source_PropertyChanged;
 
             SourceViewModel = new SourceViewModel(Activity);
+            SourceViewModel.BackgroundReadingCommand = BackgroundReadingCommand;
             DestinationListViewModel = new DestinationListViewModel(Activity);
 
             Activity.OnActivityStateChanged += Activity_OnActivityStateChanged;
@@ -103,8 +106,8 @@ namespace PicPick.ViewModel.UserControls
                     //    Activity.StateMachine.Start(_backgroundEndState);
                     break;
                 case PicPickState.READY_TO_RUN:
-                    //if (!IsRunning)
-                    //    return;
+                    if (!IsRunning)
+                        ProgressInfo.Finished();
                     //if (!Properties.UserSettings.General.ShowPreviewWindow && !Activity.RunMode_AnalyzeOnly)
                     //    return;
                     //vm = new MappingPlanViewModel(Activity);
@@ -125,6 +128,7 @@ namespace PicPick.ViewModel.UserControls
                 default:
                     break;
             }
+            OnPropertyChanged(nameof(CanStop));
         }
 
         #endregion
@@ -150,38 +154,38 @@ namespace PicPick.ViewModel.UserControls
 
         private async void Activity_OnActivityStateChanged(PicPickProjectActivity activity, ActivityStateChangedEventArgs e)
         {
-            MappingBaseViewModel vm;
-            bool dontShowAgain;
+            //MappingBaseViewModel vm;
+            //bool dontShowAgain;
 
-            switch (activity.State)
-            {
-                case ACTIVITY_STATE.NOT_STARTED:
-                    break;
-                case ACTIVITY_STATE.ANALYZING:
-                    break;
-                case ACTIVITY_STATE.ANALYZED:
-                    if (!Properties.UserSettings.General.ShowPreviewWindow && !Activity.RunMode_AnalyzeOnly)
-                        return;
-                    vm = new MappingPlanViewModel(Activity);
-                    var result = MessageBoxHelper.Show(vm, "Mapping Preview", MessageBoxButton.OKCancel, out dontShowAgain);
-                    if (dontShowAgain)
-                        Properties.UserSettings.General.ShowPreviewWindow = false;
-                    if (result != MessageBoxResult.OK)
-                        e.Cancel = true;
-                    break;
-                case ACTIVITY_STATE.RUNNING:
-                    break;
-                case ACTIVITY_STATE.DONE:
-                    if (!Properties.UserSettings.General.ShowSummaryWindow)
-                        return;
-                    vm = new MappingResultsViewModel(Activity);
-                    MessageBoxHelper.Show(vm, "Finished", MessageBoxButton.OK, out dontShowAgain);
-                    if (dontShowAgain)
-                        Properties.UserSettings.General.ShowSummaryWindow = false;
-                    break;
-                default:
-                    break;
-            }
+            //switch (activity.State)
+            //{
+            //    case ACTIVITY_STATE.NOT_STARTED:
+            //        break;
+            //    case ACTIVITY_STATE.ANALYZING:
+            //        break;
+            //    case ACTIVITY_STATE.ANALYZED:
+            //        if (!Properties.UserSettings.General.ShowPreviewWindow && !Activity.RunMode_AnalyzeOnly)
+            //            return;
+            //        vm = new MappingPlanViewModel(Activity);
+            //        var result = MessageBoxHelper.Show(vm, "Mapping Preview", MessageBoxButton.OKCancel, out dontShowAgain);
+            //        if (dontShowAgain)
+            //            Properties.UserSettings.General.ShowPreviewWindow = false;
+            //        if (result != MessageBoxResult.OK)
+            //            e.Cancel = true;
+            //        break;
+            //    case ACTIVITY_STATE.RUNNING:
+            //        break;
+            //    case ACTIVITY_STATE.DONE:
+            //        if (!Properties.UserSettings.General.ShowSummaryWindow)
+            //            return;
+            //        vm = new MappingResultsViewModel(Activity);
+            //        MessageBoxHelper.Show(vm, "Finished", MessageBoxButton.OK, out dontShowAgain);
+            //        if (dontShowAgain)
+            //            Properties.UserSettings.General.ShowSummaryWindow = false;
+            //        break;
+            //    default:
+            //        break;
+            //}
         }
 
         public async Task AnalyzeAsync()
@@ -200,10 +204,11 @@ namespace PicPick.ViewModel.UserControls
 
         }
 
-        private bool ShowMappingDialog()
+        private bool ShowMappingDialog(bool onlyMapping)
         {
             var vm = new MappingPlanViewModel(Activity);
-            var result = MessageBoxHelper.Show(vm, "Mapping Preview", MessageBoxButton.OKCancel, out bool dontShowAgain);
+            MessageBoxButton buttons = onlyMapping ? MessageBoxButton.OK : MessageBoxButton.OKCancel;
+            var result = MessageBoxHelper.Show(vm, "Mapping Preview", buttons, !onlyMapping, out bool dontShowAgain);
             if (dontShowAgain)
                 Properties.UserSettings.General.ShowPreviewWindow = false;
             return result == MessageBoxResult.OK;
@@ -212,7 +217,7 @@ namespace PicPick.ViewModel.UserControls
         private void ShowResultsDialog()
         {
             var vm = new MappingResultsViewModel(Activity);
-            MessageBoxHelper.Show(vm, "Finished", MessageBoxButton.OK, out bool dontShowAgain);
+            MessageBoxHelper.Show(vm, "Finished", MessageBoxButton.OK, true, out bool dontShowAgain);
             if (dontShowAgain)
                 Properties.UserSettings.General.ShowSummaryWindow = false;
         }
@@ -227,7 +232,7 @@ namespace PicPick.ViewModel.UserControls
                 await Activity.StateMachine.StartAsync(PicPickState.READY_TO_RUN);
                 if (Properties.UserSettings.General.ShowPreviewWindow || onlyMapping)
                 {
-                    if (!ShowMappingDialog() || onlyMapping)
+                    if (!ShowMappingDialog(onlyMapping) || onlyMapping)
                         return;
                 }
 
@@ -264,12 +269,14 @@ namespace PicPick.ViewModel.UserControls
 
         public void Stop()
         {
-            ProgressInfo.Cancel();
+            Activity.StateMachine.Stop();
+            Thread.Sleep(1000);
+            ProgressInfo.Reset();
         }
 
         public bool CanStop()
         {
-            return IsRunning;
+            return Activity.StateMachine.IsRunning;
         }
 
         public bool ReadInBackground
@@ -363,6 +370,7 @@ namespace PicPick.ViewModel.UserControls
                 OnPropertyChanged(nameof(IsRunning));
             }
         }
+
 
     }
 }

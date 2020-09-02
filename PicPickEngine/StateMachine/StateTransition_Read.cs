@@ -21,7 +21,6 @@ namespace PicPick.StateMachine
         protected override async Task Action()
         {
             Debug.WriteLine("Running Reading...");
-            ProgressInfo.Text = "Reading...";
             reader.ReadFiles();
         }
 

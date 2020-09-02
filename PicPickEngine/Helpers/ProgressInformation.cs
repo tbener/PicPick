@@ -20,6 +20,7 @@ namespace PicPick.Helpers
         private int _value;
         private int _maximum;
         private CancellationTokenSource cts;
+        private bool _finished;
 
         #endregion
 
@@ -46,22 +47,24 @@ namespace PicPick.Helpers
                 Text = "Error occured";
             }
             else
-                Text = "Done";
+                Text = "";
 
             if (cts != null)
                 cts.Dispose();
 
+            _finished = true;
             Report();
         }
 
         public void Reset()
         {
             Value = 0;
-            Maximum = 0;
+            Maximum = 100;
             Header = "";
             Text = "";
             Exception = null;
             UserCancelled = false;
+            _finished = false;
 
             Report();
 
@@ -148,7 +151,7 @@ namespace PicPick.Helpers
 
         public IProgress<ProgressInformation> Progress { get; set; }
 
-        public string ProgressPercentsText => Maximum > 0 & Value > 0 ? $"{(100*Value)/Maximum}%" : "";
+        public string ProgressPercentsText => !_finished & Maximum > 0 & Value > 0 ? $"{100 * Value / Maximum}%" : "";
 
         public int CurrentOperationTotal { get; internal set; }
         public FileExistsResponseEnum FileExistsResponse { get; set; }

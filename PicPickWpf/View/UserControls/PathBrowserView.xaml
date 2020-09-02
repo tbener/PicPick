@@ -34,5 +34,6 @@
                     <TextBlock Text="{Binding FullPath, FallbackValue=[Full path preview]}" />
                 </Hyperlink>
         </TextBlock>
+        
     </StackPanel>
 </UserControl>

@@ -3,38 +3,38 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:PicPick.View.UserControls"
              mc:Ignorable="d" 
-             d:DesignHeight="216.008" d:DesignWidth="698.949">
-    <Grid>
+             d:DesignHeight="127.008" d:DesignWidth="802.949">
+    <Grid Margin="12">
         <Grid.RowDefinitions>
-            <RowDefinition/>
-            <RowDefinition/>
-            <RowDefinition/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <StackPanel Orientation="Horizontal">
-            <Button Content="Analyze" Command="{Binding AnalyzeCommand}" Height="34" Width="100" Margin="20,0,0,0" />
-            <Button Content="Run" Command="{Binding StartCommand}" Height="34" Width="100" Margin="20,0,0,0" />
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Top">
+            <Button Content="Start" Command="{Binding StartCommand}" Height="34" Width="100"  />
             <Button Content="Stop" Command="{Binding StopCommand}" Height="34" Width="100" Margin="20,0,0,0" />
-            <CheckBox Content="Read in background" IsChecked="{Binding ReadInBackground}" Margin="20,0,0,0" />
         </StackPanel>
 
-        <ProgressBar Grid.Row="1" Height="26" Margin="20" Value="{Binding ProgressInfo.Value}" Maximum="{Binding ProgressInfo.Maximum}"/>
-
-        <TextBlock Grid.Row="1" Text="{Binding ProgressInfo.MainOperation, FallbackValue=Main operation}" Margin="20,0" />
-        <TextBlock Grid.Row="1" Text="{Binding ProgressInfo.CurrentOperation}" VerticalAlignment="Center" Margin="20,0" />
-
-        <StackPanel Grid.Row="2" Orientation="Vertical">
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Total: " />
-                <TextBlock Text="{Binding ProgressInfo.Maximum}"/>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Done: " />
-                <TextBlock Text="{Binding ProgressInfo.Value}"/>
-            </StackPanel>
+        <StackPanel x:Name="ProgressContainer" Grid.Row="1" VerticalAlignment="Bottom">
+            <Grid Height="20">
+                <TextBlock Text="{Binding ProgressInfo.Text}" />
+                <TextBlock Text="{Binding ProgressInfo.ProgressPercentsText}" TextAlignment="Right" />
+            </Grid>
+            <ProgressBar Value="{Binding ProgressInfo.Value}" Maximum="{Binding ProgressInfo.Maximum}" Height="18">
+                <ProgressBar.Style>
+                    <Style TargetType="ProgressBar">
+                        <Setter Property="Foreground" Value="Gray" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsRunning}" Value="True">
+                                <Setter Property="Foreground" Value="{DynamicResource MahApps.Brushes.Accent}" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ProgressBar.Style>
+            </ProgressBar>
         </StackPanel>
+
 
     </Grid>
 </UserControl>

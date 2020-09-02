@@ -4,6 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:PicPick.View.UserControls"
+             xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              mc:Ignorable="d" 
              d:DesignHeight="364.285" d:DesignWidth="509.74">
     <Grid Grid.Row="1">
@@ -42,7 +44,9 @@
             </StackPanel>
         </StackPanel>
 
-        <TextBlock Grid.Row="2" Text="{Binding SourceFilesStatus, FallbackValue=Total files found: 0}" />
-
+        <StackPanel Grid.Row="2" Orientation="Horizontal">
+            <Button Content="{iconPacks:Material Kind=Refresh, Height=10}" Command="{Binding BackgroundReadingCommand}" Padding="0" Width="18" Height="18" MinHeight="10" VerticalAlignment="Center"/>
+            <TextBlock Text="{Binding SourceFilesStatus, FallbackValue=Total files found: 0}" VerticalAlignment="Center" Margin="6 0"/>
+        </StackPanel>
     </Grid>
 </UserControl>

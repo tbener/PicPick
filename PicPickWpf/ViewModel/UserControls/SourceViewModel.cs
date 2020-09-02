@@ -1,4 +1,5 @@
-﻿using PicPick.Models;
+﻿using PicPick.Commands;
+using PicPick.Models;
 using PicPick.Models.Mapping;
 using PicPick.StateMachine;
 using System;
@@ -10,6 +11,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 using TalUtils;
 
 namespace PicPick.ViewModel.UserControls
@@ -20,6 +22,8 @@ namespace PicPick.ViewModel.UserControls
 
         string _sourceFilesStatus;
         CancellationTokenSource ctsSourceCheck;
+
+        public ICommand BackgroundReadingCommand { get; set; }      // set by parent ActivityViewModel
 
         private FileSystemWatcher _fileSystemWatcher;
         private System.Timers.Timer _timerCheckFiles;
@@ -157,7 +161,7 @@ namespace PicPick.ViewModel.UserControls
                     if (!PathHelper.Exists(Source.Path))
                         return "Path not found";
 
-                    return Activity.StateMachine.CurrentState.ToString();
+                    return Activity.StateMachine.IsRunning ? "Updating..." : "";
                 }
 
                 return $"{Activity.FilesGraph.Files.Count()} files found";

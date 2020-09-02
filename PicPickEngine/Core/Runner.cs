@@ -65,7 +65,7 @@ namespace PicPick.Core
                             SourceFile sourceFile = destinationFile.SourceFile;
                             _log.Info($"-- Source file: {sourceFile.FileName}");
 
-                            progressInfo.Text = sourceFile.FileName;
+                            progressInfo.Text = $"Copying {sourceFile.FileName}";
                             progressInfo.Report();
 
                             if (destinationFile.Exists(true))
