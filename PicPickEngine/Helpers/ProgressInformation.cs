@@ -38,7 +38,7 @@ namespace PicPick.Helpers
 
         public void Finished()
         {
-            if (UserCancelled)
+            if (OperationCancelled)
             {
                 Text = "Cancelled";
             }
@@ -54,6 +54,7 @@ namespace PicPick.Helpers
 
             _finished = true;
             Report();
+            RaisePropertyChanged(nameof(IsWorking));
         }
 
         public void Reset()
@@ -63,12 +64,13 @@ namespace PicPick.Helpers
             Header = "";
             Text = "";
             Exception = null;
-            UserCancelled = false;
+            OperationCancelled = false;
             _finished = false;
 
             Report();
 
             RenewToken();
+            RaisePropertyChanged(nameof(IsWorking));
         }
 
         public string Text
@@ -142,10 +144,22 @@ namespace PicPick.Helpers
 
         public int Value
         {
-            get => _value; set
+            get => _value; 
+            set
             {
+                int prev = _value;
                 _value = value;
                 RaisePropertyChanged("Value");
+                if (prev == 0)
+                    RaisePropertyChanged(nameof(IsWorking));
+            }
+        }
+
+        public bool IsWorking
+        {
+            get
+            {
+                return !_finished && Value > 0;
             }
         }
 
@@ -156,7 +170,7 @@ namespace PicPick.Helpers
         public int CurrentOperationTotal { get; internal set; }
         public FileExistsResponseEnum FileExistsResponse { get; set; }
         public Dictionary<FILE_STATUS, List<string>> Summary { get; set; }
-        public bool UserCancelled { get; set; }
+        public bool OperationCancelled { get; set; }
 
         public CancellationToken CancellationToken { get; set; }
 

@@ -1,4 +1,5 @@
 ﻿using PicPick.Commands;
+using PicPick.Helpers;
 using PicPick.Models;
 using PicPick.Models.Mapping;
 using PicPick.StateMachine;
@@ -20,16 +21,18 @@ namespace PicPick.ViewModel.UserControls
     {
         #region Private Members
 
-        string _sourceFilesStatus;
-        CancellationTokenSource ctsSourceCheck;
+        private string _sourceFilesStatus;
+        private readonly PicPickState _backgroundEndState = PicPickState.READY_TO_RUN;
 
         public ICommand BackgroundReadingCommand { get; set; }      // set by parent ActivityViewModel
+        public ICommand StopCommand { get; set; }      // set by parent ActivityViewModel
 
         private FileSystemWatcher _fileSystemWatcher;
+
         private System.Timers.Timer _timerCheckFiles;
-        private bool _useDateFrom;
-        private DateTime _dateFrom;
         PicPickProjectActivity Activity;
+        private bool _enabled = true;
+        private bool _isRunning;
 
         #endregion
 
@@ -39,7 +42,10 @@ namespace PicPick.ViewModel.UserControls
         {
             Source = activity.Source;
             Activity = activity;
-            activity.StateMachine.OnStateChanged += StateMachine_OnStateCompleted;
+            Activity.StateMachine.OnStateChanged += StateMachine_OnStateCompleted;
+
+            BackgroundReadingCommand = new RelayCommand(() => Activity.StateMachine.Restart(PicPickState.READING, _backgroundEndState));
+            StopCommand = new RelayCommand(() => Activity.StateMachine.Stop());
 
             PathViewModel = new PathBrowserViewModel(Source);
             Source.PropertyChanged += Source_PropertyChanged;
@@ -49,7 +55,8 @@ namespace PicPick.ViewModel.UserControls
 
         private void StateMachine_OnStateCompleted(object sender, EventArgs e)
         {
-            OnPropertyChanged("SourceFilesStatus");
+            OnPropertyChanged(nameof(SourceFilesStatus));
+            OnPropertyChanged(nameof(BackgroundReadingInProgress));
         }
 
 
@@ -105,7 +112,7 @@ namespace PicPick.ViewModel.UserControls
         private void FileSystemWatcher_OnCountChanged(object sender, FileSystemEventArgs e)
         {
             _timerCheckFiles.Stop();
-            
+
             // todo:
             // need to mark that the FileGraph is not updated
             // we can update the counter according to the change
@@ -243,6 +250,38 @@ namespace PicPick.ViewModel.UserControls
             {
                 Source.ToDate = SetDate(Source.ToDate, value, true);
                 OnPropertyChanged("UseToDate");
+            }
+        }
+
+        public ProgressInformation ProgressInfo { get; set; }
+
+        public bool Enabled
+        {
+            get => _enabled;
+            internal set
+            {
+                _enabled = value;
+                OnPropertyChanged(nameof(Enabled));
+            }
+        }
+
+        public bool IsRunning
+        {
+            get => _isRunning;
+            set
+            {
+                _isRunning = value;
+                Enabled = !_isRunning;
+                OnPropertyChanged(nameof(IsRunning));
+                OnPropertyChanged(nameof(BackgroundReadingInProgress));
+            }
+        }
+
+        public bool BackgroundReadingInProgress
+        {
+            get
+            {
+                return Activity.StateMachine.IsRunning && !IsRunning;
             }
         }
 

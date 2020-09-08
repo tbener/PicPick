@@ -17,17 +17,17 @@
         </StackPanel>
 
         <StackPanel x:Name="ProgressContainer" Grid.Row="1" VerticalAlignment="Bottom">
-            <Grid Height="20">
+            <Grid Height="20" Visibility="{Binding IsRunning, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <TextBlock Text="{Binding ProgressInfo.Text}" />
                 <TextBlock Text="{Binding ProgressInfo.ProgressPercentsText}" TextAlignment="Right" />
             </Grid>
-            <ProgressBar Value="{Binding ProgressInfo.Value}" Maximum="{Binding ProgressInfo.Maximum}" Height="18">
+            <ProgressBar Maximum="{Binding ProgressInfo.Maximum}" Height="18">
                 <ProgressBar.Style>
                     <Style TargetType="ProgressBar">
-                        <Setter Property="Foreground" Value="Gray" />
+                        <Setter Property="Value" Value="0" />
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding IsRunning}" Value="True">
-                                <Setter Property="Foreground" Value="{DynamicResource MahApps.Brushes.Accent}" />
+                                <Setter Property="Value" Value="{Binding ProgressInfo.Value}" />
                             </DataTrigger>
                         </Style.Triggers>
                     </Style>

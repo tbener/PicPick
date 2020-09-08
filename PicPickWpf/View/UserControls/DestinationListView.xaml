@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:uc="clr-namespace:PicPick.View.UserControls"
              mc:Ignorable="d" 
+             IsEnabled="{Binding Enabled}"
              d:DesignHeight="450" d:DesignWidth="600">
 
     <DockPanel x:Name="pnlDestinations" LastChildFill="True">

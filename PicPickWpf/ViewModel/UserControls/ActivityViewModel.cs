@@ -64,7 +64,7 @@ namespace PicPick.ViewModel.UserControls
             Activity.Source.PropertyChanged += Source_PropertyChanged;
 
             SourceViewModel = new SourceViewModel(Activity);
-            SourceViewModel.BackgroundReadingCommand = BackgroundReadingCommand;
+            SourceViewModel.ProgressInfo = ProgressInfo;
             DestinationListViewModel = new DestinationListViewModel(Activity);
 
             Activity.OnActivityStateChanged += Activity_OnActivityStateChanged;
@@ -270,13 +270,11 @@ namespace PicPick.ViewModel.UserControls
         public void Stop()
         {
             Activity.StateMachine.Stop();
-            Thread.Sleep(1000);
-            ProgressInfo.Reset();
         }
 
         public bool CanStop()
         {
-            return Activity.StateMachine.IsRunning;
+            return IsRunning;
         }
 
         public bool ReadInBackground
@@ -367,6 +365,8 @@ namespace PicPick.ViewModel.UserControls
             set
             {
                 _isRunning = value;
+                SourceViewModel.IsRunning = _isRunning;
+                DestinationListViewModel.IsRunning = _isRunning;
                 OnPropertyChanged(nameof(IsRunning));
             }
         }

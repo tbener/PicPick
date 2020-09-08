@@ -92,8 +92,6 @@ namespace PicPick.Core
         {
             List<SourceFile> sourceFilesList = new List<SourceFile>();
 
-            progressInfo.Text = "Analysing...";
-            progressInfo.Report();
             Clear();
             ValidateFields();
 

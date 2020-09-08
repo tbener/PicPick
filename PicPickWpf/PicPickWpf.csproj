@@ -213,6 +213,7 @@
     <Compile Include="Commands\AsyncRelayCommand.cs" />
     <Compile Include="Commands\RelayCommand.cs" />
     <Compile Include="Commands\SaveCommand.cs" />
+    <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="Helpers\ApplicationService.cs" />
     <Compile Include="Helpers\MessageBoxHelper.cs" />
     <Compile Include="Helpers\NotifyPropertyChangedHelper.cs" />

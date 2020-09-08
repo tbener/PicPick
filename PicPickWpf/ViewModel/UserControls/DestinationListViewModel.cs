@@ -15,9 +15,11 @@ namespace PicPick.ViewModel.UserControls
         #region Private Members
 
         private bool _keepDestinationsAbsolute;
+        private bool _enabled = true;
+        private bool _isRunning;
 
-        #endregion        
-        
+        #endregion
+
         #region Commands
 
         public ICommand AddDestinationCommand { get; set; }
@@ -88,6 +90,27 @@ namespace PicPick.ViewModel.UserControls
                 {
                     destvm.Destination.KeepAbsolute = _keepDestinationsAbsolute;
                 }
+            }
+        }
+
+        public bool Enabled
+        {
+            get => _enabled;
+            internal set
+            {
+                _enabled = value;
+                OnPropertyChanged(nameof(Enabled));
+            }
+        }
+
+        public bool IsRunning
+        {
+            get => _isRunning;
+            set
+            {
+                _isRunning = value;
+                Enabled = !_isRunning;
+                OnPropertyChanged(nameof(IsRunning));
             }
         }
 

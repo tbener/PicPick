@@ -33,6 +33,7 @@ namespace PicPick.StateMachine
         public CoreActions CoreActions { get; private set; }
 
         private Dictionary<PicPickState, IStateHandler> _stateTransitions = new Dictionary<PicPickState, IStateHandler>();
+        private bool _stop;
 
         public StateManager(PicPickProjectActivity activity)
         {
@@ -68,27 +69,32 @@ namespace PicPick.StateMachine
 
             IsRunning = true;
 
-            ProgressInfo.Reset();
-
             try
             {
                 while (CurrentState < _toState)
                 {
                     if (_stateTransitions.ContainsKey(CurrentState))
-                        await _stateTransitions[CurrentState].ExecuteAsync();
+                    {
+                        ProgressInfo.Reset();
+                        try
+                        {
+                            await _stateTransitions[CurrentState].ExecuteAsync();
+                        }
+                        catch (OperationCanceledException)
+                        {
+                            if (ProgressInfo.OperationCancelled) return;
+                            continue;
+                        }
+                    }
                     OnStateChanged?.Invoke(this, null);
-
                     CurrentState = GetNextState(CurrentState);
                 };
-            }
-            catch (OperationCanceledException)
-            {
-                // do nothing
             }
             finally
             {
                 IsRunning = false;
                 OnStateChanged?.Invoke(this, null);
+                ProgressInfo.Reset();
             }
 
             if (CurrentState == PicPickState.DONE)
@@ -108,7 +114,7 @@ namespace PicPick.StateMachine
                 return;
 
             if (IsRunning)
-                Stop();
+                ProgressInfo.Cancel();
 
             CurrentState = fromtState;
             Start(toState);
@@ -116,6 +122,7 @@ namespace PicPick.StateMachine
 
         public void Stop()
         {
+            ProgressInfo.OperationCancelled = true;
             if (IsRunning)
                 ProgressInfo.Cancel();
         }
