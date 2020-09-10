@@ -51,9 +51,6 @@ namespace PicPick.ViewModel
             DuplicateActivityCommand = new RelayCommand(DuplicateActivity);
             MoveActivityDownCommand = new RelayCommand(MoveActivityDown, CanMoveActivityDown);
             MoveActivityUpCommand = new RelayCommand(MoveActivityUp, CanMoveActivityUp);
-            StartCommand = new AsyncRelayCommand(StartAsync, CanStart);
-            AnalyzeCommand = new AsyncRelayCommand(AnalyzeAsync, CanStart);
-            StopCommand = new RelayCommand(Stop, CanStop);
 
             LogFile = LogManager.GetRepository().GetAppenders().OfType<log4net.Appender.RollingFileAppender>().FirstOrDefault()?.File;
 
@@ -132,47 +129,6 @@ namespace PicPick.ViewModel
             proj.ActivityList.Add(activity);
 
             return proj;
-        }
-
-        public bool CanStart()
-        {
-            try
-            {
-                return ActivityViewModel.CanStart();
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
-        public async Task StartAsync()
-        {
-            try
-            {
-                await ActivityViewModel.StartAsync();
-            }
-            catch { }
-        }
-
-        public void Stop()
-        {
-            if (CurrentActivity != null)
-                ActivityViewModel.Stop();
-        }
-
-        public bool CanStop()
-        {
-            return CurrentActivity == null ? false : ActivityViewModel.IsRunning;
-        }
-
-        public async Task AnalyzeAsync()
-        {
-            try
-            {
-                await ActivityViewModel.AnalyzeAsync();
-            }
-            catch { }
         }
 
         private void DuplicateActivity()
@@ -394,7 +350,10 @@ namespace PicPick.ViewModel
                             _activityViewModels.Add(_currentActivity, new ActivityViewModel(_currentActivity));
                         }
                     }
-
+                    var vm = _activityViewModels[_currentActivity];
+                    StartCommand = vm.StartCommand;
+                    StopCommand = vm.StopCommand;
+                    AnalyzeCommand = vm.AnalyzeCommand;
                 }
                 OnPropertyChanged("CurrentActivity");
                 OnPropertyChanged("ActivityViewModel");

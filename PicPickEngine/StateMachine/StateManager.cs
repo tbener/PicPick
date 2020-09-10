@@ -3,9 +3,6 @@ using PicPick.Helpers;
 using PicPick.Models;
 using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace PicPick.StateMachine
@@ -26,14 +23,13 @@ namespace PicPick.StateMachine
         public event EventHandler OnStateChanged;
 
         public PicPickState CurrentState { get; private set; }
-        private PicPickState _toState;
+        public PicPickState EndState { get; set; }
 
         public PicPickProjectActivity Activity { get; private set; }
         public ProgressInformation ProgressInfo { get; set; }
         public CoreActions CoreActions { get; private set; }
 
         private Dictionary<PicPickState, IStateHandler> _stateTransitions = new Dictionary<PicPickState, IStateHandler>();
-        private bool _stop;
 
         public StateManager(PicPickProjectActivity activity)
         {
@@ -53,13 +49,8 @@ namespace PicPick.StateMachine
 
         public void Start(PicPickState toState)
         {
-            Task.Run(() => StartAsync(toState));
-        }
-
-        public async Task StartAsync(PicPickState toState)
-        {
-            _toState = toState;
-            await StartAsync();
+            EndState = toState;
+            _ = StartAsync();
         }
 
         private async Task StartAsync()
@@ -71,7 +62,7 @@ namespace PicPick.StateMachine
 
             try
             {
-                while (CurrentState < _toState)
+                while (CurrentState < EndState)
                 {
                     if (_stateTransitions.ContainsKey(CurrentState))
                     {

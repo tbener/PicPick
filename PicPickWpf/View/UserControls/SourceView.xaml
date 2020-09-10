@@ -49,10 +49,10 @@
 
         <StackPanel Grid.Row="2">
             <StackPanel Orientation="Horizontal" Margin="0 4">
-                <Button Content="{iconPacks:Material Kind=Refresh, Height=10}" Command="{Binding BackgroundReadingCommand}" 
+                <Button Content="{iconPacks:Material Kind=Refresh, Height=10}" Command="{Binding BackgroundReadingCommand}" ToolTip="Refresh"
                         Visibility="{Binding BackgroundReadingInProgress, Converter={StaticResource boolToVisibilityConverter}, ConverterParameter=true}"
                         Padding="0" Width="18" Height="18" MinHeight="10" VerticalAlignment="Center"/>
-                <Button Content="{iconPacks:Material Kind=Stop, Height=10}" Command="{Binding StopCommand}" 
+                <Button Content="{iconPacks:Material Kind=Stop, Height=10}" Command="{Binding StopCommand}" ToolTip="Stop"
                         Visibility="{Binding BackgroundReadingInProgress, Converter={StaticResource boolToVisibilityConverter}}"
                         Padding="0" Width="18" Height="18" MinHeight="10" VerticalAlignment="Center"/>
                 <TextBlock Text="{Binding SourceFilesStatus, FallbackValue=Total files found: 0}" VerticalAlignment="Center" Margin="6 0"/>

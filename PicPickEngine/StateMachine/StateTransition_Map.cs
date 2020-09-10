@@ -21,6 +21,7 @@ namespace PicPick.StateMachine
         protected override async Task Action()
         {
             Debug.WriteLine("Running Mapping...");
+            ProgressInfo.Text = "Calculating...";
             await mapper.MapAsync(ProgressInfo);
         }
     }
