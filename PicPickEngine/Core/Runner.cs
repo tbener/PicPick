@@ -35,12 +35,65 @@ namespace PicPick.Core
         public Runner(IActivity activity) : this(activity, ProjectLoader.Project.Options)
         { }
 
+        private FileExistsResponseEnum ResolveConflict(DestinationFile destFile, ProgressInformation progressInfo)
+        {
+            FileExistsResponseEnum selectedResponse = this.FileExistsResponse;
+
+            if (this.FileExistsResponse == FileExistsResponseEnum.ASK)
+            {
+                FileExistsAskEventArgs fileExistsAskEventArgs = new FileExistsAskEventArgs()
+                {
+                    SourceFile = destFile.SourceFile.FullFileName,
+                    DestinationFolder = destFile.ParentFolder.FullPath
+                };
+
+                // Publish the event
+                selectedResponse = EventAggregatorHelper.PublishFileExists(fileExistsAskEventArgs);
+
+                _log.Info($"-- User selected: {selectedResponse}");
+
+                if (selectedResponse == FileExistsResponseEnum.ASK)
+                    // This will happen if the event wasn't handled, or wasn't handled correctly
+                    selectedResponse = FileExistsResponseEnum.SKIP;
+
+                if (fileExistsAskEventArgs.Cancel)
+                {
+                    progressInfo.OperationCancelled = true;
+                    throw new OperationCanceledException(progressInfo.CancellationToken);
+                }
+
+                if (fileExistsAskEventArgs.DontAskAgain)
+                {
+                    _log.Info($"   + Dont Ask Again!");
+                    this.FileExistsResponse = selectedResponse;
+                }
+            }
+
+            if (selectedResponse == FileExistsResponseEnum.COMPARE)
+            {
+                if (FileSystemHelper.AreSameFiles(destFile.SourceFile.FullFileName, destFile.GetFullName()))
+                {
+                    _log.Info($"-- Comparison result: Same.");
+                    selectedResponse = FileExistsResponseEnum.SKIP;
+                }
+                else
+                {
+                    _log.Info($"-- Comparison result: Not same.");
+                    selectedResponse = FileExistsResponseEnum.RENAME;
+                }
+            }
+
+            _log.Info($"-- Final conlict action: {selectedResponse}");
+
+            return selectedResponse;
+        }
+
         public async Task Run(ProgressInformation progressInfo)
         {
-            
+
             progressInfo.Text = "Start copying...";
-            _log.Info($"Starting: {Activity.Name}"); 
-            
+            _log.Info($"Starting: {Activity.Name}");
+
             FileExistsAskEventArgs fileExistsAskEventArgs = new FileExistsAskEventArgs();
             FileExistsResponseEnum currentConflictResponse;
             FileExistsResponse = _options.FileExistsResponse;
@@ -52,92 +105,50 @@ namespace PicPick.Core
                 progressInfo.Maximum = filesGraph.Files.Count * Activity.DestinationList.Where(d => d.Active).Count();
                 progressInfo.Value = 0;
 
-                foreach (DestinationFolder destinationFolder in filesGraph.DestinationFolders.Values)
-                {
-                    _log.Info($"Destination: {destinationFolder.FullPath}");
-                    if (!Directory.Exists(destinationFolder.FullPath))
-                        Directory.CreateDirectory(destinationFolder.FullPath);
+                HashSet<DestinationFolder> destinationFolders = new HashSet<DestinationFolder>();
 
-                    foreach (DestinationFile destinationFile in destinationFolder.Files)
+                foreach (var sourceFile in filesGraph.Files.Values)
+                {
+                    foreach (var destinationFolder in sourceFile.DestinationFolders)
                     {
+                        // for not checking the existance of a folder many times, we use the HashSet
+                        if (!destinationFolders.Contains(destinationFolder))
+                        {
+                            destinationFolders.Add(destinationFolder);
+                            if (!Directory.Exists(destinationFolder.FullPath))
+                                Directory.CreateDirectory(destinationFolder.FullPath);
+                        }
+
+                        var destFile = destinationFolder.DestinationFiles[sourceFile];
+
                         try
                         {
-                            SourceFile sourceFile = destinationFile.SourceFile;
-                            _log.Info($"-- Source file: {sourceFile.FileName}");
-
-                            progressInfo.Text = $"Copying {sourceFile.FileName}";
-                            progressInfo.Report();
-
-                            if (destinationFile.Exists(true))
+                            if (destFile.Exists(true))
                             {
-                                currentConflictResponse = FileExistsResponse;
-                                _log.Info($"-- File exists in destination. Response = {currentConflictResponse}");
+                                _log.Info($"-- File exists in destination. Response = {FileExistsResponse}");
+                                var conflictAction = ResolveConflict(destFile, progressInfo);
 
-                                if (currentConflictResponse == FileExistsResponseEnum.ASK)
-                                {
-                                    fileExistsAskEventArgs.SourceFile = sourceFile.FullFileName;
-                                    fileExistsAskEventArgs.DestinationFolder = destinationFolder.FullPath;
-                                    // Publish the event
-                                    currentConflictResponse = EventAggregatorHelper.PublishFileExists(fileExistsAskEventArgs);
-
-                                    _log.Info($"-- User selected: {currentConflictResponse}");
-
-                                    if (currentConflictResponse == FileExistsResponseEnum.ASK)
-                                        // This will happen if the event wasn't handled, or wasn't handled correctly
-                                        currentConflictResponse = FileExistsResponseEnum.SKIP;
-
-                                    if (fileExistsAskEventArgs.Cancel)
-                                    {
-                                        progressInfo.OperationCancelled = true;
-                                        throw new OperationCanceledException(progressInfo.CancellationToken);
-                                    }
-
-                                    if (fileExistsAskEventArgs.DontAskAgain)
-                                    {
-                                        _log.Info($"   + Dont Ask Again!");
-                                        FileExistsResponse = currentConflictResponse;
-                                    }
-                                }
-
-                                if (currentConflictResponse == FileExistsResponseEnum.COMPARE)
-                                {
-                                    if (FileSystemHelper.AreSameFiles(sourceFile.FullFileName, destinationFile.GetFullName()))
-                                    {
-                                        _log.Info($"-- Comparison result: Same.");
-                                        currentConflictResponse = FileExistsResponseEnum.SKIP;
-                                    }
-                                    else
-                                    {
-                                        _log.Info($"-- Comparison result: Not same.");
-                                        currentConflictResponse = FileExistsResponseEnum.RENAME;
-                                    }
-                                }
-
-                                _log.Info($"-- Action: {currentConflictResponse}");
-
-                                switch (currentConflictResponse)
+                                switch (conflictAction)
                                 {
                                     case FileExistsResponseEnum.OVERWRITE:
-                                        await DoCopy(sourceFile, destinationFile);
+                                        await DoCopy(sourceFile, destFile);
                                         break;
                                     case FileExistsResponseEnum.SKIP:
-                                        destinationFile.SetStatus(FILE_STATUS.SKIPPED);
+                                        destFile.SetStatus(FILE_STATUS.SKIPPED);
                                         break;
                                     case FileExistsResponseEnum.RENAME:
-                                        destinationFile.NewName = FileSystemHelper.GetNewFileName(destinationFolder.FullPath, sourceFile.FileName);
-                                        await DoCopy(sourceFile, destinationFile);
+                                        destFile.NewName = FileSystemHelper.GetNewFileName(destinationFolder.FullPath, sourceFile.FileName);
+                                        await DoCopy(sourceFile, destFile);
                                         break;
                                     default:
                                         break;
                                 }
-
                             }
                             else
                             {
-                                await DoCopy(sourceFile, destinationFile, false);
+                                await DoCopy(sourceFile, destFile, false);
                             }
 
-                            // report progress
                             progressInfo.AdvanceWithCancellationToken();
                         }
                         catch (OperationCanceledException)
@@ -146,33 +157,156 @@ namespace PicPick.Core
                         }
                         catch (Exception ex)
                         {
-                            destinationFile.SetStatus(FILE_STATUS.ERROR);
-                            destinationFile.Exception = ex;
+                            destFile.SetStatus(FILE_STATUS.ERROR);
+                            destFile.Exception = ex;
 
-                            _errorHandler.Handle(ex, false, $"An error occurred while processing the file: {destinationFile.SourceFile.FileName}");
+                            _errorHandler.Handle(ex, false, $"An error occurred while processing the file: {destFile.SourceFile.FileName}");
 
                             // Publish the error
                             // The wrapper can take this event and make a decision whether or not to continue to the next file.
-                            FileErrorEventArgs args = new FileErrorEventArgs(destinationFile);
+                            FileErrorEventArgs args = new FileErrorEventArgs(destFile);
                             bool cancel = EventAggregatorHelper.PublishFileError(args);
                             if (cancel)
                                 throw ex;
                         }
                     }
+
+                    if (Activity.DeleteSourceFiles)
+                    {
+                        ShellFileOperation.MoveToRecycleBin(sourceFile.FullFileName);
+                    }
                 }
 
-                if (Activity.DeleteSourceFiles)
-                {
-                    progressInfo.Text = "Cleaning up...";
-                    var copiedFileList = filesGraph.Files.Values.Where(f => f.Status == FILE_STATUS.COPIED).Select(f => f.FullFileName).ToList();
-                    ShellFileOperation.MoveItemsToRecycleBin(copiedFileList);
-                    progressInfo.Text = "";
-                }
+                #region Old logic
+
+                //foreach (DestinationFolder destinationFolder in filesGraph.DestinationFolders.Values)
+                //{
+                //    _log.Info($"Destination: {destinationFolder.FullPath}");
+                //    if (!Directory.Exists(destinationFolder.FullPath))
+                //        Directory.CreateDirectory(destinationFolder.FullPath);
+
+                //    foreach (DestinationFile destinationFile in destinationFolder.Files)
+                //    {
+                //        try
+                //        {
+                //            SourceFile sourceFile = destinationFile.SourceFile;
+                //            _log.Info($"-- Source file: {sourceFile.FileName}");
+
+                //            progressInfo.Text = $"Copying {sourceFile.FileName}";
+                //            progressInfo.Report();
+
+                //            if (destinationFile.Exists(true))
+                //            {
+                //                currentConflictResponse = FileExistsResponse;
+                //                _log.Info($"-- File exists in destination. Response = {currentConflictResponse}");
+
+                //                if (currentConflictResponse == FileExistsResponseEnum.ASK)
+                //                {
+                //                    fileExistsAskEventArgs.SourceFile = sourceFile.FullFileName;
+                //                    fileExistsAskEventArgs.DestinationFolder = destinationFolder.FullPath;
+                //                    // Publish the event
+                //                    currentConflictResponse = EventAggregatorHelper.PublishFileExists(fileExistsAskEventArgs);
+
+                //                    _log.Info($"-- User selected: {currentConflictResponse}");
+
+                //                    if (currentConflictResponse == FileExistsResponseEnum.ASK)
+                //                        // This will happen if the event wasn't handled, or wasn't handled correctly
+                //                        currentConflictResponse = FileExistsResponseEnum.SKIP;
+
+                //                    if (fileExistsAskEventArgs.Cancel)
+                //                    {
+                //                        progressInfo.OperationCancelled = true;
+                //                        throw new OperationCanceledException(progressInfo.CancellationToken);
+                //                    }
+
+                //                    if (fileExistsAskEventArgs.DontAskAgain)
+                //                    {
+                //                        _log.Info($"   + Dont Ask Again!");
+                //                        FileExistsResponse = currentConflictResponse;
+                //                    }
+                //                }
+
+                //                if (currentConflictResponse == FileExistsResponseEnum.COMPARE)
+                //                {
+                //                    if (FileSystemHelper.AreSameFiles(sourceFile.FullFileName, destinationFile.GetFullName()))
+                //                    {
+                //                        _log.Info($"-- Comparison result: Same.");
+                //                        currentConflictResponse = FileExistsResponseEnum.SKIP;
+                //                    }
+                //                    else
+                //                    {
+                //                        _log.Info($"-- Comparison result: Not same.");
+                //                        currentConflictResponse = FileExistsResponseEnum.RENAME;
+                //                    }
+                //                }
+
+                //                _log.Info($"-- Action: {currentConflictResponse}");
+
+                //                switch (currentConflictResponse)
+                //                {
+                //                    case FileExistsResponseEnum.OVERWRITE:
+                //                        await DoCopy(sourceFile, destinationFile);
+                //                        break;
+                //                    case FileExistsResponseEnum.SKIP:
+                //                        destinationFile.SetStatus(FILE_STATUS.SKIPPED);
+                //                        break;
+                //                    case FileExistsResponseEnum.RENAME:
+                //                        destinationFile.NewName = FileSystemHelper.GetNewFileName(destinationFolder.FullPath, sourceFile.FileName);
+                //                        await DoCopy(sourceFile, destinationFile);
+                //                        break;
+                //                    default:
+                //                        break;
+                //                }
+
+                //            }
+                //            else
+                //            {
+                //                await DoCopy(sourceFile, destinationFile, false);
+                //            }
+
+                //            // report progress
+                //            progressInfo.AdvanceWithCancellationToken();
+                //        }
+                //        catch (OperationCanceledException)
+                //        {
+                //            throw;
+                //        }
+                //        catch (Exception ex)
+                //        {
+                //            destinationFile.SetStatus(FILE_STATUS.ERROR);
+                //            destinationFile.Exception = ex;
+
+                //            _errorHandler.Handle(ex, false, $"An error occurred while processing the file: {destinationFile.SourceFile.FileName}");
+
+                //            // Publish the error
+                //            // The wrapper can take this event and make a decision whether or not to continue to the next file.
+                //            FileErrorEventArgs args = new FileErrorEventArgs(destinationFile);
+                //            bool cancel = EventAggregatorHelper.PublishFileError(args);
+                //            if (cancel)
+                //                throw ex;
+                //        }
+                //    }
+                //}
+
+
+                #endregion
+
+                #region Old Delete SOurce Files
+
+                //if (Activity.DeleteSourceFiles)
+                //{
+                //    progressInfo.Text = "Cleaning up...";
+                //    var copiedFileList = filesGraph.Files.Values.Where(f => f.Status == FILE_STATUS.COPIED).Select(f => f.FullFileName).ToList();
+                //    ShellFileOperation.MoveItemsToRecycleBin(copiedFileList);
+                //    progressInfo.Text = "";
+                //} 
+
+                #endregion
 
             }
             finally
             {
-                
+
             }
         }
 

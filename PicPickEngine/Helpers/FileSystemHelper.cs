@@ -76,7 +76,7 @@ namespace PicPick.Helpers
 
             do
             {
-                newFileName = $"{fileNameWithoutExtension} ({count++}).{extension}";
+                newFileName = $"{fileNameWithoutExtension} ({count++}){extension}";
             }
             while (File.Exists(Path.Combine(path, newFileName)));
 

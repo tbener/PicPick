@@ -105,8 +105,8 @@ namespace PicPick.ViewModel.UserControls
             switch (Activity.StateMachine.CurrentState)
             {
                 case PicPickState.READY:
-                    //if (ReadInBackground)
-                    //    Activity.StateMachine.Start(_backgroundEndState);
+                    if (ReadInBackground)
+                        Activity.StateMachine.Start(_backgroundEndState);
                     break;
 
                 // This could be a background reading, or a source refresh (which is treated the same as background reading)
@@ -237,7 +237,9 @@ namespace PicPick.ViewModel.UserControls
 
         private void Start()
         {
-            Run(PicPickState.DONE);
+            if (Properties.UserSettings.General.WarnDeleteSource)
+                if (WarningsBeforeStart())
+                    Run(PicPickState.DONE);
         }
 
         private void Run(PicPickState endState)

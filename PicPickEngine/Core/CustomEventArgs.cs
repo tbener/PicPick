@@ -7,6 +7,15 @@ using System.Threading.Tasks;
 
 namespace PicPick.Core
 {
+    public class CancellableEventArgs : EventArgs
+    {
+        public CancellableEventArgs()
+        { }
+
+        public bool Cancel { get; set; }
+
+    }
+
     public class FileExistsAskEventArgs : EventArgs
     {
         

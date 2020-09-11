@@ -21,7 +21,9 @@ namespace PicPick.Models.Mapping
         public void AddFile(SourceFile sourceFile)
         {
             sourceFile.DestinationFolders.Add(this);
-            Files.Add(new DestinationFile(sourceFile, this));
+            var df = new DestinationFile(sourceFile, this);
+            Files.Add(df);
+            DestinationFiles.Add(sourceFile, df);
         }
 
         public string RelativePath
@@ -43,6 +45,7 @@ namespace PicPick.Models.Mapping
         public bool IsNew { get; set; }
         public bool Created { get; set; }
         public List<DestinationFile> Files { get; set; } = new List<DestinationFile>();
+        public Dictionary<SourceFile, DestinationFile> DestinationFiles { get; } = new Dictionary<SourceFile, DestinationFile>();
         public PicPickProjectActivityDestination BasedOnDestination { get; set; }
 
 
