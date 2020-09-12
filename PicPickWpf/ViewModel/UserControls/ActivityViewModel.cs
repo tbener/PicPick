@@ -100,7 +100,7 @@ namespace PicPick.ViewModel.UserControls
             }
         }
 
-        private void StateMachine_OnStateCompleted(object sender, EventArgs e)
+        private void StateMachine_OnStateCompleted(object sender, CancellableEventArgs e)
         {
             switch (Activity.StateMachine.CurrentState)
             {
@@ -120,19 +120,14 @@ namespace PicPick.ViewModel.UserControls
 
                         if (Properties.UserSettings.General.ShowPreviewWindow || runOnlyMapping)
                         {
-                            bool userCancelled = !ShowMappingDialog(runOnlyMapping);
+                            e.Cancel = !ShowMappingDialog(runOnlyMapping);
 
-                            if (userCancelled)
-                                Activity.StateMachine.EndState = PicPickState.READY_TO_RUN;
-
-                            if (userCancelled || runOnlyMapping)
+                            if (e.Cancel || runOnlyMapping)
                                 IsRunning = false;
 
                         }
                     }
 
-                    if (!IsRunning)
-                        ProgressInfo.Finished();
                     break;
 
                 case PicPickState.RUNNING:

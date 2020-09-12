@@ -78,6 +78,9 @@
             <StatusBarItem>
                 <TextBlock Text="{Binding Status, FallbackValue=Ready}" HorizontalAlignment="Stretch"/>
             </StatusBarItem>
+            <StatusBarItem>
+                <TextBlock Text="{Binding DebugInfo}"/>
+            </StatusBarItem>
             <Separator Grid.Column="1"/>
             <StatusBarItem Grid.Column="2">
                 <TextBlock Text="{Binding VersionString}" HorizontalAlignment="Right"/>

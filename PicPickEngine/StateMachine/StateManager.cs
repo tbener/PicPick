@@ -7,6 +7,11 @@ using System.Threading.Tasks;
 
 namespace PicPick.StateMachine
 {
+    public delegate void StateChangedEventHandler(object sender, StateChangedEventArgs e);
+
+    public class StateChangedEventArgs : CancellableEventArgs
+    { }
+
     public enum PicPickState
     {
         READY,
@@ -18,11 +23,19 @@ namespace PicPick.StateMachine
         DONE
     }
 
-    public class StateManager
+    public class StateManager 
     {
-        public event EventHandler OnStateChanged;
+        public event StateChangedEventHandler OnStateChanged;
 
-        public PicPickState CurrentState { get; private set; }
+        public PicPickState CurrentState
+        {
+            get => currentState;
+            private set
+            {
+                currentState = value;
+                RaisePropertyChanged(nameof(CurrentState));
+            }
+        }
         public PicPickState EndState { get; set; }
 
         public PicPickProjectActivity Activity { get; private set; }
@@ -30,6 +43,7 @@ namespace PicPick.StateMachine
         public CoreActions CoreActions { get; private set; }
 
         private Dictionary<PicPickState, IStateHandler> _stateTransitions = new Dictionary<PicPickState, IStateHandler>();
+        private PicPickState currentState;
 
         public StateManager(PicPickProjectActivity activity)
         {
@@ -77,22 +91,33 @@ namespace PicPick.StateMachine
                             continue;
                         }
                     }
-                    OnStateChanged?.Invoke(this, null);
+                    if (!PublishStateChangedEvent())
+                        return;
                     CurrentState = GetNextState(CurrentState);
                 };
             }
             finally
             {
                 IsRunning = false;
-                OnStateChanged?.Invoke(this, null);
+                PublishStateChangedEvent();
                 ProgressInfo.Reset();
             }
 
             if (CurrentState == PicPickState.DONE)
             {
                 CurrentState = PicPickState.READY;
-                OnStateChanged?.Invoke(this, null);
+                PublishStateChangedEvent();
             }
+        }
+
+        private bool PublishStateChangedEvent()
+        {
+            if (OnStateChanged == null)
+                return true;
+
+            StateChangedEventArgs e = new StateChangedEventArgs();
+            OnStateChanged.Invoke(this, e);
+            return !e.Cancel;
         }
 
         /// <summary>
@@ -127,6 +152,17 @@ namespace PicPick.StateMachine
                 return PicPickState.READY;
 
             return (PicPickState)((int)state + 1);
+        }
+
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+
+        protected void RaisePropertyChanged(string propertyName)
+        {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null))
+            {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
         }
 
     }

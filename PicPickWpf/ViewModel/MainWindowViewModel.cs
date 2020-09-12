@@ -348,6 +348,7 @@ namespace PicPick.ViewModel
                         if (!_activityViewModels.ContainsKey(_currentActivity))
                         {
                             _activityViewModels.Add(_currentActivity, new ActivityViewModel(_currentActivity));
+                            _currentActivity.StateMachine.PropertyChanged += (s, e) => OnPropertyChanged(nameof(DebugInfo));
                         }
                     }
                     var vm = _activityViewModels[_currentActivity];
@@ -378,6 +379,7 @@ namespace PicPick.ViewModel
 
         System.Windows.Media.Brush _isRunningColor = (System.Windows.Media.Brush)new System.Windows.Media.BrushConverter().ConvertFrom("#FF9DDA3E");
         private string status;
+        private string _debugInfo;
 
         public System.Windows.Media.Brush RunningColor
         {
@@ -396,6 +398,16 @@ namespace PicPick.ViewModel
             {
                 status = value;
                 OnPropertyChanged(nameof(Status));
+            }
+        }
+
+        public string DebugInfo
+        {
+            get { return CurrentActivity?.StateMachine.CurrentState.ToString(); }
+            set
+            {
+                _debugInfo = value;
+                OnPropertyChanged(nameof(DebugInfo));
             }
         }
 
