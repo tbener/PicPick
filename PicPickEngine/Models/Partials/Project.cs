@@ -1,7 +1,6 @@
 ﻿using PicPick.Core;
 using PicPick.Models.IsDirtySupport;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.Xml.Serialization;
 using PicPick.Models.Interfaces;
 
@@ -11,7 +10,7 @@ namespace PicPick.Models
 
     public partial class PicPickProject : IIsDirtySupport, IProject
     {
-        private ObservableCollection<PicPickProjectActivity> _activityList = null;
+        private ObservableCollection<IActivity> _activityList = null;
         private string _name;
         private IsDirtySupport<IIsDirtySupport> _isDirtySupport;
 
@@ -41,15 +40,15 @@ namespace PicPick.Models
         // Use this list rather than the Activity Array for easyer manipulations and editing.
         // This will be converted back to the Activity Array in Loader.Save()
         [XmlIgnore]
-        public ObservableCollection<PicPickProjectActivity> ActivityList
+        public ObservableCollection<IActivity> ActivityList
         {
             get
             {
                 if (_activityList == null)
                 {
-                    _activityList = new ObservableCollection<PicPickProjectActivity>();
+                    _activityList = new ObservableCollection<IActivity>();
                     if (this.Activities != null)
-                        foreach (PicPickProjectActivity activity in this.Activities)
+                        foreach (IActivity activity in this.Activities)
                         {
                             _activityList.Add(activity);
                         }

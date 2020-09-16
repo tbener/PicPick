@@ -11,7 +11,7 @@ namespace PicPick.StateMachine
     public abstract class BaseStateTransition : IStateHandler
     {
         protected StateManager _stateManager;
-        protected ProgressInformation ProgressInfo => _stateManager.ProgressInfo;
+        protected IProgressInformation ProgressInfo => _stateManager.ProgressInfo;
 
         public bool IsRunning { get; private set; }
 

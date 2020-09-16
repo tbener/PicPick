@@ -78,7 +78,7 @@
             <StatusBarItem>
                 <TextBlock Text="{Binding Status, FallbackValue=Ready}" HorizontalAlignment="Stretch"/>
             </StatusBarItem>
-            <StatusBarItem>
+            <StatusBarItem HorizontalAlignment="Right" Margin="6 0">
                 <TextBlock Text="{Binding DebugInfo}"/>
             </StatusBarItem>
             <Separator Grid.Column="1"/>
@@ -138,9 +138,7 @@
 
             <Grid x:Name="BottomLeft" Grid.Row="1" Margin="0 0 5 0">
                 <GroupBox Header="Run" DataContext="{Binding ActivityViewModel}">
-                    
-                        <uc:ExecutionView />
-                    
+                    <uc:ExecutionView DataContext="{Binding ExecutionViewModel}" />
                 </GroupBox>
             </Grid>
 

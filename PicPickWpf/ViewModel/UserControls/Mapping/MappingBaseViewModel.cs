@@ -1,4 +1,5 @@
 ﻿using PicPick.Models;
+using PicPick.Models.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -6,7 +7,7 @@ namespace PicPick.ViewModel.UserControls.Mapping
 {
     public class MappingBaseViewModel
     {
-        public MappingBaseViewModel(PicPickProjectActivity activity)
+        public MappingBaseViewModel(IActivity activity)
         {
             // Source Pane
             PicPickProjectActivitySource source = activity.Source;

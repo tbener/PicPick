@@ -88,7 +88,7 @@ namespace PicPick.Models
             {
                 _log.Info($"Saving picpick file: {file}");
                 // get activities array
-                Project.Activities = Project.ActivityList.ToArray();
+                Project.Activities = Project.ActivityList.Select(a => a as PicPickProjectActivity).ToArray();
 
                 // get destination array in each task
                 foreach (PicPickProjectActivity task in Project.Activities)

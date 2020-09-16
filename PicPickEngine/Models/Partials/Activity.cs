@@ -14,12 +14,13 @@ using PicPick.StateMachine;
 
 namespace PicPick.Models
 {
-
-    public enum ACTIVITY_STATE
+    /// <summary>
+    /// Need refactoring!
+    /// Currently used as an indication for IsRunning across view models.
+    /// </summary>
+    public enum ActivityState
     {
         NOT_STARTED,
-        ANALYZING,
-        ANALYZED,
         RUNNING,
         DONE
     }
@@ -40,6 +41,7 @@ namespace PicPick.Models
         private Mapper _fileMapping;
         private Runner _runner;
         private StateManager _stateMachine;
+        private ActivityState _state;
 
         public event ActivityStateChangedEventHandler OnActivityStateChanged;
 
@@ -170,7 +172,15 @@ namespace PicPick.Models
 
         [XmlIgnore]
         [IsDirtySupport.IsDirtyIgnore]
-        public ACTIVITY_STATE State { get; set; }
+        public ActivityState State
+        {
+            get => _state; set
+            {
+                _state = value;
+                RaisePropertyChanged(nameof(State));
+                OnActivityStateChanged?.Invoke(this, new ActivityStateChangedEventArgs());
+            }
+        }
 
         [XmlIgnore]
         [IsDirtySupport.IsDirtyIgnore]

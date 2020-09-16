@@ -46,7 +46,7 @@ namespace PicPick.Core
 
         #region ComputeAsync
 
-        public async Task MapAsync(ProgressInformation progressInfo)
+        public async Task MapAsync(IProgressInformation progressInfo)
         {
             _destinations = Activity.DestinationList.Where(d => d.Active).ToList();
 
@@ -88,7 +88,7 @@ namespace PicPick.Core
 
         #region Computing and mapping methods
 
-        private async Task<List<SourceFile>> ReadFileListToObjects(ProgressInformation progressInfo, bool needDates)
+        private async Task<List<SourceFile>> ReadFileListToObjects(IProgressInformation progressInfo, bool needDates)
         {
             List<SourceFile> sourceFilesList = new List<SourceFile>();
 

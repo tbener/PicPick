@@ -1,6 +1,7 @@
 ﻿using PicPick.Commands;
 using PicPick.Helpers;
 using PicPick.Models;
+using PicPick.Models.Interfaces;
 using PicPick.Models.Mapping;
 using PicPick.StateMachine;
 using System;
@@ -17,35 +18,42 @@ using TalUtils;
 
 namespace PicPick.ViewModel.UserControls
 {
-    public class SourceViewModel : BaseViewModel, IDisposable
+    public class SourceViewModel : ActivityBaseViewModel
     {
         #region Private Members
-
-        private string _sourceFilesStatus;
-        private readonly PicPickState _backgroundEndState = PicPickState.READY_TO_RUN;
-
-        public ICommand BackgroundReadingCommand { get; set; }      // set by parent ActivityViewModel
-        public ICommand StopCommand { get; set; }      // set by parent ActivityViewModel
 
         private FileSystemWatcher _fileSystemWatcher;
 
         private System.Timers.Timer _timerCheckFiles;
-        PicPickProjectActivity Activity;
         private bool _enabled = true;
-        private bool _isRunning;
+
+        #endregion
+
+        #region Commands
+
+        public ICommand BackgroundReadingCommand { get; set; }
+        public ICommand StopBackgroundReadingCommand { get; set; }
 
         #endregion
 
         #region CTOR
 
-        public SourceViewModel(PicPickProjectActivity activity)
+        public SourceViewModel(IActivity activity, IProgressInformation progressInfo) : base(activity, progressInfo)
         {
             Source = activity.Source;
-            Activity = activity;
-            Activity.StateMachine.OnStateChanged += StateMachine_OnStateCompleted;
+            Activity.StateMachine.OnStateChanged += (s, e) =>
+            {
+                OnPropertyChanged(nameof(SourceFilesStatus));
+                OnPropertyChanged(nameof(BackgroundReadingInProgress));
+            };
 
-            BackgroundReadingCommand = new RelayCommand(() => Activity.StateMachine.Restart(PicPickState.READING, _backgroundEndState));
-            StopCommand = new RelayCommand(() => Activity.StateMachine.Stop());
+            Activity.OnActivityStateChanged += (s, e) =>
+            {
+                Enabled = !IsRunning;
+            };
+
+            BackgroundReadingCommand = new RelayCommand(() => Activity.StateMachine.Restart(PicPickState.READING, BACKGROUND_END_STATE));
+            StopBackgroundReadingCommand = new RelayCommand(() => Activity.StateMachine.Stop());
 
             PathViewModel = new PathBrowserViewModel(Source);
             Source.PropertyChanged += Source_PropertyChanged;
@@ -53,17 +61,40 @@ namespace PicPick.ViewModel.UserControls
             InitSystemWatcher();
         }
 
-        private void StateMachine_OnStateCompleted(object sender, EventArgs e)
+        #endregion
+
+        #region Events
+
+        private void Source_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            OnPropertyChanged(nameof(SourceFilesStatus));
-            OnPropertyChanged(nameof(BackgroundReadingInProgress));
+            Activity.State = ActivityState.NOT_STARTED;
+
+            if (e.PropertyName.Equals("Path"))
+                InitSystemWatcher();
+
+            if (!BackgroundReadingEnabled) return;
+
+            switch (e.PropertyName)
+            {
+                case "OnlyNewFiles":
+                    Activity.StateMachine.Restart(PicPickState.FILTERING, BACKGROUND_END_STATE);
+                    break;
+                case "FromDate":
+                case "ToDate":
+                    Activity.StateMachine.Restart(PicPickState.MAPPING, BACKGROUND_END_STATE);
+                    break;
+                default:
+                    Activity.StateMachine.Restart(PicPickState.READING, BACKGROUND_END_STATE);
+                    break;
+            }
+
         }
-
-
 
         #endregion
 
-        #region Private Methods
+
+        #region FileSystemWatcher
+
 
         private void InitSystemWatcher()
         {
@@ -121,24 +152,11 @@ namespace PicPick.ViewModel.UserControls
             _timerCheckFiles.Start();
         }
 
-        private void Source_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            switch (e.PropertyName)
-            {
-                case "OnlyNewFiles":
-                    break;
-                case "FromDate":
-                case "ToDate":
-                    break;
-                case "Path":
-                    InitSystemWatcher();
-                    break;
-                default:
-                    break;
-            }
-        }
+        #endregion
 
-        public void Dispose()
+        #region IDisposable
+
+        public override void Dispose()
         {
             Source.PropertyChanged -= Source_PropertyChanged;
             Source = null;
@@ -151,6 +169,8 @@ namespace PicPick.ViewModel.UserControls
                 _fileSystemWatcher.Deleted -= FileSystemWatcher_OnCountChanged;
                 _fileSystemWatcher = null;
             }
+
+            base.Dispose();
         }
 
         #endregion
@@ -173,11 +193,7 @@ namespace PicPick.ViewModel.UserControls
 
                 return $"{Activity.FilesGraph.Files.Count()} files found";
             }
-            set
-            {
-                _sourceFilesStatus = value;
-                OnPropertyChanged("SourceFilesStatus");
-            }
+
         }
 
         public PathBrowserViewModel PathViewModel
@@ -189,6 +205,27 @@ namespace PicPick.ViewModel.UserControls
         public static readonly DependencyProperty PathViewModelProperty =
             DependencyProperty.Register("PathViewModel", typeof(PathBrowserViewModel), typeof(SourceViewModel), new PropertyMetadata(null));
 
+
+        public bool Enabled
+        {
+            get => _enabled;
+            internal set
+            {
+                _enabled = value;
+                OnPropertyChanged(nameof(Enabled));
+            }
+        }
+
+
+        public bool BackgroundReadingInProgress
+        {
+            get
+            {
+                return Activity.StateMachine.IsRunning && !IsRunning;
+            }
+        }
+
+        #region Dates Properties
 
         private DateComplex SetDate(DateComplex dateProp, DateTime date, bool use)
         {
@@ -253,37 +290,7 @@ namespace PicPick.ViewModel.UserControls
             }
         }
 
-        public ProgressInformation ProgressInfo { get; set; }
-
-        public bool Enabled
-        {
-            get => _enabled;
-            internal set
-            {
-                _enabled = value;
-                OnPropertyChanged(nameof(Enabled));
-            }
-        }
-
-        public bool IsRunning
-        {
-            get => _isRunning;
-            set
-            {
-                _isRunning = value;
-                Enabled = !_isRunning;
-                OnPropertyChanged(nameof(IsRunning));
-                OnPropertyChanged(nameof(BackgroundReadingInProgress));
-            }
-        }
-
-        public bool BackgroundReadingInProgress
-        {
-            get
-            {
-                return Activity.StateMachine.IsRunning && !IsRunning;
-            }
-        }
+        #endregion
 
         #endregion
     }

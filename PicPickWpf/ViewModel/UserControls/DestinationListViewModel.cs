@@ -1,5 +1,7 @@
 ﻿using PicPick.Commands;
+using PicPick.Helpers;
 using PicPick.Models;
+using PicPick.Models.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -10,13 +12,12 @@ using System.Windows.Input;
 
 namespace PicPick.ViewModel.UserControls
 {
-    public class DestinationListViewModel : BaseViewModel, IDisposable
+    public class DestinationListViewModel : ActivityBaseViewModel
     {
         #region Private Members
 
         private bool _keepDestinationsAbsolute;
         private bool _enabled = true;
-        private bool _isRunning;
 
         #endregion
 
@@ -28,9 +29,12 @@ namespace PicPick.ViewModel.UserControls
 
         #region CTOR
 
-        public DestinationListViewModel(PicPickProjectActivity activity)
+        public DestinationListViewModel(IActivity activity, IProgressInformation progressInfo) : base(activity, progressInfo)
         {
-            Activity = activity;
+            Activity.OnActivityStateChanged += (s, e) =>
+            {
+                Enabled = !IsRunning;
+            };
 
             AddDestinationCommand = new RelayCommand(AddDestination);
 
@@ -77,7 +81,6 @@ namespace PicPick.ViewModel.UserControls
 
         #region Public Properties
 
-        public PicPickProjectActivity Activity { get; set; }
         public ObservableCollection<DestinationViewModel> DestinationViewModelList { get; set; }
 
         public bool KeepDestinationsAbsolute
@@ -103,26 +106,17 @@ namespace PicPick.ViewModel.UserControls
             }
         }
 
-        public bool IsRunning
-        {
-            get => _isRunning;
-            set
-            {
-                _isRunning = value;
-                Enabled = !_isRunning;
-                OnPropertyChanged(nameof(IsRunning));
-            }
-        }
 
         #endregion
 
         #region IDisposable Implementation
 
-        public void Dispose()
+        public override void Dispose()
         {
-            Activity = null;
             DestinationViewModelList.Clear();
             DestinationViewModelList = null;
+
+            base.Dispose();
         }
 
         #endregion

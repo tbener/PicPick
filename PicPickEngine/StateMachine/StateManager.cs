@@ -1,6 +1,7 @@
 ﻿using PicPick.Core;
 using PicPick.Helpers;
 using PicPick.Models;
+using PicPick.Models.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -23,29 +24,21 @@ namespace PicPick.StateMachine
         DONE
     }
 
-    public class StateManager 
+    public class StateManager
     {
         public event StateChangedEventHandler OnStateChanged;
 
-        public PicPickState CurrentState
-        {
-            get => currentState;
-            private set
-            {
-                currentState = value;
-                RaisePropertyChanged(nameof(CurrentState));
-            }
-        }
+
         public PicPickState EndState { get; set; }
 
-        public PicPickProjectActivity Activity { get; private set; }
-        public ProgressInformation ProgressInfo { get; set; }
+        public IActivity Activity { get; private set; }
+        public IProgressInformation ProgressInfo { get; set; }
         public CoreActions CoreActions { get; private set; }
 
         private Dictionary<PicPickState, IStateHandler> _stateTransitions = new Dictionary<PicPickState, IStateHandler>();
-        private PicPickState currentState;
+        private PicPickState _currentState;
 
-        public StateManager(PicPickProjectActivity activity)
+        public StateManager(IActivity activity)
         {
             Activity = activity;
             CoreActions = new CoreActions(Activity);
@@ -56,7 +49,7 @@ namespace PicPick.StateMachine
             _stateTransitions.Add(PicPickState.RUNNING, new StateTransition_Run(this));
         }
 
-        public StateManager(PicPickProjectActivity activity, ProgressInformation progressInfo) : this(activity)
+        public StateManager(IActivity activity, IProgressInformation progressInfo) : this(activity)
         {
             ProgressInfo = progressInfo;
         }
@@ -78,29 +71,37 @@ namespace PicPick.StateMachine
             {
                 while (CurrentState < EndState)
                 {
+                    ProgressInfo.Reset();
                     if (_stateTransitions.ContainsKey(CurrentState))
                     {
-                        ProgressInfo.Reset();
                         try
                         {
                             await _stateTransitions[CurrentState].ExecuteAsync();
                         }
                         catch (OperationCanceledException)
                         {
-                            if (ProgressInfo.OperationCancelled) return;
-                            continue;
+                            lock (this)
+                            {
+                                if (ProgressInfo.OperationCancelled)
+                                    return;
+                                continue;
+                            }
                         }
                     }
-                    if (!PublishStateChangedEvent())
-                        return;
-                    CurrentState = GetNextState(CurrentState);
+                    lock (this)
+                    {
+                        if (ProgressInfo.OperationCancelled)
+                            return;
+                        if (!PublishStateChangedEvent())
+                            return;
+                        CurrentState = GetNextState(CurrentState);
+                    }
                 };
             }
             finally
             {
                 IsRunning = false;
                 PublishStateChangedEvent();
-                ProgressInfo.Reset();
             }
 
             if (CurrentState == PicPickState.DONE)
@@ -126,21 +127,50 @@ namespace PicPick.StateMachine
         /// <param name="fromtState"></param>
         public void Restart(PicPickState fromtState, PicPickState toState)
         {
-            if (CurrentState < fromtState)
-                return;
+            lock (this)
+            {
+                Stop(false);
+                if (CurrentState > fromtState)
+                    CurrentState = fromtState;
+            }
 
-            if (IsRunning)
-                ProgressInfo.Cancel();
-
-            CurrentState = fromtState;
             Start(toState);
         }
 
-        public void Stop()
+        public void Stop(PicPickState? setState = null)
         {
-            ProgressInfo.OperationCancelled = true;
+            lock (this)
+            {
+                if (IsRunning)
+                {
+                    Stop(true);
+                    if (setState.HasValue)
+                        CurrentState = setState.Value;
+                    else
+                    {
+                        if (CurrentState < PicPickState.READY_TO_RUN)
+                            CurrentState = PicPickState.READY;
+                        else
+                            CurrentState = PicPickState.READY_TO_RUN;
+
+                    }
+                }
+                else
+                {
+                    if (setState.HasValue)
+                        CurrentState = setState.Value;
+                }
+            }
+        }
+
+        private void Stop(bool cancelOperation)
+        {
             if (IsRunning)
+            {
+                if (cancelOperation)
+                    ProgressInfo.OperationCancelled = true;
                 ProgressInfo.Cancel();
+            }
         }
 
         public bool IsRunning { get; private set; }
@@ -162,6 +192,16 @@ namespace PicPick.StateMachine
             if ((propertyChanged != null))
             {
                 propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+
+        public PicPickState CurrentState
+        {
+            get => _currentState;
+            private set
+            {
+                _currentState = value;
+                RaisePropertyChanged(nameof(CurrentState));
             }
         }
 

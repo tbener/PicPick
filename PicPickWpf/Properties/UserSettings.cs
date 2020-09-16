@@ -78,6 +78,16 @@ namespace PicPick.Properties
                 RaisePropertyChanged(nameof(ShowSummaryWindow));
             }
         }
+
+        public bool BackgroundReading
+        {
+            get { return UserSettings.Default.BackgroundReading; }
+            set
+            {
+                UserSettings.Default.BackgroundReading = value;
+                RaisePropertyChanged(nameof(BackgroundReading));
+            }
+        }
     }
 
 }

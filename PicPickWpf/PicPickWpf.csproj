@@ -233,9 +233,11 @@
     <Compile Include="Versioning\UpdateManager.cs" />
     <Compile Include="ViewModel\Dialogs\MessageViewModel.cs" />
     <Compile Include="ViewModel\Dialogs\WhatsNewViewModel.cs" />
+    <Compile Include="ViewModel\UserControls\ActivityBaseViewModel.cs" />
     <Compile Include="ViewModel\UserControls\DestinationListViewModel.cs" />
     <Compile Include="ViewModel\UserControls\DestinationViewModel.cs" />
     <Compile Include="ViewModel\UserControls\ExecutionViewModel.cs" />
+    <Compile Include="ViewModel\UserControls\IActivityPartViewModel.cs" />
     <Compile Include="ViewModel\UserControls\Mapping\MappingBaseViewModel.cs" />
     <Compile Include="ViewModel\UserControls\MappingResultsViewModel.cs" />
     <Compile Include="ViewModel\UserControls\Mapping\DataTemplateSelector.cs" />

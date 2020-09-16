@@ -9,20 +9,19 @@ using System.Windows;
 using System.IO;
 using PicPick.Helpers;
 using PicPick.Core;
-using PicPick.View;
 using log4net;
 using PicPick.ViewModel.Dialogs;
 using PicPick.View.Dialogs;
 using PicPick.ViewModel.UserControls;
-using System.Threading.Tasks;
+using PicPick.Models.Interfaces;
 
 namespace PicPick.ViewModel
 {
     internal class MainWindowViewModel : BaseViewModel, IDisposable
     {
 
-        private PicPickProjectActivity _currentActivity;
-        private Dictionary<PicPickProjectActivity, ActivityViewModel> _activityViewModels = new Dictionary<PicPickProjectActivity, ActivityViewModel>();
+        private IActivity _currentActivity;
+        private Dictionary<IActivity, ActivityViewModel> _activityViewModels = new Dictionary<IActivity, ActivityViewModel>();
 
         public ICommand OpenFileCommand { get; set; }
         public ICommand SaveCommand { get; set; }
@@ -333,7 +332,7 @@ namespace PicPick.ViewModel
 
         public ActivityViewModel ActivityViewModel => _activityViewModels[CurrentActivity];
 
-        public PicPickProjectActivity CurrentActivity
+        public IActivity CurrentActivity
         {
             get => _currentActivity;
             set
@@ -347,14 +346,14 @@ namespace PicPick.ViewModel
                     {
                         if (!_activityViewModels.ContainsKey(_currentActivity))
                         {
-                            _activityViewModels.Add(_currentActivity, new ActivityViewModel(_currentActivity));
+                            _activityViewModels.Add(_currentActivity, new ActivityViewModel(_currentActivity, new ProgressInformation()));
                             _currentActivity.StateMachine.PropertyChanged += (s, e) => OnPropertyChanged(nameof(DebugInfo));
                         }
                     }
-                    var vm = _activityViewModels[_currentActivity];
-                    StartCommand = vm.StartCommand;
-                    StopCommand = vm.StopCommand;
-                    AnalyzeCommand = vm.AnalyzeCommand;
+                    var activityViewModel = _activityViewModels[_currentActivity];
+                    StartCommand = activityViewModel.ExecutionViewModel.StartCommand;
+                    StopCommand = activityViewModel.ExecutionViewModel.StopCommand;
+                    AnalyzeCommand = activityViewModel.ExecutionViewModel.AnalyzeCommand;
                 }
                 OnPropertyChanged("CurrentActivity");
                 OnPropertyChanged("ActivityViewModel");
@@ -403,7 +402,14 @@ namespace PicPick.ViewModel
 
         public string DebugInfo
         {
-            get { return CurrentActivity?.StateMachine.CurrentState.ToString(); }
+            get {
+
+#if DEBUG
+                return CurrentActivity?.StateMachine.CurrentState.ToString();
+#else
+                return "";
+#endif
+            }
             set
             {
                 _debugInfo = value;

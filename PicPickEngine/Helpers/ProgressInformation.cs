@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace PicPick.Helpers
 {
-    public class ProgressInformation : INotifyPropertyChanged
+    public class ProgressInformation : IProgressInformation
     {
 
         #region Private members
@@ -95,11 +95,11 @@ namespace PicPick.Helpers
                 RaisePropertyChanged("Header");
             }
         }
-        
+
         public int Maximum
         {
             get => _maximum;
-            internal set
+            set
             {
                 _maximum = value;
                 RaisePropertyChanged("Maximum");
@@ -124,7 +124,7 @@ namespace PicPick.Helpers
             RaisePropertyChanged(nameof(ProgressPercentsText));
             RaisePropertyChanged(nameof(Text));
         }
-        
+
         public void RenewToken()
         {
             cts = new CancellationTokenSource();
@@ -144,7 +144,7 @@ namespace PicPick.Helpers
 
         public int Value
         {
-            get => _value; 
+            get => _value;
             set
             {
                 int prev = _value;

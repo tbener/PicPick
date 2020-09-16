@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using PicPick.Helpers;
 using TalUtils;
@@ -35,7 +32,7 @@ namespace PicPick.Core
         public Runner(IActivity activity) : this(activity, ProjectLoader.Project.Options)
         { }
 
-        private FileExistsResponseEnum ResolveConflict(DestinationFile destFile, ProgressInformation progressInfo)
+        private FileExistsResponseEnum ResolveConflict(DestinationFile destFile, IProgressInformation progressInfo)
         {
             FileExistsResponseEnum selectedResponse = this.FileExistsResponse;
 
@@ -83,19 +80,18 @@ namespace PicPick.Core
                 }
             }
 
-            _log.Info($"-- Final conlict action: {selectedResponse}");
+            _log.Info($"-- Final conflict action: {selectedResponse}");
 
             return selectedResponse;
         }
 
-        public async Task Run(ProgressInformation progressInfo)
+        public async Task Run(IProgressInformation progressInfo)
         {
 
-            progressInfo.Text = "Start copying...";
+            progressInfo.Text = "Copying...";
             _log.Info($"Starting: {Activity.Name}");
 
             FileExistsAskEventArgs fileExistsAskEventArgs = new FileExistsAskEventArgs();
-            FileExistsResponseEnum currentConflictResponse;
             FileExistsResponse = _options.FileExistsResponse;
 
             var filesGraph = Activity.FilesGraph;
@@ -109,8 +105,12 @@ namespace PicPick.Core
 
                 foreach (var sourceFile in filesGraph.Files.Values)
                 {
+                    _log.Info($"Source file: {sourceFile.FileName}");
+                    progressInfo.Text = sourceFile.FileName;
+
                     foreach (var destinationFolder in sourceFile.DestinationFolders)
                     {
+                        _log.Info($"-- Copying to: {destinationFolder.FullPath}");
                         // for not checking the existance of a folder many times, we use the HashSet
                         if (!destinationFolders.Contains(destinationFolder))
                         {
@@ -160,7 +160,7 @@ namespace PicPick.Core
                             destFile.SetStatus(FILE_STATUS.ERROR);
                             destFile.Exception = ex;
 
-                            _errorHandler.Handle(ex, false, $"An error occurred while processing the file: {destFile.SourceFile.FileName}");
+                            _errorHandler.Handle(ex, false, $"An error occurred while copying the file:\n{sourceFile.FileName}\nTo:\n{destinationFolder.FullPath}");
 
                             // Publish the error
                             // The wrapper can take this event and make a decision whether or not to continue to the next file.
