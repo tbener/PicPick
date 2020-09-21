@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
              d:DesignHeight="127.008" d:DesignWidth="802.949">
+    
     <Grid Margin="12">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
@@ -12,8 +13,13 @@
         </Grid.RowDefinitions>
 
         <StackPanel Orientation="Horizontal" VerticalAlignment="Top">
-            <Button Content="Start" Command="{Binding StartCommand}" Height="34" Width="100"  />
+            <Button Content="Start" Command="{Binding StartCommand}" CommandParameter="{Binding FullRunEndState}" Height="34" Width="100"  />
             <Button Content="Stop" Command="{Binding StopCommand}" Height="34" Width="100" Margin="20,0,0,0" />
+            <TextBlock VerticalAlignment="Bottom" Margin="20,0,0,0">
+                <Hyperlink Command="{Binding ShowPlanCommand}" CommandParameter="{Binding AnalyzeEndState}">
+                    <TextBlock Text="Show plan" />
+                </Hyperlink>
+            </TextBlock>
         </StackPanel>
 
         <StackPanel x:Name="ProgressContainer" Grid.Row="1" VerticalAlignment="Bottom">

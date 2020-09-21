@@ -67,6 +67,9 @@ namespace PicPick.StateMachine
 
             IsRunning = true;
 
+            if (CurrentState == PicPickState.DONE)
+                CurrentState = PicPickState.READY;
+
             try
             {
                 while (CurrentState < EndState)
@@ -83,7 +86,7 @@ namespace PicPick.StateMachine
                             lock (this)
                             {
                                 if (ProgressInfo.OperationCancelled)
-                                    return;
+                                    break;
                                 continue;
                             }
                         }
@@ -91,15 +94,17 @@ namespace PicPick.StateMachine
                     lock (this)
                     {
                         if (ProgressInfo.OperationCancelled)
-                            return;
+                            break;
                         if (!PublishStateChangedEvent())
-                            return;
+                            break;
                         CurrentState = GetNextState(CurrentState);
                     }
                 };
             }
             finally
             {
+                if (ProgressInfo.OperationCancelled)
+                    CurrentState = GetStoppingState();
                 IsRunning = false;
                 PublishStateChangedEvent();
             }
@@ -119,6 +124,11 @@ namespace PicPick.StateMachine
             StateChangedEventArgs e = new StateChangedEventArgs();
             OnStateChanged.Invoke(this, e);
             return !e.Cancel;
+        }
+
+        private PicPickState GetStoppingState()
+        {
+            return CurrentState > PicPickState.READY_TO_RUN ? PicPickState.DONE : PicPickState.READY;
         }
 
         /// <summary>
@@ -144,21 +154,21 @@ namespace PicPick.StateMachine
                 if (IsRunning)
                 {
                     Stop(true);
-                    if (setState.HasValue)
-                        CurrentState = setState.Value;
-                    else
-                    {
-                        if (CurrentState < PicPickState.READY_TO_RUN)
-                            CurrentState = PicPickState.READY;
-                        else
-                            CurrentState = PicPickState.READY_TO_RUN;
+                    //if (setState.HasValue)
+                    //    CurrentState = setState.Value;
+                    //else
+                    //{
+                    //    if (CurrentState < PicPickState.READY_TO_RUN)
+                    //        CurrentState = PicPickState.READY;
+                    //    else
+                    //        CurrentState = PicPickState.READY_TO_RUN;
 
-                    }
+                    //}
                 }
                 else
                 {
-                    if (setState.HasValue)
-                        CurrentState = setState.Value;
+                    //if (setState.HasValue)
+                    //    CurrentState = setState.Value;
                 }
             }
         }

@@ -23,6 +23,7 @@ namespace PicPick.Models.Interfaces
         FilesGraph FilesGraph { get; set; }
         StateManager StateMachine { get; }
         ActivityState State { get; set; }
+        bool IsRunning { get; set; }
 
         event ActivityStateChangedEventHandler OnActivityStateChanged;
 

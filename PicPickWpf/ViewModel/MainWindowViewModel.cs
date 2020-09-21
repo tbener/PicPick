@@ -353,7 +353,7 @@ namespace PicPick.ViewModel
                     var activityViewModel = _activityViewModels[_currentActivity];
                     StartCommand = activityViewModel.ExecutionViewModel.StartCommand;
                     StopCommand = activityViewModel.ExecutionViewModel.StopCommand;
-                    AnalyzeCommand = activityViewModel.ExecutionViewModel.AnalyzeCommand;
+                    AnalyzeCommand = activityViewModel.ExecutionViewModel.ShowPlanCommand;
                 }
                 OnPropertyChanged("CurrentActivity");
                 OnPropertyChanged("ActivityViewModel");

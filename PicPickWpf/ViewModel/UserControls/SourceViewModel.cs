@@ -50,6 +50,8 @@ namespace PicPick.ViewModel.UserControls
             Activity.OnActivityStateChanged += (s, e) =>
             {
                 Enabled = !IsRunning;
+                OnPropertyChanged(nameof(SourceFilesStatus));
+                OnPropertyChanged(nameof(BackgroundReadingInProgress));
             };
 
             BackgroundReadingCommand = new RelayCommand(() => Activity.StateMachine.Restart(PicPickState.READING, BACKGROUND_END_STATE));

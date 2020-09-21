@@ -172,6 +172,14 @@ namespace PicPick.Models
 
         [XmlIgnore]
         [IsDirtySupport.IsDirtyIgnore]
+        public bool IsRunning
+        {
+            get => State == ActivityState.RUNNING;
+            set => State = value ? ActivityState.RUNNING : ActivityState.NOT_STARTED;
+        }
+
+        [XmlIgnore]
+        [IsDirtySupport.IsDirtyIgnore]
         public ActivityState State
         {
             get => _state; set
