@@ -11,6 +11,8 @@ using log4net;
 using PicPick.Models.Mapping;
 using System.Threading;
 using PicPick.StateMachine;
+using PicPick.Exceptions;
+using System.IO;
 
 namespace PicPick.Models
 {
@@ -54,58 +56,35 @@ namespace PicPick.Models
             Source.ToDate.Date = DateTime.Today;
         }
 
-        //private bool SetState(ACTIVITY_STATE newState)
-        //{
-        //    this.State = newState;
-        //    if (OnActivityStateChanged != null)
-        //    {
-        //        ActivityStateChangedEventArgs e = new ActivityStateChangedEventArgs();
-        //        OnActivityStateChanged(this, e);
-        //        if (e.Cancel)
-        //            return false;
-        //    }
-        //    return true;
-        //}
+        
 
-        //public async Task ExecuteAsync(ProgressInformation progressInfo)
-        //{
-        //    if (_isRunning) throw new Exception("Activity is already running.");
+        public void ValidateFields()
+        {
+            string realPath;
+            bool isRealTemplate;
 
-        //    try
-        //    {
-        //        _isRunning = true;
+            if (Source == null || Source.Path == "")
+                throw new NoSourceException();
 
-        //        // Analyze
-        //        SetState(ACTIVITY_STATE.ANALYZING);
-        //        await FileMapping.ComputeAsync(progressInfo);
-        //        if (!SetState(ACTIVITY_STATE.ANALYZED) || RunMode_AnalyzeOnly)
-        //            return;
+            if (!Directory.Exists(Source.Path))
+                throw new SourceDirectoryNotFoundException();
 
-        //        // Run
-        //        SetState(ACTIVITY_STATE.RUNNING);
-        //        await Runner.Run(progressInfo);
-        //        SetState(ACTIVITY_STATE.DONE);
-        //    }
-        //    catch (OperationCanceledException)
-        //    {
-        //        _log.Info("*** The user cancelled the operation ***");
-        //        progressInfo.UserCancelled = true;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        progressInfo.Exception = ex;
-        //        _errorHandler.Handle(ex, false, $"Error in operation: {progressInfo.Header}.");
-        //    }
-        //    finally
-        //    {
-        //        string analyzeOnlyMode = RunMode_AnalyzeOnly ? " (AnalyzeOnly mode)" : "";
-        //        _log.Info($"Finished{analyzeOnlyMode}: {Name}\n*****************");
-        //        progressInfo.Finished();
-        //        if (!RunMode_AnalyzeOnly)
-        //            EventAggregatorHelper.PublishActivityEnded();
-        //        _isRunning = false;
-        //    }
-        //}
+            if (DestinationList.Count == 0)
+                throw new NoDestinationsException();
+
+            foreach (var dest in DestinationList.Where(d => d.Active))
+            {
+                realPath = dest.GetTemplatePath(DateTime.Now);
+                isRealTemplate = !realPath.Equals(dest.Template);
+                if (isRealTemplate)
+                    continue;
+
+                realPath = Path.Combine(PathHelper.GetFullPath(Source.Path, dest.Path), dest.Template);
+
+                if (realPath.Equals(Source.Path, StringComparison.OrdinalIgnoreCase))
+                    throw new DestinationEqualsSourceException();
+            }
+        }
 
 
         /// <summary>

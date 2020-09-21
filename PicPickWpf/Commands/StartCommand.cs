@@ -27,18 +27,35 @@ namespace PicPick.Commands
 
         public bool CanExecute(object parameter)
         {
-            return !_activity.IsRunning;
+            CannotExecuteReason = "";
+            if (_activity.IsRunning)
+                return false;
+
+            try
+            {
+                _activity.ValidateFields();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                CannotExecuteReason = ex.Message;
+            }
+            return false;
         }
 
-        
+        public string CannotExecuteReason { get; set; }
+
+
         public void Execute(object parameter)
         {
-            if (Properties.UserSettings.General.WarnDeleteSource)
-                if (WarningsBeforeStart(_activity))
-                {
-                    _activity.IsRunning = true;
-                    _activity.StateMachine.Start(PicPickState.DONE);
-                }
+            PicPickState targetState = (PicPickState)parameter;
+            if (targetState == PicPickState.DONE)
+                if (Properties.UserSettings.General.WarnDeleteSource)
+                    if (!WarningsBeforeStart(_activity))
+                        return;
+
+            _activity.IsRunning = true;
+            _activity.StateMachine.Start(targetState);
         }
 
         #region Helper methods

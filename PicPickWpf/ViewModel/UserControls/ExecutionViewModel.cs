@@ -47,8 +47,7 @@ namespace PicPick.ViewModel.UserControls
 
         private void StateMachine_OnStateCompleted(object sender, CancellableEventArgs e)
         {
-            if (!Activity.StateMachine.IsRunning || ProgressInfo.OperationCancelled)
-                Activity.IsRunning = false;
+            
 
             switch (Activity.StateMachine.CurrentState)
             {
@@ -68,18 +67,18 @@ namespace PicPick.ViewModel.UserControls
                 // OR, a real run.
                 // If it's a real run, it could be either only mapping or a full run.
                 case PicPickState.READY_TO_RUN:
-                    if (IsRunning)
+                    if (Activity.StateMachine.IsRunning)
                     {
-                        bool runOnlyMapping = _runningEndState == PicPickState.READY_TO_RUN;
-
-                        if (Properties.UserSettings.General.ShowPreviewWindow || runOnlyMapping)
+                        if (Properties.UserSettings.General.ShowPreviewWindow)
                         {
-                            e.Cancel = !ShowMappingDialog(runOnlyMapping);
+                            e.Cancel = !ShowMappingDialog(false);
 
-                            //if (e.Cancel || runOnlyMapping)
-                            //    Activity.State = ActivityState.NOT_STARTED;
+                            if (e.Cancel)
+                                Activity.IsRunning = false;
                         }
                     }
+                    else if (Activity.IsRunning)
+                        ShowMappingDialog(true);
 
                     break;
 
@@ -97,6 +96,9 @@ namespace PicPick.ViewModel.UserControls
                 default:
                     break;
             }
+
+            if (!Activity.StateMachine.IsRunning || ProgressInfo.OperationCancelled)
+                Activity.IsRunning = false;
         }
 
         #region Execution
@@ -161,18 +163,6 @@ namespace PicPick.ViewModel.UserControls
             return !string.IsNullOrEmpty(Activity.Source.Path) && !IsRunning;
         }
 
-
-        public void Stop()
-        {
-            Activity.IsRunning = false;
-            PicPickState jumpToState = Activity.StateMachine.CurrentState > PicPickState.READY_TO_RUN ? PicPickState.DONE : PicPickState.READY;
-            Activity.StateMachine.Stop(jumpToState);
-        }
-
-        public bool CanStop()
-        {
-            return IsRunning;
-        }
 
 
         #endregion

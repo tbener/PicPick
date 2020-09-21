@@ -173,13 +173,16 @@ namespace PicPick.StateMachine
             }
         }
 
-        private void Stop(bool cancelOperation)
+        private void Stop(bool cancelOperation = true)
         {
-            if (IsRunning)
+            lock (this)
             {
-                if (cancelOperation)
-                    ProgressInfo.OperationCancelled = true;
-                ProgressInfo.Cancel();
+                if (IsRunning)
+                {
+                    if (cancelOperation)
+                        ProgressInfo.OperationCancelled = true;
+                    ProgressInfo.Cancel();
+                }
             }
         }
 

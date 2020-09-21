@@ -28,5 +28,6 @@ namespace PicPick.Models.Interfaces
         event ActivityStateChangedEventHandler OnActivityStateChanged;
 
         PicPickProjectActivity Clone(string v);
+        void ValidateFields();
     }
 }
