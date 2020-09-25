@@ -103,7 +103,7 @@ namespace PicPick.Core
 
                 HashSet<DestinationFolder> destinationFolders = new HashSet<DestinationFolder>();
 
-                foreach (var sourceFile in filesGraph.Files.Values)
+                foreach (var sourceFile in filesGraph.Files)
                 {
                     _log.Info($"Source file: {sourceFile.FileName}");
                     progressInfo.Text = sourceFile.FileName;

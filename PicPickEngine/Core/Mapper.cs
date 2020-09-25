@@ -28,7 +28,8 @@ namespace PicPick.Core
         private static readonly ErrorHandler _errorHandler = new ErrorHandler(_log);
 
         // this has the same structure of the main FilesGraph, only it doesn't include the final filter
-        private Dictionary<string, SourceFile> _sourceFilesDictionary = new Dictionary<string, SourceFile>();
+        private List<SourceFile> _sourceFiles = new List<SourceFile>();
+        private Dictionary<string, DestinationFolder> _destinationFoldersDictionary = new Dictionary<string, DestinationFolder>();
         private List<PicPickProjectActivityDestination> _destinations;
 
         public IActivity Activity { get; set; }
@@ -36,17 +37,19 @@ namespace PicPick.Core
         public Mapper(IActivity activity)
         {
             Activity = activity;
+            Activity.FilesGraph.SetMapper(this);
         }
 
         internal void Clear()
         {
-            _sourceFilesDictionary.Clear();
-            Activity.FilesGraph.DestinationFolders.Clear();
+            _sourceFiles.Clear();
+            _destinationFoldersDictionary.Clear();
+            _destinationFolders = null;
         }
 
-        #region ComputeAsync
+        #region Public Methods
 
-        public async Task MapAsync(IProgressInformation progressInfo)
+        internal async Task MapAsync(IProgressInformation progressInfo)
         {
             _destinations = Activity.DestinationList.Where(d => d.Active).ToList();
 
@@ -55,34 +58,54 @@ namespace PicPick.Core
 
             List<SourceFile> sourceFilesList = await ReadFileListToObjects(progressInfo, needDates);
 
-            FilterIntoDictionary(sourceFilesList);
+            ApplyFirstFilters(sourceFilesList);
 
             CreateDestinationObjects();
         }
 
-        //public async Task ComputeAsync(ProgressInformation progressInfo, int levelUpdate = 0)
-        //{
-        //    Destinations = Activity.DestinationList.Where(d => d.Active).ToList();
+        /// <summary>
+        /// This is the last function to be called in the mapping process,
+        /// and it is the only one which considers the OnlyNewFiles filter.
+        /// </summary>
+        internal void ApplyFinalFilters()
+        {
+            _destinationFolders = null;
+            if (Activity.Source.OnlyNewFiles)
+            {
+                Activity.FilesGraph.Files = _sourceFiles.Where(sf => !sf.ExistsInDestination).ToList();
+            }
+            else
+            {
+                Activity.FilesGraph.Files = _sourceFiles.ToList();
+            }
+        }
 
-        //    bool needDates = Destinations.Any(d => d.HasTemplate);
-        //    needDates = needDates || Activity.Source.FromDate.Use || Activity.Source.ToDate.Use;
+        private List<DestinationFolder> _destinationFolders;
 
-        //    if (levelUpdate < 3)
-        //    {
-        //        // level 0
-        //        List<SourceFile> sourceFilesList = await ReadFileListToObjects(progressInfo, needDates);
+        internal List<DestinationFolder> GetDestinationFolders()
+        {
+            if (_destinationFolders == null)
+            {
+                if (Activity.Source.OnlyNewFiles)
+                {
+                    _destinationFolders = new List<DestinationFolder>();
+                    foreach (SourceFile sourceFile in Activity.FilesGraph.Files)
+                    {
+                        foreach (DestinationFolder df in sourceFile.DestinationFolders)
+                        {
+                            if (!_destinationFolders.Contains(df))
+                                _destinationFolders.Add(df);
+                        }
+                    }
+                }
+                else
+                {
+                    _destinationFolders = _destinationFoldersDictionary.Values.ToList();
+                }
+            }
 
-        //        // level 1
-        //        FilterIntoDictionary(sourceFilesList);
-
-        //        CreateDestinationObjects();
-        //    }
-
-        //    // level 3
-        //    ApplyFinalFilters();
-
-        //    _log.Info("Plan is:\n" + ToString());
-        //}
+            return _destinationFolders;
+        }
 
         #endregion
 
@@ -111,9 +134,9 @@ namespace PicPick.Core
             return sourceFilesList;
         }
 
-        private void FilterIntoDictionary(List<SourceFile> sourceFilesList)
+        private void ApplyFirstFilters(List<SourceFile> sourceFilesList)
         {
-            // Add Source Files to dictionary
+            // Add Source Files to the real list
             if (Activity.Source.FromDate.Use || Activity.Source.ToDate.Use)
             {
                 DateTime fromDate = Activity.Source.FromDate.Use ? Activity.Source.FromDate.Date : DateTime.MinValue;
@@ -121,11 +144,11 @@ namespace PicPick.Core
                 foreach (SourceFile sf in sourceFilesList)
                 {
                     if (sf.DateTime >= fromDate && sf.DateTime <= toDate)
-                        _sourceFilesDictionary.Add(sf.FullFileName, sf);
+                        _sourceFiles.Add(sf);
                 }
             }
             else
-                sourceFilesList.ForEach(sf => _sourceFilesDictionary.Add(sf.FullFileName, sf));
+                _sourceFiles.AddRange(sourceFilesList);
 
         }
 
@@ -137,14 +160,14 @@ namespace PicPick.Core
             {
                 if (destination.HasTemplate)
                 {
-                    foreach (SourceFile sourceFile in _sourceFilesDictionary.Values)
+                    foreach (SourceFile sourceFile in _sourceFiles)
                     {
                         var destinationFullPath = destination.GetFullPath(sourceFile.DateTime);
 
-                        if (!Activity.FilesGraph.DestinationFolders.TryGetValue(destinationFullPath, out DestinationFolder destinationFolder))
+                        if (!_destinationFoldersDictionary.TryGetValue(destinationFullPath, out DestinationFolder destinationFolder))
                         {
-                            destinationFolder = new DestinationFolder(destinationFullPath, destination);
-                            Activity.FilesGraph.DestinationFolders.Add(destinationFullPath, destinationFolder);
+                            destinationFolder = new DestinationFolder(destinationFullPath, destination, Activity);
+                            _destinationFoldersDictionary.Add(destinationFullPath, destinationFolder);
                         }
                         // This will do both adding a reference from the SourceFile to the destinationFolder and adding a new DestinationFile object to this destinationFolder
                         destinationFolder.AddFile(sourceFile);
@@ -153,25 +176,15 @@ namespace PicPick.Core
                 else
                 {
                     // it will be a single DestinationFolder for all files
-                    DestinationFolder destinationFolder = new DestinationFolder(destination.Path, destination);
-                    Activity.FilesGraph.DestinationFolders.Add(destinationFolder.FullPath, destinationFolder);
-                    _sourceFilesDictionary.Values.ToList().ForEach(destinationFolder.AddFile);
+                    DestinationFolder destinationFolder = new DestinationFolder(destination.Path, destination, Activity);
+                    _destinationFoldersDictionary.Add(destinationFolder.FullPath, destinationFolder);
+                    _sourceFiles.ForEach(destinationFolder.AddFile);
                 }
             }
         }
 
 
-        /// <summary>
-        /// This is the last function to be called in the mapping process,
-        /// and it is the only one which considers the OnlyNewFiles filter.
-        /// </summary>
-        public void ApplyFinalFilters()
-        {
-            if (Activity.Source.OnlyNewFiles)
-                Activity.FilesGraph.Files = _sourceFilesDictionary.Where(sf => !sf.Value.ExistsInDestination).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
-            else
-                Activity.FilesGraph.Files = _sourceFilesDictionary;
-        }
+        
 
         #endregion
 
@@ -214,7 +227,7 @@ namespace PicPick.Core
         {
             StringBuilder sb = new StringBuilder("----- Plan Start -----\n");
 
-            sb.AppendLine($"Files count: {_sourceFilesDictionary.Count}");
+            sb.AppendLine($"Files count: {_sourceFiles.Count}");
             sb.AppendLine($"Destination folders count: {Activity.FilesGraph.DestinationFolders.Count}");
 
             sb.AppendLine("\nActive Destinations:");
@@ -225,7 +238,7 @@ namespace PicPick.Core
 
             sb.AppendLine();
 
-            foreach (DestinationFolder destination in Activity.FilesGraph.DestinationFolders.Values)
+            foreach (DestinationFolder destination in Activity.FilesGraph.DestinationFolders)
             {
                 sb.AppendLine(string.Format("{0} ({1})", destination.FullPath, destination.IsNew ? "New" : "Exists"));
                 foreach (DestinationFile file in destination.Files)

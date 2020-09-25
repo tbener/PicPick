@@ -17,18 +17,31 @@ namespace PicPick.Core
     /// </summary>
     public class FilesGraph
     {
+        private Mapper _mapper;
+
         // MAIN PROPERTY
-        public Dictionary<string, SourceFile> Files { get; set; }
+        public List<SourceFile> Files { get; set; }
 
         //Helper properties
-        public Dictionary<string, DestinationFolder> DestinationFolders { get; set; } = new Dictionary<string, DestinationFolder>();
-        public HashSet<string> RawFileList { get; set; }
+        public List<DestinationFolder> DestinationFolders
+        {
+            get
+            {
+                return _mapper.GetDestinationFolders();
+            }
+        }
+
+        internal HashSet<string> RawFileList { get; set; }
 
         public void Clear()
         {
             Files = null;
-            DestinationFolders.Clear();
             RawFileList = null;
+        }
+
+        internal void SetMapper(Mapper mapper)
+        {
+            _mapper = mapper;
         }
     }
 }

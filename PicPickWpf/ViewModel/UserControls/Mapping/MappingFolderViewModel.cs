@@ -17,14 +17,6 @@ namespace PicPick.ViewModel.UserControls.Mapping
             FullPath = destinationFolder.FullPath;
             FilesCount = $"{destinationFolder.Files.Count} files";
             State = destinationFolder.IsNew ? "New" : "Exists";
-
-            //Files = destinationFolder.Files.Select(f => new MappingFileViewModel(f)).ToList();
-
-            //var g = destinationFolder.Files.GroupBy(f => f.Status, f => f, (key, grp) => new {status = key, files = grp.ToList() });
-
-            
-
-
         }
 
         public string Folder { get; set; }

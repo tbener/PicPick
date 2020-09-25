@@ -13,13 +13,11 @@ namespace PicPick.Models
     {
         List<string> _fileList = new List<string>();
         bool _initialized = false;
-        bool _fileListUpdated = false;
         private bool _enableAutoFileListReset;
 
         private void DisposeFileList()
         {
             _fileList?.Clear();
-            _fileListUpdated = false;
         }
 
         //public void ReadFiles()

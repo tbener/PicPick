@@ -118,7 +118,7 @@ namespace PicPick.UnitTests.Core.AnalyzerTests
             Assert.AreEqual(expectedDestinationCount, _activity.FileMapping.DestinationFolders.Count, "The amount of destination folders is not as expected.");
             foreach (DestinationFolder destinationFolder in _activity.FileMapping.DestinationFolders.Values)
             {
-                Assert.AreEqual(expectedFileCount, destinationFolder.Files.Count, $"The amount of files for {destinationFolder.FullPath} is not as expected.");
+                Assert.AreEqual(expectedFileCount, destinationFolder.AllFiles.Count, $"The amount of files for {destinationFolder.FullPath} is not as expected.");
             }
         }
 

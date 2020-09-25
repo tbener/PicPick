@@ -16,7 +16,7 @@ namespace PicPick.ViewModel.UserControls.Mapping
             SourceFoundFiles = $"{activity.FilesGraph.Files.Count} files found";
 
             // Destinations Pane
-            var lookup = activity.FilesGraph.DestinationFolders.Values.ToLookup(df => df.BasedOnDestination);
+            var lookup = activity.FilesGraph.DestinationFolders.ToLookup(df => df.BasedOnDestination);
             DestinationList = lookup.Select(item => new MappingDestinationViewModel(item.Key, item.ToList(), activity)).ToList();
         }
 

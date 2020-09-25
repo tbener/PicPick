@@ -69,7 +69,7 @@ namespace PicPick.Models
             if (!Directory.Exists(Source.Path))
                 throw new SourceDirectoryNotFoundException();
 
-            if (DestinationList.Count == 0)
+            if (DestinationList.Where(d => d.Active).Count() == 0)
                 throw new NoDestinationsException();
 
             foreach (var dest in DestinationList.Where(d => d.Active))
