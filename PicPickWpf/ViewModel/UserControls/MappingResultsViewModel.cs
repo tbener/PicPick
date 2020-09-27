@@ -8,7 +8,7 @@ namespace PicPick.ViewModel.UserControls
 {
     public class MappingResultsViewModel : MappingBaseViewModel
     {
-        public MappingResultsViewModel(IActivity activity) : base(activity)
+        public MappingResultsViewModel(IActivity activity) : base(activity, null)
         {
             int processedCount = activity.FilesGraph.Files.Where(f => f.Status != FILE_STATUS.NONE).Count();
             int totalCount = activity.FilesGraph.Files.Count;

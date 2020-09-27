@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:uc="clr-namespace:PicPick.ViewModel.UserControls"
              xmlns:map="clr-namespace:PicPick.ViewModel.UserControls.Mapping"
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
 
@@ -13,10 +14,17 @@
     </UserControl.Resources>
 
     <DockPanel>
-        <Border DockPanel.Dock="Top" BorderBrush="DarkGray" BorderThickness="1" CornerRadius="4" Margin="4" Padding="4">
+
+        <Border DockPanel.Dock="Top" BorderBrush="DarkGray" BorderThickness="1" CornerRadius="4"  Padding="4" Margin="4">
             <Border.Resources>
                 <DataTemplate DataType="{x:Type uc:MappingPlanViewModel}">
                     <StackPanel Orientation="Vertical">
+                        <StackPanel Orientation="Horizontal" Visibility="{Binding NeedUpdate, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <Button Content="{iconPacks:Material Kind=Refresh, Height=10}" Command="{Binding RefreshCommand}" ToolTip="Refresh"
+                                Visibility="{Binding CanRefresh, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                Padding="0" Width="18" Height="18" MinHeight="10" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                            <TextBlock Foreground="Red" Text="{Binding NeedUpdateWarning}"/>
+                        </StackPanel>
                         <TextBlock><Run Text="Source: "/><Run Text="{Binding SourceDisplay}"/></TextBlock>
                         <TextBlock Text="{Binding SourceFoundFiles}"/>
                         <TextBlock Text="{Binding SourceFilesDeleteWarning}"/>

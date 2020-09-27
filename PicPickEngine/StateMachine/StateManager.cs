@@ -37,6 +37,9 @@ namespace PicPick.StateMachine
 
         private Dictionary<PicPickState, IStateHandler> _stateTransitions = new Dictionary<PicPickState, IStateHandler>();
         private PicPickState _currentState;
+        private PicPickState? _needRestartFromState;
+
+        object lockNeedRestart = new object();
 
         public StateManager(IActivity activity)
         {
@@ -70,6 +73,16 @@ namespace PicPick.StateMachine
             if (CurrentState == PicPickState.DONE)
                 CurrentState = PicPickState.READY;
 
+            lock (lockNeedRestart)
+            {
+                if (_needRestartFromState.HasValue)
+                {
+                    if (_needRestartFromState < CurrentState)
+                        CurrentState = _needRestartFromState.Value;
+                    NeedRestartValue = null;
+                }
+            }
+
             try
             {
                 while (CurrentState < EndState)
@@ -91,6 +104,7 @@ namespace PicPick.StateMachine
                             }
                         }
                     }
+
                     lock (this)
                     {
                         if (ProgressInfo.OperationCancelled)
@@ -147,33 +161,7 @@ namespace PicPick.StateMachine
             Start(toState);
         }
 
-        public void Stop(PicPickState? setState = null)
-        {
-            lock (this)
-            {
-                if (IsRunning)
-                {
-                    Stop(true);
-                    //if (setState.HasValue)
-                    //    CurrentState = setState.Value;
-                    //else
-                    //{
-                    //    if (CurrentState < PicPickState.READY_TO_RUN)
-                    //        CurrentState = PicPickState.READY;
-                    //    else
-                    //        CurrentState = PicPickState.READY_TO_RUN;
-
-                    //}
-                }
-                else
-                {
-                    //if (setState.HasValue)
-                    //    CurrentState = setState.Value;
-                }
-            }
-        }
-
-        private void Stop(bool cancelOperation = true)
+        public void Stop(bool cancelOperation = true)
         {
             lock (this)
             {
@@ -215,6 +203,37 @@ namespace PicPick.StateMachine
             {
                 _currentState = value;
                 RaisePropertyChanged(nameof(CurrentState));
+            }
+        }
+
+        private PicPickState? NeedRestartValue 
+        {
+            get
+            {
+                return _needRestartFromState;
+            }
+            set
+            {
+                _needRestartFromState = value;
+                RaisePropertyChanged(nameof(NeedRestartValue));
+                RaisePropertyChanged(nameof(NeedRestart));
+            }
+        }
+
+        public void SetNeedRestart(PicPickState needRestartFromState)
+        {
+            lock (lockNeedRestart)
+            {
+                if (!_needRestartFromState.HasValue || _needRestartFromState.Value > needRestartFromState)
+                    NeedRestartValue = needRestartFromState;
+            }
+        }
+
+        public bool NeedRestart
+        {
+            get
+            {
+                return _needRestartFromState.HasValue;
             }
         }
 

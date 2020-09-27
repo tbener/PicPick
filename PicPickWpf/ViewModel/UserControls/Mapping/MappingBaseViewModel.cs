@@ -1,28 +1,45 @@
-﻿using PicPick.Models;
+﻿using PicPick.Helpers;
+using PicPick.Models;
 using PicPick.Models.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace PicPick.ViewModel.UserControls.Mapping
 {
-    public class MappingBaseViewModel
+    public class MappingBaseViewModel : ActivityBaseViewModel
     {
-        public MappingBaseViewModel(IActivity activity)
+        public MappingBaseViewModel(IActivity activity, IProgressInformation progressInfo) : base(activity, progressInfo)
         {
             // Source Pane
             PicPickProjectActivitySource source = activity.Source;
             var subFolders = source.IncludeSubFolders ? "including sub-folders" : "not including sub-folders";
             SourceDisplay = $"{source.Path} ({source.Filter}), {subFolders}";
-            SourceFoundFiles = $"{activity.FilesGraph.Files.Count} files found";
-
-            // Destinations Pane
-            var lookup = activity.FilesGraph.DestinationFolders.ToLookup(df => df.BasedOnDestination);
-            DestinationList = lookup.Select(item => new MappingDestinationViewModel(item.Key, item.ToList(), activity)).ToList();
         }
 
-        public List<MappingDestinationViewModel> DestinationList { get; set; }
+        public List<MappingDestinationViewModel> DestinationList
+        {
+            get
+            {
+                var lookup = Activity.FilesGraph.DestinationFolders.ToLookup(df => df.BasedOnDestination);
+                return lookup.Select(item => new MappingDestinationViewModel(item.Key, item.ToList(), Activity)).ToList();
+            }
+        }
+
+        public string SourceFoundFiles
+        {
+            get
+            {
+                try
+                {
+                    return $"{Activity.FilesGraph.Files.Count} files found";
+                }
+                catch
+                {
+                    return "";
+                }
+            }
+        }
 
         public string SourceDisplay { get; set; }
-        public string SourceFoundFiles { get; set; }
     }
 }

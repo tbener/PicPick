@@ -71,7 +71,7 @@ namespace PicPick.ViewModel.UserControls
         {
             Activity.State = ActivityState.NOT_STARTED;
 
-            if (e.PropertyName.Equals("Path"))
+            if (e.PropertyName.Equals("Path") || e.PropertyName.Equals(nameof(Source.IncludeSubFolders)))
                 InitSystemWatcher();
 
             if (!BackgroundReadingEnabled) return;
@@ -100,15 +100,14 @@ namespace PicPick.ViewModel.UserControls
 
         private void InitSystemWatcher()
         {
-            return;
             try
             {
                 if (_fileSystemWatcher == null)
                 {
                     _fileSystemWatcher = new FileSystemWatcher();
-                    _fileSystemWatcher.Renamed += FileSystemWatcher_OnMappingChanged;
-                    _fileSystemWatcher.Created += FileSystemWatcher_OnCountChanged;
-                    _fileSystemWatcher.Deleted += FileSystemWatcher_OnCountChanged;
+                    _fileSystemWatcher.Renamed += FileSystemWatcher_Changed;
+                    _fileSystemWatcher.Created += FileSystemWatcher_Changed;
+                    _fileSystemWatcher.Deleted += FileSystemWatcher_Changed;
 
                     _timerCheckFiles = new System.Timers.Timer(1000);
                     _timerCheckFiles.Elapsed += TimerCheckFiles_Elapsed;
@@ -135,21 +134,20 @@ namespace PicPick.ViewModel.UserControls
         private void TimerCheckFiles_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
             OnPropertyChanged("SourceFilesStatus");
+            if (!BackgroundReadingEnabled)
+                return;
+            if (Activity.IsRunning)
+                if (Activity.StateMachine.CurrentState > PicPickState.READY_TO_RUN)
+                    return;
+
+            Activity.StateMachine.Restart(PicPickState.READING, BACKGROUND_END_STATE);
         }
 
-        private void FileSystemWatcher_OnMappingChanged(object sender, RenamedEventArgs e)
-        {
-            //
-        }
-
-        private void FileSystemWatcher_OnCountChanged(object sender, FileSystemEventArgs e)
+        private void FileSystemWatcher_Changed(object sender, FileSystemEventArgs e)
         {
             _timerCheckFiles.Stop();
 
-            // todo:
-            // need to mark that the FileGraph is not updated
-            // we can update the counter according to the change
-            // and set the timer for re-read and map the files
+            Activity.StateMachine.SetNeedRestart(PicPickState.READING);
 
             _timerCheckFiles.Start();
         }
@@ -166,9 +164,9 @@ namespace PicPick.ViewModel.UserControls
             if (_fileSystemWatcher != null)
             {
                 _fileSystemWatcher.EnableRaisingEvents = false;
-                _fileSystemWatcher.Renamed -= FileSystemWatcher_OnMappingChanged;
-                _fileSystemWatcher.Created -= FileSystemWatcher_OnCountChanged;
-                _fileSystemWatcher.Deleted -= FileSystemWatcher_OnCountChanged;
+                _fileSystemWatcher.Renamed -= FileSystemWatcher_Changed;
+                _fileSystemWatcher.Created -= FileSystemWatcher_Changed;
+                _fileSystemWatcher.Deleted -= FileSystemWatcher_Changed;
                 _fileSystemWatcher = null;
             }
 

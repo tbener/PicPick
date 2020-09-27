@@ -78,7 +78,10 @@ namespace PicPick.ViewModel.UserControls
                         }
                     }
                     else if (Activity.IsRunning)
+                    {
+                        Activity.IsRunning = false;
                         ShowMappingDialog(true);
+                    }
 
                     break;
 
@@ -103,26 +106,10 @@ namespace PicPick.ViewModel.UserControls
 
         #region Execution
 
-        //private bool WarningsBeforeStart()
-        //{
-        //    if (!Activity.DeleteSourceFiles)
-        //        return true;
-
-        //    if (!Properties.UserSettings.General.WarnDeleteSource)
-        //        return true;
-
-        //    string msgText = "The files will be deleted from the source folder if the operation will end successfully.\nDo you want to continue?";
-        //    MessageBoxResult result = MessageBoxHelper.Show(msgText, "Warning", MessageBoxButton.YesNo, MessageBoxImage.Warning, out bool dontShowAgain);
-
-        //    Properties.UserSettings.General.WarnDeleteSource = !dontShowAgain;
-
-        //    return result == MessageBoxResult.Yes;
-        //}
-
 
         private bool ShowMappingDialog(bool onlyMapping)
         {
-            var vm = new MappingPlanViewModel(Activity);
+            var vm = new MappingPlanViewModel(Activity, ProgressInfo);
             MessageBoxButton buttons = onlyMapping ? MessageBoxButton.OK : MessageBoxButton.OKCancel;
             var result = MessageBoxHelper.Show(vm, "Mapping Preview", buttons, !onlyMapping, out bool dontShowAgain);
             if (dontShowAgain)
