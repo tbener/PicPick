@@ -18,24 +18,11 @@ namespace PicPick.ViewModel.UserControls
             SourceViewModel = new SourceViewModel(activity, progressInfo);
             DestinationListViewModel = new DestinationListViewModel(activity, progressInfo);
             ExecutionViewModel = new ExecutionViewModel(activity, ProgressInfo);
-
-            Activity.StateMachine.Start(BACKGROUND_END_STATE);
         }
 
         #endregion
 
-        public override bool BackgroundReadingEnabled
-        {
-            get => base.BackgroundReadingEnabled;
-            set
-            {
-                base.BackgroundReadingEnabled = value;
-                if (base.BackgroundReadingEnabled)
-                    Activity.StateMachine.Restart(PicPickState.READING, BACKGROUND_END_STATE);
-                else
-                    Activity.StateMachine.Stop();
-            }
-        }
+        
 
 
         #region Activity parts view models

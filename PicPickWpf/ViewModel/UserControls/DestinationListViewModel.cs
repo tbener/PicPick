@@ -61,7 +61,7 @@ namespace PicPick.ViewModel.UserControls
             DestinationViewModelList.Remove(vm);
             if (Activity.DestinationList.Count == 1)
                 Activity.DestinationList.First().Active = true;
-            UpdateMapping();
+            UpdateMapping(PicPickState.MAPPING);
         }
 
         private void AddDestination()
@@ -80,22 +80,16 @@ namespace PicPick.ViewModel.UserControls
             var vm = new DestinationViewModel(dest, Activity.Source);
             vm.OnDeleteClicked += OnDestinationDelete;
             DestinationViewModelList.Add(vm);
-            UpdateMapping();
+            UpdateMapping(PicPickState.MAPPING);
             dest.PropertyChanged += Destination_PropertyChanged;
         }
 
         private void Destination_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            UpdateMapping();
+            UpdateMapping(PicPickState.MAPPING);
         }
 
-        private void UpdateMapping()
-        {
-            if (!BackgroundReadingEnabled) 
-                return;
-
-            Activity.StateMachine.Restart(PicPickState.MAPPING, BACKGROUND_END_STATE);
-        }
+        
 
         #endregion
 

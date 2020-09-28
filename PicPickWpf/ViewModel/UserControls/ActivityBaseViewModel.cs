@@ -63,6 +63,17 @@ namespace PicPick.ViewModel.UserControls
             ProgressInfo = null;
         }
 
+        protected void UpdateMapping(PicPickState fromState)
+        {
+            if (BackgroundReadingEnabled)
+                Activity.StateMachine.Restart(fromState, BACKGROUND_END_STATE);
+            else
+            {
+                Activity.StateMachine.Stop();
+                Activity.StateMachine.SetNeedRestart(fromState);
+            }
+        }
+
         #region Public Properties
 
         public virtual bool BackgroundReadingEnabled

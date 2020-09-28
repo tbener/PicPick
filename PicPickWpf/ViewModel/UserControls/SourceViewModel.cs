@@ -74,26 +74,26 @@ namespace PicPick.ViewModel.UserControls
             if (e.PropertyName.Equals("Path") || e.PropertyName.Equals(nameof(Source.IncludeSubFolders)))
                 InitSystemWatcher();
 
-            if (!BackgroundReadingEnabled) return;
-
             switch (e.PropertyName)
             {
                 case "OnlyNewFiles":
-                    Activity.StateMachine.Restart(PicPickState.FILTERING, BACKGROUND_END_STATE);
+                    UpdateMapping(PicPickState.FILTERING);
                     break;
                 case "FromDate":
                 case "ToDate":
-                    Activity.StateMachine.Restart(PicPickState.MAPPING, BACKGROUND_END_STATE);
+                    UpdateMapping(PicPickState.MAPPING);
                     break;
                 default:
-                    Activity.StateMachine.Restart(PicPickState.READING, BACKGROUND_END_STATE);
+                    UpdateMapping(PicPickState.READING);
                     break;
             }
 
+            OnPropertyChanged(nameof(SourceFilesStatus));
         }
 
         #endregion
 
+        
 
         #region FileSystemWatcher
 
@@ -183,7 +183,7 @@ namespace PicPick.ViewModel.UserControls
         {
             get
             {
-                if (Activity.StateMachine.CurrentState < PicPickState.READY_TO_RUN)
+                if (Activity.StateMachine.CurrentState < PicPickState.READY_TO_RUN || Activity.StateMachine.NeedRestart)
                 {
                     if (!PathHelper.Exists(Source.Path))
                         return "Path not found";
@@ -222,6 +222,17 @@ namespace PicPick.ViewModel.UserControls
             get
             {
                 return Activity.StateMachine.IsRunning && !IsRunning;
+            }
+        }
+
+        public override bool BackgroundReadingEnabled
+        {
+            get => base.BackgroundReadingEnabled;
+            set
+            {
+                base.BackgroundReadingEnabled = value;
+                if (base.BackgroundReadingEnabled && Activity.StateMachine.NeedRestart)
+                    Activity.StateMachine.Restart(PicPickState.READING, BACKGROUND_END_STATE);
             }
         }
 

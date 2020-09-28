@@ -28,7 +28,7 @@ namespace PicPick.Commands
         public bool CanExecute(object parameter)
         {
             CannotExecuteReason = "";
-            if (_activity.IsRunning || _activity.StateMachine.NeedRestart)
+            if (_activity.IsRunning)
                 return false;
 
             try

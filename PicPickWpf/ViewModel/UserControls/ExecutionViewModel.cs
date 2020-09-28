@@ -28,6 +28,7 @@ namespace PicPick.ViewModel.UserControls
 
         public ExecutionViewModel(IActivity activity, IProgressInformation progressInfo) : base(activity, progressInfo)
         {
+            
             //StartCommand = new RelayCommand(Start, CanStart);
             StartCommand = new StartCommand(Activity);
             //StopCommand = new RelayCommand(Stop, CanStop);
@@ -42,6 +43,16 @@ namespace PicPick.ViewModel.UserControls
             //    //OnPropertyChanged(nameof(CanStart));
             //    OnPropertyChanged(nameof(StopCommand));
             //};
+
+
+            if (BackgroundReadingEnabled)
+                Activity.StateMachine.Start(BACKGROUND_END_STATE);
+            else
+            {
+                Activity.StateMachine.SetNeedRestart(PicPickState.READING);
+                progressInfo.Reset();
+            }
+
 
         }
 

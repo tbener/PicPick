@@ -6,6 +6,7 @@
              xmlns:local="clr-namespace:PicPick.View.UserControls"
              xmlns:converters="clr-namespace:PicPick.Converters"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
              mc:Ignorable="d" 
              d:DesignHeight="364.285" d:DesignWidth="509.74">
     <UserControl.Resources>
@@ -48,15 +49,18 @@
         </StackPanel>
 
         <StackPanel Grid.Row="2">
-            <StackPanel Orientation="Horizontal" Margin="0 4">
-                <Button Content="{iconPacks:Material Kind=Refresh, Height=10}" Command="{Binding BackgroundReadingCommand}" ToolTip="Refresh"
-                        Visibility="{Binding BackgroundReadingInProgress, Converter={StaticResource boolToVisibilityConverter}, ConverterParameter=true}"
-                        Padding="0" Width="18" Height="18" MinHeight="10" VerticalAlignment="Center"/>
-                <Button Content="{iconPacks:Material Kind=Stop, Height=10}" Command="{Binding StopBackgroundReadingCommand}" ToolTip="Stop"
-                        Visibility="{Binding BackgroundReadingInProgress, Converter={StaticResource boolToVisibilityConverter}}"
-                        Padding="0" Width="18" Height="18" MinHeight="10" VerticalAlignment="Center"/>
-                <TextBlock Text="{Binding SourceFilesStatus, FallbackValue=Total files found: 0}" VerticalAlignment="Center" Margin="6 0"/>
-            </StackPanel>
+            <Grid>
+                <StackPanel Orientation="Horizontal" Margin="0 4">
+                    <Button Content="{iconPacks:Material Kind=Refresh, Height=10}" Command="{Binding BackgroundReadingCommand}" ToolTip="Refresh"
+                            Visibility="{Binding BackgroundReadingInProgress, Converter={StaticResource boolToVisibilityConverter}, ConverterParameter=true}"
+                            Padding="0" Width="18" Height="18" MinHeight="10" VerticalAlignment="Center"/>
+                    <Button Content="{iconPacks:Material Kind=Stop, Height=10}" Command="{Binding StopBackgroundReadingCommand}" ToolTip="Stop"
+                            Visibility="{Binding BackgroundReadingInProgress, Converter={StaticResource boolToVisibilityConverter}}"
+                            Padding="0" Width="18" Height="18" MinHeight="10" VerticalAlignment="Center"/>
+                    <TextBlock Text="{Binding SourceFilesStatus, FallbackValue=Total files found: 0}" VerticalAlignment="Center" Margin="6 0"/>
+                </StackPanel>
+                <metro:ToggleSwitch IsOn="{Binding BackgroundReadingEnabled}" HorizontalAlignment="Right" OffContent="Auto refresh off" OnContent="Auto refresh on" HorizontalContentAlignment="Right"/>
+            </Grid>
             <Grid Height="2">
                 <ProgressBar Value="{Binding ProgressInfo.Value}" Maximum="{Binding ProgressInfo.Maximum}" 
                              Visibility="{Binding BackgroundReadingInProgress, Converter={StaticResource boolToVisibilityConverter}}"

@@ -50,6 +50,8 @@ namespace PicPick.StateMachine
             _stateTransitions.Add(PicPickState.MAPPING, new StateTransition_Map(this));
             _stateTransitions.Add(PicPickState.FILTERING, new StateTransition_Filter(this));
             _stateTransitions.Add(PicPickState.RUNNING, new StateTransition_Run(this));
+
+            
         }
 
         public StateManager(IActivity activity, IProgressInformation progressInfo) : this(activity)
