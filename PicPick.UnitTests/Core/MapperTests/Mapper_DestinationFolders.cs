@@ -11,7 +11,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using TalUtils;
 
-namespace PicPick.UnitTests.Core.AnalyzerTests
+namespace PicPick.UnitTests.Core.MapperTests
 {
     /// <summary>
     /// BASE_PATH 
@@ -21,7 +21,7 @@ namespace PicPick.UnitTests.Core.AnalyzerTests
     /// 
     /// </summary>
     [TestClass]
-    public class Analyzer_CreateMapping
+    public class Mapper_DestinationFolders
     {
         const int TOTAL_FILE_COUNT = 4;
 
@@ -53,52 +53,18 @@ namespace PicPick.UnitTests.Core.AnalyzerTests
             //Directory.Delete(WorkingPath, true);
         }
 
-        /// <summary>
-        /// Destination has 2 properties that compose the full path - Path + Template.
-        /// If the path is relative, it is relative to the Source, which means if both properties are empty,
-        /// the destination is the source itself.
-        /// The UI should have some sort of handling for that case, but there must be another protection from this situation in the engine level.
-        /// </summary>
-        /// <returns></returns>
-        [TestMethod]
-        public async Task CreateMapping_EmptyDestination_ThrowException()
+        private async Task RunMapping()
         {
-            _activity.DestinationList.Add(
-                new PicPickProjectActivityDestination()
-                {
-                    Path = "",
-                    Template = ""
-                }
-                );
-
-            await Assert.ThrowsExceptionAsync<DestinationEqualsSourceException>(async () =>
-                await _activity.FileMapping.ComputeAsync(new ProgressInformation())
-                );
-
-            // Should raise error
+            Reader reader = new Reader(_activity);
+            Mapper mapper = new Mapper(_activity);
+            reader.ReadFiles();
+            await mapper.MapAsync(new ProgressInformation());
+            mapper.ApplyFinalFilters();
         }
-
+        
+       
         [TestMethod]
-        public async Task CreateMapping_DestinationEqualsSource_ThrowException()
-        {
-            _activity.DestinationList.Add(
-                new PicPickProjectActivityDestination()
-                {
-                    Path = SourcePath,
-                    Template = ""
-                }
-                );
-
-            await Assert.ThrowsExceptionAsync<DestinationEqualsSourceException>(async () =>
-                await _activity.FileMapping.ComputeAsync(new ProgressInformation())
-                );
-
-            // Should raise error
-        }
-
-
-        [TestMethod]
-        public async Task CreateMapping_NoTemplate_OneDestinationFolder()
+        public async Task Map_NoTemplate_OneDestinationFolder()
         {
             // arrange
             int expectedDestinationCount = 1;
@@ -112,18 +78,18 @@ namespace PicPick.UnitTests.Core.AnalyzerTests
                 );
 
             // act
-            await _activity.FileMapping.ComputeAsync(new ProgressInformation());
+            await RunMapping();
 
             // assert
-            Assert.AreEqual(expectedDestinationCount, _activity.FileMapping.DestinationFolders.Count, "The amount of destination folders is not as expected.");
-            foreach (DestinationFolder destinationFolder in _activity.FileMapping.DestinationFolders.Values)
+            Assert.AreEqual(expectedDestinationCount, _activity.FilesGraph.DestinationFolders.Count, "The amount of destination folders is not as expected.");
+            foreach (DestinationFolder destinationFolder in _activity.FilesGraph.DestinationFolders)
             {
-                Assert.AreEqual(expectedFileCount, destinationFolder.AllFiles.Count, $"The amount of files for {destinationFolder.FullPath} is not as expected.");
+                Assert.AreEqual(expectedFileCount, destinationFolder.Files.Count, $"The amount of files for {destinationFolder.FullPath} is not as expected.");
             }
         }
 
         [TestMethod]
-        public async Task CreateMapping_WithTemplate_MultipleDestinationFolders()
+        public async Task Map_WithTemplate_MultipleDestinationFolders()
         {
             // arrange
             int expectedFileCount = TOTAL_FILE_COUNT;
@@ -137,14 +103,18 @@ namespace PicPick.UnitTests.Core.AnalyzerTests
             TestContext.WriteLine($"Template: {dest.Template} (DateTime.Now: {dest.GetTemplatePath(DateTime.Now)})");
 
             // act
-            await _activity.FileMapping.ComputeAsync(new ProgressInformation());
+            Reader reader = new Reader(_activity);
+            Mapper mapper = new Mapper(_activity);
+            reader.ReadFiles();
+            await mapper.MapAsync(new ProgressInformation());
+            mapper.ApplyFinalFilters();
 
-            var map = _activity.FileMapping;
+            var filesGraph = _activity.FilesGraph;
 
             // assert
-            Assert.IsTrue(map.DestinationFolders.Count > 1, "The amount of destination folders is expected to be larger than 1.");
+            Assert.IsTrue(filesGraph.DestinationFolders.Count > 1, "The amount of destination folders is expected to be larger than 1.");
             int fileCountTotal = 0;
-            foreach (var destinationFolder in map.DestinationFolders.Values)
+            foreach (var destinationFolder in filesGraph.DestinationFolders)
             {
                 fileCountTotal += destinationFolder.Files.Count;
 

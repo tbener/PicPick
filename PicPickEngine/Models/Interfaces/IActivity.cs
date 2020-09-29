@@ -18,7 +18,7 @@ namespace PicPick.Models.Interfaces
         PicPickProjectActivitySource Source { get; set; }
         ObservableCollection<PicPickProjectActivityDestination> DestinationList { get; }
 
-        Mapper FileMapping { get; set; }
+        //Mapper FileMapping { get; set; }
         Runner Runner { get; set; }
         FilesGraph FilesGraph { get; set; }
         StateManager StateMachine { get; }

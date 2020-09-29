@@ -16,7 +16,7 @@ namespace PicPick.StateMachine
         protected override async Task Action()
         {
             Debug.WriteLine("Performing file copying...");
-            await runner.Run(ProgressInfo);
+            await runner.RunAsync(ProgressInfo);
         }
     }
 }

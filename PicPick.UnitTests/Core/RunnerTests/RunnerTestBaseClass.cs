@@ -3,6 +3,7 @@ using PicPick.Core;
 using PicPick.Helpers;
 using PicPick.Models;
 using PicPick.Models.Interfaces;
+using PicPick.Models.Mapping;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
@@ -30,15 +31,19 @@ namespace PicPick.UnitTests.Core.RunnerTests
 
         protected IProject _project;
         protected IActivity _activity;
-        protected Runner _runner;
 
         public TestContext TestContext { get; set; }
 
         public async Task Run()
         {
-            var pi = new ProgressInformation();
-            await _activity.FileMapping.ComputeAsync(pi);
-            await _runner.Run(pi);
+            Reader reader = new Reader(_activity);
+            Mapper mapper = new Mapper(_activity);
+            Runner runner = new Runner(_activity, _project.Options);
+            reader.ReadFiles();
+            IProgressInformation progressInfo = new ProgressInformation();
+            await mapper.MapAsync(progressInfo);
+            mapper.ApplyFinalFilters();
+            await runner.RunAsync(progressInfo);
         }
 
         public void InitActivity()
@@ -47,7 +52,7 @@ namespace PicPick.UnitTests.Core.RunnerTests
             _activity.Source.Path = SourcePath;
 
             _project = new PicPickProject();
-            _runner = new Runner(_activity, _project.Options);
+            
         }
 
         public string GetWorkingFolder(string subDir)
@@ -79,10 +84,18 @@ namespace PicPick.UnitTests.Core.RunnerTests
             return dest;
         }
 
+        protected void AssertStatus(FILE_STATUS expectedStatus, SourceFile checkedFile)
+        {
+            Assert.AreEqual(expectedStatus, checkedFile.Status, "File status was not set as expected.");
+        }
+
         protected void AssertStatus(FILE_STATUS expectedStatus, string file)
         {
-            FILE_STATUS actualStatus = _activity.FileMapping.SourceFiles[file].Status;
-            Assert.AreEqual(expectedStatus, actualStatus, "File status was not set as expected.");
+            SourceFile sourceFile = _activity.FilesGraph.Files.Find(f => f.FullFileName.Equals(file, System.StringComparison.OrdinalIgnoreCase));
+            if (sourceFile != null)
+                AssertStatus(expectedStatus, sourceFile);
+            else
+                Assert.Fail($"File \"{file}\" is not found!");
         }
 
         /// <summary>

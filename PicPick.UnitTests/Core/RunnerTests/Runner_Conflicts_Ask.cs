@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TalUtils;
 using PicPick.Helpers;
+using PicPick.Models.Mapping;
 
 namespace PicPick.UnitTests.Core.RunnerTests
 {
@@ -67,7 +68,7 @@ namespace PicPick.UnitTests.Core.RunnerTests
 
             int count = int.Parse(TestContext.Properties[EventRaisedCountProperty].ToString());
             count++;
-            
+
             TestContext.Properties[EventRaisedCountProperty] = count;
             fileExistsAskEventArgs.Response = returnResponse;
             fileExistsAskEventArgs.DontAskAgain = bool.Parse(TestContext.Properties[DontAskAgainProperty].ToString());
@@ -155,7 +156,6 @@ namespace PicPick.UnitTests.Core.RunnerTests
 
             // 2. files
             CreateConflicts(uniqueBasePath, 1);
-            string checkedSourceFile = _activity.Source.FileList.First();
 
             // Act
             await Run();
@@ -163,11 +163,11 @@ namespace PicPick.UnitTests.Core.RunnerTests
             // Assert
             int actualEventCount = int.Parse(TestContext.Properties[EventRaisedCountProperty].ToString());
             Assert.AreEqual(0, actualEventCount, "The 'Ask' Event was raised. Expected to Skip without raising event.");
-            AssertStatus(expectedStatus, checkedSourceFile);
-            
+            AssertStatus(expectedStatus, _activity.FilesGraph.Files.First());
+
         }
 
-        
+
 
 
         [TestMethod]
@@ -189,7 +189,7 @@ namespace PicPick.UnitTests.Core.RunnerTests
             // Assert
             int actualEventCount = int.Parse(TestContext.Properties[EventRaisedCountProperty].ToString());
             Assert.AreEqual(expectedEventCount, actualEventCount, "The 'Ask' Event was not raised as expected.");
-            foreach (string file in _activity.Source.FileList)
+            foreach (SourceFile file in _activity.FilesGraph.Files)
             {
                 AssertStatus(expectedStatus, file);
             }

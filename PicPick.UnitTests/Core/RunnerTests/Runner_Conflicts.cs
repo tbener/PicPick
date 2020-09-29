@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PicPick.Core;
+using PicPick.Models.Mapping;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -38,7 +39,7 @@ namespace PicPick.UnitTests.Core.RunnerTests
         {
             InitActivity();
         }
-        
+
 
         [TestMethod]
         public async Task Conflict_SingleFileDifferent_Skip()
@@ -64,8 +65,6 @@ namespace PicPick.UnitTests.Core.RunnerTests
 
             _activity.Source.Path = sourcePath;
 
-            string checkedSourceFile = _activity.Source.FileList.First();
-
             // Act
             await Run();
 
@@ -73,14 +72,14 @@ namespace PicPick.UnitTests.Core.RunnerTests
             FileInfo fileInfoDest = new FileInfo(Path.Combine(destPath, fileName));
 
             // 1. File is not deleted from source
-            Assert.IsTrue(File.Exists(checkedSourceFile), $"Source file disappeared: {checkedSourceFile}");
+            SourceFile checkSourceFile = _activity.FilesGraph.Files.First();
+            Assert.IsTrue(File.Exists(checkSourceFile.FullFileName), $"Source file disappeared: {checkSourceFile.FileName}");
 
             // 2. file size in destination remained the same
             AssertFiles(fileInfoExpected, fileInfoDest);
 
             // 3. file status
-            FILE_STATUS actualStatus = _activity.FileMapping.SourceFiles[checkedSourceFile].Status;
-            Assert.AreEqual(expectedStatus, actualStatus, "File status was not set as expected.");
+            AssertStatus(expectedStatus, checkSourceFile);
 
         }
 
@@ -114,25 +113,22 @@ namespace PicPick.UnitTests.Core.RunnerTests
 
             _activity.Source.Path = sourcePath;
 
-            string checkedSourceFile = _activity.Source.FileList.First();
-
             // Act
             await Run();
 
             // Assert
+            SourceFile checkSourceFile = _activity.FilesGraph.Files.First();
             FileInfo fileInfoDest = new FileInfo(Path.Combine(destPath, fileName));
 
             // 1. File deletion from source
             string not = deleteSourceFiles ? string.Empty : "not ";
-            Assert.AreEqual(!deleteSourceFiles, File.Exists(checkedSourceFile), $"Source file does {not}exist: {checkedSourceFile}");
+            Assert.AreEqual(!deleteSourceFiles, File.Exists(checkSourceFile.FullFileName), $"Source file does {not}exist: {_sourceFiles[0]}");
 
             // 2. file size in destination remained the same
             AssertFiles(fileInfoExpected, fileInfoDest);
 
             // 3. file status
-            FILE_STATUS actualStatus = _activity.FileMapping.SourceFiles[checkedSourceFile].Status;
-            Assert.AreEqual(expectedStatus, actualStatus, "File status was not set as expected.");
-
+            AssertStatus(expectedStatus, checkSourceFile);
         }
 
         [TestMethod]
@@ -160,8 +156,6 @@ namespace PicPick.UnitTests.Core.RunnerTests
 
             _activity.Source.Path = sourcePath;
 
-            string checkedSourceFile = _activity.Source.FileList.First();
-
             // Act
             await Run();
 
@@ -181,18 +175,18 @@ namespace PicPick.UnitTests.Core.RunnerTests
             }
 
             // 2. File is deleted from source
-            Assert.IsFalse(File.Exists(checkedSourceFile), $"Source file supposed to be deleted: {checkedSourceFile}");
+            SourceFile checkSourceFile = _activity.FilesGraph.Files.First();
+            Assert.IsFalse(File.Exists(checkSourceFile.FullFileName), $"Source file supposed to be deleted: {checkSourceFile.FileName}");
 
             // 3. file status 
-            FILE_STATUS actualStatus = _activity.FileMapping.SourceFiles[checkedSourceFile].Status;
-            Assert.AreEqual(expectedStatus, actualStatus, "File status was not set as expected.");
+            AssertStatus(expectedStatus, checkSourceFile);
 
         }
 
         [DataTestMethod]
         [DataRow("Same", "01.jpg", "01.jpg")]
         [DataRow("NotSame", "01.jpg", "02.jpg")]
-        public async Task Conflict_SingleFileDifferent_Compare(string uid, string sourceFile1, string sourceFile2)
+        public async Task Conflict_SingleFileAutoCompare_RenameOrSkip(string uid, string sourceFile1, string sourceFile2)
         {
             // Arrenge
 
@@ -200,7 +194,7 @@ namespace PicPick.UnitTests.Core.RunnerTests
 
             // 1. general settings
             _project.Options.FileExistsResponse = FileExistsResponseEnum.COMPARE;
-            string uniqueBasePath = GetWorkingFolder(Path.Combine(subDir, nameof(Conflict_SingleFileDifferent_Compare), uid));
+            string uniqueBasePath = GetWorkingFolder(Path.Combine(subDir, nameof(Conflict_SingleFileAutoCompare_RenameOrSkip), uid));
             FILE_STATUS expectedStatus = areEqual ? FILE_STATUS.SKIPPED : FILE_STATUS.COPIED;
             _activity.DeleteSourceFiles = true;
             int expectedCount = areEqual ? 1 : 2;
@@ -221,14 +215,14 @@ namespace PicPick.UnitTests.Core.RunnerTests
 
             _activity.Source.Path = uniqueSourcePath;
 
-            string checkedSourceFile = _activity.Source.FileList.First();
-
             // Act
             await Run();
 
+            // Assert
+
             // 1. file status 
-            FILE_STATUS actualStatus = _activity.FileMapping.SourceFiles[checkedSourceFile].Status;
-            Assert.AreEqual(expectedStatus, actualStatus, "File status was not set as expected.");
+            var checkedFile = _activity.FilesGraph.Files.First();
+            AssertStatus(expectedStatus, checkedFile);
 
             // 2. verify file count in destination
             var destFiles = Directory.GetFiles(uniqueDestPath);
@@ -244,11 +238,11 @@ namespace PicPick.UnitTests.Core.RunnerTests
             }
 
             // 3. File is deleted from source
-            Assert.AreEqual(!expectedDeletedFromSource, File.Exists(checkedSourceFile), $"DeleteSourceFiles: expected {expectedDeletedFromSource}");
-
-            
+            Assert.AreEqual(expectedDeletedFromSource, !File.Exists(checkedFile.FullFileName), expectedDeletedFromSource ? "The file was not deleted, but should have" : "The file was unexpectedly deleted");
 
         }
+
+        
 
 
         /// <summary>
@@ -265,7 +259,7 @@ namespace PicPick.UnitTests.Core.RunnerTests
 
             // 1. general settings
             _project.Options.FileExistsResponse = FileExistsResponseEnum.COMPARE;
-            string uniqueBasePath = GetWorkingFolder(Path.Combine(subDir, nameof(Conflict_SingleFileDifferent_Compare)));
+            string uniqueBasePath = GetWorkingFolder(Path.Combine(subDir, nameof(Conflict_SingleFileAutoCompare_RenameOrSkip)));
 
             // 2. files
             string uniqueSourcePath = PathHelper.GetFullPath(uniqueBasePath, "source", true);
@@ -275,7 +269,7 @@ namespace PicPick.UnitTests.Core.RunnerTests
             // copy one file as both files in dest
             string f1 = fileNames[0];
             fileNames.ForEach(f => File.Copy(Path.Combine(SourcePath, f1), Path.Combine(uniqueDestPath, f)));
-            
+
             AddDestination(uniqueDestPath);
 
             _activity.Source.Path = uniqueSourcePath;
@@ -286,7 +280,7 @@ namespace PicPick.UnitTests.Core.RunnerTests
             // 1. file status - expected first skip and second copy
             AssertStatus(FILE_STATUS.SKIPPED, Path.Combine(uniqueSourcePath, fileNames[0]));
             AssertStatus(FILE_STATUS.COPIED, Path.Combine(uniqueSourcePath, fileNames[1]));
-            
+
         }
 
         [TestMethod]
@@ -318,8 +312,8 @@ namespace PicPick.UnitTests.Core.RunnerTests
             await Run();
 
             // Assert
-            Assert.IsTrue(_activity.FileMapping.SourceFiles.First().Value.Status == FILE_STATUS.COPIED, "First file wasn't copied");
-            Assert.IsTrue(_activity.FileMapping.SourceFiles.Last().Value.Status == FILE_STATUS.SKIPPED, "Second file wasn't skipped");
+            Assert.IsTrue(_activity.FilesGraph.Files.First().Status == FILE_STATUS.COPIED, "First file wasn't copied");
+            Assert.IsTrue(_activity.FilesGraph.Files.Last().Status == FILE_STATUS.SKIPPED, "Second file wasn't skipped");
 
         }
 

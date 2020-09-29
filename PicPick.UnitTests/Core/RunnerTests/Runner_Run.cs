@@ -116,13 +116,13 @@ namespace PicPick.UnitTests.Core.RunnerTests
                 Assert.Fail($"The folders {additionalDirs} were unexpectedly created.");
             }
 
-            
+
         }
 
         public static IEnumerable<object[]> GetTestData()
         {
-            yield return new object[] {"1", new string[] { "yyyy", "yyyy-MM" }, new string[] { "2019", "2019-05" } };
-            yield return new object[] {"2", new string[] { "yyyy", "yyyy-dd" }, new string[] { "2019", "2019-01", "2019-02", "2019-03" } };
+            yield return new object[] { "1", new string[] { "yyyy", "yyyy-MM" }, new string[] { "2019", "2019-05" } };
+            yield return new object[] { "2", new string[] { "yyyy", "yyyy-dd" }, new string[] { "2019", "2019-01", "2019-02", "2019-03" } };
         }
 
         [DataTestMethod]
@@ -140,9 +140,9 @@ namespace PicPick.UnitTests.Core.RunnerTests
             Assert.IsTrue(Directory.Exists(checkPath), $"Folder {checkPath} doesn't exist.");
         }
 
-        
 
-        
+
+
 
         [TestMethod]
         public async Task Runner_DeleteSourceFilesFalse_SourceUnchanged()
@@ -203,5 +203,5 @@ namespace PicPick.UnitTests.Core.RunnerTests
             return sb.ToString();
         }
     }
-    
+
 }

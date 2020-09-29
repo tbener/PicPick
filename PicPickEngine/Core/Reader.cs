@@ -3,9 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Runtime.CompilerServices;
 
+[assembly: InternalsVisibleTo("PicPick.UnitTests")]
 namespace PicPick.Core
 {
     public class Reader : IAction
@@ -17,7 +17,11 @@ namespace PicPick.Core
             Activity = activity;
         }
 
-        public void ReadFiles()
+        public Reader()
+        {
+        }
+
+        internal void ReadFiles()
         {
             Activity.FilesGraph.Clear();
 

@@ -9,7 +9,9 @@ using log4net;
 using System.IO;
 using PicPick.Models.Mapping;
 using PicPick.Models;
+using System.Runtime.CompilerServices;
 
+[assembly: InternalsVisibleTo("PicPick.UnitTests")]
 namespace PicPick.Core
 {
     public class Runner : IAction
@@ -85,7 +87,7 @@ namespace PicPick.Core
             return selectedResponse;
         }
 
-        public async Task Run(IProgressInformation progressInfo)
+        public async Task RunAsync(IProgressInformation progressInfo)
         {
 
             progressInfo.Text = "Copying...";
@@ -171,7 +173,7 @@ namespace PicPick.Core
                         }
                     }
 
-                    if (Activity.DeleteSourceFiles)
+                    if (ShouldDeleteSourceFile(sourceFile))
                     {
                         ShellFileOperation.MoveToRecycleBin(sourceFile.FullFileName);
                     }
@@ -308,6 +310,14 @@ namespace PicPick.Core
             {
 
             }
+        }
+
+        private bool ShouldDeleteSourceFile(SourceFile sourceFile)
+        {
+            if (!Activity.DeleteSourceFiles)
+                return false;
+
+            return sourceFile.Status == FILE_STATUS.COPIED;
         }
 
         private async Task DoCopy(SourceFile sourceFile, DestinationFile destinationFile, bool overwrite = true)

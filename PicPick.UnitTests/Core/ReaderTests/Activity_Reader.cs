@@ -1,9 +1,11 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using PicPick.Core;
 using PicPick.Models;
+using PicPick.Models.Interfaces;
 using System.IO;
 using TalUtils;
 
-namespace PicPick.UnitTests.Models
+namespace PicPick.UnitTests.ReaderTests
 {
     /// <summary>
     /// To Test:
@@ -14,7 +16,7 @@ namespace PicPick.UnitTests.Models
     /// The files will be deleted automatically because the TestDir is deleted by MSTest.
     /// </summary>
     [TestClass]
-    public class Activity_Source
+    public class Activity_Reader
     {
         const string SUB_DIR = @"_SourceFiles\FilterTest";
         private static string SourcePath;
@@ -58,7 +60,7 @@ namespace PicPick.UnitTests.Models
         [DataRow("blahblah,*.*", false, 30)]
         [DataRow("*.jpg, *.tal", false, 20)]
         [DataRow("*.jpg, *.tal", true, 25)]
-        public void Source_Filter_FileList(string filter, bool includeSubFolders, int expectedCount)
+        public void Reader_ReadFilesWithFilters_FileCount(string filter, bool includeSubFolders, int expectedCount)
         {
             // arrange
             var source = new PicPickProjectActivitySource()
@@ -67,12 +69,15 @@ namespace PicPick.UnitTests.Models
                 Filter = filter,
                 IncludeSubFolders = includeSubFolders
             };
+            IActivity _activity = new PicPickProjectActivity("test");
+            _activity.Source = source;
 
             // act
-            var files = source.FileList;
+            Reader reader = new Reader(_activity);
+            reader.ReadFiles();
 
             // assert
-            Assert.AreEqual(expectedCount, files.Count);
+            Assert.AreEqual(expectedCount, _activity.FilesGraph.RawFileList.Count);
         }
     }
 }
