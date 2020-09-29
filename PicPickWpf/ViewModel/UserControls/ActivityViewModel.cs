@@ -22,7 +22,19 @@ namespace PicPick.ViewModel.UserControls
 
         #endregion
 
-        
+
+        public bool DeleteSourceFiles
+        {
+            get { return Activity.DeleteSourceFiles; }
+            set { Activity.DeleteSourceFiles = value; }
+        }
+
+        public bool DeleteSourceFilesOnSkip
+        {
+            get { return Activity.DeleteSourceFilesOnSkip; }
+            set { Activity.DeleteSourceFilesOnSkip = value; }
+        }
+
 
 
         #region Activity parts view models

@@ -11,7 +11,6 @@ namespace PicPick.Models.Interfaces
 {
     public interface IActivity
     {
-        bool DeleteSourceFiles { get; set; }
         bool Initialized { get; set; }
         string Name { get; set; }
 

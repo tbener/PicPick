@@ -26,7 +26,12 @@
         </Border>
 
         <Border Grid.Row="1" Grid.Column="0" BorderBrush="Black" BorderThickness="0" Margin="7" Padding="7">
-            <CheckBox IsChecked="{Binding Activity.DeleteSourceFiles}" VerticalAlignment="Top">Delete source files</CheckBox>
+            <StackPanel Orientation="Vertical">
+                <CheckBox x:Name="chkDeleteSourceFiles" IsChecked="{Binding DeleteSourceFiles}">Delete source files</CheckBox>
+                <TextBlock>Delete files that were successfully copied</TextBlock>
+                <CheckBox IsChecked="{Binding DeleteSourceFilesOnSkip}" IsEnabled="{Binding IsChecked, ElementName=chkDeleteSourceFiles}" Margin="24, 5">Delete skipped files</CheckBox>
+                <TextBlock TextWrapping="Wrap" Margin="24,0,0,0">When Delete source files is selected, this will treat skipped files as success and will delete them as well</TextBlock>
+            </StackPanel>
         </Border>
 
     </Grid>

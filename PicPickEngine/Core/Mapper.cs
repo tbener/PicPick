@@ -34,11 +34,11 @@ namespace PicPick.Core
         private Dictionary<string, DestinationFolder> _destinationFoldersDictionary = new Dictionary<string, DestinationFolder>();
         private List<PicPickProjectActivityDestination> _destinations;
 
-        public IActivity Activity { get; set; }
+        public PicPickProjectActivity Activity { get; set; }
 
         public Mapper(IActivity activity)
         {
-            Activity = activity;
+            Activity = (PicPickProjectActivity)activity;
             Activity.FilesGraph.SetMapper(this);
         }
 

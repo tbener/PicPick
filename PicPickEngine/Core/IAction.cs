@@ -1,13 +1,10 @@
-﻿using PicPick.Helpers;
-using PicPick.Models.Interfaces;
-using System.Threading.Tasks;
+﻿using PicPick.Models;
 
 namespace PicPick.Core
 {
     public interface IAction
     {
-        IActivity Activity { get; }
+        PicPickProjectActivity Activity { get; }
 
-        //Task ComputeAsync(ProgressInformation progressInfo, int levelUpdate = 0);
     }
 }

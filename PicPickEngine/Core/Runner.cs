@@ -22,12 +22,12 @@ namespace PicPick.Core
         private IOptions _options;
 
         public FileExistsResponseEnum FileExistsResponse { get; set; }
-        public IActivity Activity { get; private set; }
+        public PicPickProjectActivity Activity { get; private set; }
 
 
         public Runner(IActivity activity, IOptions options)
         {
-            Activity = activity;
+            Activity = (PicPickProjectActivity)activity;
             _options = options;
         }
 
@@ -317,7 +317,13 @@ namespace PicPick.Core
             if (!Activity.DeleteSourceFiles)
                 return false;
 
-            return sourceFile.Status == FILE_STATUS.COPIED;
+            if (sourceFile.Status == FILE_STATUS.COPIED)
+                return true;
+
+            if (sourceFile.Status == FILE_STATUS.SKIPPED && Activity.DeleteSourceFilesOnSkip)
+                return true;
+
+            return false;
         }
 
         private async Task DoCopy(SourceFile sourceFile, DestinationFile destinationFile, bool overwrite = true)

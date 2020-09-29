@@ -38,6 +38,7 @@
                   </xsd:sequence>
                   <xsd:attribute name="Name" type="xsd:string" default="My Pictures" />
                   <xsd:attribute name="DeleteSourceFiles" type="xsd:boolean" default="true" />
+                  <xsd:attribute name="DeleteSourceFilesOnSkip" type="xsd:boolean" default="false" />
                   <xsd:attribute name="Active" type="xsd:boolean" default="true" />
                 </xsd:complexType>
               </xsd:element>

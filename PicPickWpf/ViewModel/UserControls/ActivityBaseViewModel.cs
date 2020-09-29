@@ -30,8 +30,8 @@ namespace PicPick.ViewModel.UserControls
 
         #region Public\Protected Properties
 
-        protected IActivity Activity { get; private set; }
-        public IProgressInformation ProgressInfo { get; private set; }
+        protected PicPickProjectActivity Activity { get; private set; }
+        public ProgressInformation ProgressInfo { get; private set; }
 
         #endregion
 
@@ -44,10 +44,9 @@ namespace PicPick.ViewModel.UserControls
 
         public ActivityBaseViewModel(IActivity activity, IProgressInformation progressInfo)
         {
-            Activity = activity;
+            Activity = (PicPickProjectActivity)activity;
             Activity.OnActivityStateChanged += (s, e) => OnPropertyChanged(nameof(IsRunning));
-            ProgressInfo = progressInfo;
-
+            ProgressInfo = (ProgressInformation)progressInfo;
         }
 
         #endregion

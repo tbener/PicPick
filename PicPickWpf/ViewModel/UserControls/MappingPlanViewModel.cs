@@ -15,7 +15,7 @@ namespace PicPick.ViewModel.UserControls
         public MappingPlanViewModel(IActivity activity, IProgressInformation progressInfo) : base(activity, progressInfo)
         {
             // Source Pane
-            SourceFilesDeleteWarning = activity.DeleteSourceFiles ? "The files will be deleted!" : "The files won't be deleted.";
+            SourceFilesDeleteWarning = Activity.DeleteSourceFiles ? "The files will be deleted!" : "The files won't be deleted.";
 
             RefreshCommand = new RelayCommand(() => Activity.StateMachine.Restart(PicPickState.READING, BACKGROUND_END_STATE));
 

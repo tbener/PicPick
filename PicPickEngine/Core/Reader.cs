@@ -1,4 +1,5 @@
-﻿using PicPick.Models.Interfaces;
+﻿using PicPick.Models;
+using PicPick.Models.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -10,11 +11,11 @@ namespace PicPick.Core
 {
     public class Reader : IAction
     {
-        public IActivity Activity { get; set; }
+        public PicPickProjectActivity Activity { get; set; }
 
         public Reader(IActivity activity)
         {
-            Activity = activity;
+            Activity = (PicPickProjectActivity)activity;
         }
 
         public Reader()

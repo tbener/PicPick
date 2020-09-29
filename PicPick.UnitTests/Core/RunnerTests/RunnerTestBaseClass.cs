@@ -29,8 +29,8 @@ namespace PicPick.UnitTests.Core.RunnerTests
         protected static string SourcePath;
         protected static string DestinationPath;
 
-        protected IProject _project;
-        protected IActivity _activity;
+        protected PicPickProject _project;
+        protected PicPickProjectActivity _activity;
 
         public TestContext TestContext { get; set; }
 

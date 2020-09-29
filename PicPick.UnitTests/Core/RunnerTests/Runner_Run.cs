@@ -140,68 +140,6 @@ namespace PicPick.UnitTests.Core.RunnerTests
             Assert.IsTrue(Directory.Exists(checkPath), $"Folder {checkPath} doesn't exist.");
         }
 
-
-
-
-
-        [TestMethod]
-        public async Task Runner_DeleteSourceFilesFalse_SourceUnchanged()
-        {
-            _activity.DeleteSourceFiles = false;
-
-            // get source start hash
-            DirectoryInfo di = new DirectoryInfo(SourcePath);
-            string hash1 = GetDirectoryHash(di);
-
-            AddDestination(DestinationPath, "yyyy");
-
-            await Run();
-
-            // compare hashes
-            Assert.IsTrue(GetDirectoryHash(di).Equals(hash1));
-        }
-
-        /// <summary>
-        /// On this test we assume all files included (no specific filter) and no skipping.
-        /// So we expect an empty folder in the end.
-        /// </summary>
-        /// <returns></returns>
-        [TestMethod]
-        public async Task Runner_DeleteSourceFilesTrue_SourceFilesDeleted()
-        {
-            // Arrange
-            _activity.DeleteSourceFiles = true;
-
-            // Copy files to a new source folder - those files are expected to be deleted
-            var newSourcePath = Path.Combine(SourcePath, "DeleteSourceFilesTest");
-            CopyFilesTo(newSourcePath);
-
-            // set the new source
-            _activity.Source.Path = newSourcePath;
-            _activity.Source.Filter = "*.*";
-
-            // set the destination
-            AddDestination(Path.Combine(DestinationPath, "DeleteSourceFilesTest"));
-
-            // Act
-            await Run();
-
-            // verify source files deleted
-            Assert.AreEqual(0, (new DirectoryInfo(newSourcePath)).GetFiles().Count());
-        }
-
-        // Currently we just compare the first level file list
-        public string GetDirectoryHash(DirectoryInfo di)
-        {
-            StringBuilder sb = new StringBuilder();
-
-            foreach (var file in di.GetFiles())
-            {
-                sb.Append(file.Name);
-            }
-
-            return sb.ToString();
-        }
     }
 
 }

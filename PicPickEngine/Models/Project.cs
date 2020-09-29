@@ -96,11 +96,14 @@ namespace PicPick.Models {
         
         private bool deleteSourceFilesField;
         
+        private bool deleteSourceFilesOnSkipField;
+        
         private bool activeField;
         
         public PicPickProjectActivity() {
             this.nameField = "My Pictures";
             this.deleteSourceFilesField = true;
+            this.deleteSourceFilesOnSkipField = false;
             this.activeField = true;
         }
         
@@ -150,6 +153,19 @@ namespace PicPick.Models {
             set {
                 this.deleteSourceFilesField = value;
                 this.RaisePropertyChanged("DeleteSourceFiles");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        [System.ComponentModel.DefaultValueAttribute(false)]
+        public bool DeleteSourceFilesOnSkip {
+            get {
+                return this.deleteSourceFilesOnSkipField;
+            }
+            set {
+                this.deleteSourceFilesOnSkipField = value;
+                this.RaisePropertyChanged("DeleteSourceFilesOnSkip");
             }
         }
         

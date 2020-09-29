@@ -17,11 +17,11 @@ namespace PicPick.Commands
     {
         public event EventHandler CanExecuteChanged;
 
-        IActivity _activity;
+        PicPickProjectActivity _activity;
 
         public StartCommand(IActivity activity)
         {
-            _activity = activity;
+            _activity = (PicPickProjectActivity)activity;
             _activity.OnActivityStateChanged += (s, e) => CanExecuteChanged?.Invoke(s, e);
         }
 
@@ -60,7 +60,7 @@ namespace PicPick.Commands
 
         #region Helper methods
 
-        private bool WarningsBeforeStart(IActivity activity)
+        private bool WarningsBeforeStart(PicPickProjectActivity activity)
         {
             if (!activity.DeleteSourceFiles)
                 return true;

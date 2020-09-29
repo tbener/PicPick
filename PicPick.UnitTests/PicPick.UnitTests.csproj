@@ -55,6 +55,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\RunnerTests\DeleteSourceFiles.cs" />
     <Compile Include="Core\RunnerTests\RunnerTestBaseClass.cs" />
     <Compile Include="Core\RunnerTests\Runner_Conflicts.cs" />
     <Compile Include="Core\MapperTests\Mapper_DestinationFolders.cs" />
