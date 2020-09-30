@@ -24,7 +24,7 @@ namespace PicPick.Core
         ASK,        // Needs to be implemented by the host application
         [FileExistsResponse(Description = "Copy and replace", Details = "Overwrite the file in the destination folder")]
         OVERWRITE,
-        [FileExistsResponse(Description = "Don't copy", Details = "Skip this file (the file will remain in the source folder)")]
+        [FileExistsResponse(Description = "Skip", Details = "Skip this file")]
         SKIP,
         [FileExistsResponse(Description = "Copy, but keep both files", Details = "The file will be renamed")]
         RENAME,     // Save both

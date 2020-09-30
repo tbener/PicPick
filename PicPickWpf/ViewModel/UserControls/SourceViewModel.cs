@@ -40,7 +40,7 @@ namespace PicPick.ViewModel.UserControls
 
         public SourceViewModel(IActivity activity, IProgressInformation progressInfo) : base(activity, progressInfo)
         {
-            Source = activity.Source;
+            Source = Activity.Source;
             Activity.StateMachine.OnStateChanged += (s, e) =>
             {
                 OnPropertyChanged(nameof(SourceFilesStatus));
