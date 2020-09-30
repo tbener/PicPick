@@ -12,64 +12,61 @@
     <UserControl.Resources>
         <converters:BooleanToVisibilityConverter x:Key="boolToVisibilityConverter"/>
     </UserControl.Resources>
-    <Grid IsEnabled="{Binding Enabled}">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
+    <DockPanel LastChildFill="True">
 
-        <DockPanel Grid.Row="0" Margin="0,0,5,0" LastChildFill="False">
-            <TextBlock Text="Copy from" DockPanel.Dock="Top" Height="23" Style="{StaticResource CaptionTextBlock}"/>
-            
-        </DockPanel>
+        <TextBlock Text="Copy from" Height="23" DockPanel.Dock="Top" Margin="0,0,5,0" Style="{StaticResource CaptionTextBlock}"/>
+
+        <Border DockPanel.Dock="Top" BorderThickness="0,1,0,0" BorderBrush="LightGray" Margin="0,16,0,0" />
+
+        <local:PathBrowserView DockPanel.Dock="Top" DataContext="{Binding PathViewModel}" Margin="6,15,6,20"/>
+
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="6,0">
+                <StackPanel Orientation="Vertical" VerticalAlignment="Top">
+
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Files search pattern:" DockPanel.Dock="Top" Height="24"/>
+                        <TextBox Text="{Binding Source.Filter, UpdateSourceTrigger=PropertyChanged}" Width="240" Margin="10, 0"/>
+                    </StackPanel>
+
+                    <CheckBox IsChecked="{Binding Source.IncludeSubFolders}" Margin="0,10,0,4">Include sub folders</CheckBox>
+
+                    <Expander Header="Advanced Filters" Margin="0,8,0,0" Padding="6,4,6,0" BorderBrush="LightGray" metro:ControlsHelper.ContentCharacterCasing="Normal" metro:HeaderedControlHelper.HeaderBackground="LightGray" BorderThickness="1">
+                        <StackPanel Orientation="Vertical" VerticalAlignment="Stretch">
+                            <CheckBox IsChecked="{Binding Source.OnlyNewFiles}" Margin="0,4" ToolTip="Read only files that don't exist in any of the destinations in the first place">Only new files</CheckBox>
+                            <StackPanel Orientation="Horizontal" Margin="0, 15, 0, 0">
+                                <CheckBox Width="93" IsChecked="{Binding UseFromDate}">From date:</CheckBox>
+                                <DatePicker IsTodayHighlighted="True" Width="200" SelectedDate="{Binding DateFrom}"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0, 5">
+                                <CheckBox Width="93" IsChecked="{Binding UseToDate}">To date:</CheckBox>
+                                <DatePicker IsTodayHighlighted="True" Width="200" SelectedDate="{Binding DateTo}"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Expander>
+                </StackPanel>
 
 
-        <!--<DockPanel Grid.Row="1" Grid.ColumnSpan="2" DockPanel.Dock="Top" LastChildFill="False" Margin="0 12 0 0">
-            
-        </DockPanel>-->
-        <Border Grid.Row="1" BorderThickness="0,1,0,0" BorderBrush="LightGray" Margin="0,16,0,30" Padding="5,15,5,0">
-        <StackPanel Orientation="Vertical">
-            <local:PathBrowserView DockPanel.Dock="Top" DataContext="{Binding PathViewModel}" Margin="0, 0, 0, 30"/>
-            
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Files search pattern:" DockPanel.Dock="Top" Height="24"/>
-                <TextBox Text="{Binding Source.Filter, UpdateSourceTrigger=PropertyChanged}" Width="240" Margin="10, 0"/>
-            </StackPanel>
-
-            <CheckBox IsChecked="{Binding Source.IncludeSubFolders}" Margin="0,10,0,4">Include sub folders</CheckBox>
-            <CheckBox IsChecked="{Binding Source.OnlyNewFiles}" Margin="0,4" ToolTip="Read only files that don't exist in any of the destinations in the first place">Only new files</CheckBox>
-
-            <StackPanel Orientation="Horizontal" Margin="0, 15, 0, 0">
-                <CheckBox Width="93" IsChecked="{Binding UseFromDate}">From date:</CheckBox>
-                <DatePicker IsTodayHighlighted="True" Width="200" SelectedDate="{Binding DateFrom}"/>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" Margin="0, 5">
-                <CheckBox Width="93" IsChecked="{Binding UseToDate}">To date:</CheckBox>
-                <DatePicker IsTodayHighlighted="True" Width="200" SelectedDate="{Binding DateTo}"/>
-            </StackPanel>
-        </StackPanel>
-        </Border>
-
-        <StackPanel Grid.Row="2">
-            <Grid>
-                <StackPanel Orientation="Horizontal" Margin="0 4">
-                    <Button Content="{iconPacks:Material Kind=Refresh, Height=10}" Command="{Binding BackgroundReadingCommand}" ToolTip="Refresh"
+                <StackPanel DockPanel.Dock="Bottom" Margin="0,8,0,0">
+                    <Grid>
+                        <StackPanel Orientation="Horizontal" Margin="0 4">
+                            <Button Content="{iconPacks:Material Kind=Refresh, Height=10}" Command="{Binding BackgroundReadingCommand}" ToolTip="Refresh"
                             Visibility="{Binding BackgroundReadingInProgress, Converter={StaticResource boolToVisibilityConverter}, ConverterParameter=true}"
                             Padding="0" Width="18" Height="18" MinHeight="10" VerticalAlignment="Center"/>
-                    <Button Content="{iconPacks:Material Kind=Stop, Height=10}" Command="{Binding StopBackgroundReadingCommand}" ToolTip="Stop"
+                            <Button Content="{iconPacks:Material Kind=Stop, Height=10}" Command="{Binding StopBackgroundReadingCommand}" ToolTip="Stop"
                             Visibility="{Binding BackgroundReadingInProgress, Converter={StaticResource boolToVisibilityConverter}}"
                             Padding="0" Width="18" Height="18" MinHeight="10" VerticalAlignment="Center"/>
-                    <TextBlock Text="{Binding SourceFilesStatus, FallbackValue=Total files found: 0}" VerticalAlignment="Center" Margin="6 0"/>
-                </StackPanel>
-                <metro:ToggleSwitch IsOn="{Binding BackgroundReadingEnabled}" HorizontalAlignment="Right" OffContent="Auto refresh off" OnContent="Auto refresh on" HorizontalContentAlignment="Right"/>
-            </Grid>
-            <Grid Height="2">
-                <ProgressBar Value="{Binding ProgressInfo.Value}" Maximum="{Binding ProgressInfo.Maximum}" 
+                            <TextBlock Text="{Binding SourceFilesStatus, FallbackValue=Total files found: 0}" VerticalAlignment="Center" Margin="6 0"/>
+                        </StackPanel>
+                        <metro:ToggleSwitch IsOn="{Binding BackgroundReadingEnabled}" HorizontalAlignment="Right" OffContent="Auto refresh off" OnContent="Auto refresh on" HorizontalContentAlignment="Right"/>
+                    </Grid>
+                    <Grid Height="2">
+                        <ProgressBar Value="{Binding ProgressInfo.Value}" Maximum="{Binding ProgressInfo.Maximum}" 
                              Visibility="{Binding BackgroundReadingInProgress, Converter={StaticResource boolToVisibilityConverter}}"
                              MinHeight="1" Background="Transparent" BorderBrush="Transparent"/>
-
-            </Grid>
-        </StackPanel>
-    </Grid>
+                    </Grid>
+                </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
+    </DockPanel>
 </UserControl>

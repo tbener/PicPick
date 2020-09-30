@@ -8,30 +8,32 @@
              d:DesignHeight="550" d:DesignWidth="743.525">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition x:Name="source"/>
             <ColumnDefinition x:Name="destinations"/>
         </Grid.ColumnDefinitions>
 
-        <Border BorderThickness="1" CornerRadius="4" BorderBrush="LightGray" Padding="7" Margin="7">
-            <uc:SourceView DataContext="{Binding SourceViewModel}"/>
-        </Border>
-        <GridSplitter Grid.RowSpan="2" Background="LightGray" Margin="0,0,-2,0" Width="4"/>
+        <DockPanel LastChildFill="True">
+            <Border DockPanel.Dock="Bottom" Grid.Column="0" BorderThickness="0" Margin="7" Padding="7">
+                <StackPanel Orientation="Vertical">
+                    <CheckBox x:Name="chkDeleteSourceFiles" IsChecked="{Binding DeleteSourceFiles}">Delete source files</CheckBox>
+                    <TextBlock>Delete files that were successfully copied</TextBlock>
+                    <CheckBox IsChecked="{Binding DeleteSourceFilesOnSkip}" IsEnabled="{Binding IsChecked, ElementName=chkDeleteSourceFiles}" Margin="24, 5">Delete skipped files</CheckBox>
+                    <TextBlock TextWrapping="Wrap" Margin="24,0,0,0">When Delete source files is selected, this will treat skipped files as success and will delete them as well</TextBlock>
+                </StackPanel>
+            </Border>
 
-        <Border Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" BorderThickness="1" CornerRadius="4" BorderBrush="LightGray" Padding="7" Margin="7">
+            <Border  BorderThickness="1" CornerRadius="4" BorderBrush="LightGray" Padding="7" Margin="7">
+                <uc:SourceView DataContext="{Binding SourceViewModel}"/>
+            </Border>
+        </DockPanel>
+
+        <GridSplitter Background="LightGray" Margin="0,0,-2,0" Width="4"/>
+
+        <Border Grid.Column="1" BorderThickness="1" CornerRadius="4" BorderBrush="LightGray" Padding="7" Margin="7">
             <uc:DestinationListView DataContext="{Binding DestinationListViewModel}"/>
-        </Border>
-
-        <Border Grid.Row="1" Grid.Column="0" BorderBrush="Black" BorderThickness="0" Margin="7" Padding="7">
-            <StackPanel Orientation="Vertical">
-                <CheckBox x:Name="chkDeleteSourceFiles" IsChecked="{Binding DeleteSourceFiles}">Delete source files</CheckBox>
-                <TextBlock>Delete files that were successfully copied</TextBlock>
-                <CheckBox IsChecked="{Binding DeleteSourceFilesOnSkip}" IsEnabled="{Binding IsChecked, ElementName=chkDeleteSourceFiles}" Margin="24, 5">Delete skipped files</CheckBox>
-                <TextBlock TextWrapping="Wrap" Margin="24,0,0,0">When Delete source files is selected, this will treat skipped files as success and will delete them as well</TextBlock>
-            </StackPanel>
         </Border>
 
     </Grid>
