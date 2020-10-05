@@ -96,7 +96,7 @@ namespace PicPick.Core
             FileExistsAskEventArgs fileExistsAskEventArgs = new FileExistsAskEventArgs();
             FileExistsResponse = _options.FileExistsResponse;
 
-            var filesGraph = Activity.FilesGraph;
+            var filesGraph = Activity.FileGraph;
 
             try
             {

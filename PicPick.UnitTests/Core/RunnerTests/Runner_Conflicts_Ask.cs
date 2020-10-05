@@ -163,7 +163,7 @@ namespace PicPick.UnitTests.Core.RunnerTests
             // Assert
             int actualEventCount = int.Parse(TestContext.Properties[EventRaisedCountProperty].ToString());
             Assert.AreEqual(0, actualEventCount, "The 'Ask' Event was raised. Expected to Skip without raising event.");
-            AssertStatus(expectedStatus, _activity.FilesGraph.Files.First());
+            AssertStatus(expectedStatus, _activity.FileGraph.Files.First());
 
         }
 
@@ -189,7 +189,7 @@ namespace PicPick.UnitTests.Core.RunnerTests
             // Assert
             int actualEventCount = int.Parse(TestContext.Properties[EventRaisedCountProperty].ToString());
             Assert.AreEqual(expectedEventCount, actualEventCount, "The 'Ask' Event was not raised as expected.");
-            foreach (SourceFile file in _activity.FilesGraph.Files)
+            foreach (SourceFile file in _activity.FileGraph.Files)
             {
                 AssertStatus(expectedStatus, file);
             }

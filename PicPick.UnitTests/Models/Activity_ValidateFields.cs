@@ -40,7 +40,7 @@ namespace PicPick.UnitTests.Models
             // arrange
             string expected = "";
             _activity.DestinationList.Add(
-                new PicPickProjectActivityDestination()
+                new PicPickProjectActivityDestination(_activity)
                 {
                     Path = @"C:\test1"
                 });
@@ -95,7 +95,7 @@ namespace PicPick.UnitTests.Models
         public void ValidateFields_EmptyDestinationIsEqualsToSource_ThrowException()
         {
             _activity.DestinationList.Add(
-                new PicPickProjectActivityDestination()
+                new PicPickProjectActivityDestination(_activity)
                 {
                     Path = "",
                     Template = ""
@@ -116,7 +116,7 @@ namespace PicPick.UnitTests.Models
             // arrange
             _activity.Source.Path = PathHelper.ExecutionPath();     // we must have an existing path
             _activity.DestinationList.Add(
-                new PicPickProjectActivityDestination()
+                new PicPickProjectActivityDestination(_activity)
                 {
                     Path = _activity.Source.Path,
                     Template = ""

@@ -34,21 +34,6 @@ namespace PicPick.Models.Mapping
             DestinationFiles.Add(sourceFile, df);
         }
 
-        public string RelativePath
-        {
-            get
-            {
-                try
-                {
-                    return PathHelper.GetRelativePath(BasedOnDestination.Path, FullPath);
-                }
-                catch
-                {
-                    return "";
-                }
-            }
-        }
-
         public string FullPath { get; set; }
         public bool IsNew { get; set; }
         public bool Created { get; set; }

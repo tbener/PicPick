@@ -4,7 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:PicPick.View.UserControls"
-             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls" x:Class="PicPick.View.UserControls.DestinationView"
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             x:Class="PicPick.View.UserControls.DestinationView"
              mc:Ignorable="d" 
              d:DesignHeight="59" d:DesignWidth="538">
     <Grid>
@@ -14,21 +15,22 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="40"/>
-            <ColumnDefinition Width="5*"/>
-            <ColumnDefinition Width="3*"/>
-            <ColumnDefinition Width="70"/>
+            <ColumnDefinition Width="30"/>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="100"/>
+            <ColumnDefinition Width="44"/>
         </Grid.ColumnDefinitions>
+        
         <CheckBox Grid.Column="0" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" IsChecked="{Binding Destination.Active}"/>
 
         <!-- Main path -->
-        <local:PathBrowserView Grid.Column="1" Grid.Row="1" Grid.RowSpan="2" DataContext="{Binding PathViewModel}" Margin="0,0,8,0" ToolTip="Use absolute path or relative to source"/>
+        <local:PathBrowserView Grid.Column="1" Grid.Row="1" Grid.RowSpan="2" DataContext="{Binding PathViewModel}" Margin="0,0,8,0" HorizontalAlignment="Stretch"/>
 
         <!-- Template -->
-        <TextBox Grid.Column="2" Grid.Row="1" Text="{Binding Destination.Template, UpdateSourceTrigger=PropertyChanged}" ToolTip="{Binding TemplateToolTip}" />
+        <TextBox Grid.Column="2" Grid.Row="1" Text="{Binding Destination.Template, UpdateSourceTrigger=PropertyChanged}" ToolTip="{Binding TemplateToolTip}" Margin="0,0,1,0"/>
 
         <!-- Delete button-->
-        <Button Grid.Column="3" Grid.Row="1" Content="Delete" Width="46" Height="22" VerticalAlignment="Center" Command="{Binding DeleteCommand}"/>
+        <Button Grid.Column="3" Grid.Row="1" Content="{iconPacks:Material Kind=Delete, Height=10}"  Width="32" Height="22" VerticalAlignment="Center" HorizontalAlignment="Center" Command="{Binding DeleteCommand}"/>
         
         <!-- Row 3 -->
         <!-- Template preview -->

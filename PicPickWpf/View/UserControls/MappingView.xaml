@@ -15,7 +15,7 @@
 
     <DockPanel>
 
-        <Border DockPanel.Dock="Top" BorderBrush="DarkGray" BorderThickness="1" CornerRadius="4"  Padding="4" Margin="4">
+        <Border DockPanel.Dock="Top" BorderBrush="DarkGray" BorderThickness="1" CornerRadius="4"  Padding="4" Margin="4" MinHeight="100">
             <Border.Resources>
                 <DataTemplate DataType="{x:Type uc:MappingPlanViewModel}">
                     <StackPanel Orientation="Vertical">
@@ -25,7 +25,7 @@
                                 Padding="0" Width="18" Height="18" MinHeight="10" VerticalAlignment="Center" Margin="0,0,6,0"/>
                             <TextBlock Foreground="Red" Text="{Binding NeedUpdateWarning}"/>
                         </StackPanel>
-                        <TextBlock><Run Text="Source: "/><Run Text="{Binding SourceDisplay}"/></TextBlock>
+                        <TextBlock TextWrapping="Wrap"><Run Text="Source: "/><Run Text="{Binding SourceDisplay}"/></TextBlock>
                         <TextBlock Text="{Binding SourceFoundFiles}"/>
                         <TextBlock Text="{Binding SourceFilesDeleteWarning}"/>
                     </StackPanel>
@@ -37,7 +37,14 @@
                     </StackPanel>
                 </DataTemplate>
             </Border.Resources>
-            <ContentControl Content="{Binding}"/>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <ContentControl Grid.Column="0" Content="{Binding}"/>
+                <Image Grid.Column="1" Source="{Binding Icon}" Width="128" Margin="0,-30,0,0"/>
+            </Grid>
         </Border>
         <Border BorderBrush="DarkGray" BorderThickness="1" CornerRadius="4" Margin="4" Padding="4">
             <ScrollViewer>

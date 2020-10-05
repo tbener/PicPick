@@ -20,7 +20,7 @@ namespace PicPick.ViewModel.UserControls.Mapping
         {
             get
             {
-                var lookup = Activity.FilesGraph.DestinationFolders.ToLookup(df => df.BasedOnDestination);
+                var lookup = Activity.FileGraph.DestinationFolders.ToLookup(df => df.BasedOnDestination);
                 return lookup.Select(item => new MappingDestinationViewModel(item.Key, item.ToList(), Activity)).ToList();
             }
         }
@@ -31,7 +31,7 @@ namespace PicPick.ViewModel.UserControls.Mapping
             {
                 try
                 {
-                    return $"{Activity.FilesGraph.Files.Count} files found";
+                    return $"{Activity.FileGraph.Files.Count} files found";
                 }
                 catch
                 {
@@ -41,5 +41,7 @@ namespace PicPick.ViewModel.UserControls.Mapping
         }
 
         public string SourceDisplay { get; set; }
+
+        
     }
 }

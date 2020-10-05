@@ -17,12 +17,6 @@ using TalUtils;
 namespace PicPick.Core
 {
     /// <summary>
-    /// This class is a dictionary that 
-    /// - its Key is the Source File path
-    /// - its Value is a SourceFile class
-    /// Every SourceFile class splits into its destinations, and then to the destination files.
-    /// 
-    /// These classes are updated during the analyzing process and then during the running porcess itself.
     /// </summary>
     public class Mapper : IAction
     {
@@ -39,7 +33,7 @@ namespace PicPick.Core
         public Mapper(IActivity activity)
         {
             Activity = (PicPickProjectActivity)activity;
-            Activity.FilesGraph.SetMapper(this);
+            Activity.FileGraph.SetMapper(this);
         }
 
         internal void Clear()
@@ -74,11 +68,11 @@ namespace PicPick.Core
             _destinationFolders = null;
             if (Activity.Source.OnlyNewFiles)
             {
-                Activity.FilesGraph.Files = _sourceFiles.Where(sf => !sf.ExistsInDestination).ToList();
+                Activity.FileGraph.Files = _sourceFiles.Where(sf => !sf.ExistsInDestination).ToList();
             }
             else
             {
-                Activity.FilesGraph.Files = _sourceFiles.ToList();
+                Activity.FileGraph.Files = _sourceFiles.ToList();
             }
         }
 
@@ -91,7 +85,7 @@ namespace PicPick.Core
                 if (Activity.Source.OnlyNewFiles)
                 {
                     _destinationFolders = new List<DestinationFolder>();
-                    foreach (SourceFile sourceFile in Activity.FilesGraph.Files)
+                    foreach (SourceFile sourceFile in Activity.FileGraph.Files)
                     {
                         foreach (DestinationFolder df in sourceFile.DestinationFolders)
                         {
@@ -118,15 +112,14 @@ namespace PicPick.Core
             List<SourceFile> sourceFilesList = new List<SourceFile>();
 
             Clear();
-            ValidateFields();
 
-            progressInfo.Maximum = Activity.FilesGraph.RawFileList.Count(); // source.FileList.Count();
+            progressInfo.Maximum = Activity.FileGraph.RawFileList.Count(); // source.FileList.Count();
             progressInfo.Value = 0;
 
             // Initiate the instances of the SourceFiles class
             await Task.Run(() =>
             {
-                foreach (string files in Activity.FilesGraph.RawFileList)
+                foreach (string files in Activity.FileGraph.RawFileList)
                 {
                     sourceFilesList.Add(new SourceFile(files, needDates));
                     progressInfo.AdvanceWithCancellationToken();
@@ -178,7 +171,7 @@ namespace PicPick.Core
                 else
                 {
                     // it will be a single DestinationFolder for all files
-                    DestinationFolder destinationFolder = new DestinationFolder(destination.Path, destination, Activity);
+                    DestinationFolder destinationFolder = new DestinationFolder(destination.GetFullPath(), destination, Activity);
                     _destinationFoldersDictionary.Add(destinationFolder.FullPath, destinationFolder);
                     _sourceFiles.ForEach(destinationFolder.AddFile);
                 }
@@ -190,38 +183,6 @@ namespace PicPick.Core
 
         #endregion
 
-        #region More Public Methods
-
-        public void ValidateFields()
-        {
-            string realPath;
-            bool isRealTemplate;
-
-            if (Activity.Source == null || Activity.Source.Path == "")
-                throw new NoSourceException();
-
-            if (!Directory.Exists(Activity.Source.Path))
-                throw new SourceDirectoryNotFoundException();
-
-            if (Activity.DestinationList.Count == 0)
-                throw new NoDestinationsException();
-
-            foreach (var dest in Activity.DestinationList.Where(d => d.Active))
-            {
-                realPath = dest.GetTemplatePath(DateTime.Now);
-                isRealTemplate = !realPath.Equals(dest.Template);
-                if (isRealTemplate)
-                    continue;
-
-                realPath = Path.Combine(PathHelper.GetFullPath(Activity.Source.Path, dest.Path), dest.Template);
-
-                if (realPath.Equals(Activity.Source.Path, StringComparison.OrdinalIgnoreCase))
-                    throw new DestinationEqualsSourceException();
-            }
-        }
-
-        #endregion
-
         #region Public Properties
 
 
@@ -230,17 +191,17 @@ namespace PicPick.Core
             StringBuilder sb = new StringBuilder("----- Plan Start -----\n");
 
             sb.AppendLine($"Files count: {_sourceFiles.Count}");
-            sb.AppendLine($"Destination folders count: {Activity.FilesGraph.DestinationFolders.Count}");
+            sb.AppendLine($"Destination folders count: {Activity.FileGraph.DestinationFolders.Count}");
 
             sb.AppendLine("\nActive Destinations:");
             foreach (PicPickProjectActivityDestination dest in _destinations)
             {
-                sb.AppendLine($"{dest.Path}\\[{dest.Template}]");
+                sb.AppendLine($"{dest.GetFullPath()}\\[{dest.Template}]");
             }
 
             sb.AppendLine();
 
-            foreach (DestinationFolder destination in Activity.FilesGraph.DestinationFolders)
+            foreach (DestinationFolder destination in Activity.FileGraph.DestinationFolders)
             {
                 sb.AppendLine(string.Format("{0} ({1})", destination.FullPath, destination.IsNew ? "New" : "Exists"));
                 foreach (DestinationFile file in destination.Files)

@@ -44,6 +44,7 @@ namespace PicPick.StateMachine
         public StateManager(IActivity activity)
         {
             Activity = activity;
+            Activity.FileGraph = new FilesGraph();
             CoreActions = new CoreActions(Activity);
 
             _stateTransitions.Add(PicPickState.READING, new StateTransition_Read(this));

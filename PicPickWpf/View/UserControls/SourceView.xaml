@@ -31,7 +31,7 @@
 
                     <CheckBox IsChecked="{Binding Source.IncludeSubFolders}" Margin="0,10,0,4">Include sub folders</CheckBox>
 
-                    <Expander Header="Advanced Filters" Margin="0,8,0,0" Padding="6,4,6,0" BorderBrush="LightGray" metro:ControlsHelper.ContentCharacterCasing="Normal" metro:HeaderedControlHelper.HeaderBackground="LightGray" BorderThickness="1">
+                    <Expander Header="{Binding AdvancedFiltersHeader, FallbackValue=Advanced Filters}" IsExpanded="{Binding IsAdvancedFiltersExpanded}" Margin="0,8,0,0" Padding="6,4,6,0" BorderBrush="LightGray" metro:ControlsHelper.ContentCharacterCasing="Normal" metro:HeaderedControlHelper.HeaderBackground="LightGray" BorderThickness="1">
                         <StackPanel Orientation="Vertical" VerticalAlignment="Stretch">
                             <CheckBox IsChecked="{Binding Source.OnlyNewFiles}" Margin="0,4" ToolTip="Read only files that don't exist in any of the destinations in the first place">Only new files</CheckBox>
                             <StackPanel Orientation="Horizontal" Margin="0, 15, 0, 0">

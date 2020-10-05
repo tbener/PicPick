@@ -172,7 +172,7 @@ namespace PicPick.UnitTests.Core.RunnerTests
             // Assert
 
             // File is skipped, and not deleted from source
-            SourceFile checkSourceFile = _activity.FilesGraph.Files.First();
+            SourceFile checkSourceFile = _activity.FileGraph.Files.First();
             AssertStatus(FILE_STATUS.SKIPPED, checkSourceFile);
             Assert.IsTrue(File.Exists(checkSourceFile.FullFileName), $"Source file disappeared: {checkSourceFile.FileName}");
         }
@@ -204,7 +204,7 @@ namespace PicPick.UnitTests.Core.RunnerTests
             // Assert
 
             // File is skipped, and not deleted from source
-            SourceFile checkSourceFile = _activity.FilesGraph.Files.First();
+            SourceFile checkSourceFile = _activity.FileGraph.Files.First();
             AssertStatus(FILE_STATUS.SKIPPED, checkSourceFile);
             Assert.IsFalse(File.Exists(checkSourceFile.FullFileName), $"Source file {checkSourceFile.FileName} was skipped, but not deleted");
         }

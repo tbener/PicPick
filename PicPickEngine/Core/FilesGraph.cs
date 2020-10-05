@@ -1,10 +1,8 @@
 ﻿using PicPick.Models.Mapping;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Runtime.CompilerServices;
 
+[assembly: InternalsVisibleTo("PicPick.UnitTests")]
 namespace PicPick.Core
 {
     /// <summary>
@@ -31,7 +29,7 @@ namespace PicPick.Core
             }
         }
 
-        internal HashSet<string> RawFileList { get; set; }
+        public HashSet<string> RawFileList { get; set; }
 
         public void Clear()
         {

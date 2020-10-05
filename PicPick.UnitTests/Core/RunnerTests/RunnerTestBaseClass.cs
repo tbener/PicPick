@@ -49,6 +49,7 @@ namespace PicPick.UnitTests.Core.RunnerTests
         public void InitActivity()
         {
             _activity = new PicPickProjectActivity("test");
+            _activity.FileGraph = new FilesGraph();
             _activity.Source.Path = SourcePath;
 
             _project = new PicPickProject();
@@ -77,7 +78,7 @@ namespace PicPick.UnitTests.Core.RunnerTests
 
         protected PicPickProjectActivityDestination AddDestination(string path, string template = "")
         {
-            PicPickProjectActivityDestination dest = new PicPickProjectActivityDestination();
+            PicPickProjectActivityDestination dest = new PicPickProjectActivityDestination(_activity);
             dest.Path = path;
             dest.Template = template;
             _activity.DestinationList.Add(dest);
@@ -91,7 +92,7 @@ namespace PicPick.UnitTests.Core.RunnerTests
 
         protected void AssertStatus(FILE_STATUS expectedStatus, string file)
         {
-            SourceFile sourceFile = _activity.FilesGraph.Files.Find(f => f.FullFileName.Equals(file, System.StringComparison.OrdinalIgnoreCase));
+            SourceFile sourceFile = _activity.FileGraph.Files.Find(f => f.FullFileName.Equals(file, System.StringComparison.OrdinalIgnoreCase));
             if (sourceFile != null)
                 AssertStatus(expectedStatus, sourceFile);
             else

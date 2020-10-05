@@ -215,6 +215,7 @@
     <Compile Include="Commands\StopCommand.cs" />
     <Compile Include="Commands\StartCommand.cs" />
     <Compile Include="Commands\SaveCommand.cs" />
+    <Compile Include="Converters\CompactPathConverter.cs" />
     <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="Helpers\ApplicationService.cs" />
     <Compile Include="Helpers\MessageBoxHelper.cs" />
@@ -459,6 +460,11 @@
   <ItemGroup>
     <Resource Include="Versioning\PicPickVersionInfo.xml" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Resources\success.ico" />
+    <Resource Include="Resources\error.ico" />
+    <Resource Include="Resources\mapping.ico" />
+    <Resource Include="Resources\warning.ico" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

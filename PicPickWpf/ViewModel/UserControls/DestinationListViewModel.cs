@@ -15,13 +15,6 @@ namespace PicPick.ViewModel.UserControls
 {
     public class DestinationListViewModel : ActivityBaseViewModel
     {
-        #region Private Members
-
-        private bool _keepDestinationsAbsolute;
-        private bool _enabled = true;
-
-        #endregion
-
         #region Commands
 
         public ICommand AddDestinationCommand { get; set; }
@@ -32,11 +25,6 @@ namespace PicPick.ViewModel.UserControls
 
         public DestinationListViewModel(IActivity activity, IProgressInformation progressInfo) : base(activity, progressInfo)
         {
-            Activity.OnActivityStateChanged += (s, e) =>
-            {
-                Enabled = !IsRunning;
-            };
-
             AddDestinationCommand = new RelayCommand(AddDestination);
 
             DestinationViewModelList = new ObservableCollection<DestinationViewModel>();
@@ -66,7 +54,7 @@ namespace PicPick.ViewModel.UserControls
 
         private void AddDestination()
         {
-            PicPickProjectActivityDestination dest = new PicPickProjectActivityDestination()
+            PicPickProjectActivityDestination dest = new PicPickProjectActivityDestination(Activity)
             {
                 Path = "",
                 Template = "dd-yy"
@@ -96,30 +84,6 @@ namespace PicPick.ViewModel.UserControls
         #region Public Properties
 
         public ObservableCollection<DestinationViewModel> DestinationViewModelList { get; set; }
-
-        public bool KeepDestinationsAbsolute
-        {
-            get { return DestinationViewModelList.FirstOrDefault().Destination.KeepAbsolute; }
-            set
-            {
-                _keepDestinationsAbsolute = value;
-                foreach (DestinationViewModel destvm in DestinationViewModelList)
-                {
-                    destvm.Destination.KeepAbsolute = _keepDestinationsAbsolute;
-                }
-            }
-        }
-
-        public bool Enabled
-        {
-            get => _enabled;
-            internal set
-            {
-                _enabled = value;
-                OnPropertyChanged(nameof(Enabled));
-            }
-        }
-
 
         #endregion
 

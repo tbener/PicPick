@@ -49,7 +49,6 @@ namespace PicPick.ViewModel.UserControls
 
             Activity.OnActivityStateChanged += (s, e) =>
             {
-                Enabled = !IsRunning;
                 OnPropertyChanged(nameof(SourceFilesStatus));
                 OnPropertyChanged(nameof(BackgroundReadingInProgress));
             };
@@ -57,7 +56,7 @@ namespace PicPick.ViewModel.UserControls
             BackgroundReadingCommand = new RelayCommand(() => Activity.StateMachine.Restart(PicPickState.READING, BACKGROUND_END_STATE));
             StopBackgroundReadingCommand = new RelayCommand(() => Activity.StateMachine.Stop());
 
-            PathViewModel = new PathBrowserViewModel(Source);
+            PathViewModel = new PathBrowserViewModel(new PathAdapter(Source));
             Source.PropertyChanged += Source_PropertyChanged;
 
             InitSystemWatcher();
@@ -73,6 +72,8 @@ namespace PicPick.ViewModel.UserControls
 
             if (e.PropertyName.Equals("Path") || e.PropertyName.Equals(nameof(Source.IncludeSubFolders)))
                 InitSystemWatcher();
+
+            OnPropertyChanged(nameof(AdvancedFiltersHeader));
 
             switch (e.PropertyName)
             {
@@ -93,7 +94,7 @@ namespace PicPick.ViewModel.UserControls
 
         #endregion
 
-        
+
 
         #region FileSystemWatcher
 
@@ -191,7 +192,7 @@ namespace PicPick.ViewModel.UserControls
                     return Activity.StateMachine.IsRunning ? "Calculating..." : "Click refresh to calculate files";
                 }
 
-                return $"{Activity.FilesGraph.Files.Count()} files found";
+                return $"{Activity.FileGraph.Files.Count()} files found";
             }
 
         }
@@ -206,15 +207,6 @@ namespace PicPick.ViewModel.UserControls
             DependencyProperty.Register("PathViewModel", typeof(PathBrowserViewModel), typeof(SourceViewModel), new PropertyMetadata(null));
 
 
-        public bool Enabled
-        {
-            get => _enabled;
-            internal set
-            {
-                _enabled = value;
-                OnPropertyChanged(nameof(Enabled));
-            }
-        }
 
 
         public bool BackgroundReadingInProgress
@@ -235,6 +227,42 @@ namespace PicPick.ViewModel.UserControls
                     Activity.StateMachine.Restart(PicPickState.READING, BACKGROUND_END_STATE);
             }
         }
+
+        private bool AdvancedFiltersHaveValue()
+        {
+            return Source.OnlyNewFiles
+                    || Source.FromDate.Use
+                    || Source.ToDate.Use;
+        }
+
+        public string AdvancedFiltersHeader
+        {
+            get
+            {
+                string header = "Advanced Filters";
+                if (AdvancedFiltersHaveValue())
+                    header += " *";
+
+                return header;
+            }
+        }
+
+        private bool? _isAdvancedFiltersExpanded;
+
+        public bool IsAdvancedFiltersExpanded
+        {
+            get
+            {
+                if (!_isAdvancedFiltersExpanded.HasValue)
+                    _isAdvancedFiltersExpanded = AdvancedFiltersHaveValue();
+                return _isAdvancedFiltersExpanded.Value;
+            }
+            set
+            {
+                _isAdvancedFiltersExpanded = value;
+            }
+        }
+
 
         #region Dates Properties
 

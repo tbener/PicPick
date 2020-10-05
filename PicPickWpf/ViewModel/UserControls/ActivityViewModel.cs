@@ -18,6 +18,11 @@ namespace PicPick.ViewModel.UserControls
             SourceViewModel = new SourceViewModel(activity, progressInfo);
             DestinationListViewModel = new DestinationListViewModel(activity, progressInfo);
             ExecutionViewModel = new ExecutionViewModel(activity, ProgressInfo);
+
+            Activity.OnActivityStateChanged += (s, e) =>
+            {
+                OnPropertyChanged(nameof(Enabled));
+            };
         }
 
         #endregion
@@ -35,7 +40,10 @@ namespace PicPick.ViewModel.UserControls
             set { Activity.DeleteSourceFilesOnSkip = value; }
         }
 
-
+        public bool Enabled
+        {
+            get => !Activity.IsRunning;
+        }
 
         #region Activity parts view models
 

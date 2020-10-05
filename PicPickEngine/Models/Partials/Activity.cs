@@ -40,8 +40,6 @@ namespace PicPick.Models
         private static readonly ErrorHandler _errorHandler = new ErrorHandler(_log);
 
         private ObservableCollection<PicPickProjectActivityDestination> _destinationList = null;
-        private Mapper _fileMapping;
-        private Runner _runner;
         private StateManager _stateMachine;
         private ActivityState _state;
 
@@ -49,6 +47,7 @@ namespace PicPick.Models
 
         public PicPickProjectActivity(string name)
         {
+            Name = name;
             Source = new PicPickProjectActivitySource();
             Source.FromDate = new DateComplex();
             Source.FromDate.Date = DateTime.Today.AddDays(-30);
@@ -116,38 +115,8 @@ namespace PicPick.Models
         }
 
 
-
-        [XmlIgnore]
-        public bool Initialized { get; set; }
-
         [XmlIgnore]
         public FileExistsResponseEnum FileExistsResponse { get; set; }
-
-        [XmlIgnore]
-        [IsDirtySupport.IsDirtyIgnore]
-        public Mapper FileMapping
-        {
-            get
-            {
-                if (_fileMapping == null)
-                    _fileMapping = new Mapper(this);
-                return _fileMapping;
-            }
-            set => _fileMapping = value;
-        }
-
-        [XmlIgnore]
-        [IsDirtySupport.IsDirtyIgnore]
-        public Runner Runner
-        {
-            get
-            {
-                if (_runner == null)
-                    _runner = new Runner(this, ProjectLoader.Project.Options);
-                return _runner;
-            }
-            set => _runner = value;
-        }
 
         [XmlIgnore]
         [IsDirtySupport.IsDirtyIgnore]
@@ -168,11 +137,7 @@ namespace PicPick.Models
                 OnActivityStateChanged?.Invoke(this, new ActivityStateChangedEventArgs());
             }
         }
-
-        [XmlIgnore]
-        [IsDirtySupport.IsDirtyIgnore]
-        public bool RunMode_AnalyzeOnly { get; set; }
-
+                
         [XmlIgnore]
         [IsDirtySupport.IsDirtyIgnore]
         public StateManager StateMachine
@@ -182,14 +147,11 @@ namespace PicPick.Models
                 if (_stateMachine == null) _stateMachine = new StateManager(this);
                 return _stateMachine;
             }
+            set => _stateMachine = value;
         }
-
+        
         [XmlIgnore]
-        [IsDirtySupport.IsDirtyIgnore]
-        public CoreActions CoreActions => StateMachine.CoreActions;
-
-        [XmlIgnore]
-        public FilesGraph FilesGraph { get; set; } = new FilesGraph();
+        public FilesGraph FileGraph { get; set; }
 
 
         #region ICloneable
@@ -201,6 +163,10 @@ namespace PicPick.Models
                 newActivity.Source = (PicPickProjectActivitySource)this.Source.Clone();
 
             newActivity.DestinationList = new ObservableCollection<PicPickProjectActivityDestination>(DestinationList.Select(dst => (PicPickProjectActivityDestination)dst.Clone()).ToList());
+
+            // this will force StateMachine recreation
+            newActivity.StateMachine = null;
+            newActivity.IsRunning = false;
 
             return newActivity;
         }

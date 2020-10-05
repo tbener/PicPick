@@ -45,7 +45,10 @@ namespace PicPick.ViewModel.UserControls
         public ActivityBaseViewModel(IActivity activity, IProgressInformation progressInfo)
         {
             Activity = (PicPickProjectActivity)activity;
-            Activity.OnActivityStateChanged += (s, e) => OnPropertyChanged(nameof(IsRunning));
+            Activity.OnActivityStateChanged += (s, e) =>
+            {
+                OnPropertyChanged(nameof(IsRunning));
+            };
             ProgressInfo = (ProgressInformation)progressInfo;
         }
 
@@ -53,8 +56,10 @@ namespace PicPick.ViewModel.UserControls
 
         public bool IsRunning
         {
-            get => Activity.State == ActivityState.RUNNING;
+            get => Activity.IsRunning;
         }
+
+        
 
         public virtual void Dispose()
         {

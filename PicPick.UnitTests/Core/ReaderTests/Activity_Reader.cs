@@ -69,7 +69,8 @@ namespace PicPick.UnitTests.ReaderTests
                 Filter = filter,
                 IncludeSubFolders = includeSubFolders
             };
-            IActivity _activity = new PicPickProjectActivity("test");
+            IActivity _activity = new PicPickProjectActivity(filter);
+            _activity.FileGraph = new FilesGraph();
             _activity.Source = source;
 
             // act
@@ -77,7 +78,7 @@ namespace PicPick.UnitTests.ReaderTests
             reader.ReadFiles();
 
             // assert
-            Assert.AreEqual(expectedCount, _activity.FilesGraph.RawFileList.Count);
+            Assert.AreEqual(expectedCount, _activity.FileGraph.RawFileList.Count);
         }
     }
 }

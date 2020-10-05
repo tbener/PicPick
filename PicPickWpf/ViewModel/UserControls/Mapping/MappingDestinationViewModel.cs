@@ -13,7 +13,7 @@ namespace PicPick.ViewModel.UserControls.Mapping
     {
         public MappingDestinationViewModel(PicPickProjectActivityDestination baseDestination, List<DestinationFolder> destinationFolders, IActivity activity)
         {
-            DestinationDisplay = $"{baseDestination.Path}\\{{{baseDestination.Template}}}";
+            DestinationDisplay = $"{baseDestination.GetFullPath()}\\{{{baseDestination.Template}}}";
             if (activity.State == ActivityState.DONE)
                 FolderList = destinationFolders.Select(df => new MappingResultsFolderViewModel(df) as MappingFolderViewModel).ToList();
             else

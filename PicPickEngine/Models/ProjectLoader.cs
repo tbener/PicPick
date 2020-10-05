@@ -42,7 +42,7 @@ namespace PicPick.Models
 
             PicPickProjectActivity activity = new PicPickProjectActivity("Default Activity");
             activity.Source.Path = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
-            PicPickProjectActivityDestination destination = new PicPickProjectActivityDestination();
+            PicPickProjectActivityDestination destination = new PicPickProjectActivityDestination(activity);
             destination.Path = "SampleDestination";
             activity.DestinationList.Add(destination);
             proj.ActivityList.Add(activity);
@@ -71,6 +71,7 @@ namespace PicPick.Models
             {
                 _log.Info($"Loading picpick file: {file}");
                 Project = SerializeHelper.Load(typeof(PicPickProject), file) as PicPickProject;
+                PrepareLoadedProject();
                 FileName = file;
                 return true;
             }
@@ -78,6 +79,17 @@ namespace PicPick.Models
             {
                 _errorHandler.Handle(ex, true, "Error while loading configuration file '{0}'", file);
                 return false;
+            }
+        }
+
+        private static void PrepareLoadedProject()
+        {
+            foreach (var activity in Project.Activities)
+            {
+                foreach (var destination in activity.Destination)
+                {
+                    destination.Activity = activity;
+                }
             }
         }
 

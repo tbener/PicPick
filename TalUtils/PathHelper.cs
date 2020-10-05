@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System;
+using System.Diagnostics;
+using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -9,8 +11,49 @@ namespace TalUtils
     {
         #region Path Methods
 
+        /*
+         * 
+BOOL PathCompactPathExW(
+  LPWSTR  pszOut,
+  LPCWSTR pszSrc,
+  UINT    cchMax,
+  DWORD   dwFlags
+);
+
+BOOL PathCompactPathW(
+  HDC    hDC,
+  LPWSTR pszPath,
+  UINT   dx
+);
+
+
+
+         * 
+         * 
+         * */
+
         [DllImport("shlwapi.dll", CharSet = CharSet.Auto)]
         static extern bool PathCompactPathEx([Out] StringBuilder pszOut, string szPath, int cchMax, int dwFlags);
+
+        [DllImport("shlwapi.dll", CharSet = CharSet.Auto)]
+        static extern bool PathCompactPathW(object hDC, [Out] StringBuilder szPath, int cchMax);
+
+        public static string PathByPixels(string path, int length)
+        {
+            StringBuilder sb = new StringBuilder(path);
+            try
+            {
+                
+                PathCompactPathW(null, sb, length);
+                return sb.ToString();
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.ToString());
+            }
+            return "";
+        }
 
         public static string ShortDisplay(string path, int length)
         {

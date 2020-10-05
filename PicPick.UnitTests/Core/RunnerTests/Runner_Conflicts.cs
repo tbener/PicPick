@@ -72,7 +72,7 @@ namespace PicPick.UnitTests.Core.RunnerTests
             FileInfo fileInfoDest = new FileInfo(Path.Combine(destPath, fileName));
 
             // 1. File is not deleted from source
-            SourceFile checkSourceFile = _activity.FilesGraph.Files.First();
+            SourceFile checkSourceFile = _activity.FileGraph.Files.First();
             Assert.IsTrue(File.Exists(checkSourceFile.FullFileName), $"Source file disappeared: {checkSourceFile.FileName}");
 
             // 2. file size in destination remained the same
@@ -117,7 +117,7 @@ namespace PicPick.UnitTests.Core.RunnerTests
             await Run();
 
             // Assert
-            SourceFile checkSourceFile = _activity.FilesGraph.Files.First();
+            SourceFile checkSourceFile = _activity.FileGraph.Files.First();
             FileInfo fileInfoDest = new FileInfo(Path.Combine(destPath, fileName));
 
             // 1. File deletion from source
@@ -175,7 +175,7 @@ namespace PicPick.UnitTests.Core.RunnerTests
             }
 
             // 2. File is deleted from source
-            SourceFile checkSourceFile = _activity.FilesGraph.Files.First();
+            SourceFile checkSourceFile = _activity.FileGraph.Files.First();
             Assert.IsFalse(File.Exists(checkSourceFile.FullFileName), $"Source file supposed to be deleted: {checkSourceFile.FileName}");
 
             // 3. file status 
@@ -221,7 +221,7 @@ namespace PicPick.UnitTests.Core.RunnerTests
             // Assert
 
             // 1. file status 
-            var checkedFile = _activity.FilesGraph.Files.First();
+            var checkedFile = _activity.FileGraph.Files.First();
             AssertStatus(expectedStatus, checkedFile);
 
             // 2. verify file count in destination
@@ -312,8 +312,8 @@ namespace PicPick.UnitTests.Core.RunnerTests
             await Run();
 
             // Assert
-            Assert.IsTrue(_activity.FilesGraph.Files.First().Status == FILE_STATUS.COPIED, "First file wasn't copied");
-            Assert.IsTrue(_activity.FilesGraph.Files.Last().Status == FILE_STATUS.SKIPPED, "Second file wasn't skipped");
+            Assert.IsTrue(_activity.FileGraph.Files.First().Status == FILE_STATUS.COPIED, "First file wasn't copied");
+            Assert.IsTrue(_activity.FileGraph.Files.Last().Status == FILE_STATUS.SKIPPED, "Second file wasn't skipped");
 
         }
 

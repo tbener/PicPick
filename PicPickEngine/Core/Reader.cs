@@ -24,7 +24,7 @@ namespace PicPick.Core
 
         internal void ReadFiles()
         {
-            Activity.FilesGraph.Clear();
+            Activity.FileGraph.Clear();
 
             var source = Activity.Source;
 
@@ -46,7 +46,7 @@ namespace PicPick.Core
             }
 
             // create a unique file list
-            Activity.FilesGraph.RawFileList = new HashSet<string>(lstFiles);
+            Activity.FileGraph.RawFileList = new HashSet<string>(lstFiles);
         }
     }
 }

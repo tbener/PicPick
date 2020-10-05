@@ -50,7 +50,13 @@ namespace PicPick.ViewModel.UserControls
 
         public string NeedUpdateWarning => "File System changes were detected. " + (CanRefresh ? "Click the Refresh button to update the plan." : "It is recommended to click Cancel and start over.");
 
-
+        public string Icon
+        {
+            get
+            {
+                return "/PicPickUI;component/Resources/mapping.ico";
+            }
+        }
 
     }
 }

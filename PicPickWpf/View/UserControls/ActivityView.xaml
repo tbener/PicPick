@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:uc="clr-namespace:PicPick.View.UserControls"
              mc:Ignorable="d" 
+             IsEnabled="{Binding Enabled}"
              d:DesignHeight="550" d:DesignWidth="743.525">
     <Grid>
         <Grid.RowDefinitions>

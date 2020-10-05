@@ -11,15 +11,12 @@ namespace PicPick.Models.Interfaces
 {
     public interface IActivity
     {
-        bool Initialized { get; set; }
         string Name { get; set; }
 
         PicPickProjectActivitySource Source { get; set; }
         ObservableCollection<PicPickProjectActivityDestination> DestinationList { get; }
 
-        //Mapper FileMapping { get; set; }
-        Runner Runner { get; set; }
-        FilesGraph FilesGraph { get; set; }
+        FilesGraph FileGraph { get; set; }
         StateManager StateMachine { get; }
         ActivityState State { get; set; }
         bool IsRunning { get; set; }

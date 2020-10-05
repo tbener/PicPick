@@ -11,7 +11,6 @@
     <DockPanel x:Name="pnlDestinations" LastChildFill="True">
         <DockPanel DockPanel.Dock="Top" LastChildFill="False">
             <TextBlock Text="Copy to" DockPanel.Dock="Left" Style="{StaticResource CaptionTextBlock}"/>
-            <CheckBox DockPanel.Dock="Right" Content="Keep paths absolute" IsChecked="{Binding KeepDestinationsAbsolute}" ToolTip="If not absolute, you can set a relative path to source" />
         </DockPanel>
         <TextBlock DockPanel.Dock="Bottom" HorizontalAlignment="Left" MinHeight="24" VerticalAlignment="Stretch">
             <Hyperlink Command="{Binding AddDestinationCommand}">
@@ -19,14 +18,14 @@
             </Hyperlink>
         </TextBlock>
 
-        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Hidden" Margin="0,10">
+        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="0,10">
             <ItemsControl ItemsSource="{Binding DestinationViewModelList}">
                 <ItemsControl.Style >
                     <Style TargetType="ItemsControl">
                         <Setter Property="ItemTemplate">
                             <Setter.Value>
                                 <DataTemplate>
-                                    <Border BorderThickness="0,1,0,0" BorderBrush="LightGray" Margin="0,5,0,10" Padding="5,10,5,0">
+                                    <Border BorderThickness="0,1,0,0" BorderBrush="LightGray" Margin="0,5,0,10" Padding="5,10,0,0">
                                         <uc:DestinationView />
                                     </Border>
                                 </DataTemplate>

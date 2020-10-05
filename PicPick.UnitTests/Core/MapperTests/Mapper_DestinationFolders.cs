@@ -42,6 +42,7 @@ namespace PicPick.UnitTests.Core.MapperTests
             SourcePath = PathHelper.GetFullPath(BASE_PATH, BaseFolder);
 
             _activity = new PicPickProjectActivity("test");
+            _activity.FileGraph = new FilesGraph();
             _activity.Source.Path = SourcePath;
             _activity.Source.Filter = "";
         }
@@ -70,7 +71,7 @@ namespace PicPick.UnitTests.Core.MapperTests
             int expectedDestinationCount = 1;
             int expectedFileCount = TOTAL_FILE_COUNT;
             _activity.DestinationList.Add(
-                new PicPickProjectActivityDestination()
+                new PicPickProjectActivityDestination(_activity)
                 {
                     Path = "test",
                     Template = ""
@@ -81,8 +82,8 @@ namespace PicPick.UnitTests.Core.MapperTests
             await RunMapping();
 
             // assert
-            Assert.AreEqual(expectedDestinationCount, _activity.FilesGraph.DestinationFolders.Count, "The amount of destination folders is not as expected.");
-            foreach (DestinationFolder destinationFolder in _activity.FilesGraph.DestinationFolders)
+            Assert.AreEqual(expectedDestinationCount, _activity.FileGraph.DestinationFolders.Count, "The amount of destination folders is not as expected.");
+            foreach (DestinationFolder destinationFolder in _activity.FileGraph.DestinationFolders)
             {
                 Assert.AreEqual(expectedFileCount, destinationFolder.Files.Count, $"The amount of files for {destinationFolder.FullPath} is not as expected.");
             }
@@ -93,7 +94,7 @@ namespace PicPick.UnitTests.Core.MapperTests
         {
             // arrange
             int expectedFileCount = TOTAL_FILE_COUNT;
-            var dest = new PicPickProjectActivityDestination()
+            var dest = new PicPickProjectActivityDestination(_activity)
             {
                 Path = "test",
                 Template = "MM-dd"
@@ -109,7 +110,7 @@ namespace PicPick.UnitTests.Core.MapperTests
             await mapper.MapAsync(new ProgressInformation());
             mapper.ApplyFinalFilters();
 
-            var filesGraph = _activity.FilesGraph;
+            var filesGraph = _activity.FileGraph;
 
             // assert
             Assert.IsTrue(filesGraph.DestinationFolders.Count > 1, "The amount of destination folders is expected to be larger than 1.");

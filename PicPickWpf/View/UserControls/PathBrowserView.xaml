@@ -5,35 +5,36 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             xmlns:converters="clr-namespace:PicPick.Converters"
              mc:Ignorable="d" 
              MinHeight="26"
-             d:DesignHeight="42" d:DesignWidth="300">
+             
+             d:DesignHeight="42" d:DesignWidth="394">
     <UserControl.Resources>
-        
+        <converters:CompactPathConverter x:Key="CompactPathConverter"/>
     </UserControl.Resources>
-    <StackPanel>
-        <!--<Button Margin="3 0 0 0" Width="24" DockPanel.Dock="Right" Command="{Binding OpenExplorerCommand}" 
-                ToolTip="Open in Explorer"
-                Style="{DynamicResource MahApps.Metro.Styles.MetroCircleButtonStyle}">
-            <Rectangle Width="14" Height="14">
-                <Rectangle.Fill>
-                    <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_folder_open}" />
-                </Rectangle.Fill>
-            </Rectangle>
-        </Button>-->
-        <TextBox Text="{Binding PathToDisplay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" 
+    <StackPanel >
+        <TextBox Text="{Binding Path, UpdateSourceTrigger=PropertyChanged}"
                  Style="{DynamicResource MahApps.Styles.TextBox.Button}"
                  ToolTip="{Binding TextboxTooltip}" Height="24"
                  metro:TextBoxHelper.ButtonCommand="{Binding BrowseCommand}" 
                  metro:TextBoxHelper.ButtonContent="{iconPacks:Material Kind=FolderOpenOutline}">
         </TextBox>
-        <TextBlock Visibility="{Binding PreviewVisibility, Mode=OneWay}" 
-                   Cursor="Hand"
-                    ToolTip="Click to open in Explorer">
+        <TextBlock x:Name="LinkHolder" Visibility="{Binding PreviewVisibility, Mode=OneWay}"
+                   Cursor="Hand">
             <Hyperlink Command="{Binding OpenExplorerCommand}" Foreground="Gray">
-                    <TextBlock Text="{Binding FullPath, FallbackValue=[Full path preview]}" />
-                </Hyperlink>
+                <TextBlock ToolTip="{Binding LinkTooltip}">
+                    <TextBlock.Text>
+                        <MultiBinding Converter="{StaticResource CompactPathConverter}">
+                            <MultiBinding.Bindings>
+                                <Binding Path="PathPreviewLink"/>
+                                <Binding ElementName="LinkHolder"/>
+                            </MultiBinding.Bindings>
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
+             </Hyperlink>
         </TextBlock>
-        
+
     </StackPanel>
 </UserControl>
