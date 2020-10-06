@@ -25,7 +25,6 @@ namespace PicPick.ViewModel.UserControls
         private FileSystemWatcher _fileSystemWatcher;
 
         private System.Timers.Timer _timerCheckFiles;
-        private bool _enabled = true;
 
         #endregion
 

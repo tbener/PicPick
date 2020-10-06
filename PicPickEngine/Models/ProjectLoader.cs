@@ -33,22 +33,6 @@ namespace PicPick.Models
         }
 
 
-        public static PicPickProject CreateNew(string projectName)
-        {
-            PicPickProject proj = new PicPickProject()
-            {
-                Name = projectName
-            };
-
-            PicPickProjectActivity activity = new PicPickProjectActivity("Default Activity");
-            activity.Source.Path = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
-            PicPickProjectActivityDestination destination = new PicPickProjectActivityDestination(activity);
-            destination.Path = "SampleDestination";
-            activity.DestinationList.Add(destination);
-            proj.ActivityList.Add(activity);
-
-            return proj;
-        }
 
         public static void Create(PicPickProject project, string file)
         {

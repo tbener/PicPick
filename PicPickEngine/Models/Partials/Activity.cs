@@ -45,17 +45,22 @@ namespace PicPick.Models
 
         public event ActivityStateChangedEventHandler OnActivityStateChanged;
 
-        public PicPickProjectActivity(string name)
+
+
+        public static PicPickProjectActivity CreateNew(string name)
         {
-            Name = name;
-            Source = new PicPickProjectActivitySource();
-            Source.FromDate = new DateComplex();
-            Source.FromDate.Date = DateTime.Today.AddDays(-30);
-            Source.ToDate = new DateComplex();
-            Source.ToDate.Date = DateTime.Today;
+            PicPickProjectActivity activity = new PicPickProjectActivity()
+            {
+                Name = name
+            };
+
+            activity.Source = PicPickProjectActivitySource.CreateNew();
+            activity.DestinationList.Add(PicPickProjectActivityDestination.CreateNew(activity));
+
+            return activity;
         }
 
-        
+
 
         public void ValidateFields()
         {
@@ -137,7 +142,7 @@ namespace PicPick.Models
                 OnActivityStateChanged?.Invoke(this, new ActivityStateChangedEventArgs());
             }
         }
-                
+
         [XmlIgnore]
         [IsDirtySupport.IsDirtyIgnore]
         public StateManager StateMachine
@@ -149,7 +154,7 @@ namespace PicPick.Models
             }
             set => _stateMachine = value;
         }
-        
+
         [XmlIgnore]
         public FilesGraph FileGraph { get; set; }
 

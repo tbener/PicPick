@@ -48,7 +48,7 @@ namespace PicPick.UnitTests.Core.RunnerTests
 
         public void InitActivity()
         {
-            _activity = new PicPickProjectActivity("test");
+            _activity = PicPickProjectActivity.CreateNew("test");
             _activity.FileGraph = new FilesGraph();
             _activity.Source.Path = SourcePath;
 

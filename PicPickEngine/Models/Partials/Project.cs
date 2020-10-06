@@ -56,7 +56,20 @@ namespace PicPick.Models
                 return _activityList;
             }
         }
-        
+
+        public static PicPickProject CreateNew(string name, string activityName)
+        {
+            PicPickProject project = new PicPickProject()
+            {
+                Name = name
+            };
+
+            project.ActivityList.Add(PicPickProjectActivity.CreateNew(activityName));
+
+            return project;
+        }
+
+
         [XmlIgnore]
         public string Name
         {

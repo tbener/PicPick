@@ -7,13 +7,6 @@ using TalUtils;
 
 namespace PicPick.ViewModel.UserControls
 {
-    enum PATH_TYPE_ENUM
-    {
-        Source,
-        Destination
-    }
-
-
     public class PathAdapter
     {
         public event EventHandler OnAnyPathChanged;

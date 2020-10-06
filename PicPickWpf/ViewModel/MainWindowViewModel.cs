@@ -106,30 +106,6 @@ namespace PicPick.ViewModel
             //e.Cancel = messageViewModel.DialogResult == MessageBoxResult.No;
         }
 
-        private PicPickProjectActivity GetNewActivity(string name)
-        {
-            PicPickProjectActivity activity = new PicPickProjectActivity(name);
-            activity.Source.Path = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
-            PicPickProjectActivityDestination destination = new PicPickProjectActivityDestination();
-            destination.Path = "SampleDestination";
-            activity.DestinationList.Add(destination);
-            return activity;
-        }
-
-        private PicPickProject CreateNewProject()
-        {
-            PicPickProject proj = new PicPickProject()
-            {
-                Name = "Default"
-            };
-
-            string activityName = (string)Application.Current.FindResource("ppk_first_activity");
-            PicPickProjectActivity activity = GetNewActivity(activityName);
-            proj.ActivityList.Add(activity);
-
-            return proj;
-        }
-
         private void DuplicateActivity()
         {
             PicPickProjectActivity activity = CurrentActivity.Clone(CurrentActivity.Name + " 2");
@@ -140,7 +116,7 @@ namespace PicPick.ViewModel
         private void CreateNewActivity()
         {
             string activityName = (string)Application.Current.FindResource("ppk_new_activity");
-            PicPickProjectActivity activity = GetNewActivity(activityName);
+            PicPickProjectActivity activity = PicPickProjectActivity.CreateNew(activityName);
             CurrentProject.ActivityList.Add(activity);
             CurrentActivity = activity;
         }
@@ -235,7 +211,7 @@ namespace PicPick.ViewModel
         {
             if (!ProjectLoader.LoadDefault())
             {
-                PicPickProject project = CreateNewProject();
+                PicPickProject project = PicPickProject.CreateNew("Default", (string)Application.Current.FindResource("ppk_first_activity"));
                 ProjectLoader.Create(project);
             }
             InitIsDirty();

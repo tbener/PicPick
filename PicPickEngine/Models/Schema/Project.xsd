@@ -23,7 +23,7 @@
                         </xsd:sequence>
                         <xsd:attribute name="Path" type="xsd:string" default="" />
                         <xsd:attribute name="Filter" type="xsd:string" default="*.jpg" />
-                        <xsd:attribute name="IncludeSubFolders" type="xsd:boolean" default="true" />
+                        <xsd:attribute name="IncludeSubFolders" type="xsd:boolean" default="false" />
                         <xsd:attribute name="OnlyNewFiles" type="xsd:boolean" default="false" />
                       </xsd:complexType>
                     </xsd:element>

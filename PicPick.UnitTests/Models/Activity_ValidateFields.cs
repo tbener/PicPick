@@ -23,7 +23,7 @@ namespace PicPick.UnitTests.Models
         [TestInitialize]
         public void Initialize()
         {
-            _activity = new PicPickProjectActivity("test");
+            _activity = PicPickProjectActivity.CreateNew("test");
             _activity.Source.Path = @"c:\";
 
         }
@@ -39,11 +39,7 @@ namespace PicPick.UnitTests.Models
         {
             // arrange
             string expected = "";
-            _activity.DestinationList.Add(
-                new PicPickProjectActivityDestination(_activity)
-                {
-                    Path = @"C:\test1"
-                });
+            _activity.DestinationList.First().Path = @"C:\test1";
 
             // act
             string actual;

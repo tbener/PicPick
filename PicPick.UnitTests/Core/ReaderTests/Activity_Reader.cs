@@ -41,7 +41,7 @@ namespace PicPick.UnitTests.ReaderTests
             CreateFiles(5, ".tmp", "sub1");
             CreateFiles(10, ".tal");
         }
-        
+
 
         [DataTestMethod]
         [DataRow("*.jpg", false, 10)]
@@ -63,15 +63,11 @@ namespace PicPick.UnitTests.ReaderTests
         public void Reader_ReadFilesWithFilters_FileCount(string filter, bool includeSubFolders, int expectedCount)
         {
             // arrange
-            var source = new PicPickProjectActivitySource()
-            {
-                Path = SourcePath,
-                Filter = filter,
-                IncludeSubFolders = includeSubFolders
-            };
-            IActivity _activity = new PicPickProjectActivity(filter);
+            IActivity _activity = PicPickProjectActivity.CreateNew(filter);
             _activity.FileGraph = new FilesGraph();
-            _activity.Source = source;
+            _activity.Source.Path = SourcePath;
+            _activity.Source.Filter = filter;
+            _activity.Source.IncludeSubFolders = includeSubFolders;
 
             // act
             Reader reader = new Reader(_activity);

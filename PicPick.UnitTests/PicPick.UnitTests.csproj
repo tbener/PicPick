@@ -66,6 +66,7 @@
     <Compile Include="IsDirty\IsDirty_LoadedProject.cs" />
     <Compile Include="IsDirty\IsDirty_EmptyProject.cs" />
     <Compile Include="Core\ReaderTests\Activity_Reader.cs" />
+    <Compile Include="Models\CreateNew.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Temp\UnitTest1.cs" />
   </ItemGroup>

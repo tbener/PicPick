@@ -215,7 +215,7 @@ namespace PicPick.Models {
         public PicPickProjectActivitySource() {
             this.pathField = "";
             this.filterField = "*.jpg";
-            this.includeSubFoldersField = true;
+            this.includeSubFoldersField = false;
             this.onlyNewFilesField = false;
         }
         
@@ -269,7 +269,7 @@ namespace PicPick.Models {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
-        [System.ComponentModel.DefaultValueAttribute(true)]
+        [System.ComponentModel.DefaultValueAttribute(false)]
         public bool IncludeSubFolders {
             get {
                 return this.includeSubFoldersField;

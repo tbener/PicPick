@@ -19,6 +19,17 @@ namespace PicPick.Models
             Activity = activity;
         }
 
+        public static PicPickProjectActivityDestination CreateNew(IActivity activity)
+        {
+            PicPickProjectActivityDestination destination = new PicPickProjectActivityDestination(activity)
+            {
+                Path = "",
+                Template = "yyy-MM"
+            };
+
+            return destination;
+        }
+
         [XmlIgnore]
         public IActivity Activity { get; set; }
 

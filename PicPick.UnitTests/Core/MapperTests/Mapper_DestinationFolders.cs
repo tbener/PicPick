@@ -41,7 +41,7 @@ namespace PicPick.UnitTests.Core.MapperTests
         {
             SourcePath = PathHelper.GetFullPath(BASE_PATH, BaseFolder);
 
-            _activity = new PicPickProjectActivity("test");
+            _activity = PicPickProjectActivity.CreateNew("test");
             _activity.FileGraph = new FilesGraph();
             _activity.Source.Path = SourcePath;
             _activity.Source.Filter = "";

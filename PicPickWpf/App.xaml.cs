@@ -1,18 +1,8 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using PicPick.Models;
-using PicPick.ViewModel;
+﻿using PicPick.ViewModel;
 using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
-using Prism.Events;
 using System.IO;
 using log4net;
-using System.Net;
-using PicPick.Versioning;
 using TalUtils;
 
 //[assembly: log4net.Config.XmlConfigurator(Watch = true)]
@@ -30,30 +20,40 @@ namespace PicPick
 
         protected override void OnStartup(StartupEventArgs e)
         {
-            log4net.GlobalContext.Properties["LogFileFolder"] = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "PicPick");
-            log4net.Config.XmlConfigurator.Configure();
+            try
+            {
 
-            _log.Info("----------------------------------------");
-            _log.Info($"Starting PicPick v{AppInfo.AppVersionString}");
+                log4net.GlobalContext.Properties["LogFileFolder"] = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "PicPick");
+                log4net.Config.XmlConfigurator.Configure();
 
-            base.OnStartup(e);
+                _log.Info("----------------------------------------");
+                _log.Info($"Starting PicPick v{AppInfo.AppVersionString}");
 
-            PicPick.Helpers.EventAggregatorHelper.EventAggregator = Helpers.ApplicationService.Instance.EventAggregator;
+                base.OnStartup(e);
 
-            MainWindowViewModel vm = new MainWindowViewModel();
-            MainWindow view = new MainWindow();
-            view.Closing += (s, e1) => {
-                if (!vm.CheckSaveIfDirty("Project is not saved. Would you like to save before exiting?"))
+                PicPick.Helpers.EventAggregatorHelper.EventAggregator = Helpers.ApplicationService.Instance.EventAggregator;
+
+                MainWindowViewModel vm = new MainWindowViewModel();
+                MainWindow view = new MainWindow();
+                view.Closing += (s, e1) =>
                 {
-                    e1.Cancel = true;
-                    return;
-                }
-                vm.Dispose();
-                vm = null;
-            };
-            
-            view.DataContext = vm;
-            view.Show();
+                    if (!vm.CheckSaveIfDirty("Project is not saved. Would you like to save before exiting?"))
+                    {
+                        e1.Cancel = true;
+                        return;
+                    }
+                    vm.Dispose();
+                    vm = null;
+                };
+
+                view.DataContext = vm;
+                view.Show();
+            }
+            catch (Exception ex)
+            {
+                Msg.ShowE(ex);
+                Application.Current.Shutdown(1);
+            }
         }
 
         protected override void OnExit(ExitEventArgs e)
