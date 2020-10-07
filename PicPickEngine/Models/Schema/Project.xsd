@@ -51,7 +51,7 @@
           </xsd:complexType>
         </xsd:element>
       </xsd:sequence>
-      <xsd:attribute name="ver" type="xsd:string" default="1.1" />
+      <xsd:attribute name="ver" type="xsd:string" default="2.0" />
     </xsd:complexType>
   </xsd:element>
 </xs:schema>

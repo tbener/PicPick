@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using log4net;
 using TalUtils;
 
@@ -74,6 +75,29 @@ namespace PicPick.Models
                 {
                     destination.Activity = activity;
                 }
+                
+                // new filter objects in ver 2.0
+                if (activity.Source.FromDate == null)
+                {
+                    activity.Source.FromDate = new DateComplex();
+                    activity.Source.FromDate.Date = DateTime.Today.AddDays(-30);
+                    activity.Source.ToDate = new DateComplex();
+                    activity.Source.ToDate.Date = DateTime.Today;
+                }
+            }
+
+        }
+
+        public static string GetDefaultSchemaVersion()
+        {
+            try
+            {
+                return ((System.ComponentModel.DefaultValueAttribute)typeof(PicPickProject).GetProperty("ver").GetCustomAttribute(typeof(System.ComponentModel.DefaultValueAttribute))).Value.ToString();
+            }
+            catch (Exception ex)
+            {
+                _log.Error($"Could not get default schema version", ex);
+                return AppInfo.AppVersionString;
             }
         }
 
@@ -89,6 +113,8 @@ namespace PicPick.Models
                 // get destination array in each task
                 foreach (PicPickProjectActivity task in Project.Activities)
                     task.Destination = task.DestinationList.ToArray();
+
+                Project.ver = GetDefaultSchemaVersion();
 
                 // save
                 SerializeHelper.Save(Project, file);

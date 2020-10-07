@@ -62,6 +62,7 @@ namespace PicPick.StateMachine
 
         public void Start(PicPickState toState)
         {
+            //if (!Enabled) return;
             EndState = toState;
             _ = StartAsync();
         }
@@ -240,5 +241,6 @@ namespace PicPick.StateMachine
             }
         }
 
+        public static bool Enabled { get; set; }
     }
 }

@@ -14,6 +14,7 @@ using PicPick.ViewModel.Dialogs;
 using PicPick.View.Dialogs;
 using PicPick.ViewModel.UserControls;
 using PicPick.Models.Interfaces;
+using PicPick.StateMachine;
 
 namespace PicPick.ViewModel
 {
@@ -215,6 +216,7 @@ namespace PicPick.ViewModel
                 ProjectLoader.Create(project);
             }
             InitIsDirty();
+            StateManager.Enabled = true;
         }
 
         void OpenFileWithDialog()
@@ -232,11 +234,22 @@ namespace PicPick.ViewModel
 
         private void OpenFile(string file)
         {
-            if (!ProjectLoader.Load(file)) return;
-            // set the current activity to refresh the window
-            CurrentActivity = CurrentProject.ActivityList.FirstOrDefault();
-            UpdateFileName();
-            InitIsDirty();
+            try
+            {
+                StateManager.Enabled = false;
+                if (!ProjectLoader.Load(file)) return;
+                // set the current activity to refresh the window
+                CurrentActivity = CurrentProject.ActivityList.FirstOrDefault();
+                UpdateFileName();
+                InitIsDirty();
+            }
+            finally
+            {
+                StateManager.Enabled = true;
+            }
+
+            //if (ActivityViewModel.BackgroundReadingEnabled)
+            //    ActivityViewModel.BackgroundReadingEnabled = true;
         }
 
         private void UpdateFileName()

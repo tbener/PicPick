@@ -31,7 +31,7 @@ namespace PicPick.Models {
         private string verField;
         
         public PicPickProject() {
-            this.verField = "1.1";
+            this.verField = "2.0";
         }
         
         /// <remarks/>
@@ -59,7 +59,7 @@ namespace PicPick.Models {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
-        [System.ComponentModel.DefaultValueAttribute("1.1")]
+        [System.ComponentModel.DefaultValueAttribute("2.0")]
         public string ver {
             get {
                 return this.verField;
