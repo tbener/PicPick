@@ -62,7 +62,12 @@ namespace PicPick.StateMachine
 
         public void Start(PicPickState toState)
         {
-            //if (!Enabled) return;
+            if (!Enabled)
+            {
+                SetNeedRestart(CurrentState);
+                return;
+            }
+
             EndState = toState;
             _ = StartAsync();
         }

@@ -32,7 +32,7 @@
                 </DataTemplate>
                 <DataTemplate DataType="{x:Type uc:MappingResultsViewModel}">
                     <StackPanel Orientation="Vertical">
-                        <TextBlock><Run Text="Source: "/><Run Text="{Binding SourceDisplay}"/></TextBlock>
+                        <TextBlock TextWrapping="Wrap"><Run Text="Source: "/><Run Text="{Binding SourceDisplay}"/></TextBlock>
                         <TextBlock Text="{Binding ProcessedFiles}"/>
                     </StackPanel>
                 </DataTemplate>

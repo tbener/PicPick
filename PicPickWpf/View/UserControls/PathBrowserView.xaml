@@ -20,8 +20,7 @@
                  metro:TextBoxHelper.ButtonCommand="{Binding BrowseCommand}" 
                  metro:TextBoxHelper.ButtonContent="{iconPacks:Material Kind=FolderOpenOutline}">
         </TextBox>
-        <TextBlock x:Name="LinkHolder" Visibility="{Binding PreviewVisibility, Mode=OneWay}"
-                   Cursor="Hand">
+        <TextBlock x:Name="LinkHolder" Cursor="Hand">
             <Hyperlink Command="{Binding OpenExplorerCommand}" Foreground="Gray">
                 <TextBlock ToolTip="{Binding LinkTooltip}">
                     <TextBlock.Text>

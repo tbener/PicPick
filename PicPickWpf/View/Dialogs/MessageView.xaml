@@ -8,8 +8,8 @@
                    xmlns:views="clr-namespace:PicPick.View.UserControls"
                    mc:Ignorable="d"
                    ResizeMode="CanResizeWithGrip"
-                   MinWidth="200"
-                   MinHeight="120"
+                   MinWidth="500"
+                   MinHeight="200"
                    Style="{StaticResource ToolWindowStyle}"
                    WindowStartupLocation="CenterOwner"
                    Title="{Binding Caption}" Height="183.502" Width="660">

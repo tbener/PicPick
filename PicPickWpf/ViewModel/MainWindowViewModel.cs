@@ -248,8 +248,8 @@ namespace PicPick.ViewModel
                 StateManager.Enabled = true;
             }
 
-            //if (ActivityViewModel.BackgroundReadingEnabled)
-            //    ActivityViewModel.BackgroundReadingEnabled = true;
+            ActivityViewModel.SourceViewModel.BackgroundReadingEnabled = ActivityViewModel.BackgroundReadingEnabled;
+
         }
 
         private void UpdateFileName()
