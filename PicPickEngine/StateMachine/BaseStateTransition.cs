@@ -1,15 +1,11 @@
-﻿using PicPick.Core;
-using PicPick.Helpers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using PicPick.Helpers;
 using System.Threading.Tasks;
 
 namespace PicPick.StateMachine
 {
     public abstract class BaseStateTransition : IStateHandler
     {
+
         protected StateManager _stateManager;
         protected IProgressInformation ProgressInfo => _stateManager.ProgressInfo;
 
@@ -20,25 +16,22 @@ namespace PicPick.StateMachine
             _stateManager = manager;
         }
 
-        public async Task ExecuteAsync()
+        public async Task<bool> ExecuteAsync()
         {
+            bool result;
             try
             {
                 IsRunning = true;
-                await Action();
+                result = await Action();
                 ProgressInfo.Text = "";
-            }
-            catch (Exception ex)
-            {
-                // log
-                throw ex;
             }
             finally
             {
                 IsRunning = false;
             }
+            return result;
         }
 
-        protected abstract Task Action();
+        protected abstract Task<bool> Action();
     }
 }

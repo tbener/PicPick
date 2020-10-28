@@ -74,7 +74,13 @@ namespace PicPick.ViewModel
             ApplicationService.Instance.EventAggregator.GetEvent<GotDirtyEvent>().Subscribe(OnGotDirty);
             ApplicationService.Instance.EventAggregator.GetEvent<FileExistsAskEvent>().Subscribe(OnFileExistsAskEvent);
             ApplicationService.Instance.EventAggregator.GetEvent<FileErrorEvent>().Subscribe(OnFileErrorEvent);
+            ApplicationService.Instance.EventAggregator.GetEvent<GeneralErrorEvent>().Subscribe(OnGeneralErrorEvent);
 
+        }
+
+        private void OnGeneralErrorEvent(ExceptionEventArgs exceptionEventArgs)
+        {
+            MessageBoxHelper.Show(exceptionEventArgs.Exception);
         }
 
         private void InitIsDirty()
@@ -329,6 +335,7 @@ namespace PicPick.ViewModel
                 if (_currentActivity != value)
                 {
                     _currentActivity = value;
+                    _log.Info($"Switching to Activity: {_currentActivity.Name}");
                     if (_currentActivity == null)
                         return;
                     lock (_currentActivity)
@@ -413,6 +420,7 @@ namespace PicPick.ViewModel
             ApplicationService.Instance.EventAggregator.GetEvent<GotDirtyEvent>().Unsubscribe(OnGotDirty);
             ApplicationService.Instance.EventAggregator.GetEvent<FileExistsAskEvent>().Unsubscribe(OnFileExistsAskEvent);
             ApplicationService.Instance.EventAggregator.GetEvent<FileErrorEvent>().Unsubscribe(OnFileErrorEvent);
+            ApplicationService.Instance.EventAggregator.GetEvent<GeneralErrorEvent>().Unsubscribe(OnGeneralErrorEvent);
 
             _currentActivity = null;
             _activityViewModels = null;

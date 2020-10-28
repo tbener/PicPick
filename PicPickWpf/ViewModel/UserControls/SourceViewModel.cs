@@ -222,6 +222,7 @@ namespace PicPick.ViewModel.UserControls
             set
             {
                 base.BackgroundReadingEnabled = value;
+                _log.Info("Background reading switched " + (base.BackgroundReadingEnabled ? "ON" : "OFF"));
                 if (base.BackgroundReadingEnabled && Activity.StateMachine.NeedRestart)
                     Activity.StateMachine.Restart(PicPickState.READING, BACKGROUND_END_STATE);
             }

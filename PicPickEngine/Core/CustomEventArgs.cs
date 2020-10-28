@@ -26,6 +26,16 @@ namespace PicPick.Core
         public bool DontAskAgain { get; set; }
     }
 
+    public class ExceptionEventArgs : EventArgs
+    {
+        public ExceptionEventArgs(Exception ex)
+        {
+            Exception = ex;
+        }
+
+        public Exception Exception { get; set; }
+    }
+
     public class FileErrorEventArgs : EventArgs
     {
         public FileErrorEventArgs(DestinationFile destinationFile)

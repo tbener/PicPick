@@ -13,7 +13,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TalUtils;
 
-[assembly:InternalsVisibleTo("PicPick.UnitTests")]
+[assembly: InternalsVisibleTo("PicPick.UnitTests")]
 namespace PicPick.Core
 {
     /// <summary>
@@ -47,6 +47,7 @@ namespace PicPick.Core
 
         internal async Task MapAsync(IProgressInformation progressInfo)
         {
+            _log.Info("Mapping files...");
             _destinations = Activity.DestinationList.Where(d => d.Active).ToList();
 
             bool needDates = _destinations.Any(d => d.HasTemplate);
@@ -65,6 +66,7 @@ namespace PicPick.Core
         /// </summary>
         internal void ApplyFinalFilters()
         {
+            _log.Info("-- Applying final filters");
             _destinationFolders = null;
             if (Activity.Source.OnlyNewFiles)
             {
@@ -74,6 +76,7 @@ namespace PicPick.Core
             {
                 Activity.FileGraph.Files = _sourceFiles.ToList();
             }
+            _log.Info($"Total files found: {Activity.FileGraph.Files.Count()}");
         }
 
         private List<DestinationFolder> _destinationFolders;
@@ -131,6 +134,7 @@ namespace PicPick.Core
 
         private void ApplyFirstFilters(List<SourceFile> sourceFilesList)
         {
+            _log.Info("-- Applying first filters");
             // Add Source Files to the real list
             if (Activity.Source.FromDate.Use || Activity.Source.ToDate.Use)
             {
@@ -179,7 +183,7 @@ namespace PicPick.Core
         }
 
 
-        
+
 
         #endregion
 

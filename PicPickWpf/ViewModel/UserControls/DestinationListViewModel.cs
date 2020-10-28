@@ -61,6 +61,7 @@ namespace PicPick.ViewModel.UserControls
             };
             Activity.DestinationList.Add(dest);
             AddDestinationViewModel(dest);
+            UpdateMapping(PicPickState.MAPPING);
         }
 
         private void AddDestinationViewModel(PicPickProjectActivityDestination dest)
@@ -68,7 +69,6 @@ namespace PicPick.ViewModel.UserControls
             var vm = new DestinationViewModel(dest, Activity.Source);
             vm.OnDeleteClicked += OnDestinationDelete;
             DestinationViewModelList.Add(vm);
-            UpdateMapping(PicPickState.MAPPING);
             dest.PropertyChanged += Destination_PropertyChanged;
         }
 

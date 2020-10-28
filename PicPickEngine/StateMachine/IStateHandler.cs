@@ -9,6 +9,6 @@ namespace PicPick.StateMachine
     public interface IStateHandler
     {
         bool IsRunning { get; }
-        Task ExecuteAsync();
+        Task<bool> ExecuteAsync();
     }
 }

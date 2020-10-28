@@ -39,7 +39,7 @@ namespace TalUtils
                     Msg.ShowE(error);
 
             if (evtLogException != null)
-                Msg.ShowE(evtLogException, "An error occured while trying to write Log!");
+                Msg.ShowE(evtLogException, "An error occurred while trying to write Log!");
 
             return retVal;
         }
@@ -72,7 +72,7 @@ namespace TalUtils
 
         public void Handle(Exception ex)
         {
-            Handle(ex, "Unhandled error", false, _logger);
+            Handle(ex, "Error occurred", false, _logger);
         }
 
         #endregion

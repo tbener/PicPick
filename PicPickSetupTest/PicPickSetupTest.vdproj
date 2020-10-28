@@ -5083,7 +5083,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:PicPick, Version=2.0.0.14123, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:PicPick, Version=2.0.1.35125, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_A21BA9767096773FCA67632BF2B4EFD4"
@@ -6354,7 +6354,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:TalUtils, Version=1.0.9.0, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:TalUtils, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_E32DAEDA534530726C95DEF6D1E8F49B"
@@ -6944,15 +6944,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:PicPick"
-        "ProductCode" = "8:{B70F8A2A-D95D-4F49-919A-D91FC2665165}"
-        "PackageCode" = "8:{C14604B2-2F9B-4DB5-91F5-B94F4AEDB78E}"
+        "ProductCode" = "8:{E148259F-EE9C-4723-B443-E6A80B9216A6}"
+        "PackageCode" = "8:{096219DE-5D03-472E-A6E8-EDB5A8EAC9C8}"
         "UpgradeCode" = "8:{EFB057AD-E138-4EE0-B390-13651E7B83DF}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:FALSE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:2.0.0"
+        "ProductVersion" = "8:2.0.1"
         "Manufacturer" = "8:Tal Bener (TalTools)"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"

@@ -18,11 +18,12 @@ namespace PicPick.StateMachine
             mapper = (Mapper)manager.CoreActions.Mapper;
         }
 
-        protected override async Task Action()
+        protected override async Task<bool> Action()
         {
             Debug.WriteLine("Running Filtering...");
             ProgressInfo.Text = "Filtering...";
             mapper.ApplyFinalFilters();
+            return true;
         }
     }
 }

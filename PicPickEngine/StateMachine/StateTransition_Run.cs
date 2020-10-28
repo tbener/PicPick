@@ -13,10 +13,11 @@ namespace PicPick.StateMachine
             runner = (Runner)manager.CoreActions.Runner;
         }
 
-        protected override async Task Action()
+        protected override async Task<bool> Action()
         {
             Debug.WriteLine("Performing file copying...");
             await runner.RunAsync(ProgressInfo);
+            return true;
         }
     }
 }

@@ -50,7 +50,10 @@ namespace PicPick.Helpers
             EventAggregator?.GetEvent<GotDirtyEvent>().Publish();
         }
 
-
+        public static void PublishGeneralException(ExceptionEventArgs payload)
+        {
+            EventAggregator?.GetEvent<GeneralErrorEvent>().Publish(payload);
+        }
 
         //internal static FileExistsResponseEnum Publish(AskEventArgs payload)
         //{

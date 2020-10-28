@@ -53,9 +53,9 @@ namespace PicPick.Helpers
         /// </summary>
         /// <param name="ex"></param>
         /// <param name="caption"></param>
-        public static void Show(Exception ex, string caption = "PicPick Error")
+        public static void Show(Exception ex, string caption = "Error")
         {
-            Show(ex.Message, caption, MessageBoxButton.OK, MessageBoxImage.Error);
+            Show(ex.Message + " (check the log for more details)", caption, MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
         /// <summary>

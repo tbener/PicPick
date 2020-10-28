@@ -44,7 +44,7 @@ namespace PicPick.Helpers
             }
             else if (Exception != null)
             {
-                Text = "Error occured";
+                Text = "Error occurred";
             }
             else
                 Text = "";

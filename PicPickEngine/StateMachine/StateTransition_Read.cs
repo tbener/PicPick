@@ -18,10 +18,10 @@ namespace PicPick.StateMachine
             reader = (Reader)manager.CoreActions.Reader;
         }
 
-        protected override async Task Action()
+        protected override async Task<bool> Action()
         {
             Debug.WriteLine("Running Reading...");
-            reader.ReadFiles();
+            return reader.ReadFiles();
         }
 
     }

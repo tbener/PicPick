@@ -1,10 +1,12 @@
-﻿using PicPick.Core;
+﻿using log4net;
+using PicPick.Core;
 using PicPick.Helpers;
 using PicPick.Models;
 using PicPick.Models.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using TalUtils;
 
 namespace PicPick.StateMachine
 {
@@ -26,6 +28,9 @@ namespace PicPick.StateMachine
 
     public class StateManager
     {
+        private static readonly ILog _log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        private static readonly ErrorHandler _errorHandler = new ErrorHandler(_log);
+
         public event StateChangedEventHandler OnStateChanged;
 
 
@@ -74,10 +79,13 @@ namespace PicPick.StateMachine
 
         private async Task StartAsync()
         {
+            bool stateResult = true;
+
             if (IsRunning)
                 return;
 
             IsRunning = true;
+            LastException = null;
 
             if (CurrentState == PicPickState.DONE)
                 CurrentState = PicPickState.READY;
@@ -101,7 +109,7 @@ namespace PicPick.StateMachine
                     {
                         try
                         {
-                            await _stateTransitions[CurrentState].ExecuteAsync();
+                            stateResult = await _stateTransitions[CurrentState].ExecuteAsync();
                         }
                         catch (OperationCanceledException)
                         {
@@ -116,13 +124,21 @@ namespace PicPick.StateMachine
 
                     lock (this)
                     {
-                        if (ProgressInfo.OperationCancelled)
+                        if (!stateResult || ProgressInfo.OperationCancelled)
                             break;
                         if (!PublishStateChangedEvent())
                             break;
                         CurrentState = GetNextState(CurrentState);
                     }
                 };
+            }
+            catch (Exception ex)
+            {
+                // IMPORTANT: we should get here only if something is wrong with the paramters.
+                // Errors that could be handled by an external change and re-run should be handled differently!
+                LastException = ex;
+                _errorHandler.Handle(ex);
+                EventAggregatorHelper.PublishGeneralException(new ExceptionEventArgs(ex));
             }
             finally
             {
@@ -245,6 +261,9 @@ namespace PicPick.StateMachine
                 return _needRestartFromState.HasValue;
             }
         }
+
+        // Note that this exception is preventing the process from running until something is changed
+        public Exception LastException { get; private set; }
 
         public static bool Enabled { get; set; }
     }
