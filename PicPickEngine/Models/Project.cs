@@ -102,7 +102,7 @@ namespace PicPick.Models {
         
         public PicPickProjectActivity() {
             this.nameField = "My Pictures";
-            this.deleteSourceFilesField = true;
+            this.deleteSourceFilesField = false;
             this.deleteSourceFilesOnSkipField = false;
             this.activeField = true;
         }
@@ -145,7 +145,7 @@ namespace PicPick.Models {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
-        [System.ComponentModel.DefaultValueAttribute(true)]
+        [System.ComponentModel.DefaultValueAttribute(false)]
         public bool DeleteSourceFiles {
             get {
                 return this.deleteSourceFilesField;
